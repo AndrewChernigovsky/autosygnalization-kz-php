@@ -12,17 +12,6 @@ AddType application/pdf .pdf
 
 RewriteEngine On
 
-RewriteRule ^files/php/pages/services/audit-page/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/services/audit-page [R=301,L]
-RewriteRule ^files/php/pages/services/visitka-page/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/services/visitka-page [R=301,L]
-RewriteRule ^files/php/pages/services/site-catalog-page/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/services/site-catalog-page [R=301,L]
-RewriteRule ^files/php/pages/services/landing-page/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/services/landing-page [R=301,L]
-
-RewriteRule ^files/php/pages/portfolio/site-1/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/portfolio/site-1 [R=301,L]
-RewriteRule ^files/php/pages/portfolio/site-2/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/portfolio/site-2 [R=301,L]
-RewriteRule ^files/php/pages/portfolio/site-3/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/portfolio/site-3 [R=301,L]
-RewriteRule ^files/php/pages/portfolio/site-4/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/portfolio/site-4 [R=301,L]
-RewriteRule ^files/php/pages/portfolio/site-5/(?:\?|index|$) https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/portfolio/site-5 [R=301,L]
-
 RewriteRule ^files/php/functions - [L]
 
 RewriteCond %{REQUEST_FILENAME} !-d
