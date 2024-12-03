@@ -1,0 +1,40 @@
+@use 'variables'as var;
+
+.examples {
+  .swiper-wrapper {
+    margin: 0;
+    padding: 20px 0;
+
+    li,
+    p {
+      font-family: var.$primary-font;
+      text-transform: none;
+      font-weight: 400;
+      margin-bottom: 40px;
+    }
+
+    h4 {
+      font-weight: 700;
+      color: var.$orange;
+    }
+  }
+
+  &__image {
+    object-fit: cover;
+    border-radius: 15px;
+    border: 1px solid var.$orange;
+    height: 450px;
+    width: 100%;
+  }
+
+  .swiper-pagination {
+    bottom: 0px;
+  }
+
+  .swiper-pagination-bullet {
+    background-color: var.$orange;
+    width: 10px;
+    height: 10px;
+    border-radius: 0;
+  }
+}

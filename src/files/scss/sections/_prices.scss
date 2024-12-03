@@ -1,0 +1,120 @@
+@use 'variables'as var;
+@use 'mixins'as mix;
+
+.prices {
+  padding: 60px 0;
+  border-bottom: 1px solid var.$white;
+  clip-path: polygon(0% 0%, 100% 18%, 100% 90%, 0% 97%);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 150px;
+    background-color: var.$white;
+    clip-path: polygon(0 59%, 100% 0, 100% 100%, 0% 100%);
+    bottom: -35px;
+  }
+
+  @media screen and (max-width: var.$tablet) {
+    clip-path: polygon(0% 0%, 100% 0%, 100% 93%, 0% 100%);
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 150px;
+      background-color: var.$white;
+      clip-path: polygon(-30% 50%, 100% 0, 100% 100%, 0% 100%);
+      bottom: -85px;
+    }
+  }
+
+  .secondary-title {
+    color: var.$orange;
+  }
+
+  .base-text {
+    text-transform: none;
+  }
+
+  &__link {
+    color: var.$orange;
+    text-decoration: none;
+    @include mix.gradient(rgb(34, 34, 34), rgb(4, 0, 27));
+    padding: 10px;
+    border-radius: 50px;
+    font-weight: 700;
+  }
+
+  &__list {
+    list-style: none;
+    max-width: 700px;
+    margin: 0 auto;
+
+    li:nth-of-type(odd) {
+      text-align: right;
+      max-width: 300px;
+      margin-left: auto;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -15px;
+        bottom: 40px;
+        border: 5px solid var.$orange;
+        width: 100px;
+        background: transparent;
+        height: 100px;
+        z-index: -1;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: -4px;
+        bottom: 30px;
+        border: 1px solid var.$orange;
+        width: 100px;
+        background: black;
+        height: 100px;
+        z-index: -1;
+      }
+    }
+
+    li:nth-of-type(even) {
+      text-align: left;
+      max-width: 530px;
+      margin-right: auto;
+      position: relative;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: -35px;
+        top: -40px;
+        border: 5px solid var.$orange;
+        width: 100px;
+        border-radius: 50%;
+        background: transparent;
+        height: 100px;
+        z-index: -1;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: -40px;
+        border: 1px solid var.$orange;
+        width: 70px;
+        border-radius: 50%;
+        background: black;
+        height: 70px;
+        z-index: -1;
+      }
+    }
+  }
+}

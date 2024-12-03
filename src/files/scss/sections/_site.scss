@@ -1,0 +1,53 @@
+@use "variables" as var;
+
+.site {
+    &__wrapper {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var.$orange;
+    }
+
+    &__title {
+        font-size: 21px;
+        line-height: 24px;
+        letter-spacing: 0.5px;
+    }
+
+    &__list-item {
+        font-size: 16px;
+        line-height: 18px;
+        letter-spacing: 0.5px;
+        text-transform: none;
+    }
+
+    &__item-text {
+        font-family: var.$primary-font;
+    }
+
+    &__item-title {
+        font-family: var.$secondary-font;
+        color: var.$orange ;
+    }
+}
+
+@media screen and (min-width:var.$tablet) {
+    .site {
+
+        &__wrapper {
+            padding-bottom: 40px;
+            border-bottom: 2px solid var.$orange;
+        }
+
+        &__title {
+            font-size: 26px;
+            line-height: 29px;
+            letter-spacing: 1px;
+        }
+
+        &__list-item {
+            font-size: 18px;
+            line-height: 20px;
+            letter-spacing: 1px;
+        }
+    }
+}

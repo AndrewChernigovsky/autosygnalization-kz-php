@@ -1,0 +1,35 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "cross-env PRODUCTION=false gulp",
+    "build": "cross-env PRODUCTION=true gulp build",
+    "statics": "cross-env PRODUCTION=true gulp statics && node sharp.js && gulp fonts",
+    "fonts": "gulp fonts"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@rollup/plugin-babel": "^6.0.4",
+    "@rollup/plugin-commonjs": "^28.0.1",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "browser-sync": "^3.0.3",
+    "cross-env": "^7.0.3",
+    "gulp": "^5.0.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^5.1.0",
+    "gulp-svg-sprite": "^2.0.3",
+    "gulp-ttf2woff": "^2.0.0",
+    "gulp-ttf2woff2": "^5.0.0",
+    "inputmask": "^5.0.9",
+    "rollup": "^2.79.2",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "sass": "^1.80.5",
+    "sharp": "^0.33.5",
+    "swiper": "^11.1.14"
+  },
+  "dependencies": {
+    "gulp-autoprefixer": "^9.0.0",
+    "gulp-clean-css": "^4.3.0"
+  }
+}

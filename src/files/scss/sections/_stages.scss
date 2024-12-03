@@ -1,0 +1,62 @@
+@use "variables" as var;
+
+.stages {
+
+    &__wrapper {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid var.$orange;
+    }
+
+    &__title {
+        font-size: 21px;
+        line-height: 24px;
+        letter-spacing: 0.5px;
+    }
+
+    &__list {
+        padding-left: 10px;
+    }
+
+    &__list-item {
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        min-height: 17px;
+        font-weight: 400;
+        text-transform: none;
+    }
+
+    &__list-item:not(:last-child) {
+        margin-bottom: 9px;
+    }
+}
+
+@media screen and (min-width:var.$tablet) {
+    .stages {
+
+        &__wrapper {
+            padding-bottom: 40px;
+            border-bottom: 2px solid var.$orange;
+        }
+
+        &__title {
+            font-size: 26px;
+            line-height: 29px;
+            letter-spacing: 1px;
+        }
+
+        &__list {
+            padding-left: 20px;
+        }
+
+        &__list-item {
+            font-size: 16px;
+            min-height: 19px;
+            text-transform: none;
+        }
+
+        &__list-item:not(:last-child) {
+            margin-bottom: 12px;
+        }
+    }
+}

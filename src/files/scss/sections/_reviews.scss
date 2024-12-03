@@ -1,0 +1,31 @@
+@use 'variables'as var;
+
+.reviews {
+  .swiper-wrapper {
+    margin: 0;
+    padding: 20px 0;
+
+    li,
+    p {
+      font-family: var.$primary-font;
+      text-transform: none;
+      font-weight: 400;
+    }
+
+    h4 {
+      font-weight: 700;
+      color: var.$orange;
+    }
+  }
+
+  .swiper-pagination {
+    bottom: 0px;
+  }
+
+  .swiper-pagination-bullet {
+    background-color: var.$orange;
+    width: 10px;
+    height: 10px;
+    border-radius: 0;
+  }
+}

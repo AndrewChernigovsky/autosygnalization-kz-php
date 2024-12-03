@@ -1,0 +1,21 @@
+@use 'variables'as var;
+
+.reasons {
+  padding: 60px 0;
+  border-bottom: 1px solid var.$white;
+
+  .secondary-title {
+    color: var.$orange;
+    text-align: center;
+  }
+
+  &__list {
+    display: grid;
+    gap: 10px;
+  }
+
+  &__wrapper {
+    display: grid;
+    justify-content: center;
+  }
+}

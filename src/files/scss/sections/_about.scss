@@ -1,0 +1,48 @@
+@use 'variables'as var;
+
+.about {
+  background-color: var.$black;
+  padding: 60px 0;
+  border-bottom: 1px solid var.$white;
+
+  &__wrapper {
+    display: grid;
+    gap: 20px;
+
+    @media screen and (min-width: var.$tablet) {
+      display: flex;
+    }
+  }
+
+  &__text {
+    max-width: 100%;
+
+
+    @media screen and (min-width: var.$tablet) {
+      max-width: 50%;
+    }
+
+    .base-text {
+      text-transform: none;
+    }
+  }
+
+  .about-second {
+    display: grid;
+    align-items: stretch;
+  }
+
+  &__advantages {
+    color: var.$orange;
+    font-weight: 700;
+    display: grid;
+    gap: 10px;
+    align-content: center;
+  }
+
+  .blockquote {
+    margin: 0;
+    padding: 5px;
+
+  }
+}

@@ -1,0 +1,24 @@
+@use 'reset'as *;
+@use 'fonts'as *;
+@use 'global'as *;
+
+@use './blocks/footer'as *;
+@use './blocks/header'as *;
+@use './blocks/nav'as *;
+@use './blocks/popup'as *;
+
+@use './sections/intro'as *;
+@use './sections/advantages'as *;
+@use './sections/prices'as *;
+@use './sections/tarifs'as *;
+@use './sections/about'as *;
+@use './sections/reasons'as *;
+@use './sections/reviews'as *;
+@use "./sections/cost"as *;
+@use "./sections/content"as *;
+@use "./sections/stages"as *;
+@use "./sections/purpose"as *;
+@use "./sections/site"as *;
+@use "./sections/deadlines"as *;
+@use "./sections/quality"as *;
+@use "./sections/examples"as *;

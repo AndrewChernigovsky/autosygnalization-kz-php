@@ -1,0 +1,19 @@
+@use 'variables'as var;
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: var.$orange;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+  height: auto;
+}

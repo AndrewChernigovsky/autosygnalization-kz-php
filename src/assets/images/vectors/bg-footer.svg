@@ -1,0 +1,27 @@
+<svg width="1441.000000" height="516.000000" viewBox="0 0 1441 516" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<desc>
+			Created with Pixso.
+	</desc>
+	<defs>
+		<linearGradient x1="1.000000" y1="255.980957" x2="1441.000122" y2="255.980957" id="paint_linear_26_520_0" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#8F2300"/>
+			<stop offset="1.000000" stop-color="#000000"/>
+		</linearGradient>
+		<linearGradient x1="1.000000" y1="288.151123" x2="1441.000122" y2="288.151123" id="paint_linear_26_519_0" gradientUnits="userSpaceOnUse">
+			<stop offset="0.003641" stop-color="#4D1800"/>
+			<stop offset="1.000000" stop-color="#02000A"/>
+		</linearGradient>
+		<linearGradient x1="0.000000" y1="351.151123" x2="1440.000122" y2="351.151123" id="paint_linear_26_518_0" gradientUnits="userSpaceOnUse">
+			<stop offset="0.003641" stop-color="#581B00"/>
+			<stop offset="1.000000" stop-color="#02000A"/>
+		</linearGradient>
+		<linearGradient x1="737.000000" y1="316.071777" x2="1439.999146" y2="357.548370" id="paint_linear_26_516_0" gradientUnits="userSpaceOnUse">
+			<stop offset="0.003641" stop-color="#181818"/>
+			<stop offset="1.000000" stop-color="#02000A"/>
+		</linearGradient>
+	</defs>
+	<path id="Rectangle 22" d="M1441 25.82L1441 424L16.33 424L1 67.1C1.52 66.98 2.05 66.86 2.57 66.74L1 25.82C149.52 -8.27 292.36 -14.38 390.31 43.11C404.68 51.54 419.23 59.29 433.88 66.4C508.36 79.02 578.28 95.38 640.88 110.03C725.5 129.84 796.76 146.52 847.88 146.58C978.48 146.73 1044.57 116.34 1111.06 85.77C1120.63 81.37 1130.19 76.97 1139.97 72.66C1208.38 42.46 1286.64 16.51 1441 25.82Z" fill="url(#paint_linear_26_520_0)" fill-opacity="1.000000" fill-rule="evenodd"/>
+	<path id="Rectangle 22" d="M1441 54.7L1441 453L1 453L1 54.7C14.97 51.53 28.72 48.82 42.27 46.55C245.48 12.51 401.61 76.42 527.56 127.96C600.59 157.86 663.48 183.6 719.5 183.66C850.18 183.81 942.82 152.29 1037.25 120.16C1051.09 115.45 1064.96 110.73 1079.01 106.09C1177.3 73.63 1283.62 45.31 1441 54.7Z" fill="url(#paint_linear_26_519_0)" fill-opacity="1.000000" fill-rule="evenodd"/>
+	<path id="Rectangle 22" d="M1440 117.7L1440 516L0 516L0 117.7C13.97 114.53 27.72 111.82 41.27 109.55C244.48 75.51 400.61 139.42 526.56 190.96C599.59 220.86 662.48 246.6 718.5 246.66C849.18 246.81 941.82 215.29 1036.25 183.16C1050.09 178.45 1063.96 173.73 1078.01 169.09C1176.3 136.63 1282.62 108.31 1440 117.7Z" fill="url(#paint_linear_26_518_0)" fill-opacity="1.000000" fill-rule="evenodd"/>
+	<path id="Rectangle 22" d="M1440 130.82L1440 515.99L0 515.99L0 130.82C13.76 127.8 27.29 125.28 40.6 123.23C240.15 92.54 388.38 167.75 508.72 228.8C581.44 265.7 643.97 297.43 701.5 297.5C833.25 297.65 929.99 257.62 1029.15 216.6C1043.46 210.68 1057.82 204.74 1072.35 198.89C1174.05 157.97 1283.72 121.81 1440 130.82Z" fill="url(#paint_linear_26_516_0)" fill-opacity="1.000000" fill-rule="evenodd"/>
+</svg>
