@@ -17,26 +17,9 @@ body {
   display: flex;
   flex-direction: column;
   font-family: var.$primary-font;
-  @include mix.gradient(rgb(7, 6, 6), rgb(8, 5, 26));
   text-transform: uppercase;
   color: var.$white;
   font-weight: 400;
-  overflow-x: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    display: block;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    z-index: -2;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-image: url('#{var.$DEV_PATH}assets/images/vectors/bg-header.svg');
-    filter: drop-shadow(2px 4px 6px var.$black);
-  }
 
   &.overflow {
     overflow: hidden;

@@ -28,17 +28,6 @@ echo $head->setHead();
     $file_2_section = './files/php/sections/';
     $files_to_include = [
       $file_2_section . 'intro.php',
-      $file_2_section . 'advantages.php',
-      $file_2_section . 'prices.php',
-      $file_2_section . 'tarifs.php',
-      $file_2_section . 'about.php',
-      $file_2_section . 'reasons.php',
-      $file_2_section . 'quality.php',
-      $file_2_section . 'cost/cost.php',
-      $file_2_section . 'examples/examples.php',
-      $file_2_section . 'form.php',
-      $file_2_section . 'reviews/reviews.php',
-      $file_2_section . 'faq.php',
     ];
 
     $sectionLoader = new IncludeSections(__DIR__, $files_to_include);

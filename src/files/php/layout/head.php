@@ -96,7 +96,7 @@ class Head
 
 
 
-    $headContent .= $this->setYandexMetrika();
+    // $headContent .= $this->setYandexMetrika();
 
     return $headContent;
   }
