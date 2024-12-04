@@ -8,7 +8,13 @@
   Allow from all
 </FilesMatch>
 
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+</IfModule>
+
 AddType application/pdf .pdf
+AddType font/woff .woff
+AddType font/woff2 .woff2
 
 RewriteEngine On
 

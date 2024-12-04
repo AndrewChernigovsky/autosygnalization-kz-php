@@ -1,29 +1,46 @@
 @use 'variables'as var;
 
 @font-face {
-  font-family: 'Russo';
-  src: url('#{var.$DEV_PATH}assets/fonts/Russo_One.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/Russo_One.woff') format('woff'),
-  url('#{var.$DEV_PATH}assets/fonts/Russo_One.ttf') format('truetype');
-  font-weight: 400;
+  font-family: "DINPRO";
+  src: url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff2') format('woff2'),
+  url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Rubik';
-  src: url('#{var.$DEV_PATH}assets/fonts/Rubik-Regular.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/Rubik-Regular.woff') format('woff'),
-  url('#{var.$DEV_PATH}assets/fonts/Rubik-Regular.ttf') format('truetype');
-  font-weight: 400;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Rubik';
-  src: url('#{var.$DEV_PATH}assets/fonts/Rubik-Bold.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/Rubik-Bold.woff') format('woff'),
-  url('#{var.$DEV_PATH}assets/fonts/Rubik-Bold.ttf') format('truetype');
+  font-family: "DINPRO";
+  src: url('#{var.$DEV_PATH}assets/fonts/din-pro-700.woff2') format('woff2'),
+  url('#{var.$DEV_PATH}assets/fonts/din-pro-700.woff') format('woff');
   font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url('#{var.$DEV_PATH}assets/fonts/oswald-regular.woff2') format('woff2'),
+  url('#{var.$DEV_PATH}assets/fonts/oswald-regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Oswald";
+  src: url('#{var.$DEV_PATH}assets/fonts/oswald-bold.woff2') format('woff2'),
+  url('#{var.$DEV_PATH}assets/fonts/oswald-bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "rubik";
+  src: url('#{var.$DEV_PATH}assets/fonts/rubik-bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
   font-display: swap;
 }
 

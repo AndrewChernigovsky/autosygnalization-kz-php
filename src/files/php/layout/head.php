@@ -29,62 +29,32 @@ class Head
     global $pathFile_URL;
     $title = $this->title ?? 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
     $headContent = <<<HTML
-            <meta name="description" content="Профессиональная разработка и продвижение сайтов: лендинги, сайты-визитки, каталоги. Уникальный дизайн, адаптивность, базовая SEO-настройка. Хостинг на год в подарок.">
+            <meta charset="utf-8">
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-            <meta property="og:site_name" content="Академия Андрея Андреевича Изосимова" />
-            <meta property="og:title" content="Создание и продвижение сайтов" />
-            <meta property="og:description" content="Профессиональная разработка и продвижение сайтов: лендинги, сайты-визитки, каталоги. Уникальный дизайн, адаптивность, базовая SEO-настройка. Хостинг на год в подарок." />
-            <meta property="og:type" content="website" />
-            <meta property="og:image" content="https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/logo.png" />
-            <meta property="og:image:width" content="300" />
-            <meta property="og:image:height" content="300" />
-            <meta property="og:url" content="https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/" />
+            <meta name="keywords" content="купить автосигнализацию, купить видеорегистратор, купить антирадар, купить камеру заднего вида, установить автосигнализацию, услуги автоэлектрика, компьютерная диагностика, русификация авто, Starline">
+            <meta name="description" content="Auto Security - магазин автоэлектроники и установочный центр в г.Алматы. Авторизованный партнер Starline.">
             <title>$title</title>
+            <meta property="og:url" content="https://autosecurity.kz/">
+            <meta property="og:type" content="article">
+            <meta property="og:title" content="Главная">
+            <meta property="og:description" content="Auto Security - магазин автоэлектроники и установочный центр d в г.Алматы. Авторизованный партнер Starline.">
             HTML;
     foreach ($this->meta_tags as $meta_tag) {
       $headContent .= "$meta_tag\n";
     }
-    $headContent .= "
-            <link type='image/x-icon' rel='shortcut icon' href='./favicon.ico'>
-            <link type='image/png' sizes='16x16' rel='icon' href='{$pathFile_URL}/assets/images/favicons/favicon-16x16.png'>
-            <link type='image/png' sizes='32x32' rel='icon' href='{$pathFile_URL}/assets/images/favicons/favicon-32x32.png'>
-            <link type='image/png' sizes='96x96' rel='icon' href='{$pathFile_URL}/assets/images/favicons/favicon-96x96.png'>
-            <link type='image/png' sizes='120x120' rel='icon' href='{$pathFile_URL}/assets/images/favicons/favicon-120x120.png'>
-            <link type='image/png' sizes='72x72' rel='icon' href='{$pathFile_URL}/assets/images/favicons/android-icon-72x72.png'>
-            <link type='image/png' sizes='96x96' rel='icon' href='{$pathFile_URL}/assets/images/favicons/android-icon-96x96.png'>
-            <link type='image/png' sizes='144x144' rel='icon' href='{$pathFile_URL}/assets/images/favicons/android-icon-144x144.png'>
-            <link type='image/png' sizes='192x192' rel='icon' href='{$pathFile_URL}/assets/images/favicons/android-icon-192x192.png'> 
-            <link type='image/png' sizes='512x512' rel='icon' href='{$pathFile_URL}/assets/images/favicons/android-icon-512x512.png'>
-            <link rel='manifest' href='./manifest.json'>
-            <link sizes='57x57' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-57x57.png'>
-            <link sizes='60x60' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-60x60.png'>
-            <link sizes='72x72' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-72x72.png'>
-            <link sizes='76x76' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-76x76.png'>
-            <link sizes='114x114' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-114x114.png'>
-            <link sizes='120x120' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-120x120.png'>
-            <link sizes='144x144' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-144x144.png'>
-            <link sizes='152x152' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-152x152.png'>
-            <link sizes='180x180' rel='apple-touch-icon' href='{$pathFile_URL}/assets/images/favicons/apple-touch-icon-180x180.png'>
-            <link color='#e52037' rel='mask-icon' href='{$pathFile_URL}/assets/images/favicons/safari-pinned-tab.svg'>
-            <meta name='msapplication-TileColor' content='#2b5797'>
-            <meta name='msapplication-TileImage' content='{$pathFile_URL}/assets/images/favicons/mstile-144x144.png'>
-            <meta name='msapplication-square70x70logo' content='{$pathFile_URL}/assets/images/favicons/mstile-70x70.png'>
-            <meta name='msapplication-square150x150logo' content='{$pathFile_URL}/assets/images/favicons/mstile-150x150.png'>
-            <meta name='msapplication-wide310x150logo' content='{$pathFile_URL}/assets/images/favicons/mstile-310x310.png'>
-            <meta name='msapplication-square310x310logo' content='{$pathFile_URL}/assets/images/favicons/mstile-310x150.png'>
-            <meta name='application-name' content='My Application'>
-            <meta name='msapplication-config' content='./browserconfig.xml'>";
-    $headContent .= "
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Russo_One.woff2' as='font' type='font/woff2' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Russo_One.woff' as='font' type='font/woff' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Russo_One.ttf' as='font' type='font/ttf' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Rubik-Bold.woff2' as='font' type='font/woff2' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Rubik-Bold.woff' as='font' type='font/woff' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Rubik-Bold.ttf' as='font' type='font/ttf' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Rubik-Regular.woff2' as='font' type='font/woff2' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Rubik-Regular.woff' as='font' type='font/woff' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/Rubik-Regular.ttf' as='font' type='font/ttf' crossorigin>
+    $favicons = "";
+
+    $reload_fonts = "
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-400.woff2' as='font' type='font/woff2' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-400.woff' as='font' type='font/woff' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-700.woff2' as='font' type='font/woff2' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-700.woff' as='font' type='font/woff' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-bold.woff2' as='font' type='font/woff2' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-bold.woff' as='font' type='font/woff' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff2' as='font' type='font/woff2' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff' as='font' type='font/woff' crossorigin>
         ";
+    // $headContent .= $reload_fonts;
     $headContent .= "<link rel='stylesheet' href='$pathFile_URL/assets/libs/libs.css'>";
     $headContent .= "<link rel='stylesheet' href='$pathFile_URL/files/css/style.css'>";
     $headContent .= "<script src='$pathFile_URL/assets/libs/libs.js' defer type='module'></script>";

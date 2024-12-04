@@ -4,15 +4,13 @@ include_once $head_path;
 include_once './../../data/paths.php';
 include_once './../../data/contacts.php';
 $title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова | Портфолио';
-$canonical = "<link rel='canonical' href='https://xn----7sbbihceda5ae9bf1bg0j.xn--p1ai/files/php/pages/portfolio/site-4'/>";
-$head = new Head($title, [], [$canonical]);
+$head = new Head($title, [], []);
 ?>
 
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
-  <meta charset='utf-8'>
   <?php echo $head->setHead(); ?>
   <style>
     .value-button {

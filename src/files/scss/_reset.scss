@@ -15,6 +15,12 @@ body {
   background-color: var.$orange;
 }
 
+.list-style-none {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
 img {
   max-width: 100%;
   display: block;

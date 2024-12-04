@@ -103,7 +103,7 @@ const phpTask = (cb) => {
 
 const watchTask = () => {
   browserSync.init({
-    proxy: "http://aaa/dist",
+    proxy: "http://autosygnalization-kz-php/dist",
     serveStatic: [{
       route: '/',
       dir: 'dist'
@@ -175,7 +175,7 @@ const copyStatics = (cb) => {
 }
 
 const images = (cb) => {
-  return src(['./dist/assets/images/**/*.{png,jpg}'], { encoding: false })
+  return src(['./src/assets/images/**/*.{png,jpg}'], { encoding: false })
     .pipe(dest(paths.dist + '/assets/images'))
     .on('end', cb)
 };
@@ -204,7 +204,7 @@ const fonts = (cb) => {
   cb()
 };
 
-const statics = parallel(() => cleanDist('dist/assets/libs'), sprite, sassTaskLibs, rollupTask);
+const statics = parallel(() => cleanDist('dist/assets/libs'), copyStatics, images, sprite, sassTaskLibs, rollupTask);
 const dev = series(() => cleanDist('dist/files'), copyStatics, docs, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
 const build = series(() => cleanDist('dist/files'), copyStatics, docs, images, vectors, phpTask, sassTask, sassTaskLibs, rollupTask);
 

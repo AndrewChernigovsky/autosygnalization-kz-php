@@ -1,15 +1,15 @@
 @use 'variables'as var;
 @use 'mixins'as mix;
 
+html {
+  min-height: 100vh;
+  scroll-behavior: smooth;
+}
+
 .container {
   max-width: var.$desktop;
   margin: 0 auto;
   padding: 0 20px;
-}
-
-html {
-  min-height: 100vh;
-  scroll-behavior: smooth;
 }
 
 body {
