@@ -164,7 +164,7 @@ const copyStatics = (cb) => {
       .pipe(dest('./dist/assets'))
   })();
   (() => {
-    return src(['./src/.htaccess', './src/index.php', './src/sitemap.xml', './src/robots.txt', './src/yandex_12ed8a33b1d44641.html', './src/browserconfig.xml', './src/favicon.ico', './src/manifest.json'])
+    return src(['./src/.htaccess', './src/index.php', './src/404.php', './src/sitemap.xml', './src/robots.txt', './src/yandex_12ed8a33b1d44641.html', './src/browserconfig.xml', './src/favicon.ico', './src/manifest.json'])
       .pipe(dest(paths.dist))
   })()
   cb();

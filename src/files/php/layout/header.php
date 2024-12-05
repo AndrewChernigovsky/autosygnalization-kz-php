@@ -80,7 +80,7 @@ function isActive($linkPath, $currentPath)
               </address>
             </div>
             <div class="cart">
-              <a class="link" href="/cart">
+              <a class="link" href="<?php echo $pathFile_URL.'/files/php/pages/cart/cart.php' ?>">
                 <svg width="25" height="25">
                   <use href="<?php echo $pathFile_URL . '/assets/images/vectors/sprite.svg#cart' ?>"></use>
                 </svg>
