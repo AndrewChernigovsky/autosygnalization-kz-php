@@ -17,46 +17,85 @@ if (is_dir($distPath)) {
   $pathFile_URL = '';
 }
 
-$link1 = $currentUrl . '#advantages';
-$link2 = $currentUrl . '#quality';
-$link3 = $currentUrl . '#tarifs';
-$link4 = $currentUrl . '#prices';
-$link5 = $currentUrl . '#reasons';
-$link6 = $currentUrl . '#about';
-$link2form = $currentUrl . '#form';
+?>
 
-$logo = $pathFile_URL . '/assets/images/logo.avif';
-$phone = '+7 953 232 21 12';
+<?php
+$navLinks = $_SERVER['DOCUMENT_ROOT'] . "$pathFile_URL/files/php/data/navigation-links.php";
+
+if (file_exists($navLinks)) {
+  include_once $navLinks;
+} else {
+  echo "Файл не найден: $navLinks";
+}
+
+$currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+function isActive($linkPath, $currentPath)
+{
+  return $linkPath === $currentPath ? 'active' : '';
+}
 ?>
 
 <header class="header">
   <div class="container">
-    <div class="header__wrapper">
-      <div class="header__inner">
-        <button class="header__menu-btn" type="button" id="btn-open-menu"><span class="visually-hidden">Открыть
-            окно</span></button>
-        <a class='tel' href="tel:<?php echo str_replace(' ', '', $phone) ?>"><?php echo $phone ?></a>
-        <img src="<?php echo $logo; ?>" alt="логотип академии Андрея Андреевича Изосимова" width="50" height="50">
-      </div>
-
-      <div class="header__intro">
-        <span class="add-text">Хостинг на год в подарок</span>
-        <div class="logo">
-          <img src="<?php echo $logo; ?>" alt="логотип академии Андрея Андреевича Изосимова" width="100" height="100">
-          <a class="tel" href="tel:<?php echo str_replace(' ', '', $phone) ?>"><?php echo $phone ?></a>
+    <div class="header-head">
+      <div class="menu">
+        <div class="menu-desktop">
+          <div class="logo">
+            <a href="/" class="logo">
+              <img src="<?php echo htmlspecialchars($pathFile_URL . '/assets/images/logo.avif'); ?>"
+                alt="Логотип компании Auto Security." width="122" height="84" />
+              <div class="text">
+                <p class="text-main">Auto</p>
+                <p class="text-secondary">Security</p>
+              </div>
+            </a>
+          </div>
           <nav class="nav">
-            <ul class="nav__list list-style-none ">
-              <li class="nav__item"><a href="<?php echo $link1 ?>">Преимущества</a></li>
-              <li class="nav__item"><a href="<?php echo $link2 ?>">Гарантия</a></li>
-              <li class="nav__item"><a href="<?php echo $link3 ?>">Обо мне</a></li>
-              <li class="nav__item"><a href="<?php echo $link4 ?>">Тарифы</a></li>
-              <li class="nav__item"><a href="<?php echo $link5 ?>">Цены</a></li>
-              <li class="nav__item"><a href="<?php echo $link6 ?>">Почему Я</a></li>
+            <ul class="nav-list list-type-none">
+              <?php
+              foreach ($navigationLinks as $link) {
+                echo '<li class="nav-item">
+            <a class="nav-link link ' . isActive($link['path'], $currentPath) . '" href="' . htmlspecialchars($link['path']) . '">' . htmlspecialchars($link['name']) . '</a>
+          </li>';
+              }
+              ?>
             </ul>
           </nav>
+          <div class="contacts">
+            <div class="geo">
+              <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="geo-image">
+                <div class="image">
+                  <svg width="25" height="25">
+                    <use href="<?php echo $pathFile_URL . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
+                  </svg>
+                </div>
+              </a>
+              <address>
+                <a href="tel:+77077478212">+7 707 747 8212'</a>
+                <a href="tel:77017478212">+7 701 747 8212</a>
+                <span>
+                  Казахстан, г.Алматы, ул.Абая 145/г, бокс №15
+                </span>
+              </address>
+            </div>
+            <div class="cart">
+              <a class="link" href="/cart">
+                <svg width="25" height="25">
+                  <use href="<?php echo $pathFile_URL . '/assets/images/vectors/sprite.svg#cart' ?>"></use>
+                </svg>
+                <div class="counter">1</div>
+              </a>
+            </div>
+          </div>
+          <div class="menu-btns">
+            <div class="search">
+              <input type="search" placeholder="Поиск..." name="Поиск" />
+            </div>
+          </div>
         </div>
-        <a href="<?php echo $link2form ?>" class="add-text">ЗАКАЗАТЬ САЙТ</a>
       </div>
     </div>
+
   </div>
 </header>

@@ -3,33 +3,33 @@ $path = '/dist/assets/videos';
 $viewportWidth = 768;
 $slides = [
   [
-    'poster' => 'path/to/poster1.jpg', // Укажите путь к изображению постера
-    'srcMob' => "$pathvideo-mobile-1.mp4", // Укажите путь к мобильному видео
-    'src' => ["$path/video-1.mp4", "$path/video-1.webm"], // Укажите пути к видео
-    'type' => ['video/mp4', 'video/webm'], // Укажите типы видео
+    'poster' => "$path/poster1.jpg", // Используем переменную $path для постера
+    'srcMob' => "$path/video-mob--1.mp4", // Путь к мобильному видео
+    'src' => ["$path/video-1.mp4", "$path/video-1.webm"], // Пути к видео
+    'type' => ['video/mp4', 'video/webm'], // Типы видео
     'title' => 'АВТОСИГНАЛИЗАЦИИ АВТОЗАПУСК GSM GPS',
     'list' => ['ПРОДАЖА', 'УСТАНОВКА', 'РЕМОНТ'],
   ],
   [
-    'poster' => 'path/to/poster2.jpg',
-    'srcMob' => 'path/to/video-mobile2.mp4',
-    'src' => ['path/to/video2.mp4', 'path/to/video2.webm'],
+    'poster' => "$path/poster-2.jpg",
+    'srcMob' => "$path/video-mob-2.mp4",
+    'src' => ["$path/video-2.mp4", "$path/video-2.webm"],
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'РУССИФИКАЦИЯ АВТОМОБИЛЕЙ ЧИПТЮНИНГ',
     'list' => ['ЛЕЦИНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
   ],
   [
-    'poster' => 'path/to/poster3.jpg',
-    'srcMob' => 'path/to/video-mobile3.mp4',
-    'src' => ['path/to/video3.mp4', 'path/to/video3.webm'],
+    'poster' => "$path/poster3.jpg",
+    'srcMob' => "$path/video-mob-3.mp4",
+    'src' => ["$path/video-3.mp4", "$path/video-3.webm"],
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ',
     'list' => ['ПРОДАЖА', 'МОНТАЖ', 'ВОЗМОЖЕН ВЫЕЗД'],
   ],
   [
-    'poster' => 'path/to/poster4.jpg',
-    'srcMob' => 'path/to/video-mobile4.mp4',
-    'src' => ['path/to/video4.mp4', 'path/to/video4.webm'],
+    'poster' => "$path/poster4.jpg",
+    'srcMob' => "$path/video-mob-4.mp4",
+    'src' => ["$path/video-4.mp4", "$path/video-4.webm"],
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'УСЛУГИ АВТОЭЛЕКТРИКА',
     'list' => [

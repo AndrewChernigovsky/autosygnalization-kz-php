@@ -20,21 +20,21 @@ RewriteEngine On
 
 RewriteRule ^files/php/functions - [L]
 
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule ^([^\.]+)$ $1.php [NC,L]
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
-RewriteCond %{THE_REQUEST} \s/index\.php [NC]
-RewriteRule ^index\.php(.*)$ /$1 [R=301,L]
+# RewriteCond %{THE_REQUEST} \s/index\.php [NC]
+# RewriteRule ^index\.php(.*)$ /$1 [R=301,L]
 
-RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
+# RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
 
-RewriteCond %{REQUEST_URI} ^(.*)//+(.*)$
-RewriteRule . %1/%2 [R=301,L]
+# RewriteCond %{REQUEST_URI} ^(.*)//+(.*)$
+# RewriteRule . %1/%2 [R=301,L]
 
-RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.php
-RewriteRule ^/?(.*)\.php$ /$1 [L,R=301]
+# RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.php
+# RewriteRule ^/?(.*)\.php$ /$1 [L,R=301]
 
-RewriteCond %{REQUEST_FILENAME}\.php -f
-RewriteRule ^/?(.*)$ /$1.php [L]
+# RewriteCond %{REQUEST_FILENAME}\.php -f
+# RewriteRule ^/?(.*)$ /$1.php [L]

@@ -107,10 +107,6 @@ const watchTask = () => {
     serveStatic: [{
       route: '/',
       dir: 'dist'
-    },
-    {
-      route: '/php/pages',
-      dir: 'assets'
     }],
     notify: false,
   });
@@ -164,7 +160,7 @@ const sassTaskLibs = () => {
 
 const copyStatics = (cb) => {
   (() => {
-    return src(['./src/assets/**/*', '!./src/assets/images/**'])
+    return src(['./src/assets/**/*', '!./src/assets/images/**', '!./src/assets/videos/**'])
       .pipe(dest('./dist/assets'))
   })();
   (() => {
@@ -177,6 +173,12 @@ const copyStatics = (cb) => {
 const images = (cb) => {
   return src(['./src/assets/images/**/*.{png,jpg}'], { encoding: false })
     .pipe(dest(paths.dist + '/assets/images'))
+    .on('end', cb)
+};
+
+const videos = (cb) => {
+  return src(['./src/assets/videos/**/*.{mp4,png,webp,avif,webm}'], { encoding: false })
+    .pipe(dest(paths.dist + '/assets/videos'))
     .on('end', cb)
 };
 
@@ -204,9 +206,9 @@ const fonts = (cb) => {
   cb()
 };
 
-const statics = parallel(() => cleanDist('dist/assets/libs'), copyStatics, images, sprite, sassTaskLibs, rollupTask);
+const statics = parallel(() => cleanDist('dist/assets'), copyStatics, images, videos, sprite, sassTaskLibs, rollupTask);
 const dev = series(() => cleanDist('dist/files'), copyStatics, docs, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
-const build = series(() => cleanDist('dist/files'), copyStatics, docs, images, vectors, phpTask, sassTask, sassTaskLibs, rollupTask);
+const build = series(() => cleanDist('dist/files'), copyStatics, docs, images, videos, vectors, phpTask, sassTask, sassTaskLibs, rollupTask);
 
-export { images, sassTask, vectors, sassTaskLibs, rollupTask, phpTask, watchTask, dev, build, statics, docs, sprite, fonts };
+export { images, sassTask, vectors, sassTaskLibs, rollupTask, phpTask, watchTask, dev, build, statics, docs, sprite, fonts, videos };
 export default dev;

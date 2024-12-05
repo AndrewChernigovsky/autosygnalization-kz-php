@@ -14,6 +14,7 @@ html {
 
 body {
   min-height: 100%;
+  background-color: var.$gray-bg;
   display: flex;
   flex-direction: column;
   font-family: var.$primary-font;
@@ -95,5 +96,15 @@ p {
     width: 300px;
     height: 50px;
     margin: 0;
+  }
+}
+
+.link {
+  text-decoration: none;
+  color: var.$white;
+  transition: 0.3s ease-in-out;
+
+  &:hover {
+    opacity: 0.3;
   }
 }

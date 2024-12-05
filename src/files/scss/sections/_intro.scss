@@ -20,6 +20,10 @@
   position: relative;
   height: 100vh;
   width: 100%;
+
+  video {
+    height: inherit;
+  }
 }
 
 .advantages-text {
@@ -131,4 +135,8 @@ h2 {
   @media screen and (min-width: var.$desktop-min) {
     font-size: 64px;
   }
+}
+
+.swiper-intro {
+  height: 100vh;
 }
