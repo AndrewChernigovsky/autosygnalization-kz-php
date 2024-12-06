@@ -79,7 +79,6 @@ function isActive($linkPath, $currentPath)
               <?php
               if (!empty($contacts_phone)) {
                 foreach ($contacts_phone as $phone) {
-                  echo $phone;
                   $cleanedPhone = str_replace(' ', '', $phone['phone']);
                   echo '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">' . htmlspecialchars($phone['phone']) . '</a>';
                 }
@@ -99,7 +98,7 @@ function isActive($linkPath, $currentPath)
             </a>
           </div>
           <div class="menu-toggle">
-            <button></button>
+            <button type="button" id="btn-open-menu"><span class="visually-hidden">Открыть меню</span></button>
           </div>
         </div>
         <div class="menu-btns">
