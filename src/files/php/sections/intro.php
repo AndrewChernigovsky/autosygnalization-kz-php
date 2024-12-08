@@ -1,5 +1,4 @@
 <?php
-$path = '/dist/assets/videos';
 $viewportWidth = 768;
 
 $distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
@@ -15,39 +14,38 @@ if (is_dir($distPath)) {
   $pathFile_URL = '';
 }
 
-
 $slides = [
   [
-    'poster' => "$path/poster1.jpg", // Используем переменную $path для постера
-    'srcMob' => "$path/video-mob--1.mp4", // Путь к мобильному видео
-    'src' => ["$path/video-1.mp4", "$path/video-1.webm"], // Пути к видео
+    'poster' => "$pathFile_URL/assets/videos/poster1.jpg", // Используем переменную $path для постера
+    'srcMob' => "$pathFile_URL/assets/videos/video-mob--1.mp4", // Путь к мобильному видео
+    'src' => ["$pathFile_URL/assets/videos/video-1.mp4", "$pathFile_URL/assets/videos/video-1.webm"], // Пути к видео
     'type' => ['video/mp4', 'video/webm'], // Типы видео
     'title' => 'АВТОСИГНАЛИЗАЦИИ АВТОЗАПУСК GSM GPS',
     'list' => ['ПРОДАЖА', 'УСТАНОВКА', 'РЕМОНТ'],
     'link' => "$pathFile_URL/files/php/pages/services/services-page.php",
   ],
   [
-    'poster' => "$path/poster-2.jpg",
-    'srcMob' => "$path/video-mob-2.mp4",
-    'src' => ["$path/video-2.mp4", "$path/video-2.webm"],
+    'poster' => "$pathFile_URL/assets/videos/poster-2.jpg",
+    'srcMob' => "$pathFile_URL/assets/videos/video-mob-2.mp4",
+    'src' => ["$pathFile_URL/assets/videos/video-2.mp4", "$pathFile_URL/assets/videos/video-2.webm"],
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'РУССИФИКАЦИЯ АВТОМОБИЛЕЙ ЧИПТЮНИНГ',
     'list' => ['ЛЕЦИНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
     'link' => "$pathFile_URL/files/php/pages/parking-systems/parking-systems.php"
   ],
   [
-    'poster' => "$path/poster3.jpg",
-    'srcMob' => "$path/video-mob-3.mp4",
-    'src' => ["$path/video-3.mp4", "$path/video-3.webm"],
+    'poster' => "$pathFile_URL/assets/videos/poster3.jpg",
+    'srcMob' => "$pathFile_URL/assets/videos/video-mob-3.mp4",
+    'src' => ["$pathFile_URL/assets/videos/video-3.mp4", "$pathFile_URL/assets/videos/video-3.webm"],
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ',
     'list' => ['ПРОДАЖА', 'МОНТАЖ', 'ВОЗМОЖЕН ВЫЕЗД'],
     'link' => "$pathFile_URL/files/php/pages/autosygnals/autosygnals.php",
   ],
   [
-    'poster' => "$path/poster4.jpg",
-    'srcMob' => "$path/video-mob-4.mp4",
-    'src' => ["$path/video-4.mp4", "$path/video-4.webm"],
+    'poster' => "$pathFile_URL/assets/videos/poster4.jpg",
+    'srcMob' => "$pathFile_URL/assets/videos/video-mob-4.mp4",
+    'src' => ["$pathFile_URL/assets/videos/video-4.mp4", "$pathFile_URL/assets/videos/video-4.webm"],
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'УСЛУГИ АВТОЭЛЕКТРИКА',
     'list' => [

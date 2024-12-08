@@ -17,16 +17,14 @@ include $currentUrl;
       <div class="footer__inner">
         <div class="footer__contacts">
           <p>Телефон</p>
-          <a href="tel:<?php echo str_replace(' ', '', $phone) ?>"><?php echo $phone ?></a>
+          <?php
+          foreach ($phones as $phone) {
+            $telLink = 'tel:' . str_replace(' ', '', $phone);
+            echo "<a href=\"$telLink\">$phone</a>";
+          }
+          ?>
           <p>Почта</p>
           <a href="mailto:<?php echo $email ?>"><?php echo $email ?></a>
-        </div>
-        <div class="footer__messangers">
-          <p>Мессенджеры</p>
-          <div class="footer__links">
-            <a href="<?php echo $telegram ?>" class="telegram-icon"><span class="visually-hidden">telegram</span></a>
-            <a href="<?php echo $watchapp ?>" class="whatsapp-icon"><span class="visually-hidden">whatsapp</span></a>
-          </div>
         </div>
         <div class="footer__date">
           <p>Часы работы</p>
