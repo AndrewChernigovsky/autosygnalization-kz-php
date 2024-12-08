@@ -13,8 +13,18 @@
 </IfModule>
 
 AddType application/pdf .pdf
-AddType font/woff .woff
-AddType font/woff2 .woff2
+
+<IfModule mod_mime.c>
+  AddType application/font-woff .woff
+  AddType application/font-woff2 .woff2
+  AddType application/vnd.ms-fontobject .eot
+  AddType font/ttf .ttf
+  AddType font/otf .otf
+</IfModule>
+
+<FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
+  Header set Access-Control-Allow-Origin "*"
+</FilesMatch>
 
 RewriteEngine On
 

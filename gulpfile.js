@@ -9,8 +9,6 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import svgSprite from 'gulp-svg-sprite';
-import ttf2woff from 'gulp-ttf2woff';
-import ttf2woff2 from 'gulp-ttf2woff2';
 
 const config = {
   mode: {
@@ -18,9 +16,9 @@ const config = {
       sprite: '../sprite.svg',
       render: {
         css: false
-      }
-    }
-  }
+      },
+    },
+  },
 };
 
 const __filename = fileURLToPath(import.meta.url);
@@ -135,9 +133,14 @@ async function cleanDist(dirname) {
   }
 }
 
+
 const sassTask = () => {
   let stream = src(paths.styles.src)
-    .pipe(sass({ silenceDeprecations: ['legacy-js-api'] }).on('error', sass.logError));
+    .pipe(sass(
+      {
+        silenceDeprecations: ['legacy-js-api'],
+      }
+    ).on('error', sass.logError));
   if (PRODUCTION) {
     stream = stream.pipe(autoPrefixer());
     stream = stream.pipe(cleanCSS({ level: 2 }));
@@ -147,6 +150,7 @@ const sassTask = () => {
   }
   return stream.pipe(dest(paths.styles.dest));
 };
+
 
 const sassTaskLibs = () => {
   let stream = src(paths.styles.srcLib)
@@ -159,14 +163,17 @@ const sassTaskLibs = () => {
 };
 
 const copyStatics = (cb) => {
+
   (() => {
     return src(['./src/assets/**/*', '!./src/assets/images/**', '!./src/assets/videos/**'])
       .pipe(dest('./dist/assets'))
   })();
+
   (() => {
     return src(['./src/.htaccess', './src/index.php', './src/404.php', './src/sitemap.xml', './src/robots.txt', './src/yandex_12ed8a33b1d44641.html', './src/browserconfig.xml', './src/favicon.ico', './src/manifest.json'])
       .pipe(dest(paths.dist))
-  })()
+  })();
+
   cb();
 }
 
@@ -202,7 +209,6 @@ const vectors = () => {
 const fonts = (cb) => {
   src('./src/assets/fonts/**/*.{ttf,woff,woff2}')
     .pipe(dest(paths.dist + '/assets/fonts'))
-
   cb()
 };
 

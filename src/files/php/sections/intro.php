@@ -1,6 +1,21 @@
 <?php
 $path = '/dist/assets/videos';
 $viewportWidth = 768;
+
+$distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
+
+// Проверяем, существует ли папка dist
+if (is_dir($distPath)) {
+  $currentUrl = "http://localhost:3000/dist/index.php";
+  $pathFile = "http://localhost:3000/dist";
+  $pathFile_URL = '/dist';
+} else {
+  $currentUrl = "/index.php";
+  $pathFile = "";
+  $pathFile_URL = '';
+}
+
+
 $slides = [
   [
     'poster' => "$path/poster1.jpg", // Используем переменную $path для постера
@@ -9,6 +24,7 @@ $slides = [
     'type' => ['video/mp4', 'video/webm'], // Типы видео
     'title' => 'АВТОСИГНАЛИЗАЦИИ АВТОЗАПУСК GSM GPS',
     'list' => ['ПРОДАЖА', 'УСТАНОВКА', 'РЕМОНТ'],
+    'link' => "$pathFile_URL/files/php/pages/services/services-page.php",
   ],
   [
     'poster' => "$path/poster-2.jpg",
@@ -17,6 +33,7 @@ $slides = [
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'РУССИФИКАЦИЯ АВТОМОБИЛЕЙ ЧИПТЮНИНГ',
     'list' => ['ЛЕЦИНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
+    'link' => "$pathFile_URL/files/php/pages/parking-systems/parking-systems.php"
   ],
   [
     'poster' => "$path/poster3.jpg",
@@ -25,6 +42,7 @@ $slides = [
     'type' => ['video/mp4', 'video/webm'],
     'title' => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ',
     'list' => ['ПРОДАЖА', 'МОНТАЖ', 'ВОЗМОЖЕН ВЫЕЗД'],
+    'link' => "$pathFile_URL/files/php/pages/autosygnals/autosygnals.php",
   ],
   [
     'poster' => "$path/poster4.jpg",
@@ -37,6 +55,7 @@ $slides = [
       'УСТАНОВКА СИСТЕМ ПАРКИНГА',
       'ОТКЛЮЧЕНИЕ АВТОСИГНАЛИЗАЦИЙ',
     ],
+    'link' => "$pathFile_URL/files/php/pages/services/services-page.php",
   ],
 ];
 ?>
@@ -67,10 +86,7 @@ $slides = [
                   </li>
                 <?php endforeach; ?>
               </ul>
-
-              <div class="button">
-                <a href="#" class="y-button">Подробнее</a>
-              </div>
+              <a href="<?php echo $slide['link'] ?>" class="y-button button link btn-4">Подробнее</a>
             </div>
           </div>
         <?php endforeach; ?>

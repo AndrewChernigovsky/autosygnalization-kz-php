@@ -1,6 +1,8 @@
 {
   "type": "module",
   "scripts": {
+    "vite": "cross-env PRODUCTION=false vite",
+    "vite build": "cross-env PRODUCTION=true vite build",
     "dev": "cross-env PRODUCTION=false gulp",
     "build": "cross-env PRODUCTION=true gulp build",
     "statics": "cross-env PRODUCTION=true gulp statics && node sharp.js && gulp fonts",
@@ -21,16 +23,26 @@
     "gulp-svg-sprite": "^2.0.3",
     "gulp-ttf2woff": "^2.0.0",
     "gulp-ttf2woff2": "^5.0.0",
+    "http-proxy-middleware": "^3.0.3",
     "inputmask": "^5.0.9",
     "rollup": "^2.79.2",
     "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-postcss": "^4.0.2",
     "rollup-plugin-terser": "^7.0.2",
-    "sass": "^1.80.5",
+    "sass": "^1.82.0",
     "sharp": "^0.33.5",
-    "swiper": "^11.1.14"
+    "svg-sprite-loader": "^6.0.11",
+    "swiper": "^11.1.15",
+    "vite": "^6.0.3",
+    "vite-imagetools": "^7.0.5",
+    "vite-plugin-ejs": "^1.7.0",
+    "vite-plugin-php": "^1.0.67",
+    "vite-plugin-static-copy": "^2.2.0",
+    "webpack": "^5.97.1"
   },
   "dependencies": {
     "gulp-autoprefixer": "^9.0.0",
-    "gulp-clean-css": "^4.3.0"
+    "gulp-clean-css": "^4.3.0",
+    "node-sass": "^9.0.0"
   }
 }

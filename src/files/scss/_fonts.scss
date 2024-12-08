@@ -2,8 +2,10 @@
 
 @font-face {
   font-family: "DINPRO";
-  src: url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff') format('woff');
+  src: url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff2'),
+  format('woff2'),
+  url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff'),
+  format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -19,18 +21,20 @@
 }
 
 @font-face {
-  font-family: "Oswald";
+  font-family: "OSWALD";
   src: url('#{var.$DEV_PATH}assets/fonts/oswald-regular.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/oswald-regular.woff') format('woff');
+  url('#{var.$DEV_PATH}assets/fonts/oswald-regular.woff') format('woff'),
+  url('#{var.$DEV_PATH}assets/fonts/oswald-regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "Oswald";
+  font-family: "OSWALD";
   src: url('#{var.$DEV_PATH}assets/fonts/oswald-bold.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/oswald-bold.woff') format('woff');
+  url('#{var.$DEV_PATH}assets/fonts/oswald-bold.woff') format('woff'),
+  url('#{var.$DEV_PATH}assets/fonts/oswald-bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -66,4 +70,10 @@
   li {
     text-transform: none;
   }
+}
+
+h2 {
+  font-family: var.$secondary-font;
+  font-weight: 700;
+  text-align: center;
 }

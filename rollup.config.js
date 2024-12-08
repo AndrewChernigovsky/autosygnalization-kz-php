@@ -2,6 +2,7 @@ import babel from '@rollup/plugin-babel';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import { terser } from 'rollup-plugin-terser';
+import postcss from 'rollup-plugin-postcss'; // Импортируем плагин для обработки CSS
 
 const PRODUCTION = process.env.PRODUCTION === 'true';
 
@@ -54,5 +55,4 @@ export default [
       include: 'src/**'
     }
   },
-
 ];

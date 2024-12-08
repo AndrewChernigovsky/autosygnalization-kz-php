@@ -98,7 +98,8 @@ function isActive($linkPath, $currentPath)
             </a>
           </div>
           <div class="menu-toggle">
-            <button type="button" id="btn-open-menu"><span class="visually-hidden">Открыть меню</span></button>
+            <button type="button" id="btn-open-menu" class="button"><span class="visually-hidden">Открыть
+                меню</span></button>
           </div>
         </div>
         <div class="menu-btns">
