@@ -1,50 +1,63 @@
 <?php
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
+$host = $_SERVER['HTTP_HOST'];
+$requestUri = $_SERVER['REQUEST_URI'];
+$currentUrl = $protocol . $host . $requestUri;
+
+$distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
+
+// Проверяем, существует ли папка dist
+if (is_dir($distPath)) {
+  $currentUrl = "http://localhost:3000/dist/index.php";
+  $pathFile = "http://localhost:3000/dist";
+  $pathFile_URL = '/dist';
+} else {
+  $currentUrl = "/index.php";
+  $pathFile = "";
+  $pathFile_URL = '';
+}
+
+
 $distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
 
 // Проверяем, существует ли папка dist
 if (is_dir($distPath)) {
   $currentUrl = $_SERVER['DOCUMENT_ROOT'] . '/dist' . '/files/php/data/contacts.php';
+  $svgInclude = $_SERVER['DOCUMENT_ROOT'] . '/dist' . '/files/php/helpers/svg.php';
+  $phone = $_SERVER['DOCUMENT_ROOT'] . '/dist' . '/files/php/helpers/phone.php';
 } else {
   $currentUrl = $_SERVER['DOCUMENT_ROOT'] . '/files/php/data/contacts.php';
+  $svgInclude = $_SERVER['DOCUMENT_ROOT'] . '/files/php/helpers/svg.php';
+  $phone = $_SERVER['DOCUMENT_ROOT'] . '/files/php/helpers/phone.php';
 }
 
-include $currentUrl;
+include_once $currentUrl;
+include_once $svgInclude;
+include_once $phone;
+
+$insertSVG = new InsertSVG();
+$insertPHONE = new InsertPhone();
 ?>
 
 <footer class="footer">
   <div class="container">
     <div class="footer__wrapper">
-      <div class="footer__inner">
-        <div class="footer__contacts">
-          <p>Телефон</p>
-          <?php
-          foreach ($phones as $phone) {
-            $telLink = 'tel:' . str_replace(' ', '', $phone);
-            echo "<a href=\"$telLink\">$phone</a>";
-          }
-          ?>
-          <p>Почта</p>
-          <a href="mailto:<?php echo $email ?>"><?php echo $email ?></a>
+      <div class="logo">
+        <a href="/" class="logo">
+          <img src="<?php echo htmlspecialchars($pathFile_URL . '/assets/images/logo.avif'); ?>"
+            alt="Логотип компании Auto Security." width="122" height="84" />
+          <div class="text">
+            <p class="text-main">Auto</p>
+            <p class="text-secondary">Security</p>
+          </div>
+        </a>
+        <div class="social">
+          <p>Социальные сети</p>
+          <?php $insertSVG->render($social) ?>
+          <div class="phones">
+            <?php $insertPHONE->displayPhones($contacts_phone) ?>
+          </div>
         </div>
-        <div class="footer__date">
-          <p>Часы работы</p>
-          <p>Пн-Пт с 9.00 по 20.00</p>
-          <p>Сб-Вс с 10.00 по 14.00</p>
-        </div>
-      </div>
-      <div class="footer__rights">
-        <p>© 2024 Академия Андрея Андреевича. Все права защищены.
-        <p>
-          Любое копирование, распространение или использование материалов с данного сайта без предварительного
-          письменного
-          согласия владельца является грубым нарушением авторских прав и может повлечь за собой юридическую
-          ответственность.
-        <p>
-        <p>
-          Для получения разрешения на использование материалов, пожалуйста, свяжитесь с нами по адресу:
-          <a href="mailto:<?php echo $email ?>" style="color: white; text-decoration: none;"><?php echo $email ?></a>
-        </p>
-        </p>
       </div>
     </div>
   </div>

@@ -4,12 +4,16 @@ export const initSwiper = () => {
     const swiperIntro1 = new Swiper('.swiper-intro', {
       loop: true,
       modules: [Autoplay, EffectFade],
+      effect: 'fade',
+      speed: 1000,
       autoplay: {
         delay: 4500,
         disableOnInteraction: false,
       },
+      fadeEffect: {
+        crossFade: true
+      },
       slidesPerView: '1',
-      effect: 'fade',
     });
     window.swiperIntro = swiperIntro1;
   }
