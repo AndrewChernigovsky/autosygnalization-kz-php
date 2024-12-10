@@ -1,4 +1,5 @@
 <?php
+
 $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
 $host = $_SERVER['HTTP_HOST'];
 $requestUri = $_SERVER['REQUEST_URI'];
@@ -17,23 +18,23 @@ if (is_dir($distPath)) {
   $pathFile_URL = '';
 }
 
+$basePath = is_dir($distPath) ? '/dist' : '';
+$rootPath = $_SERVER['DOCUMENT_ROOT'] . $basePath;
 
-$distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
-
-// Проверяем, существует ли папка dist
-if (is_dir($distPath)) {
-  $currentUrl = $_SERVER['DOCUMENT_ROOT'] . '/dist' . '/files/php/data/contacts.php';
-  $svgInclude = $_SERVER['DOCUMENT_ROOT'] . '/dist' . '/files/php/helpers/svg.php';
-  $phone = $_SERVER['DOCUMENT_ROOT'] . '/dist' . '/files/php/helpers/phone.php';
-} else {
-  $currentUrl = $_SERVER['DOCUMENT_ROOT'] . '/files/php/data/contacts.php';
-  $svgInclude = $_SERVER['DOCUMENT_ROOT'] . '/files/php/helpers/svg.php';
-  $phone = $_SERVER['DOCUMENT_ROOT'] . '/files/php/helpers/phone.php';
-}
+$currentUrl = $rootPath . '/files/php/data/contacts.php';
+$svgInclude = $rootPath . '/files/php/helpers/svg.php';
+$phone = $rootPath . '/files/php/helpers/phone.php';
+$classes = $rootPath . '/files/php/helpers/classes/';
+$geo = $rootPath . '/files/php/helpers/components/geo.php';
 
 include_once $currentUrl;
 include_once $svgInclude;
 include_once $phone;
+include_once $geo;
+
+spl_autoload_register(function ($class_name) use ($classes) {
+  include $classes . $class_name . '.php';
+});
 
 $insertSVG = new InsertSVG();
 $insertPHONE = new InsertPhone();
@@ -51,13 +52,28 @@ $insertPHONE = new InsertPhone();
             <p class="text-secondary">Security</p>
           </div>
         </a>
-        <div class="social">
-          <p>Социальные сети</p>
-          <?php $insertSVG->render($social) ?>
+        <div class="contacts">
+          <div class="social">
+            <p>Социальные сети</p>
+            <?php $insertSVG->render($social) ?>
+
+          </div>
           <div class="phones">
             <?php $insertPHONE->displayPhones($contacts_phone) ?>
           </div>
+          <div class="contacts__text">
+            <p>autosecurity.kz@mail.ru</p>
+          </div>
+          <div class="site">
+            <p>www.autosecurity.kz</p>
+          </div>
         </div>
+        <?php
+
+        $geo = new GEO();
+        $geo->insertGeo();
+
+        ?>
       </div>
     </div>
   </div>
