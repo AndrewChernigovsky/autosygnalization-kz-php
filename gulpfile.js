@@ -23,6 +23,7 @@ const config = {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const PRODUCTION = process.env.PRODUCTION === 'true';
 
 const sass = gulpSass(dartSass);
 
@@ -40,7 +41,7 @@ const paths = {
   dist: './dist'
 };
 
-const PRODUCTION = process.env.PRODUCTION === 'true';
+
 
 const rollupTask = (done) => {
   exec('rollup -c', (err, stdout, stderr) => {
@@ -56,6 +57,20 @@ const rollupTask = (done) => {
 };
 
 const phpTask = (cb) => {
+  (() => {
+    return src(['./src/files/php/helpers/**/*.php'])
+      .pipe(dest(paths.dist + '/files/php/helpers'))
+  })();
+
+  (() => {
+    return src(['./src/files/php/functions/**/*.php'])
+      .pipe(dest(paths.dist + '/files/php/functions'))
+  })();
+
+  (() => {
+    return src(['./src/files/php/data/**/*.php'])
+      .pipe(dest(paths.dist + '/files/php/data'))
+  })();
 
   (() => {
     return src(['./src/index.php'])
@@ -68,11 +83,6 @@ const phpTask = (cb) => {
   })();
 
   (() => {
-    return src(['./src/files/php/helpers/**/*.php'])
-      .pipe(dest(paths.dist + '/files/php/helpers'))
-  })();
-
-  (() => {
     return src(['./src/files/php/sections/**/*.php'])
       .pipe(dest(paths.dist + '/files/php/sections'))
   })();
@@ -80,16 +90,6 @@ const phpTask = (cb) => {
   (() => {
     return src(['./src/files/php/layout/**/*.php'])
       .pipe(dest(paths.dist + '/files/php/layout'))
-  })();
-
-  (() => {
-    return src(['./src/files/php/functions/**/*.php'])
-      .pipe(dest(paths.dist + '/files/php/functions'))
-  })();
-
-  (() => {
-    return src(['./src/files/php/data/**/*.php'])
-      .pipe(dest(paths.dist + '/files/php/data'))
   })();
 
   if (!PRODUCTION) {
@@ -115,52 +115,53 @@ const watchTask = () => {
   }
 };
 
-async function cleanDist(dirname) {
-  const distPath = path.join(__dirname, dirname);
+async function cleanDist(dirnames) {
+  for (const dir of dirnames) {
+    const distPath = path.join(__dirname, dir);
 
-  try {
-    await fs.access(distPath);
-    await fs.rm(distPath, { recursive: true, force: true });
-    console.log(`${distPath} успешно удалена!`);
-
-  } catch (err) {
-    if (err.code === 'ENOENT') {
-      await fs.mkdir(distPath, { recursive: true });
-      console.log(`${distPath} успешно создана!`);
-    } else {
-      console.error('Ошибка при удалении папки "dist":', err);
+    try {
+      await fs.access(distPath);
+      await fs.rm(distPath, { recursive: true, force: true });
+      console.log(`${distPath} успешно удалена!`);
+    } catch (err) {
+      if (err.code === 'ENOENT') {
+        // Если директория не существует, создаем её
+        await fs.mkdir(distPath, { recursive: true });
+        console.log(`${distPath} успешно создана!`);
+      } else {
+        console.error('Ошибка при удалении папки "dist":', err);
+      }
     }
   }
 }
 
-
 const sassTask = () => {
-  let stream = src(paths.styles.src)
-    .pipe(sass(
-      {
-        silenceDeprecations: ['legacy-js-api'],
-      }
-    ).on('error', sass.logError));
+  let stream = src([paths.styles.src])
+    .pipe(sass({
+      outputStyle: 'expanded',
+      silenceDeprecations: ['legacy-js-api'],
+    }).on('error', sass.logError));
+
+  stream = stream.pipe(autoPrefixer());
+
   if (PRODUCTION) {
-    stream = stream.pipe(autoPrefixer());
     stream = stream.pipe(cleanCSS({ level: 2 }));
-  }
-  if (!PRODUCTION) {
+  } else {
     stream = stream.pipe(browserSync.stream());
   }
+
   return stream.pipe(dest(paths.styles.dest));
 };
 
 
 const sassTaskLibs = () => {
-  let stream = src(paths.styles.srcLib)
-    .pipe(sass({ silenceDeprecations: ['legacy-js-api'] }).on('error', sass.logError));
-  if (PRODUCTION) {
-    stream = stream.pipe(autoPrefixer());
-    stream = stream.pipe(cleanCSS({ level: 2 }));
-  }
-  return stream.pipe(dest('./dist/assets/libs/'));
+  return src(paths.styles.srcLib)
+    .pipe(sass({ outputStyle: 'expanded', silenceDeprecations: ['legacy-js-api'] }).on('error', sass.logError))
+    .pipe(autoPrefixer())
+    .pipe(cleanCSS({ level: 2 }))
+    .pipe(dest('./dist/assets/libs/'));
 };
+
 
 const copyStatics = (cb) => {
 
@@ -201,20 +202,15 @@ const sprite = () => {
     .pipe(dest('./dist/assets/images/vectors'));
 };
 
-const vectors = () => {
-  return src('./src/assets/images/**/*.svg')
-    .pipe(dest(paths.dist + '/assets/images/vectors'));
-};
-
 const fonts = (cb) => {
   src('./src/assets/fonts/**/*.{ttf,woff,woff2}')
     .pipe(dest(paths.dist + '/assets/fonts'))
   cb()
 };
 
-const statics = parallel(() => cleanDist('dist/assets'), copyStatics, images, videos, sprite, sassTaskLibs, rollupTask);
-const dev = series(() => cleanDist('dist/files'), copyStatics, docs, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
-const build = series(() => cleanDist('dist/files'), copyStatics, docs, images, videos, vectors, phpTask, sassTask, sassTaskLibs, rollupTask);
+const statics = parallel(() => cleanDist(['dist/assets']), copyStatics, images, videos, sprite, sassTaskLibs, rollupTask);
+const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
+const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask);
 
-export { images, sassTask, vectors, sassTaskLibs, rollupTask, phpTask, watchTask, dev, build, statics, docs, sprite, fonts, videos };
+export { images, sassTask, sassTaskLibs, rollupTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
 export default dev;

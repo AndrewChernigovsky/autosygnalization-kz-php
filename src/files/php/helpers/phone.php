@@ -8,7 +8,6 @@ class InsertPhone extends InsertSVG
         $cleanedPhone = str_replace(' ', '', $phone['phone']);
         echo '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">';
 
-        // Проверяем, что $social не пустой и вызываем render
         if (!empty($social)) {
           echo $this->render($social);
         }

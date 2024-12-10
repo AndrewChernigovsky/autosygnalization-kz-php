@@ -1,1 +1,2 @@
-@import './../../../node_modules/swiper/swiper-bundle.min.css';
+@use './../../../node_modules/swiper/swiper.scss'as *;
+@use './../../../node_modules/swiper/modules/effect-fade.scss'as *;

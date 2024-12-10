@@ -8,6 +8,7 @@ async function loadModule() {
   initSwiper();
   initFormValidation();
   initSearch();
+
 }
 
 document.addEventListener('DOMContentLoaded', loadModule)
