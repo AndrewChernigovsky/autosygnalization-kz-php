@@ -1,10 +1,9 @@
 <?php
-class createSVG
+class CreateSVG
 {
-  // Метод для вставки иконок с текстом
   public function insertIconText($icons)
   {
-    $output = ''; // Инициализируем переменную для хранения HTML-кода
+    $output = '';
 
     foreach ($icons as $icon) {
       if (isset($icon['name']) && isset($icon['href']) && isset($icon['image']) && isset($icon['width']) && isset($icon['height'])) {
@@ -21,15 +20,14 @@ class createSVG
       }
     }
 
-    return $output; // Возвращаем собранный HTML-код
+    return $output;
   }
 
-  // Метод для вставки SVG
   public function insertSvg($icon)
   {
     return "<svg width='{$icon['width']}' height='{$icon['height']}'>      
                     <use href='{$icon['image']}'></use>
-                </svg>"; // Возвращаем строку с SVG-кодом
+                </svg>";
   }
 }
 ?>

@@ -1,42 +1,36 @@
 <?php
+include_once __DIR__ . '/../helpers/classes/setVariables.php';
 
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
-$host = $_SERVER['HTTP_HOST'];
-$requestUri = $_SERVER['REQUEST_URI'];
-$currentUrl = $protocol . $host . $requestUri;
+$variables = new SetVariables();
+$variables->setVar();
 
-$distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
+$path = $variables->getPathFileURL();
+$docROOT = $variables->getDocRoot();
+$basePath = $variables->getBasePath();
 
-// Проверяем, существует ли папка dist
-if (is_dir($distPath)) {
-  $currentUrl = "http://localhost:3000/dist/index.php";
-  $pathFile = "http://localhost:3000/dist";
-  $pathFile_URL = '/dist';
-} else {
-  $currentUrl = "/index.php";
-  $pathFile = "";
-  $pathFile_URL = '';
-}
+$contacts_data = $basePath . '/files/php/data/contacts.php';
+$svgInclude = $basePath . '/files/php/helpers/svg.php';
+$phone = $basePath . '/files/php/helpers/phone.php';
+$classes = $basePath . '/files/php/helpers/classes/';
+$geo = $basePath . '/files/php/helpers/components/geo.php';
 
-$basePath = is_dir($distPath) ? '/dist' : '';
-$rootPath = $_SERVER['DOCUMENT_ROOT'] . $basePath;
-
-$currentUrl = $rootPath . '/files/php/data/contacts.php';
-$svgInclude = $rootPath . '/files/php/helpers/svg.php';
-$phone = $rootPath . '/files/php/helpers/phone.php';
-$classes = $rootPath . '/files/php/helpers/classes/';
-$geo = $rootPath . '/files/php/helpers/components/geo.php';
-
-include_once $currentUrl;
+include_once $contacts_data;
 include_once $svgInclude;
 include_once $phone;
 include_once $geo;
+
+$contacts = new Contacts();
+$social = $contacts->getSocial();
+$phones = $contacts->getPhones();
+$email = $contacts->getEmail();
+$web_site = $contacts->getWebsite();
+$geos = new Geo();
 
 spl_autoload_register(function ($class_name) use ($classes) {
   include $classes . $class_name . '.php';
 });
 
-$insertSVG = new InsertSVG();
+$insertSVG = new CreateSVG();
 $insertPHONE = new InsertPhone();
 ?>
 
@@ -45,7 +39,7 @@ $insertPHONE = new InsertPhone();
     <div class="footer__wrapper">
       <div class="logo">
         <a href="/" class="logo">
-          <img src="<?php echo htmlspecialchars($pathFile_URL . '/assets/images/logo.avif'); ?>"
+          <img src="<?php echo htmlspecialchars($path . '/assets/images/logo.avif'); ?>"
             alt="Логотип компании Auto Security." width="122" height="84" />
           <div class="text">
             <p class="text-main">Auto</p>
@@ -55,25 +49,26 @@ $insertPHONE = new InsertPhone();
         <div class="contacts">
           <div class="social">
             <p>Социальные сети</p>
-            <?php $insertSVG->render($social) ?>
+            <?php
+            if (isset($social['instagramm'])) {
+              echo $insertSVG->insertSvg($social['instagramm']);
+            } else {
+              echo "<!-- Instagram icon data is missing -->";
+            }
+            ?>
 
           </div>
           <div class="phones">
-            <?php $insertPHONE->displayPhones($contacts_phone) ?>
+            <?php $insertPHONE->displayPhones($phones) ?>
           </div>
           <div class="contacts__text">
-            <p>autosecurity.kz@mail.ru</p>
+            <p><?php echo $email ?></p>
           </div>
           <div class="site">
-            <p>www.autosecurity.kz</p>
+            <p><?php echo $web_site ?></p>
           </div>
+          <?php echo $geos->getGeo() ?>
         </div>
-        <?php
-
-        $geo = new GEO();
-        $geo->insertGeo();
-
-        ?>
       </div>
     </div>
   </div>
