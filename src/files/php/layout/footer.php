@@ -35,21 +35,20 @@ $insertPHONE = new InsertPhone();
 ?>
 
 <footer class="footer">
-  <div class="container">
-    <div class="footer__wrapper">
-      <div class="logo">
-        <a href="/" class="logo">
-          <img src="<?php echo htmlspecialchars($path . '/assets/images/logo.avif'); ?>"
-            alt="Логотип компании Auto Security." width="122" height="84" />
-          <div class="text">
-            <p class="text-main">Auto</p>
-            <p class="text-secondary">Security</p>
-          </div>
-        </a>
-        <div class="contacts">
-          <div class="social">
-            <p>Социальные сети</p>
-            <?php
+    <div class="container">
+        <div class="footer__wrapper">
+            <a href="/" class="logo">
+                <img src="<?php echo htmlspecialchars($path . '/assets/images/logo.avif'); ?>"
+                    alt="Логотип компании Auto Security." width="122" height="84" />
+                <div class="text">
+                    <p class="text-main">Auto</p>
+                    <p class="text-secondary">Security</p>
+                </div>
+            </a>
+            <div class="contacts">
+                <div class="social">
+                    <p>Социальные сети</p>
+                    <?php
             if (isset($social['instagramm'])) {
               echo $insertSVG->insertSvg($social['instagramm']);
             } else {
@@ -57,19 +56,19 @@ $insertPHONE = new InsertPhone();
             }
             ?>
 
-          </div>
-          <div class="phones">
-            <?php $insertPHONE->displayPhones($phones) ?>
-          </div>
-          <div class="contacts__text">
-            <p><?php echo $email ?></p>
-          </div>
-          <div class="site">
-            <p><?php echo $web_site ?></p>
-          </div>
-          <?php echo $geos->getGeo() ?>
+                </div>
+                <div class="phones">
+                    <?php $insertPHONE->displayPhones($phones) ?>
+                </div>
+                <div class="contacts__text">
+                    <p><?php echo $email ?></p>
+                </div>
+                <div class="site">
+                    <p><?php echo $web_site ?></p>
+                </div>
+                <?php echo $geos->getGeo() ?>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+    </div>
 </footer>
