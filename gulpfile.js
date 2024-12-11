@@ -205,7 +205,7 @@ const copyStatics = (cb) => {
 
 
 const images = (cb) => {
-  return src(['./src/assets/images/**/*.{png,jpg}'], { encoding: false })
+  return src(['./src/assets/images/**/*.{png,jpg,svg}'], { encoding: false })
     .pipe(dest(paths.dist + '/assets/images'))
     .on('end', cb)
 };
@@ -239,7 +239,7 @@ const fonts = (cb) => {
 };
 
 const statics = parallel(() => cleanDist(['dist/assets']), copyStatics, images, videos, sprite, sassTaskLibs, rollupTask);
-const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
+const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
 const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask);
 
 export { images, sassTask, sassTaskLibs, rollupTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
