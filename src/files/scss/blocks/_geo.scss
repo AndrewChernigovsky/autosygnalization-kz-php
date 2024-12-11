@@ -1,0 +1,11 @@
+.geo {
+
+  &__wrapper {
+    display: flex;
+    align-items: center;
+
+    span {
+      text-transform: none;
+    }
+  }
+}

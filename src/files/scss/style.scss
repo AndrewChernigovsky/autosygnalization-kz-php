@@ -5,6 +5,8 @@
 @use './blocks/footer'as *;
 @use './blocks/header'as *;
 @use './blocks/nav'as *;
+@use './blocks/geo'as *;
+@use './blocks/phones'as *;
 @use './blocks/popup'as *;
 
 @use './sections/intro'as *;
