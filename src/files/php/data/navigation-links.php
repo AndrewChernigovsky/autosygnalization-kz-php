@@ -30,7 +30,7 @@ $navigationFooterLinks = [
       'list' => [
         ['link' => "$path/service1.php", 'name' => 'Услуга 1'],
         ['link' => "$path/service2.php", 'name' => 'Услуга 2'],
-        ['link' => "$path/service3.php", 'name' => 'Услуга 3'],
+        ['link' => "$path/service3.php", 'name' => 'Услуга 3']
       ]
     ]
   ],
