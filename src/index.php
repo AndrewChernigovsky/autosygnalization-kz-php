@@ -1,8 +1,8 @@
 <?php
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
-$host = $_SERVER['HTTP_HOST'];
-$requestUri = $_SERVER['REQUEST_URI'];
-$currentUrl = $protocol . $host . $requestUri;
+// $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
+// $host = $_SERVER['HTTP_HOST'];
+// $requestUri = $_SERVER['REQUEST_URI'];
+// $currentUrl = $protocol . $host . $requestUri;
 
 $distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
 
