@@ -86,6 +86,7 @@ foreach ($filesToInclude as $key => $filePath) {
           ?>
         </div>
       </div>
+      <p class="footer__copy">© 2024 Auto Security. Все права защищены</p>
     </div>
   </div>
   </div>

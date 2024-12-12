@@ -1,6 +1,8 @@
 <?php
 $page_path = $path . '/files/php/pages';
 $page_autosyngals = $page_path . '/autosygnals';
+$page_setup = $page_path . '/service';
+$page_client = $page_path . '/client';
 $navigationLinks = [
   ['name' => 'Главная', 'path' => "$path/index.php"],
   ['name' => 'Наши услуги', 'path' => "$page_path/files/php/pages/services/services-page.php"],
@@ -30,34 +32,30 @@ $navigationFooterLinks = [
   [
     'title' => 'Установочный центр',
     'list' => [
-      ['link' => "$page_path/alarm2.php", 'name' => 'Автосигнализации с GSM'],
-      ['link' => "$page_path/alarm3.php", 'name' => 'Автосигнализации без автозапуска'],
-      ['link' => "$page_path/alarm4.php", 'name' => 'Автосигнализация 4'],
-      ['link' => "$page_path/alarm5.php", 'name' => 'Автосигнализация 5'],
+      ['link' => "$page_setup/service.php?service=setup", 'name' => 'Установка и ремонт сигнализаций'],
+      ['link' => "$page_setup/service.php?service=locks", 'name' => 'Ремонт центрозамков'],
+      ['link' => "$page_setup/service.php?service=setup-media", 'name' => 'Установка автозвука и мультимедиа'],
+      ['link' => "$page_setup/service.php?service=setup-system-parking", 'name' => 'Установка систем паркинга'],
+      ['link' => "$page_setup/service.php?service=autoelectric", 'name' => 'Услуги автоэлектрика'],
+      ['link' => "$page_setup/service.php?service=rus", 'name' => 'Русификация авто и чиптюнинг'],
+      ['link' => "$page_setup/service.php?service=diagnostic", 'name' => 'Компьютерная диагностика'],
+      ['link' => "$page_setup/service.php?service=disabled-autosynal", 'name' => 'Отключение сигнализации'],
+      [
+        'link' => "$page_setup/service.php?service=setup-videoregistration",
+        'name' => 'Установка видеорегистраторов
+и антирадаров'
+      ],
+      ['link' => "$page_setup/service.php?service=price", 'name' => 'Прайс на услуги'],
     ],
   ],
   [
-    'title' => 'Магазин',
+    'title' => 'Клиенту',
     'list' => [
-      [
-        'name' => 'Услуги установки',
-        'children' => [
-          [
-            'name' => 'Услуги установки',
-            'children' => [
-              ['link' => "$page_path/service1.php", 'name' => 'Услуга 1'],
-              ['link' => "$page_path/service2.php", 'name' => 'Услуга 2'],
-              ['link' => "$page_path/service3.php", 'name' => 'Услуга 3']
-            ]
-          ],
-          ['link' => "$page_path/service2.php", 'name' => 'Услуга 2'],
-          ['link' => "$page_path/service3.php", 'name' => 'Услуга 3']
-        ]
-      ],
-      ['link' => "$page_path/alarm2.php", 'name' => 'Автосигнализации с GSM'],
-      ['link' => "$page_path/alarm3.php", 'name' => 'Автосигнализации без автозапуска'],
-      ['link' => "$page_path/alarm4.php", 'name' => 'Автосигнализация 4'],
-      ['link' => "$page_path/alarm5.php", 'name' => 'Автосигнализация 5'],
+      ['link' => "$page_client/client.php?client=special", 'name' => 'Специальные предложения'],
+      ['link' => "$page_client/client.php?client=cart", 'name' => 'Корзина заказа'],
+      ['link' => "$page_client/client.php?client=review", 'name' => 'Оставить отзыв'],
+      ['link' => "$page_client/client.php?client=gallery", 'name' => 'Галерея выполненных работ'],
+      ['link' => "$page_client/client.php?client=map", 'name' => 'Как к нам добраться'],
     ]
   ],
 ];
