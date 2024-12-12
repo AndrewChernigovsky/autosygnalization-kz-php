@@ -1,0 +1,13 @@
+.phones {
+  display: grid;
+
+  a {
+    display: flex;
+    align-items: center;
+
+    svg {
+      width: 25px;
+      height: 25px;
+    }
+  }
+}

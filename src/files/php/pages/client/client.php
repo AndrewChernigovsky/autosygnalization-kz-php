@@ -1,24 +1,20 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
-$autoType = isset($_GET['auto']) ? $_GET['auto'] : null;
+$autoType = isset($_GET['client']) ? $_GET['client'] : null;
 
 function getAutoContent($type)
 {
   switch ($type) {
-    case 'auto':
-      return 'Контент для автосигнализаций с автозапуском.';
-    case 'gsm':
-      return 'Контент для автосигнализаций с GSM.';
-    case 'no-auto':
-      return 'Контент для автосигнализаций без автозапуска.';
-    case 'catalog':
-      return 'Контент для автосигнализаций каталога.';
-    case 'accessories':
-      return 'Контент для автосигнализаций аксессуары.';
-    case 'parking-systems':
-      return 'Контент для автосигнализаций парковочные системы.';
-    case 'price':
-      return 'Контент для автосигнализаций цена.';
+    case 'special':
+      return 'Контент для клиента с автозапуском.';
+    case 'cart':
+      return 'Контент для клиента с GSM.';
+    case 'review':
+      return 'Контент для клиента без автозапуска.';
+    case 'gallery':
+      return 'Контент для клиента каталога.';
+    case 'map':
+      return 'Контент для клиента аксессуары.';
     default:
       return 'Контент не найден.';
   }

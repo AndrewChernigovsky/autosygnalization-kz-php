@@ -1,5 +1,6 @@
 <?php
-class InsertPhone extends InsertSVG
+include_once 'classes/createSVG.php';
+class InsertPhone extends CreateSVG
 {
   public function displayPhones($contacts_phone, $social = [])
   {
@@ -9,7 +10,7 @@ class InsertPhone extends InsertSVG
         echo '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">';
 
         if (!empty($social)) {
-          echo $this->render($social);
+          echo $this->insertSvg($social);
         }
 
         echo htmlspecialchars($phone['phone']) . '</a>';
