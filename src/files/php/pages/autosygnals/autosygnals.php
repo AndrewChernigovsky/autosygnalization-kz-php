@@ -24,13 +24,12 @@ function getAutoContent($type)
       return 'Контент не найден.';
   }
 }
+
 $content = getAutoContent($autoType);
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
-
-
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
