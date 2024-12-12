@@ -19,8 +19,8 @@ $viewportWidth = 768;
     <div class="swiper swiper-intro">
       <div class="swiper-wrapper">
         <?php foreach ($slides as $videoIndex => $slide): ?>
-          <div class="swiper-slide">
-            <video class="intro-video" preload="auto" autoplay loop muted
+          <div class="swiper-slide swiper-intro__slide">
+            <video class="intro__video" preload="auto" autoplay loop muted
               poster="<?= htmlspecialchars($slide['poster']) ?>">
               <?php if ($viewportWidth < 768): ?>
                 <source src="<?= htmlspecialchars($slide['srcMob']) ?>" data-src="<?= htmlspecialchars($slide['srcMob']) ?>"
@@ -34,17 +34,17 @@ $viewportWidth = 768;
               Ваш браузер не поддерживает тег video.
             </video>
 
-            <div class="container content">
-              <h2 class="title"><?= htmlspecialchars($slide['title']) ?></h2>
+            <div class="container intro__content">
+              <h2 class="intro__title"><?= htmlspecialchars($slide['title']) ?></h2>
 
-              <ul class="list-slide list-style-none">
+              <ul class="intro__list-slide list-style-none">
                 <?php foreach ($slide['list'] as $item): ?>
                   <li>
-                    <span class="advantages-text"><?= htmlspecialchars($item) ?></span>
+                    <span class="intro__advantages-text"><?= htmlspecialchars($item) ?></span>
                   </li>
                 <?php endforeach; ?>
               </ul>
-              <a href="<?php echo $slide['link'] ?>" class="y-button button link btn-4">Подробнее</a>
+              <a href="<?php echo $slide['link'] ?>" class="y-button button link">Подробнее</a>
             </div>
           </div>
         <?php endforeach; ?>

@@ -1,12 +1,13 @@
-@use 'reset'as *;
-@use 'fonts'as *;
-@use 'global'as *;
+@use 'reset' as *;
+@use 'fonts' as *;
+@use 'global' as *;
 
-@use './blocks/footer'as *;
-@use './blocks/header'as *;
-@use './blocks/nav'as *;
-@use './blocks/geo'as *;
-@use './blocks/phones'as *;
-@use './blocks/popup'as *;
+@use './blocks/footer' as *;
+@use './blocks/header' as *;
+@use './blocks/nav' as *;
+@use './blocks/geo' as *;
+@use './blocks/phones' as *;
+@use './blocks/popup' as *;
+@use './blocks/button' as *;
 
-@use './sections/intro'as *;
+@use './sections/intro' as *;
