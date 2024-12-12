@@ -1,148 +1,125 @@
-@use "variables"as var;
+@use "variables" as var;
 
 .intro {
   position: relative;
   box-shadow: 0px 90px 100px rgba(47, 47, 47, 1);
-}
 
-.slide {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  gap: 30px;
-  position: relative;
-  height: 100vh;
-  width: 100%;
-
-  video {
-    height: inherit;
-  }
-}
-
-.advantages-text {
-  font-size: 14px;
-  font-weight: 400;
-  position: relative;
-  padding-left: 50px;
-  width: 100%;
-  display: flex;
-
-  @media screen and (min-width: var.$desktop-min) {
-    font-size: 48px;
-  }
-
-  &:before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background-image: url('#{var.$DEV_PATH}assets/images/vectors/aprove.svg');
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+  &__advantages-text {
+    font-size: 14px;
+    font-weight: 400;
+    position: relative;
+    padding-left: 50px;
+    width: 100%;
+    display: flex;
 
     @media screen and (min-width: var.$desktop-min) {
-      width: 40px;
-      height: 40px;
+      font-size: 48px;
+    }
+
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      background-image: url('#{var.$DEV_PATH}assets/images/vectors/aprove.svg');
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+
+      @media screen and (min-width: var.$desktop-min) {
+        width: 40px;
+        height: 40px;
+      }
     }
   }
-}
 
-.intro__button {
-  position: absolute;
-  bottom: 100px;
-  z-index: 1;
-  pointer-events: auto;
-}
-
-.content {
-  height: inherit;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 100px;
-  width: inherit;
-  gap: 10px;
-
-  @media screen and (min-width: var.$desktop-min) {
-    padding-top: 100px;
-    gap: 20px;
-  }
-
-  @media screen and (min-width: var.$desktop) {
-    padding-top: 150px;
-  }
-}
-
-.swiper-slide::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  display: block;
-  top: 0;
-  left: 0;
-  z-index: -1;
-  background: linear-gradient(black, #170f0f52);
-  box-shadow: inset 60px -120px 100px rgba(47, 47, 47, 1);
-}
-
-.swiper-slide video {
-  // filter: blur(5px);
-  top: 0;
-  left: 0;
-  position: absolute;
-  z-index: -1;
-  width: 100vw;
-  height: 100vh;
-  object-fit: cover;
-}
-
-h1,
-h2,
-li {
-  color: var.$white;
-}
-
-.list-slide {
-  min-height: 150px;
-  display: grid;
-  align-content: center;
-  justify-items: flex-start;
-  gap: 5px;
-
-  @media screen and (min-width: var.$desktop-min) {
+  &__content {
+    height: inherit;
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 100px;
+    width: inherit;
+    gap: 10px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      padding-top: 100px;
+      gap: 20px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      padding-top: 150px;
+    }
+
+    .y-button {
+      position: absolute;
+      bottom: 20%;
+    }
   }
-}
 
-h2 {
-  font-size: 24px;
-  margin: 0;
+  .swiper-intro__slide {
+    &::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: block;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      background: linear-gradient(black, #170f0f52);
+      box-shadow: inset 60px -120px 100px rgba(47, 47, 47, 1);
+    }
 
-  @media screen and (min-width: var.$desktop-min) {
-    font-size: 64px;
+    & .intro__video {
+      // filter: blur(5px);
+      top: 0;
+      left: 0;
+      position: absolute;
+      z-index: -1;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+    }
   }
-}
 
-.swiper-intro {
-  height: 100vh;
-}
 
-.content {
-  .y-button {
-    position: absolute;
-    bottom: 20%;
-
-    @media screen and (min-width: var.$desktop-min) {}
+  h1,
+  h2,
+  li {
+    color: var.$white;
   }
+
+  &__list-slide {
+    min-height: 150px;
+    display: grid;
+    align-content: center;
+    justify-items: flex-start;
+    gap: 5px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  &__title {
+    font-size: 24px;
+    margin: 0;
+
+    @media screen and (min-width: var.$desktop-min) {
+      font-size: 64px;
+    }
+  }
+
+  .swiper-intro {
+    height: 100vh;
+  }
+
 }
