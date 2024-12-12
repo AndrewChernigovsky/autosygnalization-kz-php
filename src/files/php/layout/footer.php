@@ -80,11 +80,9 @@ foreach ($filesToInclude as $key => $filePath) {
         <?php echo $geos->getGeo() ?>
       </div>
       <div class="footer__menu">
-        <div class="footer__menu-title">
-          <?php
-          $footerMenu->generateFooter();
-          ?>
-        </div>
+        <?php
+        $footerMenu->generateFooter();
+        ?>
       </div>
       <p class="footer__copy">© 2024 Auto Security. Все права защищены</p>
     </div>

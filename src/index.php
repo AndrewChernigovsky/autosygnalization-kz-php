@@ -23,9 +23,9 @@ echo $head->setHead();
 ?>
 
 <body>
-    <?php include $base_path . '/header.php'; ?>
-    <main class="main">
-        <?php
+  <?php include $base_path . '/header.php'; ?>
+  <main class="main">
+    <?php
     $file_2_section = './files/php/sections/';
     $files_to_include = [
       'intro.php',
@@ -34,8 +34,8 @@ echo $head->setHead();
     $sectionLoader = new IncludeSections($file_2_section, $files_to_include);
     $sectionLoader->includeFiles();
     ?>
-    </main>
-    <!-- <?php include $base_path . '/footer.php'; ?> -->
+  </main>
+  <?php include $base_path . '/footer.php'; ?>
 </body>
 
 </html>
