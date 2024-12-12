@@ -64,13 +64,41 @@
     cursor: pointer;
 }
 
+.y-button-secondary {
+    display: flex;
+    width: 260px;
+    min-height: 40px;
+    border-radius: 5px;
+    border: 1px solid white;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 20px;
+    gap: 10px;
+    background-color: black;
+
+    &:hover {
+        opacity: 0.3;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+        font-size: 36px;
+        width: 364px;
+        min-height: 65px;
+
+        &:hover {
+            opacity: 0.3;
+        }
+    }
+}
+
 .y-button-primary {
     display: flex;
     background: linear-gradient(var.$red-280000, var.$red-FF0000);
     width: 260px;
     min-height: 40px;
     border-radius: 5px;
-    border: 1px solid black;
+    border: 1px solid white;
     justify-content: center;
     align-items: center;
     font-weight: 700;
