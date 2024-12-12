@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+
 $autoType = isset($_GET['auto']) ? $_GET['auto'] : null;
 
 function getAutoContent($type)
@@ -29,6 +30,8 @@ $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
+
+
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 include_once $head_path;
@@ -48,7 +51,8 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <h1>Автосигнализации</h1>
+    <!-- <h1>Автосигнализации</h1> -->
+    <?php include_once './auto.php'; ?>
     <div>
       <?php echo htmlspecialchars($content); ?>
     </div>

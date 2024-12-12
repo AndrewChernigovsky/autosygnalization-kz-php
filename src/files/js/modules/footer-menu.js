@@ -5,12 +5,18 @@ export function toggleList() {
     toggle.addEventListener('click', function () {
       const submenu = this.nextElementSibling;
 
-      if (submenu && submenu.classList.contains('footer__submenu-list') || submenu && submenu.classList.contains('footer__menu-title')) {
+      function visibleContent(submenu) {
         if (submenu.style.display === 'block') {
           submenu.style.display = 'none';
+          toggle.classList.add('active')
         } else {
           submenu.style.display = 'block';
+          toggle.classList.remove('active')
         }
+      }
+
+      if (submenu && submenu.classList.contains('footer__menu-list')) {
+        visibleContent(submenu);
       }
     });
   });

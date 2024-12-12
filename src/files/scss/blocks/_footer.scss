@@ -115,12 +115,88 @@
     margin: 0;
   }
 
-  &__submenu-list,
   &__menu-list {
     display: none;
   }
 
+  &__menu-list,
+  &__submenu-list {
+    display: grid;
+    gap: 8px;
+    padding-left: 15px;
+
+    li {
+      list-style: none;
+
+      a {
+        color: var.$white;
+        text-decoration: none;
+        text-transform: none;
+      }
+
+      span {
+        text-transform: none;
+        margin-bottom: 5px;
+        display: block;
+      }
+    }
+  }
+
+  &__submenu-list {
+    border-left: 2px solid var.$white;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: 0;
+      width: 30px;
+      height: 2px;
+      background-color: var.$white;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: -30px;
+      top: -5px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: var.$white;
+    }
+  }
+
   .toggle-list {
     cursor: pointer;
+    padding: 20px 0 20px 60px;
+    position: relative;
+    margin: 0;
+
+    &::before {
+      content: '';
+      position: absolute;
+      border: 1px solid var.$white;
+      background: url('#{var.$DEV_PATH}assets/images/vectors/arrow.svg') no-repeat center center,
+      linear-gradient(var.$red-280000, var.$red-FF0000);
+      background-size: 30px;
+      border-radius: 5px;
+      width: 48px;
+      height: 48px;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    &.active::before {
+      background: url('#{var.$DEV_PATH}assets/images/vectors/arrow-up.svg') no-repeat center center,
+      linear-gradient(var.$red-280000, var.$red-FF0000);
+    }
+  }
+
+  &__menu {
+    display: grid;
+    gap: 5px;
   }
 }

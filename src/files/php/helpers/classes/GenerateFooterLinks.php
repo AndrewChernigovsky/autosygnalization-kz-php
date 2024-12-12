@@ -16,7 +16,7 @@ class GenerateFooterLinks
 
       foreach ($items as $navItem) {
         $output .= '<div class="footer__menu-title">';
-        $output .= '<h3 class="toggle-list">';
+        $output .= '<h3 class="toggle-list active">';
         if (isset($navItem['link'])) {
           $output .= '<a href="' . htmlspecialchars($navItem['link']) . '">';
         }
@@ -31,7 +31,7 @@ class GenerateFooterLinks
             if (isset($listItem['link'])) {
               $output .= '<a href="' . htmlspecialchars($listItem['link']) . '">';
             }
-            $output .= '<span class="toggle-list">' . htmlspecialchars($listItem['name']) . '</span>';
+            $output .= '<span>' . htmlspecialchars($listItem['name']) . '</span>';
             $output .= '</a>';
 
             if (isset($listItem['children'])) {
