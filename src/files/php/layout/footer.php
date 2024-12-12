@@ -21,6 +21,10 @@ include_once $phone;
 include_once $geo;
 include_once $logo;
 
+spl_autoload_register(function ($class_name) use ($classes) {
+  include $classes . $class_name . '.php';
+});
+
 $contacts = new Contacts();
 $social = $contacts->getSocial();
 $phones = $contacts->getPhones();
@@ -28,10 +32,8 @@ $email = $contacts->getEmail();
 $web_site = $contacts->getWebsite();
 $geos = new Geo();
 $logos = new Logo();
+$footerMenu = new GenerateFooterLinks($navigationFooterLinks);
 
-spl_autoload_register(function ($class_name) use ($classes) {
-  include $classes . $class_name . '.php';
-});
 
 $insertSVG = new CreateSVG();
 $insertPHONE = new InsertPhone();
@@ -79,38 +81,9 @@ foreach ($filesToInclude as $key => $filePath) {
       </div>
       <div class="footer__menu">
         <div class="footer__menu-title">
-          <?php foreach ($navigationFooterLinks as $navItem): ?>
-            <div class="footer__menu-title">
-              <h3>
-                <a href="<?php echo htmlspecialchars($navItem['link']); ?>">
-                  <?php echo htmlspecialchars($navItem['title']); ?>
-                </a>
-              </h3>
-
-              <?php if (isset($navItem['sub-title'])): ?>
-                <h4><?php echo htmlspecialchars($navItem['sub-title']['name']); ?></h4>
-                <ul class="footer__menu-list">
-                  <?php foreach ($navItem['sub-title']['list'] as $subItem): ?>
-                    <li>
-                      <a href="<?php echo htmlspecialchars($subItem['link']); ?>">
-                        <?php echo htmlspecialchars($subItem['name']); ?>
-                      </a>
-                    </li>
-                  <?php endforeach; ?>
-                </ul>
-              <?php elseif (isset($navItem['list'])): ?>
-                <ul class="footer__menu-list">
-                  <?php foreach ($navItem['list'] as $clientItem): ?>
-                    <li>
-                      <a href="<?php echo htmlspecialchars($clientItem['link']); ?>">
-                        <?php echo htmlspecialchars($clientItem['name']); ?>
-                      </a>
-                    </li>
-                  <?php endforeach; ?>
-                </ul>
-              <?php endif; ?>
-            </div>
-          <?php endforeach; ?>
+          <?php
+          $footerMenu->generateFooter();
+          ?>
         </div>
       </div>
     </div>
