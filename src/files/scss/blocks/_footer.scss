@@ -119,8 +119,7 @@
     display: none;
   }
 
-  &__menu-list,
-  &__submenu-list {
+  &__menu-list {
     display: grid;
     gap: 8px;
     padding-left: 15px;
@@ -139,36 +138,43 @@
         margin-bottom: 5px;
         display: block;
       }
+
+      &>span {
+        text-decoration: underline;
+      }
     }
   }
 
-  &__submenu-list {
-    border-left: 2px solid var.$white;
-    position: relative;
+  &__menu-list {
+    &:first-of-type li ul {
+      border-left: 2px solid var.$white;
+      position: relative;
 
-    &::before {
-      content: '';
-      position: absolute;
-      left: -30px;
-      top: 0;
-      width: 30px;
-      height: 2px;
-      background-color: var.$white;
+      &::before {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: 0;
+        width: 30px;
+        height: 2px;
+        background-color: var.$white;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        left: -30px;
+        top: -5px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: var.$white;
+      }
     }
 
-    &::after {
-      content: '';
-      position: absolute;
-      left: -30px;
-      top: -5px;
-      width: 15px;
-      height: 15px;
-      border-radius: 50%;
-      background-color: var.$white;
-    }
   }
 
-  .toggle-list {
+  h3.toggle-list {
     cursor: pointer;
     padding: 20px 0 20px 60px;
     position: relative;
@@ -192,6 +198,16 @@
     &.active::before {
       background: url('#{var.$DEV_PATH}assets/images/vectors/arrow-up.svg') no-repeat center center,
       linear-gradient(var.$red-280000, var.$red-FF0000);
+
+    }
+  }
+
+  .toggle-inner-list {
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 0.6;
     }
   }
 
