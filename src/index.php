@@ -1,27 +1,16 @@
 <?php
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? "https://" : "http://";
-$host = $_SERVER['HTTP_HOST'];
-$requestUri = $_SERVER['REQUEST_URI'];
-$currentUrl = $protocol . $host . $requestUri;
+include_once __DIR__ . '/files/php/helpers/classes/setVariables.php';
 
-$distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
+$variables = new SetVariables();
+$variables->setVar();
+$docROOT = $variables->getDocRoot();
+$path = $variables->getPathFileURL();
 
-// Проверяем, существует ли папка dist
-if (is_dir($distPath)) {
-  $currentUrl = "http://localhost:3000/dist/index.php";
-  $pathFile = "http://localhost:3000/dist";
-  $pathFile_URL = '/dist';
-} else {
-  $currentUrl = "/index.php";
-  $pathFile = "";
-  $pathFile_URL = '';
-}
-
-$head_path = $_SERVER['DOCUMENT_ROOT'] . $pathFile_URL . '/files/php/layout/head.php';
-$sections_path = $_SERVER['DOCUMENT_ROOT'] . $pathFile_URL . '/files/php/helpers/include-sections.php';
+$head_path = $docROOT . $path . '/files/php/layout/head.php';
+$sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 include_once $head_path;
 include_once $sections_path;
-$base_path = $_SERVER['DOCUMENT_ROOT'] . $pathFile_URL . '/files/php/layout';
+$base_path = $docROOT . $path . '/files/php/layout';
 
 $title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
 $head = new Head($title, [], []);
@@ -34,9 +23,9 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include $base_path . '/header.php'; ?>
-  <main class="main">
-    <?php
+    <?php include $base_path . '/header.php'; ?>
+    <main class="main">
+        <?php
     $file_2_section = './files/php/sections/';
     $files_to_include = [
       'intro.php',
@@ -45,8 +34,8 @@ echo $head->setHead();
     $sectionLoader = new IncludeSections($file_2_section, $files_to_include);
     $sectionLoader->includeFiles();
     ?>
-  </main>
-  <?php include $base_path . '/footer.php'; ?>
+    </main>
+    <!-- <?php include $base_path . '/footer.php'; ?> -->
 </body>
 
 </html>

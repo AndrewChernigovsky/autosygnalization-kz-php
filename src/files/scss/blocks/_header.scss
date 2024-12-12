@@ -1,168 +1,339 @@
-@use "variables"as var;
+@use "variables" as var;
 
-.header-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 20px 0;
-}
+.header {
 
-header {
   background: linear-gradient(#010308, #000208);
-}
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-
-  img {
-    width: 58px;
-    height: 40px;
-
-    @media screen and (min-width: var.$desktop-min) {
-      width: 122px;
-      height: 84px;
-    }
-  }
-}
-
-.menu {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-}
-
-.logo {
-  grid-column: 1/2;
-}
-
-.contacts {
-  display: flex;
-  grid-column: 12/13;
-}
-
-.absolute {
-  z-index: -1;
-  position: absolute;
-}
-
-p {
-  font-size: 20px;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.text-main {
-  color: var.$white;
-}
-
-.text-secondary {
-  color: var.$red;
-}
-
-.text {
-  p {
-    margin: 0;
-    font-weight: 700;
-  }
-}
-
-.geo {
-  display: flex;
-  align-items: center;
-
-  address {
-    color: var.$white;
-    font-style: normal;
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 16px;
-    max-width: 50%;
-  }
-}
-
-.geo-image {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  .image {
-    min-height: 100%;
-  }
-
-  svg {
-    width: 30px;
-    height: 30px;
-  }
-}
-
-.cart {
-  display: flex;
-  align-items: center;
-
-  .link {
-    cursor: pointer;
+  &__head {
     display: flex;
-    width: 30px;
-    height: 100%;
-    position: relative;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 0;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
 
     img {
-      margin-top: -10px;
+      width: 58px;
+      height: 40px;
 
       @media screen and (min-width: var.$desktop-min) {
-        margin-top: auto;
+        width: 122px;
+        height: 84px;
       }
     }
   }
 
-  .counter {
-    background-color: var.$red;
-    border-radius: 50%;
-    min-width: 20px;
-    height: 20px;
-    position: absolute;
-    color: var.$white;
-    right: -10px;
-    top: 0px;
-    text-align: center;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  &__menu {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  }
 
-    @media screen and (min-width: var.$desktop-min) {
-      min-width: 35px;
-      height: 35px;
-      font-size: 24px;
-      line-height: 28px;
-      top: -10px;
-      font-family: var.$secondary-font;
+  &__logo {
+    grid-column: 1/2;
+  }
+
+  &__contacts {
+    display: flex;
+    grid-column: 12/13;
+  }
+
+  &__absolute {
+    z-index: -1;
+    position: absolute;
+  }
+
+  p {
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  &__text-main {
+    color: var.$white;
+  }
+
+  &__text-secondary {
+    color: var.$red;
+  }
+
+  &__text {
+    p {
+      margin: 0;
+      font-weight: 700;
     }
   }
-}
 
-@media screen and (min-width: var.$tablet) {
-  address {
-    display: none;
+  &__geo {
+    display: flex;
+    align-items: center;
+
+    address {
+      color: var.$white;
+      display: none;
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 16px;
+      max-width: 50%;
+    }
   }
 
-  .geo-image {
-    min-height: 100%;
+  &__geo-image {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 
     .image {
       min-height: 100%;
+    }
 
-      svg {
+    svg {
+      width: 30px;
+      height: 30px;
+    }
+  }
+
+  &__cart {
+    display: flex;
+    align-items: center;
+
+    .link {
+      cursor: pointer;
+      display: flex;
+      width: 30px;
+      height: 100%;
+      position: relative;
+
+      img {
+        margin-top: -10px;
         width: 50px;
         height: 50px;
+
+        @media screen and (min-width: var.$desktop-min) {
+          margin-top: auto;
+        }
+      }
+    }
+
+    .counter {
+      background-color: var.$red;
+      border-radius: 50%;
+      min-width: 20px;
+      height: 20px;
+      position: absolute;
+      color: var.$white;
+      right: -10px;
+      top: 0px;
+      text-align: center;
+      padding: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      @media screen and (min-width: var.$desktop-min) {
+        min-width: 35px;
+        height: 35px;
+        font-size: 24px;
+        line-height: 28px;
+        top: -10px;
+        font-family: var.$secondary-font;
       }
     }
   }
 
-  .cart .link {
-    width: 50px;
-    height: 50px;
+  @media screen and (min-width: var.$tablet) {
+    address {
+      display: none;
+    }
+
+    &__geo-image {
+      min-height: 100%;
+
+      .image {
+        min-height: 100%;
+
+        svg {
+          width: 50px;
+          height: 50px;
+        }
+      }
+    }
+
+    .cart .link {
+      width: 50px;
+      height: 50px;
+    }
   }
 }
+
+// .header-head {
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   padding: 20px 0;
+// }
+
+// header {
+//   background: linear-gradient(#010308, #000208);
+// }
+
+// .logo {
+//   display: flex;
+//   align-items: center;
+//   gap: 10px;
+//   text-decoration: none;
+
+//   img {
+//     width: 58px;
+//     height: 40px;
+
+//     @media screen and (min-width: var.$desktop-min) {
+//       width: 122px;
+//       height: 84px;
+//     }
+//   }
+// }
+
+// .menu {
+//   display: grid;
+//   grid-template-columns: repeat(12, 1fr);
+// }
+
+// .logo {
+//   grid-column: 1/2;
+// }
+
+// .contacts {
+//   display: flex;
+//   grid-column: 12/13;
+// }
+
+// .absolute {
+//   z-index: -1;
+//   position: absolute;
+// }
+
+// p {
+//   font-size: 20px;
+//   text-transform: uppercase;
+//   font-weight: 700;
+// }
+
+// .text-main {
+//   color: var.$white;
+// }
+
+// .text-secondary {
+//   color: var.$red;
+// }
+
+// .text {
+//   p {
+//     margin: 0;
+//     font-weight: 700;
+//   }
+// }
+
+// .geo {
+//   display: flex;
+//   align-items: center;
+
+//   address {
+//     color: var.$white;
+//     font-style: normal;
+//     font-weight: 400;
+//     font-size: 12px;
+//     line-height: 16px;
+//     max-width: 50%;
+//   }
+// }
+
+// .geo-image {
+//   display: flex;
+//   align-items: center;
+//   gap: 10px;
+
+//   .image {
+//     min-height: 100%;
+//   }
+
+//   svg {
+//     width: 30px;
+//     height: 30px;
+//   }
+// }
+
+// .cart {
+//   display: flex;
+//   align-items: center;
+
+//   .link {
+//     cursor: pointer;
+//     display: flex;
+//     width: 30px;
+//     height: 100%;
+//     position: relative;
+
+//     img {
+//       margin-top: -10px;
+
+//       @media screen and (min-width: var.$desktop-min) {
+//         margin-top: auto;
+//       }
+//     }
+//   }
+
+//   .counter {
+//     background-color: var.$red;
+//     border-radius: 50%;
+//     min-width: 20px;
+//     height: 20px;
+//     position: absolute;
+//     color: var.$white;
+//     right: -10px;
+//     top: 0px;
+//     text-align: center;
+//     padding: 5px;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+
+//     @media screen and (min-width: var.$desktop-min) {
+//       min-width: 35px;
+//       height: 35px;
+//       font-size: 24px;
+//       line-height: 28px;
+//       top: -10px;
+//       font-family: var.$secondary-font;
+//     }
+//   }
+// }
+
+// @media screen and (min-width: var.$tablet) {
+//   address {
+//     display: none;
+//   }
+
+//   .geo-image {
+//     min-height: 100%;
+
+//     .image {
+//       min-height: 100%;
+
+//       svg {
+//         width: 50px;
+//         height: 50px;
+//       }
+//     }
+//   }
+
+//   .cart .link {
+//     width: 50px;
+//     height: 50px;
+//   }
+// }

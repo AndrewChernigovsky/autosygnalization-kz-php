@@ -121,15 +121,18 @@ async function cleanDist(dirnames) {
 
     try {
       await fs.access(distPath);
-      await fs.rm(distPath, { recursive: true, force: true });
-      console.log(`${distPath} успешно удалена!`);
+      const files = await fs.readdir(distPath);
+      await Promise.all(files.map(file =>
+        fs.rm(path.join(distPath, file), { recursive: true, force: true })
+      ));
+
+      console.log(`Содержимое ${distPath} успешно удалено!`);
     } catch (err) {
       if (err.code === 'ENOENT') {
-        // Если директория не существует, создаем её
         await fs.mkdir(distPath, { recursive: true });
         console.log(`${distPath} успешно создана!`);
       } else {
-        console.error('Ошибка при удалении папки "dist":', err);
+        console.error(`Ошибка при удалении содержимого папки ${dir}:`, err);
       }
     }
   }
@@ -164,22 +167,45 @@ const sassTaskLibs = () => {
 
 
 const copyStatics = (cb) => {
+  // Создаем массив промисов для отслеживания завершения всех операций
+  const tasks = [];
 
-  (() => {
-    return src(['./src/assets/**/*', '!./src/assets/images/**', '!./src/assets/videos/**'])
+  // Копируем статические файлы, исключая изображения и видео
+  tasks.push(
+    src(['./src/assets/**/*', '!./src/assets/images/**', '!./src/assets/videos/**'])
       .pipe(dest('./dist/assets'))
-  })();
+  );
 
-  (() => {
-    return src(['./src/.htaccess', './src/index.php', './src/404.php', './src/sitemap.xml', './src/robots.txt', './src/yandex_12ed8a33b1d44641.html', './src/browserconfig.xml', './src/favicon.ico', './src/manifest.json'])
+  // Копируем другие необходимые файлы
+  tasks.push(
+    src([
+      './src/.htaccess',
+      './src/index.php',
+      './src/404.php',
+      './src/sitemap.xml',
+      './src/robots.txt',
+      './src/yandex_12ed8a33b1d44641.html',
+      './src/browserconfig.xml',
+      './src/favicon.ico',
+      './src/manifest.json'
+    ])
       .pipe(dest(paths.dist))
-  })();
+  );
 
-  cb();
-}
+  // Используем Promise.all для ожидания завершения всех задач
+  return Promise.all(tasks)
+    .then(() => {
+      cb(); // Вызываем коллбек после завершения всех задач
+    })
+    .catch(err => {
+      console.error('Ошибка при копировании статических файлов:', err);
+      cb(err); // Вызываем коллбек с ошибкой
+    });
+};
+
 
 const images = (cb) => {
-  return src(['./src/assets/images/**/*.{png,jpg}'], { encoding: false })
+  return src(['./src/assets/images/**/*.{png,jpg,svg}'], { encoding: false })
     .pipe(dest(paths.dist + '/assets/images'))
     .on('end', cb)
 };
@@ -190,12 +216,16 @@ const videos = (cb) => {
     .on('end', cb)
 };
 
-const docs = (cb) => {
-  return src(['./src/files/docs/**/*.pdf'], { encoding: false })
-    .pipe(dest(paths.dist + '/files/docs/'))
-    .on('end', cb)
-};
+const docs = async () => {
+  await cleanDist(['./src/files/docs']);
 
+  return new Promise((resolve, reject) => {
+    src(['./src/files/docs/**/*.pdf'], { encoding: false })
+      .pipe(dest(paths.dist + '/files/docs/'))
+      .on('end', resolve)
+      .on('error', reject);
+  });
+};
 const sprite = () => {
   return src(['./src/assets/images/vectors/**/*.svg', '!./src/assets/images/vectors/sprite.svg'])
     .pipe(svgSprite(config))
@@ -205,11 +235,11 @@ const sprite = () => {
 const fonts = (cb) => {
   src('./src/assets/fonts/**/*.{ttf,woff,woff2}')
     .pipe(dest(paths.dist + '/assets/fonts'))
-  cb()
+    .on('end', cb);
 };
 
 const statics = parallel(() => cleanDist(['dist/assets']), copyStatics, images, videos, sprite, sassTaskLibs, rollupTask);
-const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
+const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
 const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask);
 
 export { images, sassTask, sassTaskLibs, rollupTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
