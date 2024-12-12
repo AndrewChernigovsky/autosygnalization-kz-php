@@ -3,11 +3,11 @@ $desktop-min: 1024px;
 $desktop: 1440px;
 
 $primary-font: "ROBOTO",
-Arial,
-sans-serif;
+    Arial,
+    sans-serif;
 $secondary-font: "OSWALD",
-Arial,
-sans-serif;
+    Arial,
+    sans-serif;
 
 $white: white;
 $black: black;
@@ -16,8 +16,9 @@ $blue-1: #042247;
 $orange: #FF4600;
 $gray-gradient: linear-gradient(rgb(10, 10, 10), rgb(4, 0, 27));
 $green: lightgreen;
-$gray:rgb(28, 26, 26);
+$gray: rgb(28, 26, 26);
 $gray-bg: rgba(47, 47, 47, 1);
+$gray-bg-autosygnals: rgb(43, 43, 43);
 $red-64001E: #64001e;
 $red-B40036: #B40036;
 $red-280000: #280000;
