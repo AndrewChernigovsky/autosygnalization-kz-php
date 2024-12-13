@@ -9,7 +9,7 @@ export function initSwiper() {
       effect: 'fade',
       speed: 1000,
       autoplay: {
-        delay: 6000,
+        delay: 600000,
         disableOnInteraction: false,
       },
       pagination: {
