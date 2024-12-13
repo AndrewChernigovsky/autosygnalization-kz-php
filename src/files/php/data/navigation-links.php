@@ -19,13 +19,13 @@ $navigationFooterLinks = [
       [
         'name' => 'Автосигнализации',
         'children' => [
-          // [
-          //   'name' => 'Типы автосигнализаций',
-          //   'children' => [
-          //     ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском'],
-          //     ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM'],
-          //   ],
-          // ],
+          [
+            'name' => 'Типы автосигнализаций',
+            'children' => [
+              ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском'],
+              ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM'],
+            ],
+          ],
           ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском'],
           ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM'],
           ['link' => "$page_autosyngals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска'],
