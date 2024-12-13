@@ -31,7 +31,7 @@ $phones = $contacts->getPhones();
 $email = $contacts->getEmail();
 $web_site = $contacts->getWebsite();
 $geos = new Geo();
-$logos = new Logo();
+$logo = new Logo();
 $footerMenu = new GenerateFooterLinks($navigationFooterLinks);
 
 
@@ -53,39 +53,46 @@ foreach ($filesToInclude as $key => $filePath) {
 ?>
 
 <footer class="footer">
-  <div class="container">
-    <div class="footer__wrapper">
-      <?php echo $logos->getLogo(); ?>
-      <div class="footer__contacts">
-        <div class="social">
-          <p>Социальные сети</p>
-          <?php
-          if (isset($social['instagramm'])) {
-            echo $insertSVG->insertSvg($social['instagramm']);
-          } else {
-            echo "<!-- Instagram icon data is missing -->";
-          }
-          ?>
+  <div class="footer__wrapper">
+    <div class="container">
+      <div class="footer__inner">
+        <div class="footer__contacts">
+          <?php echo $logo->getLogo(); ?>
+          <div class="social">
+            <p>Социальные сети</p>
+            <ul class="social__icons list-style-none">
+              <li>
+                <?php
+                if (isset($social['instagramm'])) {
+                  echo $insertSVG->insertSvg($social['instagramm']);
+                } else {
+                  echo "<!-- Instagram icon data is missing -->";
+                }
+                ?>
+              </li>
+            </ul>
 
+          </div>
+          <div class="phones">
+            <?php $insertPHONE->displayPhones($phones, $icon_phone) ?>
+          </div>
+          <div class="email-site">
+            <div class="email">
+              <p><?php echo $email ?></p>
+            </div>
+            <div class="site">
+              <p><?php echo $web_site ?></p>
+            </div>
+          </div>
+          <?php echo $geos->getGeo() ?>
         </div>
-        <div class="phones">
-          <?php $insertPHONE->displayPhones($phones, $icon_phone) ?>
+        <div class="footer__menu">
+          <?php
+          $footerMenu->generateFooter();
+          ?>
         </div>
-        <div class="contacts__text">
-          <p><?php echo $email ?></p>
-        </div>
-        <div class="site">
-          <p><?php echo $web_site ?></p>
-        </div>
-        <?php echo $geos->getGeo() ?>
       </div>
-      <div class="footer__menu">
-        <?php
-        $footerMenu->generateFooter();
-        ?>
-      </div>
-      <p class="footer__copy">© 2024 Auto Security. Все права защищены</p>
     </div>
-  </div>
+    <p class="footer__copy">© 2024 Auto Security. Все права защищены</p>
   </div>
 </footer>

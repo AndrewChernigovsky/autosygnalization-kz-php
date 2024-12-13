@@ -1,0 +1,35 @@
+@use "variables"as var;
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+
+  img {
+    width: 58px;
+    height: 40px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      width: 122px;
+      height: 84px;
+    }
+  }
+
+  &__text-main {
+    color: var.$white;
+    text-transform: uppercase;
+  }
+
+  &__text-secondary {
+    color: var.$red;
+    text-transform: uppercase;
+  }
+
+  &__text {
+    p {
+      margin: 0;
+      font-weight: 700;
+    }
+  }
+}
