@@ -52,8 +52,6 @@ echo $head->setHead();
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
     <!-- <h1>Автосигнализации</h1> -->
-    <!-- include_once './auto.php';-->
-    <?php include_once './marks.php'; ?>
     <div>
       <?php echo htmlspecialchars($content); ?>
     </div>

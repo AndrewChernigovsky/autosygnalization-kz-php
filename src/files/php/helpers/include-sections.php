@@ -4,7 +4,7 @@ class IncludeSections
   private $base_path;
   private $files_to_include;
 
-  public function __construct($base_path, array $files)
+  public function __construct($base_path, $files)
   {
     $this->base_path = rtrim($base_path, '/');
     $this->files_to_include = $files;
