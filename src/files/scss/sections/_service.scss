@@ -1,0 +1,18 @@
+@use 'variables'as var;
+
+.service {
+  &__list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    align-items: end;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  &__item {
+    align-content: flex-end;
+  }
+}

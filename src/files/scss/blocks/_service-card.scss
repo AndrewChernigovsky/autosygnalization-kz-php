@@ -1,0 +1,31 @@
+@use 'variables'as var;
+
+.service-card {
+  position: relative;
+  min-height: 100%;
+  display: grid;
+
+  img {
+    display: flex;
+    max-height: 554px;
+    margin: 0 auto;
+  }
+
+  &__buttons {
+    position: absolute;
+    bottom: 20px;
+    align-items: center;
+    max-width: calc(100% - 50px);
+    justify-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 10px;
+    display: grid;
+
+    @media screen and (min-width: var.$tablet) {
+      display: flex;
+    }
+  }
+}
