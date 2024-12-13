@@ -66,7 +66,6 @@ foreach ($filesToInclude as $key => $filePath) {
             echo "<!-- Instagram icon data is missing -->";
           }
           ?>
-
         </div>
         <div class="phones">
           <?php $insertPHONE->displayPhones($phones, $icon_phone) ?>
