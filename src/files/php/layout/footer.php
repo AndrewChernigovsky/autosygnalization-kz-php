@@ -9,14 +9,14 @@ $docROOT = $variables->getDocRoot();
 $basePath = $variables->getBasePath();
 
 $contacts_data = $basePath . '/files/php/data/contacts.php';
-$svgInclude = $basePath . '/files/php/helpers/svg.php';
+$social = $basePath . '/files/php/helpers/components/social.php';
 $phone = $basePath . '/files/php/helpers/phone.php';
 $classes = $basePath . '/files/php/helpers/classes/';
 $geo = $basePath . '/files/php/helpers/components/geo.php';
 $logo = $basePath . '/files/php/helpers/components/logo.php';
 
 include_once $contacts_data;
-include_once $svgInclude;
+include_once $social;
 include_once $phone;
 include_once $geo;
 include_once $logo;
@@ -26,16 +26,14 @@ spl_autoload_register(function ($class_name) use ($classes) {
 });
 
 $contacts = new Contacts();
-$social = $contacts->getSocial();
 $phones = $contacts->getPhones();
-$email = $contacts->getEmail();
-$web_site = $contacts->getWebsite();
+$email = $contacts->getEmail(true);
+$web_site = $contacts->getWebsite(true);
 $geos = new Geo();
 $logo = new Logo();
 $footerMenu = new GenerateFooterLinks($navigationFooterLinks);
 
-
-$insertSVG = new CreateSVG();
+$socialIcons = $contacts->getSocialIcons();
 $insertPHONE = new InsertPhone();
 $icon_phone = ['name' => 'icon_phone', 'width' => '50', 'height' => '50', "image" => $path . '/assets/images/vectors/sprite.svg#phone-no-border', 'href' => '#'];
 
@@ -63,25 +61,22 @@ foreach ($filesToInclude as $key => $filePath) {
             <ul class="social__icons list-style-none">
               <li>
                 <?php
-                if (isset($social['instagramm'])) {
-                  echo $insertSVG->insertSvg($social['instagramm']);
-                } else {
-                  echo "<!-- Instagram icon data is missing -->";
+                foreach ($socialIcons as $social) {
+                  echo $contacts->setSocial($social);
                 }
                 ?>
               </li>
             </ul>
-
           </div>
           <div class="phones">
             <?php $insertPHONE->displayPhones($phones, $icon_phone) ?>
           </div>
           <div class="email-site">
-            <div class="email">
-              <p><?php echo $email ?></p>
+            <div class="email" style>
+              <?php echo $email ?>
             </div>
             <div class="site">
-              <p><?php echo $web_site ?></p>
+              <?php echo $web_site ?>
             </div>
           </div>
           <?php echo $geos->getGeo() ?>

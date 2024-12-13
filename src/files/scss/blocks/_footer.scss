@@ -33,6 +33,11 @@
       grid-area: logo;
     }
 
+    .email-site {
+      grid-area: email-site;
+      width: min-content;
+    }
+
     .social {
       text-transform: none;
       display: grid;
@@ -65,12 +70,17 @@
       text-transform: none;
       grid-area: email;
 
-      p {
+      a {
         color: var.$white;
         font-family: var.$primary-font;
         margin: 0;
         font-size: 14px;
         font-weight: 700;
+        background-repeat: no-repeat;
+        background-size: 15px 15px;
+        line-height: 30px;
+        padding-right: 30px;
+        background-position: right;
       }
     }
 
@@ -79,12 +89,17 @@
       text-transform: none;
       grid-area: site;
 
-      p {
+      a {
         color: var.$white;
         font-family: var.$primary-font;
         margin: 0;
         font-size: 14px;
         font-weight: 700;
+        background-repeat: no-repeat;
+        background-size: 15px 15px;
+        line-height: 25px;
+        padding-right: 30px;
+        background-position: right;
       }
     }
 
@@ -107,6 +122,9 @@
       color: var.$white;
       text-decoration: none;
       font-weight: 700;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -507,8 +525,93 @@
         opacity: 1;
       }
     }
-  }
 
+    &__menu-title {
+      min-height: 100%;
+
+      &:not(:last-of-type) {
+        border-right: 2px solid var.$white;
+        position: relative;
+      }
+
+      &:not(:first-of-type) {
+        padding-left: 10px;
+
+        &::before {
+          content: '';
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: var.$white;
+          position: absolute;
+          display: block;
+          top: 0;
+          left: -11px;
+        }
+
+      }
+    }
+
+    &__contacts {
+      position: relative;
+      height: 100%;
+
+      &::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var.$white;
+        position: absolute;
+        display: block;
+        top: 0;
+        left: calc(33.3% - 10px);
+      }
+
+      &::after {
+        content: '';
+        width: 2px;
+        height: 100%;
+        border-radius: 50%;
+        background-color: var.$white;
+        position: absolute;
+        display: block;
+        top: 0;
+        left: calc(33.3% - 5px);
+      }
+
+      .phones {
+        position: relative;
+        height: inherit;
+        align-content: center;
+        padding-left: 10px;
+
+        &::before {
+          content: '';
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: var.$white;
+          position: absolute;
+          display: block;
+          top: 0;
+          right: calc(100% + 6px);
+        }
+
+        &::after {
+          content: '';
+          width: 2px;
+          height: inherit;
+          border-radius: 50%;
+          background-color: var.$white;
+          position: absolute;
+          display: block;
+          top: 0;
+          right: calc(100% + 10px);
+        }
+      }
+    }
+  }
 
   @media screen and (min-width: var.$desktop) {
     &__inner {
