@@ -1,0 +1,117 @@
+@use "variables" as var;
+
+.autosygnals {
+
+    &__wrapper {
+        display: grid;
+        grid-template-columns: 1fr;
+        justify-content: center;
+        row-gap: 30px;
+        padding-top: 20px;
+        background-color: black;
+    }
+
+    &__title {
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    &__list {
+        display: grid;
+        row-gap: 20px;
+        justify-content: center;
+    }
+
+    &__item {
+        display: grid;
+        row-gap: 20px;
+        border-radius: 10px;
+        background-color: var.$gray-bg-autosygnals;
+        max-width: 300px;
+        min-height: 342px;
+        padding-bottom: 20px;
+    }
+
+    &__item-title {
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    &__item-block {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: end;
+        align-items: center;
+        background-size: 145%;
+        background-repeat: no-repeat;
+        background-position: start;
+        min-height: 466px;
+        min-width: 300px;
+        border-radius: 10px;
+    }
+
+    &__item-count {
+        margin: 0;
+        text-transform: uppercase;
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 700;
+    }
+
+
+
+    @media screen and (min-width: var.$desktop-min) {
+
+        &__wrapper {
+            align-items: center;
+            row-gap: 126px;
+            padding-top: 40px;
+        }
+
+        &__title {
+            font-size: 64px;
+            line-height: 48px;
+        }
+
+        &__list {
+            row-gap: 24px;
+            column-gap: 34px;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            justify-content: center;
+        }
+
+        &__item {
+            padding-top: 20px;
+            row-gap: 25px;
+            border-radius: 20px;
+            max-width: 680px;
+            min-height: 748px;
+            padding-bottom: 18px;
+        }
+
+
+        &__item-title {
+            font-size: 36px;
+            line-height: 48px;
+            min-height: 90px;
+        }
+
+        &__item-count {
+            font-size: 36px;
+            line-height: 48px;
+        }
+
+    }
+
+}
