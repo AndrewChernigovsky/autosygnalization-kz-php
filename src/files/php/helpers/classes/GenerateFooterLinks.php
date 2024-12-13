@@ -20,7 +20,7 @@ class GenerateFooterLinks
         if (isset($item['link'])) {
           $output .= '<a href="' . htmlspecialchars($item['link']) . '">';
         }
-        $output .= '<span class="toggle-list toggle-inner-list">' . htmlspecialchars($item['name']) . '</span>';
+        $output .= '<span class="toggle-list toggle-inner-list active">' . htmlspecialchars($item['name']) . '</span>';
         if (isset($item['link'])) {
           $output .= '</a>';
         }

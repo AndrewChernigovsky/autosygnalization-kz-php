@@ -116,10 +116,6 @@
   }
 
   &__menu-list {
-    display: none;
-  }
-
-  &__menu-list {
     display: grid;
     gap: 8px;
     padding-left: 15px;
@@ -140,7 +136,27 @@
       }
 
       &>span {
-        text-decoration: underline;
+        position: relative;
+
+        &:hover {
+
+          &::before {
+            content: '';
+            position: absolute;
+            background: url('#{var.$DEV_PATH}assets/images/vectors/arrow-up.svg') no-repeat center center;
+            background-size: 30px;
+            border-radius: 5px;
+            width: 15px;
+            height: 15px;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+          }
+
+          &.active::before {
+            background: url('#{var.$DEV_PATH}assets/images/vectors/arrow.svg') no-repeat center center;
+          }
+        }
       }
     }
   }
@@ -181,6 +197,7 @@
     padding: 20px 0 20px 60px;
     position: relative;
     margin: 0;
+    text-transform: uppercase;
 
     &::before {
       content: '';
@@ -202,6 +219,24 @@
       linear-gradient(var.$red-280000, var.$red-FF0000);
 
     }
+
+    &+ul {
+      display: none;
+    }
+
+    &.active+ul {
+      display: block;
+    }
+  }
+
+  span {
+    &.toggle-list+ul {
+      display: none;
+    }
+
+    &.toggle-list.active+ul {
+      display: grid;
+    }
   }
 
   .toggle-inner-list {
@@ -216,5 +251,63 @@
   &__menu {
     display: grid;
     gap: 5px;
+    position: relative;
+    padding-bottom: 20px;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -15px;
+      left: 0;
+      width: 80%;
+      height: 4px;
+      background-color: var.$white;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -20px;
+      left: -10px;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background-color: var.$white;
+    }
+  }
+
+  &__menu-title {
+    position: relative;
+
+    &:not(:last-of-type) {
+      padding-bottom: 20px;
+
+      &::before {
+        content: '';
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        width: 80%;
+        height: 4px;
+        background-color: var.$white;
+      }
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: 5px;
+        left: -10px;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background-color: var.$white;
+      }
+    }
+  }
+
+  &__copy {
+    margin: 0;
+    text-transform: none;
+    font-family: var.$primary-font;
   }
 }
