@@ -62,6 +62,8 @@
 
 .button {
   cursor: pointer;
+  text-decoration: none;
+  color: var.$white;
 }
 
 .y-button-secondary {
@@ -69,13 +71,14 @@
   width: 260px;
   min-height: 40px;
   border-radius: 5px;
-  border: 1px solid white;
+  border: 1px solid var.$white;
   justify-content: center;
   align-items: center;
   font-weight: 700;
   font-size: 20px;
   gap: 10px;
-  background-color: black;
+  background-color: var.$black;
+  text-transform: uppercase;
 
   &:hover {
     opacity: 0.3;
@@ -98,11 +101,12 @@
   width: 260px;
   min-height: 40px;
   border-radius: 5px;
-  border: 1px solid white;
+  border: 1px solid var.$white;
   justify-content: center;
   align-items: center;
   font-weight: 700;
   font-size: 20px;
+  text-transform: uppercase;
 
   &:hover {
     opacity: 0.3;
