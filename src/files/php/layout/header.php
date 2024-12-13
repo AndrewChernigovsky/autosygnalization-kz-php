@@ -31,7 +31,6 @@ function isActive($linkPath, $currentPath)
 }
 
 $contacts = new Contacts();
-$social = $contacts->getSocial();
 $phones = $contacts->getPhones();
 $email = $contacts->getEmail();
 $web_site = $contacts->getWebsite();
