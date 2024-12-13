@@ -11,7 +11,7 @@ async function loadModule() {
   initFormValidation();
   initSearch();
   toggleList();
-  // showMarks();
+  showMarks();
 }
 
 document.addEventListener('DOMContentLoaded', loadModule)
