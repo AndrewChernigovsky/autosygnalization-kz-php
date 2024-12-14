@@ -64,6 +64,7 @@
   cursor: pointer;
   text-decoration: none;
   color: var.$white;
+  padding: 5px 10px;
 }
 
 .y-button-secondary {
@@ -85,13 +86,9 @@
   }
 
   @media screen and (min-width: var.$desktop-min) {
-    font-size: 36px;
+    font-size: 24px;
     width: 364px;
     min-height: 65px;
-
-    &:hover {
-      opacity: 0.3;
-    }
   }
 }
 
@@ -108,12 +105,8 @@
   font-size: 20px;
   text-transform: uppercase;
 
-  &:hover {
-    opacity: 0.3;
-  }
-
   @media screen and (min-width: var.$desktop-min) {
-    font-size: 36px;
+    font-size: 24px;
     width: 364px;
     min-height: 65px;
 
