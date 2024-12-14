@@ -53,6 +53,7 @@ echo $head->setHead();
     <!-- <h1>Автосигнализации</h1> -->
     <div>
       <?php echo htmlspecialchars($content); ?>
+      <?php include_once './../../helpers/components/setup.php'; ?>
     </div>
   </main>
   <?php include $base_path . '/footer.php'; ?>
