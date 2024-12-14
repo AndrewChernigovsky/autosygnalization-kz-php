@@ -15,7 +15,7 @@ $services = $service_data->getServices();
   <div class="container">
     <h2 class="service__title secondary-title">наши услуги</h2>
     <div class="swiper swiper-service">
-      <ul class="service__list list-style-none swiper__wrapper">
+      <ul class="service__list list-style-none swiper-wrapper">
         <?php foreach ($services as $index => $service): ?>
           <li class="service__item swiper-slide">
             <?php
@@ -24,6 +24,9 @@ $services = $service_data->getServices();
             ?>
           </li>
         <?php endforeach; ?>
+        <li>
+          <ul class="swiper-pagination swiper-service__pagination"></ul>
+        </li>
       </ul>
     </div>
   </div>
