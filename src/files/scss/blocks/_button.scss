@@ -77,18 +77,10 @@
     gap: 10px;
     background-color: black;
 
-    &:hover {
-        opacity: 0.3;
-    }
-
     @media screen and (min-width: var.$desktop-min) {
         font-size: 36px;
         width: 364px;
         min-height: 65px;
-
-        &:hover {
-            opacity: 0.3;
-        }
     }
 }
 
