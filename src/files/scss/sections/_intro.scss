@@ -1,8 +1,8 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .intro {
   position: relative;
-  box-shadow: 0px 90px 100px rgba(47, 47, 47, 1);
+  box-shadow: 0px 90px 100px var.$black-0E0C0C;
 
   &__advantages-text {
     font-size: 14px;
@@ -72,11 +72,10 @@
       left: 0;
       z-index: -1;
       background: linear-gradient(black, #170f0f52);
-      box-shadow: inset 60px -120px 100px rgba(47, 47, 47, 1);
+      box-shadow: inset 10px -40px 20px var.$black-0E0C0C;
     }
 
-    & .intro__video {
-      // filter: blur(5px);
+    .intro__video {
       top: 0;
       left: 0;
       position: absolute;
@@ -112,6 +111,14 @@
   &__title {
     font-size: 24px;
     margin: 0;
+    transform: translateY(-50px);
+    opacity: 0;
+    transition: 0.5s ease-in-out;
+
+    &.visible {
+      transform: translateY(0px);
+      opacity: 1;
+    }
 
     @media screen and (min-width: var.$desktop-min) {
       font-size: 64px;

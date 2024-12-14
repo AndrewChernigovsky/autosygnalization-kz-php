@@ -1,0 +1,45 @@
+@use 'variables'as var;
+
+.service-card {
+  position: relative;
+  min-height: 100%;
+  display: grid;
+
+  &__title {
+    font-family: var.$primary-font;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  img {
+    display: flex;
+    height: 100%;
+    max-height: 554px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  &__buttons {
+    position: absolute;
+    bottom: 20px;
+    align-items: center;
+    max-width: 80%;
+    justify-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    left: 50%;
+    transform: translateX(-50%);
+    gap: 10px;
+    display: grid;
+
+    @media screen and (min-width: var.$tablet) {
+      display: flex;
+    }
+  }
+
+  @media screen and (min-width: var.$tablet) {
+    &__title {
+      font-size: 24px;
+    }
+  }
+}
