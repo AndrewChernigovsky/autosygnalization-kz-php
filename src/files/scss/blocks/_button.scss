@@ -85,6 +85,10 @@
         font-size: 36px;
         width: 364px;
         min-height: 65px;
+
+        &:hover {
+            opacity: 0.3;
+        }
     }
 }
 
