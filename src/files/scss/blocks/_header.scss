@@ -62,12 +62,13 @@
       min-height: 100%;
       display: flex;
       align-items: center;
+
+      svg {
+        width: 35px;
+        height: 35px;
+      }
     }
 
-    svg {
-      width: 30px;
-      height: 30px;
-    }
   }
 
   &__cart {
@@ -113,11 +114,11 @@
       justify-content: center;
 
       @media screen and (min-width: var.$desktop-min) {
-        min-width: 35px;
-        height: 35px;
-        font-size: 24px;
+        min-width: 25px;
+        height: 25px;
+        font-size: 20px;
         line-height: 28px;
-        top: -10px;
+        top: -5px;
         font-family: var.$secondary-font;
       }
     }
@@ -128,18 +129,18 @@
       display: none;
     }
 
-    &__geo-image {
-      min-height: 100%;
+    // &__geo-image {
+    //   min-height: 100%;
 
-      .image {
-        min-height: 100%;
+    //   .image {
+    //     min-height: 100%;
 
-        svg {
-          width: 50px;
-          height: 50px;
-        }
-      }
-    }
+    //     svg {
+    //       width: 50px;
+    //       height: 50px;
+    //     }
+    //   }
+    // }
 
     .cart .link {
       width: 50px;
