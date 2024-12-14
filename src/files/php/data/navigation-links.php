@@ -6,8 +6,8 @@ $page_client = $page_path . '/client';
 
 $navigationLinks = [
   ['name' => 'Главная', 'path' => "$path/index.php"],
-  ['name' => 'Наши услуги', 'path' => "$page_path/files/php/pages/services/services-page.php"],
-  ['name' => 'О нас', 'path' => "$page_path/files/php/pages/about/about.php"],
+  ['name' => 'Наши услуги', 'path' => "$page_path/service/service.php"],
+  ['name' => 'О нас', 'path' => "$page_path/about/about.php"],
   ['name' => 'Парковочные системы', 'path' => "$page_autosyngals/autosygnals.php?auto=parking-systems"],
   ['name' => 'Автосигнализации', 'path' => "$page_autosyngals/autosygnals.php"],
 ];

@@ -15,10 +15,10 @@ class ServiceCard
     $path = $this->variables->getPathFileURL();
     $output = '';
     $output .= '<div class="service-card">';
-    $output .= '<h2 class="service-card__title">' . htmlspecialchars($card['name']) . '</h2>';
+    $output .= '<h3 class="service-card__title third-title">' . htmlspecialchars($card['name']) . '</h3>';
 
     // Исправление формулы для индекса и формирование пути к изображению
-    $output .= '<img src="' . htmlspecialchars($path . htmlspecialchars($card['src']) . '-' . ($index + 1) . '.avif') . '" alt="' . htmlspecialchars($card['description']) . ' ' . htmlspecialchars($card['name']) . '">';
+    $output .= '<img src="' . htmlspecialchars($path . htmlspecialchars($card['src']) . '-' . ($index + 1) . '.avif') . '" alt="' . htmlspecialchars($card['description']) . ' ' . htmlspecialchars($card['name']) . '" width="300" height="400">';
 
     // Исправление кавычек в ссылке
     $output .= '<div class="service-card__buttons">';

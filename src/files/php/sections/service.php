@@ -14,15 +14,17 @@ $services = $service_data->getServices();
 <section class="service" id="service">
   <div class="container">
     <h2 class="service__title secondary-title">наши услуги</h2>
-    <ul class="service__list list-style-none">
-      <?php foreach ($services as $index => $service): ?>
-        <li class="service__item">
-          <?php
-          $card = new ServiceCard();
-          echo $card->initCard($service, $index);
-          ?>
-        </li>
-      <?php endforeach; ?>
-    </ul>
+    <div class="swiper swiper-service">
+      <ul class="service__list list-style-none swiper__wrapper">
+        <?php foreach ($services as $index => $service): ?>
+          <li class="service__item swiper-slide">
+            <?php
+            $card = new ServiceCard();
+            echo $card->initCard($service, $index);
+            ?>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
   </div>
 </section>
