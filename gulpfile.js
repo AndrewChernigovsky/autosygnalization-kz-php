@@ -235,7 +235,7 @@ const fonts = (cb) => {
     .on('end', cb);
 };
 
-const statics = parallel(() => cleanDist(['dist/assets']), copyStatics, images, videos, sprite, sassTaskLibs, rollupTask);
+const statics = parallel(() => cleanDist(['dist/assets']), copyStatics, fonts, images, videos, sprite, sassTaskLibs, rollupTask);
 const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
 const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask);
 
