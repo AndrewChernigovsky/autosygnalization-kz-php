@@ -24,13 +24,12 @@ function getAutoContent($type)
       return 'Контент не найден.';
   }
 }
+
 $content = getAutoContent($autoType);
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
-
-
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
@@ -52,7 +51,6 @@ echo $head->setHead();
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
     <!-- <h1>Автосигнализации</h1> -->
-    <?php include_once './auto.php'; ?>
     <div>
       <?php echo htmlspecialchars($content); ?>
     </div>

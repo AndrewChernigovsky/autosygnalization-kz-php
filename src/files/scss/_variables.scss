@@ -3,25 +3,30 @@ $desktop-min: 1024px;
 $desktop: 1440px;
 
 $primary-font: "ROBOTO",
-    Arial,
-    sans-serif;
+Arial,
+sans-serif;
 $secondary-font: "OSWALD",
-    Arial,
-    sans-serif;
+Arial,
+sans-serif;
 
 $white: white;
 $black: black;
-$red: red;
+$black-121010: #121010;
+$black-0E0C0C: #0E0C0C;
+$gray-gradient: linear-gradient(rgb(10, 10, 10), rgb(4, 0, 27));
+$gray:rgb(28, 26, 26);
+$gray-bg: rgba(47, 47, 47, 1);
+
 $blue-1: #042247;
 $orange: #FF4600;
-$gray-gradient: linear-gradient(rgb(10, 10, 10), rgb(4, 0, 27));
 $green: lightgreen;
-$gray: rgb(28, 26, 26);
-$gray-bg: rgba(47, 47, 47, 1);
+$red: red;
 $gray-bg-autosygnals: rgb(43, 43, 43);
 $red-64001E: #64001e;
 $red-B40036: #B40036;
 $red-280000: #280000;
 $red-FF0000: #FF0000;
+$gray_413E3E: #413E3E;
+$gray_959090: #959090;
 
 $DEV_PATH: '/dist/';

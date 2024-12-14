@@ -7,7 +7,7 @@ class InsertPhone extends CreateSVG
     if (!empty($contacts_phone)) {
       foreach ($contacts_phone as $phone) {
         $cleanedPhone = str_replace(' ', '', $phone['phone']);
-        echo '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">';
+        echo "<a class='link' href='tel:" . htmlspecialchars($cleanedPhone) . "'>";
 
         if (!empty($social)) {
           echo $this->insertSvg($social);

@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .header {
 
@@ -9,23 +9,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px 0;
-  }
-
-  &__logo {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    text-decoration: none;
-
-    img {
-      width: 58px;
-      height: 40px;
-
-      @media screen and (min-width: var.$desktop-min) {
-        width: 122px;
-        height: 84px;
-      }
-    }
   }
 
   &__menu {
@@ -53,20 +36,6 @@
     font-weight: 700;
   }
 
-  &__text-main {
-    color: var.$white;
-  }
-
-  &__text-secondary {
-    color: var.$red;
-  }
-
-  &__text {
-    p {
-      margin: 0;
-      font-weight: 700;
-    }
-  }
 
   &__geo {
     display: flex;
@@ -87,9 +56,12 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    height: 100%;
 
     .image {
       min-height: 100%;
+      display: flex;
+      align-items: center;
     }
 
     svg {
@@ -108,6 +80,7 @@
       width: 30px;
       height: 100%;
       position: relative;
+      align-items: center;
 
       img {
         margin-top: -10px;
@@ -117,6 +90,10 @@
         @media screen and (min-width: var.$desktop-min) {
           margin-top: auto;
         }
+      }
+
+      svg {
+        height: 35px;
       }
     }
 

@@ -1,5 +1,5 @@
-@use 'variables' as var;
-@use 'mixins' as mix;
+@use 'variables'as var;
+@use 'mixins'as mix;
 
 html {
   height: 100%;
@@ -13,8 +13,8 @@ html {
 }
 
 body {
-  min-height: 100%;
-  background-color: var.$gray-bg;
+  min-height: 100vh;
+  background: linear-gradient(var.$black-121010, var.$black-0E0C0C);
   display: flex;
   flex-direction: column;
   font-family: var.$primary-font;

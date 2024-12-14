@@ -52,6 +52,14 @@
   font-size: 48px;
 }
 
+.secondary-title {
+  font-size: 38px;
+}
+
+.third-title {
+  font-size: 28px;
+}
+
 @media screen and (max-width: var.$tablet) {
   .primary-title {
     font-size: 20px;
@@ -59,6 +67,10 @@
 
   .secondary-title {
     font-size: 18px;
+  }
+
+  .third-title {
+    font-size: 16px;
   }
 
   h3 {
@@ -69,6 +81,20 @@
   p,
   li {
     text-transform: none;
+  }
+}
+
+@media screen and (min-width: var.$tablet) {
+  // .primary-title {
+  //   font-size: 20px;
+  // }
+
+  // .secondary-title {
+  //   font-size: 18px;
+  // }
+
+  .third-title {
+    font-size: 32px;
   }
 }
 
