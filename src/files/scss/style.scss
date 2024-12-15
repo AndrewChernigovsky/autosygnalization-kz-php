@@ -12,9 +12,9 @@
 @use "./blocks/logo"as *;
 @use "./blocks/service-card"as *;
 
-@use "./sections/intro"as *;
-@use "./sections/service"as *;
-@use "./sections/marks"as *;
-@use "./sections/autosygnals"as *;
-@use "./sections/setup"as *;
+@use './sections/intro'as *;
+@use './sections/service'as *;
+@use './sections/marks'as *;
+@use './sections/autosygnals'as *;
 @use './sections/sertificates'as *;
+@use './sections/setup'as *;
