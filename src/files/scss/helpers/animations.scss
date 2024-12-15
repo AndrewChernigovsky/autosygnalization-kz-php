@@ -1,0 +1,27 @@
+@use 'variables'as var;
+
+.animated-button {
+  background-color: var.$black;
+  color: var.$white;
+  animation: shine 7s infinite;
+}
+
+@keyframes shine {
+  0% {
+    background-color: var.$black;
+    color: var.$white;
+    transform: scaleX(1);
+  }
+
+  50% {
+    background-color: var.$white;
+    color: var.$black;
+    transform: scaleX(1.02);
+  }
+
+  100% {
+    background-color: var.$black;
+    color: var.$white;
+    transform: scaleX(1);
+  }
+}

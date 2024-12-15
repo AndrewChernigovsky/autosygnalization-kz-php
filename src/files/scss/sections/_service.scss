@@ -1,6 +1,8 @@
 @use 'variables'as var;
 
 .service {
+  padding: 50px 0;
+
   &__list {
     height: 100%;
     min-height: 400px;
@@ -50,5 +52,9 @@
     align-content: self-end;
     height: inherit;
     min-height: inherit;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    padding: 100px 0;
   }
 }

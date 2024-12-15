@@ -1,7 +1,181 @@
 @use 'variables'as var;
 
-.quality-doc {
-  a {
-    color: var.$white;
+.quality {
+  position: relative;
+  overflow: hidden;
+  min-height: 600px;
+
+  &__video {
+    min-height: inherit;
+    margin: 0 auto;
+    display: flex;
+    height: inherit;
+    max-width: 100%;
+    position: relative;
+    z-index: 2;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+
+    &--bg {
+      display: flex;
+      width: 100%;
+      max-height: 600px;
+      object-fit: cover;
+      position: absolute;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      filter: blur(5px);
+    }
+  }
+
+  &__present {
+    min-height: 200px;
+    position: absolute;
+    bottom: -2px;
+    width: 100%;
+
+    h2 {
+      position: relative;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      background-color: var.$black_0006;
+      margin: 0;
+      z-index: 3;
+
+      p {
+        display: flex;
+        max-width: 1440px;
+        padding: 0 20px 0 50px;
+        margin: 0 auto;
+        justify-content: center;
+        font-weight: 400;
+        font-family: var.$primary-font;
+
+        span {
+          display: flex;
+          max-width: 380px;
+          text-align: left;
+          position: relative;
+
+          &::before {
+            content: '';
+            top: 50%;
+            left: -50px;
+            transform: translateY(-50%);
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-image: url('#{var.$DEV_PATH}assets/images/vectors/shield.svg');
+            background-size: cover;
+            background-position: center;
+          }
+        }
+      }
+    }
+  }
+
+  &__list-wrapper {
+    background-color: var.$black-0E0C0C;
+    min-height: 100px;
+    width: 100%;
+    border-top: 2px solid var.$white;
+    border-bottom: 2px solid var.$white;
+    z-index: 2;
+    position: relative;
+    bottom: 2px;
+
+    .container {
+      min-height: inherit;
+    }
+  }
+
+  &__list {
+    min-height: inherit;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    align-content: center;
+    font-weight: 700;
+    font-family: var.$secondary-font;
+    margin: 0 auto;
+    display: grid;
+    justify-content: center;
+    gap: 10px;
+    padding: 40px 0;
+
+    li {
+      padding-left: 50px;
+      text-align: left;
+      font-size: 18px;
+      position: relative;
+
+      &::before {
+        content: '';
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-image: url('#{var.$DEV_PATH}assets/images/vectors/aprove.svg');
+        background-size: cover;
+        background-position: center;
+      }
+    }
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    min-height: 680px;
+
+    &__video {
+      max-width: 100%;
+
+      &--bg {
+        max-width: 100%;
+      }
+    }
+
+    h2 {
+      min-height: 200px;
+      font-size: 48px;
+
+      p {
+        padding-left: 150px;
+
+        span {
+          max-width: 750px;
+
+          &::before {
+            width: 150px;
+            height: 150px;
+            left: -150px;
+          }
+        }
+      }
+    }
+
+    &__list {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      align-content: center;
+
+      li {
+        text-align: center;
+        font-size: 28px;
+
+        &::before {
+          display: none;
+        }
+      }
+    }
+
+    &__list-wrapper {
+      min-height: 200px;
+    }
   }
 }

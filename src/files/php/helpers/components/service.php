@@ -14,7 +14,7 @@ class ServiceCard
   {
     $path = $this->variables->getPathFileURL();
     $output = '';
-    $output .= '<div class="service-card">';
+    $output .= '<a class="service-card" href="' . htmlspecialchars($path . $card['href']) . '">';
     $output .= '<h3 class="service-card__title third-title">' . htmlspecialchars($card['name']) . '</h3>';
 
     // Исправление формулы для индекса и формирование пути к изображению
@@ -22,13 +22,13 @@ class ServiceCard
 
     // Исправление кавычек в ссылке
     $output .= '<div class="service-card__buttons">';
-    $output .= '<a class="y-button-secondary button" href="' . htmlspecialchars($path . $card['href']) . '">Подробнее</a>';
+    $output .= '<a class="y-button-secondary button animated-button" href="' . htmlspecialchars($path . $card['href']) . '">Подробнее</a>';
 
     // Исправление кавычек в кнопке
     $output .= '<button type="button" class="y-button-primary button">Заказать</button>';
 
     $output .= '</div>';
-    $output .= '</div>';
+    $output .= '</a>';
     return $output;
   }
 }
