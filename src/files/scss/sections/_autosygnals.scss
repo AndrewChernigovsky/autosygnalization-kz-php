@@ -78,10 +78,21 @@
         &__list {
             gap: 10px;
             grid-template-columns: 1fr;
+            display: flex;
         }
+
+        &__list .swiper-slide {
+            opacity: 0 !important
+        }
+
+        &__list .swiper-slide-active {
+            opacity: 1 !important
+        }
+
 
         &__item-card {
             gap: 20px;
+
         }
 
         &__item-title {
@@ -106,5 +117,8 @@
             margin: 0;
         }
 
+        &__pagination {
+            position: static;
+        }
     }
 }
