@@ -4,12 +4,14 @@ async function loadModule() {
   const { initFormValidation } = await import("./modules/validation.js");
   const { initSearch } = await import("./modules/search.js");
   const { toggleList } = await import("./modules/footer-menu.js");
+  const { initFancybox } = await import("./modules/fancybox.js");
 
   toToggleMenu()
   initSwiper();
   initFormValidation();
   initSearch();
   toggleList();
+  initFancybox();
 }
 
 document.addEventListener('DOMContentLoaded', loadModule)

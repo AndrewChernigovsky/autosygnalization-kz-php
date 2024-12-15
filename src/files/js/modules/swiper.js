@@ -1,9 +1,13 @@
+import { EffectCards } from "swiper/modules";
+
 export function initSwiper() {
   const swiperIntro = document.querySelector('.swiper-intro');
   const swiperService = document.querySelector('.swiper-service');
+  const swiperSertificates = document.querySelector('.swiper-sertificates');
 
   let introSwiper;
   let serviceSwiper;
+  let sertificatesSwiper;
 
   function createIntroSwiper() {
     if (!introSwiper && swiperIntro) {
@@ -61,10 +65,35 @@ export function initSwiper() {
     }
   }
 
-  function destroyIntroSwiper() {
-    if (introSwiper) {
-      introSwiper.destroy(true, true);
-      introSwiper = null;
+  function createSertificatesSwiper() {
+    if (!sertificatesSwiper && swiperSertificates) {
+      sertificatesSwiper = new Swiper(swiperSertificates, {
+        loop: true,
+        modules: [Autoplay, Pagination, EffectCards],
+        // effect: 'cards',
+        // grabCursor: true,
+        // cardsEffect: {
+        //   slideShadows: true,
+        //   perSlideOffset: 50,
+        // },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        spaceBetween: 10,
+        slidesPerView: 1.5,
+        centeredSlides: true,
+        breakpoints: {
+          768: {
+            slidesPerView: 2.5,
+            spaceBetween: 20,
+          },
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          }
+        },
+      });
     }
   }
 
@@ -84,6 +113,7 @@ export function initSwiper() {
   }
 
   createIntroSwiper();
+  createSertificatesSwiper();
   checkWindowSize();
 
   window.addEventListener('resize', checkWindowSize);
