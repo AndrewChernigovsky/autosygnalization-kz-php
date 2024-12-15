@@ -48,27 +48,15 @@ echo $head->setHead();
 ?>
 
 <body>
-<<<<<<< HEAD
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <!-- <h1>Автосигнализации</h1> -->
     <div>
-      <?php echo htmlspecialchars($content); ?>
+      <?php include_once './auto.php'; ?>
       <?php include_once './../../helpers/components/setup.php'; ?>
+      <?php echo htmlspecialchars($content); ?>
     </div>
   </main>
   <?php include $base_path . '/footer.php'; ?>
-=======
-    <?php include $base_path . '/header.php'; ?>
-    <main class="main">
-        <!-- <h1>Автосигнализации</h1> -->
-        <?php include_once './auto.php';?>
-        <div>
-            <?php echo htmlspecialchars($content); ?>
-        </div>
-    </main>
-    <?php include $base_path . '/footer.php'; ?>
->>>>>>> 079db738733251636bc317255a48e532b15b25a8
 </body>
 
 </html>
