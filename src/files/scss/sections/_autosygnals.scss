@@ -119,6 +119,19 @@
 
         &__pagination {
             position: static;
+            width: 100%;
+            min-height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        &__pagination .swiper-pagination-bullet {
+            transition: 0.3s ease-in-out;
+            width: 20px;
+            height: 20px;
+            background-color: #413E3E;
         }
     }
 }
