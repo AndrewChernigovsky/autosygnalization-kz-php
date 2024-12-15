@@ -167,16 +167,14 @@ const sassTaskLibs = () => {
 
 
 const copyStatics = (cb) => {
-  // Создаем массив промисов для отслеживания завершения всех операций
+
   const tasks = [];
 
-  // Копируем статические файлы, исключая изображения и видео
   tasks.push(
     src(['./src/assets/**/*', '!./src/assets/images/**', '!./src/assets/videos/**'])
       .pipe(dest('./dist/assets'))
   );
 
-  // Копируем другие необходимые файлы
   tasks.push(
     src([
       './src/.htaccess',
@@ -192,14 +190,13 @@ const copyStatics = (cb) => {
       .pipe(dest(paths.dist))
   );
 
-  // Используем Promise.all для ожидания завершения всех задач
   return Promise.all(tasks)
     .then(() => {
-      cb(); // Вызываем коллбек после завершения всех задач
+      cb();
     })
     .catch(err => {
       console.error('Ошибка при копировании статических файлов:', err);
-      cb(err); // Вызываем коллбек с ошибкой
+      cb(err);
     });
 };
 
@@ -238,7 +235,7 @@ const fonts = (cb) => {
     .on('end', cb);
 };
 
-const statics = parallel(() => cleanDist(['dist/assets']), copyStatics, images, videos, sprite, sassTaskLibs, rollupTask);
+const statics = parallel(() => cleanDist(['dist/assets']), copyStatics, fonts, images, videos, sprite, sassTaskLibs, rollupTask);
 const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
 const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask);
 
