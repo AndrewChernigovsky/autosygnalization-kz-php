@@ -4,6 +4,7 @@
   position: relative;
   min-height: 100%;
   display: grid;
+  align-items: self-end;
 
   &__title {
     font-family: var.$primary-font;

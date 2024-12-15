@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .nav {
   grid-column: 3/12;
@@ -103,7 +103,9 @@
   }
 }
 
-
+.menu-toggle {
+  display: none;
+}
 
 @media screen and (max-width: var.$desktop-min) {
   .nav {
@@ -136,6 +138,7 @@
     width: 50px;
     height: 100%;
     margin-left: 15px;
+    display: flex;
 
     button {
       border: none;

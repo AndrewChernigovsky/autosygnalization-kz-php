@@ -31,6 +31,7 @@ echo $head->setHead();
       'intro.php',
       'marks.php',
       'service.php',
+      'sertificates.php',
     ];
 
     $sectionLoader = new IncludeSections($file_2_section, $files_to_include);
