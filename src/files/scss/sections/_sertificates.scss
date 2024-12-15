@@ -1,0 +1,58 @@
+@use "variables"as var;
+@use "mixins"as mix;
+
+.sertificates {
+  overflow: hidden;
+
+  .swiper-sertificates {
+    li a {
+      display: flex;
+      justify-content: center;
+      height: inherit;
+    }
+
+    height: 300px;
+
+    @media screen and (min-width: var.$desktop) {
+      height: 600px;
+    }
+  }
+
+  .swiper-pagination {
+    display: flex;
+    justify-content: center;
+    padding: 0;
+
+    .swiper-pagination-bullet {
+      transition: 0.3s ease-in-out;
+      width: 20px;
+      height: 20px;
+      background-color: var.$gray_413E3E;
+    }
+
+    .swiper-pagination-bullet-active {
+      background-color: var.$gray_959090;
+    }
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s;
+    transform: scale(0.9);
+
+    a {
+      border-radius: 16px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+      }
+    }
+  }
+
+  .swiper-slide-active {
+    transform: scale(1);
+  }
+}
