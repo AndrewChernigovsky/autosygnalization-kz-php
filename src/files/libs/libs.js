@@ -1,13 +1,16 @@
 import Swiper from 'swiper';
-import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
+import { Autoplay, Pagination, EffectFade, EffectCards } from 'swiper/modules';
 import Inputmask from 'inputmask';
+import { Fancybox } from "@fancyapps/ui";
 
 const libraries = {
   Swiper: Swiper,
   Autoplay: Autoplay,
   Pagination: Pagination,
   EffectFade: EffectFade,
-  Inputmask: Inputmask
+  EffectCards: EffectCards,
+  Inputmask: Inputmask,
+  Fancybox: Fancybox
 };
 
 for (const [key, value] of Object.entries(libraries)) {
@@ -17,6 +20,7 @@ for (const [key, value] of Object.entries(libraries)) {
 async function loadLibs() {
   await import('swiper');
   await import('inputmask');
+  await import('@fancyapps/ui');
 }
 
 loadLibs();

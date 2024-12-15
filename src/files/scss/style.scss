@@ -12,8 +12,16 @@
 @use "./blocks/logo" as *;
 @use "./blocks/service-card" as *;
 
+<<<<<<< HEAD
 @use "./sections/intro" as *;
 @use "./sections/service" as *;
 @use "./sections/marks" as *;
 @use "./sections/autosygnals" as *;
 @use "./sections/setup" as *;
+=======
+@use './sections/intro'as *;
+@use './sections/service'as *;
+@use './sections/marks'as *;
+@use './sections/autosygnals'as *;
+@use './sections/sertificates'as *;
+>>>>>>> 079db738733251636bc317255a48e532b15b25a8
