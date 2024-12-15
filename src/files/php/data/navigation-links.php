@@ -67,4 +67,11 @@ $navigationFooterLinks = [
   ]
 ];
 
-?>
+$categories_autosygnals = [
+  ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-1.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-2.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-3.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=catalog", 'name' => 'Каталог автосигнализаций Starline', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-4.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=accessories", 'name' => 'Пульты и аксессуары', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-5.avif"],
+]
+  ?>
