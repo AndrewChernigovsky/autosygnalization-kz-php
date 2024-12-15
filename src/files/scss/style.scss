@@ -1,27 +1,20 @@
-@use "reset" as *;
-@use "fonts" as *;
-@use "global" as *;
+@use "reset"as *;
+@use "fonts"as *;
+@use "global"as *;
 
-@use "./blocks/footer" as *;
-@use "./blocks/header" as *;
-@use "./blocks/nav" as *;
-@use "./blocks/geo" as *;
-@use "./blocks/phones" as *;
-@use "./blocks/popup" as *;
-@use "./blocks/button" as *;
-@use "./blocks/logo" as *;
-@use "./blocks/service-card" as *;
+@use "./blocks/footer"as *;
+@use "./blocks/header"as *;
+@use "./blocks/nav"as *;
+@use "./blocks/geo"as *;
+@use "./blocks/phones"as *;
+@use "./blocks/popup"as *;
+@use "./blocks/button"as *;
+@use "./blocks/logo"as *;
+@use "./blocks/service-card"as *;
 
-<<<<<<< HEAD
-@use "./sections/intro" as *;
-@use "./sections/service" as *;
-@use "./sections/marks" as *;
-@use "./sections/autosygnals" as *;
-@use "./sections/setup" as *;
-=======
 @use './sections/intro'as *;
 @use './sections/service'as *;
 @use './sections/marks'as *;
 @use './sections/autosygnals'as *;
 @use './sections/sertificates'as *;
->>>>>>> 079db738733251636bc317255a48e532b15b25a8
+@use './sections/setup'as *;

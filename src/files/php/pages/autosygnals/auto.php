@@ -35,6 +35,6 @@ $autosygnals = $categories_autosygnals;
   </div>
 </section>
 <?php
-$isShop = false;
 include_once __DIR__ . '/../../helpers/components/setup.php';
+echo getShop('setup');
 ?>
