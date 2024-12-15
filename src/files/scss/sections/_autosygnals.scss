@@ -60,7 +60,8 @@
         background-color: var.$black;
         text-transform: uppercase;
         font-size: 36px;
-        width: 364px;
+        width: 100%;
+        max-width: 364px;
         min-height: 65px;
     }
 
@@ -88,6 +89,9 @@
             word-break: normal;
         }
 
+        &__item-image {
+            max-height: 350px;
+        }
 
         &__item-block {
             position: static;
@@ -97,7 +101,7 @@
 
         &__item-count {
             font-size: 20px;
-            width: 260px;
+            max-width: 260px;
             min-height: 40px;
             margin: 0;
         }
