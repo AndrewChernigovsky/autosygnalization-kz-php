@@ -13,10 +13,10 @@ $setups = [
       'Наилучшие предложения автоэлектроники в нашем магазине! Выбирайте, что Вас интересует!',
     ],
     "src" => [
-      "mob" => "$path/assets/images/setup/shop-img.png",
-      "desktop" => "$path/assets/images/setup/shop-img.png",
+      "mob" => "$path/assets/images/setup/shop-img.avif",
+      "desktop" => "$path/assets/images/setup/shop-img.avif",
     ],
-    "url"=> "#",
+    "url"=> "$path/files/php/pages/autosygnals/autosygnals.php",
     "link-text" => "В магазин"
   ],
   "setup" => [
@@ -26,10 +26,10 @@ $setups = [
       'Прайс на оборудование и установку',
     ],
     "src" => [
-      "mob" => "$path/assets/images/setup/setup-img-mobile.png",
-      "desktop" => "$path/assets/images/setup/setup-img.png",
+      "mob" => "$path/assets/images/setup/setup-img-mobile.avif",
+      "desktop" => "$path/assets/images/setup/setup-img.avif",
     ],
-    "url" => "#",
+    "url" => "$path/files/php/pages/service/service.php",
     "link-text" => "В раздел"
   ],
 ];
