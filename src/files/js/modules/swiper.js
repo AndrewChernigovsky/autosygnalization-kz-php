@@ -4,10 +4,12 @@ export function initSwiper() {
   const swiperIntro = document.querySelector('.swiper-intro');
   const swiperService = document.querySelector('.swiper-service');
   const swiperSertificates = document.querySelector('.swiper-sertificates');
+  const swiperAutosygnals = document.querySelector('.swiper-autosygnals');
 
   let introSwiper;
   let serviceSwiper;
   let sertificatesSwiper;
+  let autosygnalsSwiper;
 
   function createIntroSwiper() {
     if (!introSwiper && swiperIntro) {
@@ -97,6 +99,23 @@ export function initSwiper() {
     }
   }
 
+  function createAutosygnalsSwiper() {
+    if (!autosygnalsSwiper && swiperAutosygnals) {
+      console.log('Функция');
+      autosygnalsSwiper = new Swiper(swiperAutosygnals, {
+        loop: true,
+        modules: [Autoplay, Pagination, EffectFade],
+        effect: 'fade',
+        speed: 1000,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        slidesPerView: 1,
+      });
+    }
+  }
+
   function destroyServiceSwiper() {
     if (serviceSwiper) {
       serviceSwiper.destroy(true, true);
@@ -104,16 +123,26 @@ export function initSwiper() {
     }
   }
 
+  function destroyAutosygnalsSwiper() {
+    if (autosygnalsSwiper) {
+      autosygnalsSwiper.destroy(true, true);
+      autosygnalsSwiper = null;
+    }
+  }
+
   function checkWindowSize() {
     if (window.innerWidth <= 768) {
       createServiceSwiper();
+      createAutosygnalsSwiper()
     } else {
-      destroyServiceSwiper();
+      destroyServiceSwiper()
+      destroyAutosygnalsSwiper();
     }
   }
 
   createIntroSwiper();
   createSertificatesSwiper();
+  createAutosygnalsSwiper()
   checkWindowSize();
 
   window.addEventListener('resize', checkWindowSize);
