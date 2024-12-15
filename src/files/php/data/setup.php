@@ -10,13 +10,14 @@ $setups = [
   "shop" => [
     "title" => 'Магазин',
     "descs" => [
-      'Воспользуйтесь услугами нашего сервисного центра',
-      'Прайс на оборудование и установку',
+      'Наилучшие предложения автоэлектроники в нашем магазине! Выбирайте, что Вас интересует!',
     ],
     "src" => [
-      "mob" => "$path/assets/images/setup/setup-img-mobile.png",
-      "desktop" => "$path/assets/images/setup/setup-img.png",
-    ]
+      "mob" => "$path/assets/images/setup/shop-img.png",
+      "desktop" => "$path/assets/images/setup/shop-img.png",
+    ],
+    "url"=> "#",
+    "link-text" => "В магазин"
   ],
   "setup" => [
     "title" => 'Установочный центр',
@@ -27,7 +28,9 @@ $setups = [
     "src" => [
       "mob" => "$path/assets/images/setup/setup-img-mobile.png",
       "desktop" => "$path/assets/images/setup/setup-img.png",
-    ]
+    ],
+    "url" => "#",
+    "link-text" => "В раздел"
   ],
 ];
 ?>

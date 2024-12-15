@@ -65,5 +65,6 @@ $path = $variables->getPathFileURL();
   </div>
 </section>
 <?php
+$isShop = false;
 include_once __DIR__ . '/../../helpers/components/setup.php';
 ?>
