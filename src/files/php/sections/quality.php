@@ -1,16 +1,27 @@
-<section class="reasons" id="quality">
-  <div class="container">
-    <div class="reasons__wrapper">
-      <h2 class="secondary-title">Я гарантирую</h2>
-      <ol class="reasons__list">
-        <li>Соблюдение сроков</li>
-        <li>Издержки за наш счёт</li>
-        <li>Поэтапная оплата и оформленный договор</li>
-      </ol>
-      <!-- <div class="quality-doc">
-        <a href="/docs/quality.pdf" download="гарантии.pdf">Скачать Документ "Гарантии на сайт от компании ААА"</a>
-      </div> -->
-    </div>
+<?php
+include_once __DIR__ . '/../data/quality.php';
+?>
 
+<section class="quality" id="quality">
+  <?php foreach ($quality_videos['videos'] as $video): ?>
+    <video class="quality__video" preload="auto" autoplay loop muted poster="<?= htmlspecialchars($video['poster']); ?>">
+      <source src="<?= htmlspecialchars($video['srcMob']); ?>" data-src="<?= htmlspecialchars($video['srcMob']); ?>"
+        type="<?= htmlspecialchars($video['type'][0]); ?>" media="(max-width:768px)" />
+      <?php foreach ($video['src'] as $index => $source): ?>
+        <source src="<?= htmlspecialchars($source); ?>" data-src="<?= htmlspecialchars($source); ?>"
+          type="<?= htmlspecialchars($video['type'][$index]); ?>" />
+      <?php endforeach; ?>
+      Ваш браузер не поддерживает тег video.
+    </video>
+  <?php endforeach; ?>
+  <div class="container">
+    <h2><?php echo htmlspecialchars($quality_videos['title']); ?></h2>
+
+
+    <ul class="quality__list">
+      <?php foreach ($quality_videos['qualities'] as $item): ?>
+        <li class="quality__item"><?php echo htmlspecialchars($item); ?></li>
+      <?php endforeach; ?>
+    </ul>
   </div>
 </section>
