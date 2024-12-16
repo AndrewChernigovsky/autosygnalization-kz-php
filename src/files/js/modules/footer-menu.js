@@ -3,9 +3,9 @@ const footer = document.querySelector('footer');
 let viewPort;
 
 if (footer) {
+  viewPort = window.innerWidth;
   window.addEventListener('resize', () => {
     viewPort = window.innerWidth;
-    console.log(viewPort);
   })
 }
 

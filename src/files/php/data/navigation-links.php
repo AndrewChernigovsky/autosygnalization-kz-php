@@ -6,8 +6,8 @@ $page_client = $page_path . '/client';
 
 $navigationLinks = [
   ['name' => 'Главная', 'path' => "$path/index.php"],
-  ['name' => 'Наши услуги', 'path' => "$page_path/files/php/pages/services/services-page.php"],
-  ['name' => 'О нас', 'path' => "$page_path/files/php/pages/about/about.php"],
+  ['name' => 'Наши услуги', 'path' => "$page_path/service/service.php"],
+  ['name' => 'О нас', 'path' => "$page_path/about/about.php"],
   ['name' => 'Парковочные системы', 'path' => "$page_autosyngals/autosygnals.php?auto=parking-systems"],
   ['name' => 'Автосигнализации', 'path' => "$page_autosyngals/autosygnals.php"],
 ];
@@ -19,13 +19,13 @@ $navigationFooterLinks = [
       [
         'name' => 'Автосигнализации',
         'children' => [
-          // [
-          //   'name' => 'Типы автосигнализаций',
-          //   'children' => [
-          //     ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском'],
-          //     ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM'],
-          //   ],
-          // ],
+          [
+            'name' => 'Типы автосигнализаций',
+            'children' => [
+              ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском'],
+              ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM'],
+            ],
+          ],
           ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском'],
           ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM'],
           ['link' => "$page_autosyngals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска'],
@@ -67,4 +67,11 @@ $navigationFooterLinks = [
   ]
 ];
 
-?>
+$categories_autosygnals = [
+  ['link' => "$page_autosyngals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-1.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-2.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-3.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=catalog", 'name' => 'Каталог автосигнализаций Starline', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-4.avif"],
+  ['link' => "$page_autosyngals/autosygnals.php?auto=accessories", 'name' => 'Пульты и аксессуары', "count" => 11, "src" => "$path/assets/images/autosygnals/autosygnals-5.avif"],
+]
+  ?>

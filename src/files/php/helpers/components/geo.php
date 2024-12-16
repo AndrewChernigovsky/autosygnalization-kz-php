@@ -20,7 +20,7 @@ class GEO
 
   public function getGeo()
   {
-    $social = $this->contacts->getSocial();
+    $social = $this->contacts->getGeoIcon($this->variables->getPathFileURL());
     $geoIcon = isset($social['geo']) ? $social['geo'] : null;
     if ($geoIcon === null) {
       return "<p>Гео-иконка не найдена.</p>";

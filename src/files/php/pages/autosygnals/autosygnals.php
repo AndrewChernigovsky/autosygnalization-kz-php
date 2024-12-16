@@ -50,8 +50,9 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <!-- <h1>Автосигнализации</h1> -->
     <div>
+      <?php include_once './auto.php'; ?>
+      <?php include_once './../../helpers/components/setup.php'; ?>
       <?php echo htmlspecialchars($content); ?>
     </div>
   </main>

@@ -1,2 +1,6 @@
 @use './../../../node_modules/swiper/swiper.scss'as *;
 @use './../../../node_modules/swiper/modules/effect-fade.scss'as *;
+@use './../../../node_modules/swiper/modules/effect-cards.scss'as *;
+@use './../../../node_modules/swiper/modules/pagination.scss'as *;
+@use './../../../node_modules/swiper/modules/navigation.scss'as *;
+@use "./../../../node_modules/@fancyapps/ui/dist/fancybox/fancybox.css"as *;

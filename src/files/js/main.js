@@ -5,6 +5,7 @@ async function loadModule() {
   const { initSearch } = await import("./modules/search.js");
   const { toggleList } = await import("./modules/footer-menu.js");
   const { validateSectionForm } = await import("./modules/validate-form.js");
+  const { initFancybox } = await import("./modules/fancybox.js");
 
   toToggleMenu()
   initSwiper();
@@ -12,6 +13,7 @@ async function loadModule() {
   initSearch();
   toggleList();
   validateSectionForm();
+  initFancybox();
 }
 
 document.addEventListener('DOMContentLoaded', loadModule)

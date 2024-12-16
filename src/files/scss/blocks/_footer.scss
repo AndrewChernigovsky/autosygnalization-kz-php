@@ -1,4 +1,4 @@
-@use 'variables'as var;
+@use "variables" as var;
 
 .footer {
   padding: 20px 0;
@@ -33,6 +33,11 @@
       grid-area: logo;
     }
 
+    .email-site {
+      grid-area: email-site;
+      width: min-content;
+    }
+
     .social {
       text-transform: none;
       display: grid;
@@ -65,12 +70,17 @@
       text-transform: none;
       grid-area: email;
 
-      p {
+      a {
         color: var.$white;
         font-family: var.$primary-font;
         margin: 0;
         font-size: 14px;
         font-weight: 700;
+        background-repeat: no-repeat;
+        background-size: 15px 15px;
+        line-height: 30px;
+        padding-right: 30px;
+        background-position: right;
       }
     }
 
@@ -79,12 +89,17 @@
       text-transform: none;
       grid-area: site;
 
-      p {
+      a {
         color: var.$white;
         font-family: var.$primary-font;
         margin: 0;
         font-size: 14px;
         font-weight: 700;
+        background-repeat: no-repeat;
+        background-size: 15px 15px;
+        line-height: 25px;
+        padding-right: 30px;
+        background-position: right;
       }
     }
 
@@ -99,7 +114,6 @@
         span {
           color: var.$white;
         }
-
       }
     }
 
@@ -107,6 +121,9 @@
       color: var.$white;
       text-decoration: none;
       font-weight: 700;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -127,11 +144,11 @@
       border-radius: 50%;
 
       &.telegram-icon {
-        background-image: url('#{var.$DEV_PATH}assets/images/vectors/telegram.svg');
+        background-image: url("#{var.$DEV_PATH}assets/images/vectors/telegram.svg");
       }
 
       &.whatsapp-icon {
-        background-image: url('#{var.$DEV_PATH}assets/images/vectors/whatsapp.svg');
+        background-image: url("#{var.$DEV_PATH}assets/images/vectors/whatsapp.svg");
       }
     }
   }
@@ -192,28 +209,8 @@
         display: block;
       }
 
-      &>span {
+      & > span {
         position: relative;
-
-        &:hover {
-
-          &::before {
-            content: '';
-            position: absolute;
-            background: url('#{var.$DEV_PATH}assets/images/vectors/arrow-up.svg') no-repeat center center;
-            background-size: 30px;
-            border-radius: 5px;
-            width: 15px;
-            height: 15px;
-            left: -20px;
-            top: 50%;
-            transform: translateY(-50%);
-          }
-
-          &.active::before {
-            background: url('#{var.$DEV_PATH}assets/images/vectors/arrow.svg') no-repeat center center;
-          }
-        }
       }
     }
 
@@ -224,7 +221,7 @@
       margin-left: 25px;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         left: -20px;
         top: 0;
@@ -234,7 +231,7 @@
       }
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         left: -27px;
         top: -5px;
@@ -244,7 +241,6 @@
         background-color: var.$white;
       }
     }
-
   }
 
   h3.toggle-list {
@@ -255,11 +251,12 @@
     text-transform: uppercase;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       border: 1px solid var.$white;
-      background: url('#{var.$DEV_PATH}assets/images/vectors/arrow.svg') no-repeat center center,
-      linear-gradient(var.$red-280000, var.$red-FF0000);
+      background: url("#{var.$DEV_PATH}assets/images/vectors/arrow.svg")
+          no-repeat center center,
+        linear-gradient(var.$red-280000, var.$red-FF0000);
       background-size: 30px;
       border-radius: 5px;
       width: 48px;
@@ -270,32 +267,31 @@
     }
 
     &.active::before {
-      background: url('#{var.$DEV_PATH}assets/images/vectors/arrow-up.svg') no-repeat center center,
-      linear-gradient(var.$red-280000, var.$red-FF0000);
-
+      background: url("#{var.$DEV_PATH}assets/images/vectors/arrow-up.svg")
+          no-repeat center center,
+        linear-gradient(var.$red-280000, var.$red-FF0000);
     }
 
-    &+ul {
+    & + ul {
       display: none;
     }
 
-    &.active+ul {
+    &.active + ul {
       display: block;
     }
   }
 
   span {
-    &.toggle-list+ul {
+    &.toggle-list + ul {
       display: none;
     }
 
-    &.toggle-list.active+ul {
+    &.toggle-list.active + ul {
       display: grid;
     }
   }
 
   .toggle-inner-list {
-    cursor: pointer;
     transition: 0.3s ease-in-out;
 
     &:hover {
@@ -310,7 +306,7 @@
     padding-bottom: 20px;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       bottom: 5px;
       left: 0;
@@ -320,7 +316,7 @@
     }
 
     &::after {
-      content: '';
+      content: "";
       position: absolute;
       bottom: 0px;
       left: -10px;
@@ -338,7 +334,7 @@
       padding-bottom: 20px;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         bottom: 10px;
         left: 0;
@@ -348,7 +344,7 @@
       }
 
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         bottom: 5px;
         left: -10px;
@@ -361,7 +357,6 @@
   }
 
   &__copy {
-    margin: 0;
     text-transform: none;
     font-family: var.$primary-font;
     max-width: 300px;
@@ -439,11 +434,8 @@
           right: 0px;
           top: 50%;
           transform: translateY(-50%);
-
         }
       }
-
-
     }
 
     &__menu {
@@ -455,7 +447,7 @@
         padding-left: 0;
         cursor: auto;
 
-        &>span {
+        & > span {
           cursor: auto;
         }
 
@@ -476,7 +468,6 @@
     }
 
     &__menu-title {
-
       &::before,
       &::after {
         display: none;
@@ -484,9 +475,8 @@
     }
 
     &__wrapper {
-
       &::after {
-        content: '';
+        content: "";
         position: absolute;
         bottom: 50px;
         width: 100%;
@@ -500,15 +490,107 @@
       max-width: 1440px;
     }
 
-    &__menu-list>li:not(:has(a:first-of-type)) .toggle-list {
+    &__menu-list > li:not(:has(a:first-of-type)) .toggle-list {
       cursor: auto;
 
       &:hover {
         opacity: 1;
       }
     }
+
+    &__menu-title {
+      min-height: 100%;
+
+      &:not(:last-of-type) {
+        border-right: 2px solid var.$white;
+        position: relative;
+      }
+
+      &:not(:first-of-type) {
+        padding-left: 10px;
+
+        &::before {
+          content: "";
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: var.$white;
+          position: absolute;
+          display: block;
+          top: 0;
+          left: -11px;
+        }
+      }
+    }
+
+    &__contacts {
+      position: relative;
+      height: 100%;
+
+      &::before {
+        content: "";
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: var.$white;
+        position: absolute;
+        display: block;
+        top: 0;
+        left: calc(33.3% - 10px);
+      }
+
+      &::after {
+        content: "";
+        width: 2px;
+        height: 100%;
+        border-radius: 50%;
+        background-color: var.$white;
+        position: absolute;
+        display: block;
+        top: 0;
+        left: calc(33.3% - 5px);
+      }
+
+      .phones {
+        position: relative;
+        height: inherit;
+        align-content: center;
+        padding-left: 10px;
+
+        &::before {
+          content: "";
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: var.$white;
+          position: absolute;
+          display: block;
+          top: 0;
+          right: calc(100% + 6px);
+        }
+
+        &::after {
+          content: "";
+          width: 2px;
+          height: inherit;
+          border-radius: 50%;
+          background-color: var.$white;
+          position: absolute;
+          display: block;
+          top: 0;
+          right: calc(100% + 10px);
+        }
+      }
+    }
   }
 
+  @media screen and (min-width: var.$tablet) {
+    &__menu-list {
+      li > span:first-of-type:hover {
+        opacity: 1;
+      }
+    }
+  }
 
   @media screen and (min-width: var.$desktop) {
     &__inner {
@@ -525,10 +607,7 @@
       svg {
         height: 29px;
         right: 30px;
-
       }
     }
-
-
   }
 }

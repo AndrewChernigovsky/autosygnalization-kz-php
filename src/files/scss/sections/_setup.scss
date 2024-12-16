@@ -1,0 +1,87 @@
+@use "../variables" as var;
+
+.setup {
+  &__container {
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 10px;
+    padding: 20px 10px;
+    border-radius: 25px;
+    background-color: var.$black-121010;
+
+    @media screen and (min-width: var.$tablet) {
+      flex-direction: row;
+    }
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media screen and (min-width: var.$tablet) {
+      align-items: start;
+    }
+  }
+  &__title {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 24px;
+    line-height: 30px;
+    text-transform: uppercase;
+
+    @media screen and (min-width: var.$tablet) {
+      align-self: center;
+      margin-bottom: auto;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 48px;
+      line-height: 60px;
+    }
+  }
+
+  &__description {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+    font-family: var.$primary-font;
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 34px;
+      line-height: 42px;
+    }
+  }
+
+  &__btn {
+    display: block;
+    margin-top: auto;
+    width: 100%;
+    max-width: 240px;
+    align-self: center;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid var.$white;
+    background-image: linear-gradient(
+      180deg,
+      var.$red_280000 0,
+      var.$red_FF0000 100%
+    );
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 64px;
+      line-height: 86px;
+      max-width: 540px;
+    }
+  }
+
+  &__img-container {
+    align-self: center;
+  }
+}
