@@ -8,10 +8,6 @@
   Allow from all
 </FilesMatch>
 
-<IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "*"
-</IfModule>
-
 AddType application/pdf .pdf
 
 <IfModule mod_mime.c>

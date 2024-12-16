@@ -1,0 +1,16 @@
+@use 'variables'as var;
+
+.popular {
+  background-color: var.$white;
+
+  &__title {
+    color: var.$black;
+  }
+
+
+  &__item {
+    background-color: var.$gray-bg-autosygnals;
+    padding: 20px;
+    border-radius: 15px;
+  }
+}

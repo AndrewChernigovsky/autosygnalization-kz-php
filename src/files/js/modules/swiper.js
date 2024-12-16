@@ -5,11 +5,15 @@ export function initSwiper() {
   const swiperService = document.querySelector('.swiper-service');
   const swiperSertificates = document.querySelector('.swiper-sertificates');
   const swiperAutosygnals = document.querySelector('.swiper-autosygnals');
+  const swiperPopular = document.querySelector('.swiper-popular');
+  const swiperPopularGallery = document.querySelectorAll('.popular__item .swiper-popular-gallery');
 
   let introSwiper;
   let serviceSwiper;
   let sertificatesSwiper;
   let autosygnalsSwiper;
+  let popularSwiper;
+  let popularGallerySwiper;
 
   function createIntroSwiper() {
     if (!introSwiper && swiperIntro) {
@@ -48,6 +52,48 @@ export function initSwiper() {
       if (initialTitle) {
         initialTitle.classList.add('visible');
       }
+    }
+  }
+
+  function createPopularSwiper() {
+    if (!popularSwiper && swiperPopular) {
+      popularSwiper = new Swiper(swiperPopular, {
+        modules: [Autoplay, Pagination],
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        slidesPerView: 1,
+        spaceBetween: 10,
+        breakpoints: {
+          768: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          }
+        },
+      });
+    }
+  }
+
+  function createPopularGallerySwiper() {
+    if (!popularGallerySwiper && swiperPopularGallery) {
+      console.log(swiperPopularGallery);
+      swiperPopularGallery.forEach(element => {
+        popularGallerySwiper = new Swiper(element, {
+          loop: true,
+          modules: [Autoplay, Pagination],
+          pagination: {
+            el: '.swiper-pagination',
+            clickable: true,
+          },
+          slidesPerView: 1,
+          spaceBetween: 10,
+        });
+      });
     }
   }
 
@@ -142,8 +188,9 @@ export function initSwiper() {
 
   createIntroSwiper();
   createSertificatesSwiper();
-  createAutosygnalsSwiper()
+  createAutosygnalsSwiper();
+  createPopularGallerySwiper();
+  createPopularSwiper();
   checkWindowSize();
-
   window.addEventListener('resize', checkWindowSize);
 }
