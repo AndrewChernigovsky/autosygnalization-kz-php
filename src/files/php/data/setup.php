@@ -26,7 +26,7 @@ $setups = [
       'Прайс на оборудование и установку',
     ],
     "src" => [
-      "mob" => "$path/assets/images/setup/setup-img-mobile.avif",
+      "mob" => "$path/assets/images/setup/setup-img.avif",
       "desktop" => "$path/assets/images/setup/setup-img.avif",
     ],
     "url" => "$path/files/php/pages/service/service.php",
