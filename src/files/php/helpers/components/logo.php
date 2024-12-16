@@ -27,11 +27,7 @@ class Logo
 
     $output = "
             <a href='/' class='logo'>
-                <img src='" . htmlspecialchars($logo_path) . "' alt='" . htmlspecialchars($logo_description) . "' width='122' height='84'/>
-                <div class='logo__text'>
-                    <p class='logo__text-main text-main'>Auto</p>
-                    <p class='logo__text-secondary text-secondary'>Security</p>
-                </div>
+                <img src='" . htmlspecialchars($logo_path) . "' alt='" . htmlspecialchars($logo_description) . "' width='142' height='40'/>
             </a>";
 
     return $output;
