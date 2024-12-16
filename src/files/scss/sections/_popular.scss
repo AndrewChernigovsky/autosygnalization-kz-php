@@ -1,16 +1,103 @@
-@use 'variables'as var;
+@use 'variables' as var;
 
 .popular {
-  background-color: var.$white;
+  background-color: var.$black;
+
 
   &__title {
-    color: var.$black;
+    color: var.$white;
+    font-size: 24px;
+    line-height: 34px;
+    margin-block-end: 30px;
+
   }
 
+  &__list {
+    display: flex;
+  }
 
   &__item {
     background-color: var.$gray-bg-autosygnals;
     padding: 20px;
     border-radius: 15px;
+    height: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 20px;
+
+    .swiper {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+  }
+
+  &__item-title {
+    text-align: right;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 30px;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  img {
+    display: flex;
+    background-color: var.$white;
+    border-radius: 20px;
+    width: 100%;
+  }
+
+
+  &__item-block {
+    margin: 0;
+  }
+
+  &__item-price {
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 36px;
+  }
+
+  &__item-currency {
+    font-weight: 700;
+    font-size: 28px;
+    line-height: 36px;
+    color: var.$red;
+  }
+
+  &__item-buttons {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    &__title {
+      font-size: 64px;
+      line-height: 88px;
+      margin-block-end: 30px;
+
+    }
+
+
+    &__item-title {
+      font-size: 34px;
+      line-height: 42px;
+    }
+
+    &__item-price {
+      font-size: 48px;
+      line-height: 66px;
+    }
+
+    &__item-currency {
+      font-size: 48px;
+      line-height: 66px;
+    }
   }
 }
