@@ -84,6 +84,7 @@
     @media screen and (min-width: var.$desktop-min) {
         font-size: 36px;
         width: 100%;
+        min-width: 260px;
         max-width: 364px;
         min-height: 65px;
 
@@ -109,6 +110,7 @@
     @media screen and (min-width: var.$desktop-min) {
         font-size: 24px;
         width: 100%;
+        min-width: 260px;
         max-width: 364px;
         min-height: 65px;
 
