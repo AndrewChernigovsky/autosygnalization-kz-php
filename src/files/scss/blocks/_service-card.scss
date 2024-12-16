@@ -31,7 +31,7 @@
 
   &__buttons {
     position: absolute;
-    bottom: 20px;
+    bottom: 50px;
     align-items: center;
     max-width: 80%;
     justify-items: center;
@@ -44,6 +44,7 @@
 
     @media screen and (min-width: var.$tablet) {
       display: flex;
+      bottom: 20px;
     }
   }
 
