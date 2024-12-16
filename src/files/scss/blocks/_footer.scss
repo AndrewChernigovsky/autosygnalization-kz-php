@@ -263,13 +263,15 @@
       height: 48px;
       left: 0;
       top: 50%;
+      transition: all 0.3s ease;
       transform: translateY(-50%);
     }
 
     &.active::before {
-      background: url("#{var.$DEV_PATH}assets/images/vectors/arrow-up.svg")
+      transform: translateY(-50%) scaleY(-1);
+      background: url("#{var.$DEV_PATH}assets/images/vectors/arrow.svg")
           no-repeat center center,
-        linear-gradient(var.$red-280000, var.$red-FF0000);
+        linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
     }
 
     & + ul {
