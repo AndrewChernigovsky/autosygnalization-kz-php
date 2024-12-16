@@ -1,6 +1,7 @@
-@use 'variables'as var;
+@use "variables" as var;
 
 .nav {
+  grid-row: 1 / 2;
   grid-column: 3/12;
   display: flex;
   align-items: center;
@@ -19,7 +20,6 @@
 .nav-link.active {
   padding-bottom: 2px;
   border-bottom: 1px solid var.$white;
-
 }
 
 .search {
@@ -33,7 +33,7 @@
   min-width: inherit;
 
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     width: 20px;
     height: 20px;
@@ -42,7 +42,7 @@
     left: 6px;
     z-index: 1;
     mask-position: center;
-    mask-image: url('#{var.$DEV_PATH}assets/images/vectors/search.svg');
+    mask-image: url("#{var.$DEV_PATH}assets/images/vectors/search.svg");
     background-color: var.$black;
     mask-position: center;
     mask-repeat: no-repeat;
@@ -149,7 +149,7 @@
       position: relative;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: 50%;
         left: 50%;
@@ -157,9 +157,7 @@
         background-color: var.$red;
         width: inherit;
         height: 2px;
-        box-shadow:
-          0px 10px 0 var.$red,
-          0px -10px 0 var.$red;
+        box-shadow: 0px 10px 0 var.$red, 0px -10px 0 var.$red;
       }
     }
 
@@ -167,7 +165,7 @@
       position: relative;
 
       &::before {
-        content: '';
+        content: "";
         position: fixed;
         z-index: 10;
         background-color: var.$gray-bg;
@@ -182,7 +180,7 @@
         z-index: 13;
 
         &::before {
-          content: '';
+          content: "";
           position: absolute;
           top: 50%;
           left: 50%;
@@ -195,7 +193,7 @@
         }
 
         &::after {
-          content: '';
+          content: "";
           position: absolute;
           top: 50%;
           left: 50%;
@@ -210,7 +208,6 @@
   }
 
   .menu-btns {
-
     .phone,
     .search {
       display: none;
@@ -311,5 +308,4 @@
       min-width: 640px;
     }
   }
-
 }
