@@ -1,6 +1,5 @@
 <?php
 include_once __DIR__ . '/../data/slides.php';
-$viewportWidth = 768;
 ?>
 <style>
   .title {
@@ -22,17 +21,15 @@ $viewportWidth = 768;
           <div class="swiper-slide swiper-intro__slide">
             <video class="intro__video" preload="auto" autoplay loop muted
               poster="<?= htmlspecialchars($slide['poster']) ?>">
-              <?php if ($viewportWidth < 768): ?>
-                <source src="<?= htmlspecialchars($slide['srcMob']) ?>" data-src="<?= htmlspecialchars($slide['srcMob']) ?>"
-                  type="video/mp4" />
-              <?php else: ?>
-                <?php foreach ($slide['src'] as $index => $source): ?>
-                  <source src="<?= htmlspecialchars($source) ?>" data-src="<?= htmlspecialchars($source) ?>"
-                    type="<?= htmlspecialchars($slide['type'][$index]) ?>" />
-                <?php endforeach; ?>
-              <?php endif; ?>
+              <source src="<?= htmlspecialchars($slide['srcMob']) ?>" data-src="<?= htmlspecialchars($slide['srcMob']) ?>"
+                type="<?= htmlspecialchars($slide['type'][0]) ?>" media="(max-width:768px)" />
+              <?php foreach ($slide['src'] as $index => $source): ?>
+                <source src="<?= htmlspecialchars($source) ?>" data-src="<?= htmlspecialchars($source) ?>"
+                  type="<?= htmlspecialchars($slide['type'][$index]) ?>" />
+              <?php endforeach; ?>
               Ваш браузер не поддерживает тег video.
             </video>
+
 
             <div class="container intro__content">
               <h2 class="intro__title visible"><?= htmlspecialchars($slide['title']) ?></h2>

@@ -2,6 +2,8 @@
 @use "fonts"as *;
 @use "global"as *;
 
+@use "./helpers/animations"as *;
+
 @use "./blocks/footer"as *;
 @use "./blocks/header"as *;
 @use "./blocks/nav"as *;
@@ -18,3 +20,4 @@
 @use './sections/autosygnals'as *;
 @use './sections/sertificates'as *;
 @use './sections/setup'as *;
+@use './sections/quality'as *;

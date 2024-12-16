@@ -3,6 +3,7 @@
 
 .sertificates {
   overflow: hidden;
+  padding: 50px 0;
 
   .swiper-sertificates {
     li a {
@@ -54,5 +55,9 @@
 
   .swiper-slide-active {
     transform: scale(1);
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    padding: 100px 0;
   }
 }
