@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .form {
   &__wrapper {
@@ -91,10 +91,10 @@
       height: 150px;
       background-size: 90px 90px;
     }
-  }  
+  }
 
   &__radio--genesis {
-    background-image: url('/dist/assets/images/cars-brand/genesis.avif');    
+    background-image: url('/dist/assets/images/cars-brand/genesis.avif');
   }
 
   &__radio--kia {
@@ -158,7 +158,7 @@
     }
   }
 
-  &__input {    
+  &__input {
     font-size: 24px;
     line-height: 30px;
     padding: 10px;
@@ -189,7 +189,7 @@
     border: 10px solid var.$red;
   }
 
-  &__input--textarea {    
+  &__input--textarea {
     min-height: 340px;
     margin-bottom: 20px;
     font-size: 16px;
@@ -210,7 +210,7 @@
   }
 
   &__button {
-    width: auto;
+    width: 100%;
     min-height: 48px;
     margin-bottom: 10px;
     font-family: var.$primary-font;
@@ -224,6 +224,7 @@
     @media (min-width: var.$desktop-min) {
       min-height: 71px;
       font-size: 34px;
+      width: 100%;
       text-transform: uppercase;
     }
   }
@@ -231,10 +232,10 @@
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 input[type="number"] {
-    -moz-appearance: textfield;
+  -moz-appearance: textfield;
 }

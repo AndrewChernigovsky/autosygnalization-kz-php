@@ -4,11 +4,6 @@
 
 @use "./helpers/animations"as *;
 
-@use './sections/intro' as *;
-@use './sections/marks' as *;
-@use './sections/autosygnals' as *;
-@use './sections/form' as *;
-
 @use "./blocks/footer"as *;
 @use "./blocks/header"as *;
 @use "./blocks/nav"as *;
@@ -26,4 +21,4 @@
 @use './sections/sertificates'as *;
 @use './sections/setup'as *;
 @use './sections/quality'as *;
-
+@use './sections/form'as *;
