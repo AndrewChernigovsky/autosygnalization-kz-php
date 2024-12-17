@@ -52,6 +52,8 @@
 
       &__icons {
         display: flex;
+        flex-wrap: wrap;
+        max-width: 140px;
 
         svg {
           width: 25px;
