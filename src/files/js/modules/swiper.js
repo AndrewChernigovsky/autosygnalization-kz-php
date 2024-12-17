@@ -125,12 +125,6 @@ export function initSwiper() {
       sertificatesSwiper = new Swiper(swiperSertificates, {
         loop: true,
         modules: [Autoplay, Pagination, EffectCards],
-        // effect: 'cards',
-        // grabCursor: true,
-        // cardsEffect: {
-        //   slideShadows: true,
-        //   perSlideOffset: 50,
-        // },
         pagination: {
           el: '.swiper-pagination',
           clickable: true,

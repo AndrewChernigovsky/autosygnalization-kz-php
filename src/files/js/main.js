@@ -8,8 +8,10 @@ async function loadModule() {
   const { initFancybox } = await import("./modules/fancybox.js");
   const { initPhone } = await import("./modules/phone-button.js");
 
-  toToggleMenu()
-  initSwiper();
+  toToggleMenu();
+  setTimeout(
+    initSwiper, 100
+  );
   initFormValidation();
   initSearch();
   toggleList();
