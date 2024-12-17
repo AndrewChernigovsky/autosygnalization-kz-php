@@ -12,8 +12,8 @@
   border: none;
 
   &__wrapper {
-    background-color: var.$white;
     mask-image: url('#{var.$DEV_PATH}assets/images/vectors/phone-no-border.svg');
+    background-color: var.$white;
     mask-position: center;
     mask-repeat: no-repeat;
     mask-size: 100%;
