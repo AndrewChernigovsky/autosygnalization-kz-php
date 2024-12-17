@@ -1,4 +1,4 @@
-@use 'variables'as var;
+@use "variables" as var;
 
 .service-card {
   position: relative;
@@ -23,7 +23,7 @@
 
   img {
     display: flex;
-    max-height: 554px;
+    max-height: 500px;
     margin: 0 auto;
     width: 100%;
     transition: transform 0.5s ease;

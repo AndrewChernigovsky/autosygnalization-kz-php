@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use "variables" as var;
 
 .autosygnals {
   &__title {
@@ -31,7 +31,7 @@
   &__item-image {
     display: flex;
     height: 100%;
-    max-height: 554px;
+    max-height: 500px;
     margin: 0 auto;
     width: 100%;
   }
@@ -68,7 +68,6 @@
   }
 
   @media screen and (max-width: var.$tablet) {
-
     &__title {
       font-size: 24px;
     }
@@ -79,17 +78,16 @@
       display: flex;
 
       .swiper-slide {
-        opacity: 0 !important
+        opacity: 0 !important;
       }
 
       .swiper-slide-active {
-        opacity: 1 !important
+        opacity: 1 !important;
       }
     }
 
     &__item-card {
       gap: 20px;
-
     }
 
     &__item-title {
@@ -127,7 +125,7 @@
         transition: 0.3s ease-in-out;
         width: 20px;
         height: 20px;
-        background-color: #413E3E;
+        background-color: #413e3e;
       }
     }
   }
