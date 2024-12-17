@@ -42,17 +42,12 @@
         </li>
         <li class="form__item form__item--textarea">
           <label class="form__subtitle">Ваше сообщение:
-            <textarea class="form__input form__input--textarea" name="message" id="message" required>Вы купили автомобиль и желаете защитить его, установив сигнализацию?  Вы любите комфорт и хотите установить автозапуск на Ваше авто?  Вам необходимо отслеживать Ваш транспорт по GPS?  Обращайтесь к нам, и мы поможем Вам решить эти задачи!</textarea>
+            <textarea class="form__input form__input--textarea" name="message" id="message" placeholder="Вы купили автомобиль и желаете защитить его, установив сигнализацию?  Вы любите комфорт и хотите установить автозапуск на Ваше авто?  Вам необходимо отслеживать Ваш транспорт по GPS?  Обращайтесь к нам, и мы поможем Вам решить эти задачи!" required></textarea>
           </label>
         </li>
-      </ul>     
-      <button class="form__button y-button-primary" type="submit">Отправить заявку</button> 
-      <div class="captcha">
-        <button type="button" class="captcha-btn">Капча!</button>
-        <div id="RecaptchaField2"></div>
-      </div>
-      <input type="text" class="password-hash" id="password-hash" value="" aria-hidden="true" aria-label="false"
-        tabindex="-1">       
+      </ul> 
+      <div class="g-recaptcha" data-sitekey="КЛЮЧ_САЙТА" data-callback="onReCaptchaSuccess"></div>     
+      <button class="form__button y-button-primary" type="submit">Отправить заявку</button>      
     </form>
   </div>
 </section>

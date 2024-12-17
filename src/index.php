@@ -29,11 +29,11 @@ echo $head->setHead();
     $file_2_section = './files/php/sections/';
     $files_to_include = [
       'intro.php',
-      'marks.php',
-      'form.php',
+      'marks.php',      
       'service.php',
       'quality.php',
       'sertificates.php',
+      'form.php',
     ];
 
     $sectionLoader = new IncludeSections($file_2_section, $files_to_include);

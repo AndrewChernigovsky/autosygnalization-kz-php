@@ -58,7 +58,39 @@ function validateForm() {
   }
 
   if (isValid) {
-    feedbackForm.submit();
-    feedbackForm.reset();
+    grecaptcha.execute();
   }
 }
+
+function onReCaptchaSuccess(token) {
+    const tokenInput = document.createElement('input');
+    tokenInput.type = 'hidden';
+    tokenInput.name = 'g-recaptcha-response';
+    tokenInput.value = token;
+
+    feedbackForm.appendChild(tokenInput);
+    feedbackForm.submit();
+}
+
+window.onReCaptchaSuccess = onReCaptchaSuccess;
+
+function initFormValidation() {
+  if (feedbackForm) {
+    const script = document.createElement('script');
+    script.src = 'https://www.google.com/recaptcha/api.js';
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    script.onload = function () {
+    grecaptcha.ready(function () {
+    submitButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      validateForm();
+    });
+  });
+};
+  }
+}
+
+initFormValidation();
