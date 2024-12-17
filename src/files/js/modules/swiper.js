@@ -87,7 +87,7 @@ export function initSwiper() {
     if (!popularGallerySwiper && swiperPopularGallery) {
       swiperPopularGallery.forEach(element => {
         popularGallerySwiper = new Swiper(element, {
-          loop: true,
+          loop: false,
           modules: [Autoplay, Pagination, Navigation],
           pagination: {
             el: '.swiper-pagination',
@@ -98,7 +98,7 @@ export function initSwiper() {
             prevEl: '.swiper-button-prev',
           },
           slidesPerView: 1,
-          spaceBetween: 10,
+          spaceBetween: 0,
         });
       });
     }
