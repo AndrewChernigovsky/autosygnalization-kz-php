@@ -27,7 +27,7 @@ class Head
   public function setHead(): string
   {
     global $pathFile_URL;
-    $title = $this->title ?? 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
+    $title = $this->title ?? "Auto Security - магазин автоэлектроники и установочный центр d в г.Алматы. Авторизованный партнер Starline.";
     $headContent = <<<HTML
             <meta charset="utf-8">
             <meta name='viewport' content='width=device-width, initial-scale=1.0'>
