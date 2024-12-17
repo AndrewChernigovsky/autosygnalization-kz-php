@@ -1,6 +1,24 @@
 <?php
-include_once __DIR__ . '/files/php/helpers/classes/setVariables.php';
+include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../../data/products.php';
+include_once __DIR__ . '/../../helpers/components/product.php';
 
+$category = isset($_GET['category']) ? $_GET['category'] : null;
+$model = isset($_GET['model']) ? $_GET['model'] : null;
+
+function getAutoContent($products, $category, $model)
+{
+  $result = "";
+  switch ($category) {
+    case 'keychain':
+      $result .= getProductCard($products, $model);
+      return $result;
+    default:
+      return 'Контент не найден.';
+  }
+}
+
+$content = getAutoContent($products, $category, $model);
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
@@ -25,20 +43,9 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <?php
-    $file_2_section = './files/php/sections/';
-    $files_to_include = [
-      'intro.php',
-      'marks.php',
-      'popular.php',
-      'service.php',
-      'quality.php',
-      'sertificates.php',
-    ];
-
-    $sectionLoader = new IncludeSections($file_2_section, $files_to_include);
-    $sectionLoader->includeFiles();
-    ?>
+    <div class="container">
+      <?= $content; ?>
+    </div>
   </main>
   <?php include $base_path . '/footer.php'; ?>
 </body>

@@ -54,7 +54,7 @@ class Head
             <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff2' as='font' type='font/woff2' crossorigin>
             <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff' as='font' type='font/woff' crossorigin>
         ";
-    // $headContent .= $reload_fonts;
+    $headContent .= $reload_fonts;
     $headContent .= "<link rel='stylesheet' href='$pathFile_URL/assets/libs/libs.css'>";
     $headContent .= "<link rel='stylesheet' href='$pathFile_URL/files/css/style.css'>";
     $headContent .= "<script src='$pathFile_URL/assets/libs/libs.js' defer type='module'></script>";
