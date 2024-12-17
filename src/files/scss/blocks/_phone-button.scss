@@ -1,0 +1,23 @@
+@use "variables"as var;
+
+.phone-button {
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  bottom: 20px;
+  right: 20%;
+  z-index: 15;
+  background-color: var.$red-FF0000;
+  border-radius: 50%;
+  border: none;
+
+  &__wrapper {
+    background-color: var.$white;
+    mask-image: url('#{var.$DEV_PATH}assets/images/vectors/phone-no-border.svg');
+    mask-position: center;
+    mask-repeat: no-repeat;
+    mask-size: 100%;
+    width: 100%;
+    height: 100%;
+  }
+}

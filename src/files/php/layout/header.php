@@ -72,9 +72,9 @@ $logo = new Logo();
                 }
               }
               ?>
-              <span>
+              <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link">
                 <?php echo $address ?>
-              </span>
+              </a>
             </address>
           </div>
           <div class="header__cart cart">
