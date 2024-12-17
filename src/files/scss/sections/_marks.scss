@@ -1,52 +1,52 @@
 @use 'variables'as var;
 
-.marks__wrapper {
-  padding: 20px 0;
-  overflow: hidden;
-  display: flex;
-  gap: 30px;
+.marks {
+  &__wrapper {
+    padding: 20px 0;
+    overflow: hidden;
+    display: flex;
+    gap: 30px;
 
-  &>* {
-    flex: 0 0 100%;
+    &>* {
+      flex: 0 0 100%;
+    }
   }
-}
 
-.marks__list {
-  padding: 30px 0;
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  will-change: transform;
-  animation: scrolling 80s linear infinite;
-}
+  &__list {
+    padding: 30px 0;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    will-change: transform;
+    animation: scrolling 80s linear infinite;
+  }
 
-.marks__item {
-  min-width: 200px;
-  width: 100%;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var.$white;
-  border-radius: 20px;
-
-  @media (min-width: var.$desktop) {
-    min-width: 300px;
+  &__item {
+    min-width: 200px;
     width: 100%;
-    height: 300px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var.$white;
+    border-radius: 20px;
+
+    @media (min-width: var.$desktop) {
+      min-width: 300px;
+      width: 100%;
+      height: 300px;
+    }
   }
 
+  &__image {
+    width: 140px;
+    height: 140px;
 
-}
-
-.marks__image {
-  width: 140px;
-  height: 140px;
-
-  @media (min-width: var.$desktop) {
-    width: 240px;
-    height: 240px;
-  }
+    @media (min-width: var.$desktop) {
+      width: 240px;
+      height: 240px;
+    }
+  }  
 }
 
 @keyframes scrolling {

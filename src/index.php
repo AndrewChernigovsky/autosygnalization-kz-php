@@ -35,6 +35,7 @@ echo $head->setHead();
       'service.php',
       'quality.php',
       'sertificates.php',
+      'form.php',
     ];
 
     $sectionLoader = new IncludeSections($file_2_section, $files_to_include);
