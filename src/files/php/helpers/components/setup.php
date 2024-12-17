@@ -26,7 +26,7 @@ function getShop($type = 'shop')
   $output .= "</div>";
   $output .= "<div class='setup__img-container'>";
   $output .= "<picture>";
-  $output .= "<source type='image/png' media='(min-width: 1130px)' srcset=" . htmlspecialchars($shop['src']['desktop']) . " width='700' height='554'>";
+  $output .= "<source type='image/png' media='(min-width: 1030px)' srcset=" . htmlspecialchars($shop['src']['desktop']) . " width='700' height='554'>";
   $output .= "<img src=" . htmlspecialchars($shop['src']['mob']) . " width='300' height='350' alt='Сервис'>";
   $output .= "</picture>";
   $output .= "</div>";

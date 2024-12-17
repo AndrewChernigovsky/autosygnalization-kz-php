@@ -41,7 +41,7 @@ include_once __DIR__ . '/../data/slides.php';
                   </li>
                 <?php endforeach; ?>
               </ul>
-              <a href="<?php echo $slide['link'] ?>" class="y-button button link">Подробнее</a>
+              <a href="<?php echo $slide['link'] ?>" class="intro__link y-button button link">Подробнее</a>
             </div>
           </div>
         <?php endforeach; ?>

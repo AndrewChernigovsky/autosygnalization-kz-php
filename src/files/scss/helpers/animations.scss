@@ -25,3 +25,29 @@
     transform: scaleX(1);
   }
 }
+
+.animated-calling {
+  animation: calling 3s infinite;
+}
+
+@keyframes calling {
+  0% {
+    transform: scaleX(1) rotate(10deg);
+  }
+
+  50% {
+    transform: scaleX(1.02) rotate(0deg);
+  }
+
+  60% {
+    transform: scaleX(1.02) rotate(12deg);
+  }
+
+  70% {
+    transform: scaleX(1.02) rotate(0deg);
+  }
+
+  100% {
+    transform: scaleX(1) rotate(10deg);
+  }
+}

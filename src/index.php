@@ -11,6 +11,7 @@ $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 include_once $head_path;
 include_once $sections_path;
 $base_path = $docROOT . $path . '/files/php/layout';
+$path_components = $docROOT . $path . '/files/php/helpers/components';
 
 $title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
 $head = new Head($title, [], []);
@@ -29,7 +30,8 @@ echo $head->setHead();
     $file_2_section = './files/php/sections/';
     $files_to_include = [
       'intro.php',
-      'marks.php',      
+      'marks.php',
+      'popular.php',
       'service.php',
       'quality.php',
       'sertificates.php',
@@ -41,6 +43,8 @@ echo $head->setHead();
     ?>
   </main>
   <?php include $base_path . '/footer.php'; ?>
+  <?php include_once $path_components . '/phone-button.php'; ?>
+  <?php include_once $file_2_section . '/popups/modal-form.php'; ?>
 </body>
 
 </html>

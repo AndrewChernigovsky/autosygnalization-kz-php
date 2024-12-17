@@ -6,6 +6,7 @@ async function loadModule() {
   const { toggleList } = await import("./modules/footer-menu.js");
   const { validateSectionForm } = await import("./modules/validate-form.js");
   const { initFancybox } = await import("./modules/fancybox.js");
+  const { initPhone } = await import("./modules/phone-button.js");
 
   toToggleMenu()
   initSwiper();
@@ -13,6 +14,7 @@ async function loadModule() {
   initSearch();
   toggleList();
   validateSectionForm();
+  initPhone();
   initFancybox();
 }
 

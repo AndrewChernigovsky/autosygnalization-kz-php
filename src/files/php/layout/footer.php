@@ -10,7 +10,7 @@ $basePath = $variables->getBasePath();
 
 $contacts_data = $basePath . '/files/php/data/contacts.php';
 $social = $basePath . '/files/php/helpers/components/social.php';
-$phone = $basePath . '/files/php/helpers/phone.php';
+$phone = $basePath . '/files/php/helpers/components/phone.php';
 $classes = $basePath . '/files/php/helpers/classes/';
 $geo = $basePath . '/files/php/helpers/components/geo.php';
 $logo = $basePath . '/files/php/helpers/components/logo.php';

@@ -46,7 +46,7 @@ class Contacts
     if ($link) {
       $output = '';
       $path = htmlspecialchars($this->variables->getPathFileURL() . '/assets/images/vectors/message-icon.svg');
-      $output .= "<a class='link' style='background-image: url(\"$path\"); href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
+      $output .= "<a class='link' style='background-image: url(\"$path\")' href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
       return $output;
     } else {
       return htmlspecialchars($this->web_site);
@@ -60,8 +60,8 @@ class Contacts
   {
     if ($link) {
       $output = '';
-      $path = htmlspecialchars($this->variables->getPathFileURL() . '/assets/images/vectors/home-icon.svg'); // Экранирование URL
-      $output .= "<a class='link' style='background-image: url(\"$path\"); href='http://autosecurity.site'>" . htmlspecialchars($this->web_site) . '</a>'; // Используйте экранирование для URL
+      $path = htmlspecialchars($this->variables->getPathFileURL() . '/assets/images/vectors/home-icon.svg');
+      $output .= "<a class='link' style='background-image: url(\"$path\");' href='http://autosecurity.site'>" . htmlspecialchars($this->web_site) . '</a>'; // Используйте экранирование для URL
       return $output;
     } else {
       return htmlspecialchars($this->web_site);

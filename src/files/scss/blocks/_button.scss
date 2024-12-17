@@ -83,7 +83,9 @@
 
     @media screen and (min-width: var.$desktop-min) {
         font-size: 36px;
-        width: 364px;
+        width: 100%;
+        min-width: 260px;
+        max-width: 364px;
         min-height: 65px;
 
         &:hover {
@@ -107,7 +109,9 @@
 
     @media screen and (min-width: var.$desktop-min) {
         font-size: 24px;
-        width: 364px;
+        width: 100%;
+        min-width: 260px;
+        max-width: 364px;
         min-height: 65px;
 
         &:hover {

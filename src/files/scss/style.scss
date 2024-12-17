@@ -13,6 +13,7 @@
 @use "./blocks/button"as *;
 @use "./blocks/logo"as *;
 @use "./blocks/service-card"as *;
+@use "./blocks/phone-button"as *;
 
 @use './sections/intro'as *;
 @use './sections/service'as *;
@@ -22,3 +23,5 @@
 @use './sections/setup'as *;
 @use './sections/quality'as *;
 @use './sections/form'as *;
+@use './sections/popular'as *;
+@use "./sections/service-page"as *;

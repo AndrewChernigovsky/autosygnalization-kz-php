@@ -21,6 +21,10 @@
 
     @media screen and (min-width: var.$tablet) {
       align-items: start;
+      justify-content: center;
+    }
+    @media screen and (min-width: var.$desktop) {
+      max-width: 690px;
     }
   }
   &__title {
@@ -31,11 +35,17 @@
     text-transform: uppercase;
 
     @media screen and (min-width: var.$tablet) {
-      align-self: center;
-      margin-bottom: auto;
+      align-self: start;
+    }
+
+    @media screen and (min-width: 1030px) {
+      align-self: start;
+      font-size: 28px;
+      line-height: 38px;
     }
 
     @media screen and (min-width: var.$desktop) {
+      margin-bottom: auto;
       font-size: 48px;
       line-height: 60px;
     }
@@ -44,7 +54,7 @@
   &__description {
     margin: 0;
     margin-bottom: 10px;
-    font-size: 20px;
+    font-size: 18px;
     line-height: 26px;
     font-weight: 700;
     font-family: var.$primary-font;
@@ -57,7 +67,6 @@
 
   &__btn {
     display: block;
-    margin-top: auto;
     width: 100%;
     max-width: 240px;
     align-self: center;
@@ -73,15 +82,52 @@
     font-size: 20px;
     line-height: 26px;
     font-weight: 700;
+    transition: all 0.3s ease;
+
+    &:hover {
+      opacity: 0.3;
+    }
+
+    @media screen and (min-width: var.$tablet) {
+      align-self: start;
+    }
+
+    @media screen and (min-width: 1030px) {
+      align-self: start;
+      font-size: 28px;
+      line-height: 38px;
+    }
 
     @media screen and (min-width: var.$desktop) {
       font-size: 64px;
       line-height: 86px;
       max-width: 540px;
+      margin-top: auto;
+      align-self: start;
     }
   }
 
   &__img-container {
     align-self: center;
+    width: 100%;
+
+    & picture {
+      width: 100%;
+    }
+
+    & img {
+      width: 100%;
+      max-height: 500px;
+
+      @media screen and (min-width: var.$tablet) {
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 540px;
+      }
+
+      @media screen and (min-width: var.$desktop) {
+        max-width: 700px;
+      }
+    }
   }
 }

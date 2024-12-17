@@ -102,10 +102,10 @@ const phpTask = (cb) => {
 const watchTask = () => {
   browserSync.init({
     proxy: "http://autosygnalization-kz-php/dist",
-    serveStatic: [{
-      route: '/',
-      dir: 'dist'
-    }],
+    // serveStatic: [{
+    //   route: '/',
+    //   dir: 'dist'
+    // }],
     notify: false,
   });
   if (!PRODUCTION) {
@@ -230,7 +230,7 @@ const sprite = () => {
 };
 
 const fonts = (cb) => {
-  src('./src/assets/fonts/**/*.{ttf,woff,woff2}')
+  src(['./src/assets/fonts/**/*.{ttf,woff,woff2}'], { encoding: false })
     .pipe(dest(paths.dist + '/assets/fonts'))
     .on('end', cb);
 };

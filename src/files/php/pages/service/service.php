@@ -52,7 +52,9 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <h1>Автосигнализации</h1>
+    <section class='service-page'>
+      <h1 class='service-page__title'>Наши услуги</h1>
+    </section>
     <div>
       <?php echo htmlspecialchars($content); ?>
     </div>
