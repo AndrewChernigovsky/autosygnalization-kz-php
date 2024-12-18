@@ -41,14 +41,14 @@ class Head
     $favicons = "";
 
     $reload_fonts = "
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-400.woff2' as='font' type='font/woff2' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-400.woff' as='font' type='font/woff' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-700.woff2' as='font' type='font/woff2' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-700.woff' as='font' type='font/woff' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-bold.woff2' as='font' type='font/woff2' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-bold.woff' as='font' type='font/woff' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff2' as='font' type='font/woff2' crossorigin>
-            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff' as='font' type='font/woff' crossorigin>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-400.woff2' as='font' type='font/woff2' crossorigin='anonymous'>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-400.woff' as='font' type='font/woff' crossorigin='anonymous'>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-700.woff2' as='font' type='font/woff2' crossorigin='anonymous'>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/din-pro-700.woff' as='font' type='font/woff' crossorigin='anonymous'>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-bold.woff2' as='font' type='font/woff2' crossorigin='anonymous'>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-bold.woff' as='font' type='font/woff' crossorigin='anonymous'>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff2' as='font' type='font/woff2' crossorigin='anonymous'>
+            <link rel='preload' href='{$pathFile_URL}/assets/fonts/oswald-regular.woff' as='font' type='font/woff' crossorigin='anonymous'>
         ";
     $headContent .= $reload_fonts;
     $headContent .= "<link rel='stylesheet' href='$pathFile_URL/assets/libs/libs.css'>";

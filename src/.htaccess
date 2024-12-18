@@ -16,11 +16,10 @@ AddType font/ttf .ttf
 AddType font/otf .otf
 
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
-  # Header set Access-Control-Allow-Origin "https://andrey-andreevich.ru/"
-  Header set Access-Control-Allow-Origin "http://localhost:3000/"
-  # Header set Access-Control-Allow-Origin "http://autosygnalization-kz-php/"
-    Allow from all
+  Header set Access-Control-Allow-Origin "*"
+  Allow from all
 </FilesMatch>
+
 
 RewriteEngine On
 
