@@ -25,9 +25,7 @@ async function loadModule() {
     initSearch();
   }
   if (feedbackForm != null) {
-    const { initFormValidation } = await import("./modules/validation.js");
     const { validateSectionForm } = await import("./modules/validate-form.js");
-    initFormValidation();
     validateSectionForm();
   }
   if (fancyboxExist.length > 0) {
