@@ -3,6 +3,8 @@ const numberInput = feedbackForm.querySelector('#release-year');
 const nameInput = feedbackForm.querySelector('#name');
 const phoneInput = feedbackForm.querySelector('#phone');
 const submitButton = feedbackForm.querySelector('.form__button');
+let recaptchaResponse;
+let widgetId1;
 
 export function validateSectionForm() {
   submitButton.addEventListener('click', (e) => {
@@ -76,41 +78,48 @@ window.onReCaptchaSuccess = onReCaptchaSuccess;
 
 function initFormValidation() {
   if (feedbackForm) {
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js';
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
+    const scriptExist = document.querySelector('head script[src="https://www.google.com/recaptcha/api.js"]');
+    if (!scriptExist) {
+      const script = document.createElement('script');
+      script.src = 'https://www.google.com/recaptcha/api.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
 
-    script.onload = function () {
-      grecaptcha.ready(function () {
-        submitButton.addEventListener('click', (e) => {
-          e.preventDefault();
-          validateForm();
-        });
-      });
-    };
+      script.onload = function () {
+        if (typeof grecaptcha !== 'undefined') {
+          grecaptcha.ready(function () {
+            captchaCallback()
+          });
+        }
+      };
+    } else {
+      captchaCallback();
+    }
   }
-  const recaptchaField2 = document.getElementById('RecaptchaField2');
 
   function captchaCallback() {
-    if (recaptchaField2) {
-      widgetId2 = grecaptcha.render(recaptchaField2, {
+    const recaptchaField1 = document.getElementById('recaptcha-field1');
+    if (recaptchaField1 && !widgetId1) {
+      widgetId1 = grecaptcha.render(recaptchaField1, {
         'sitekey': '6LcXjXMqAAAAAOk-ZcPIIdan-9-WnbxIYv4Gbaav',
         'callback': function (response) {
           recaptchaResponse = response;
         }
-      });
+      })
+    } else if (widgetId1) {
+      console.warn("reCAPTCHA has already been rendered in this element.");
     } else {
       console.error("reCAPTCHA fields not found");
     }
   };
-
-  captchaCallback()
 }
 
 if (feedbackForm != null) {
   const captchaRender = feedbackForm.querySelector('#captcha-render');
-  console.log(captchaRender, 'captchaRender');
-  captchaRender.addEventListener('click', initFormValidation);
+  if (captchaRender) {
+    captchaRender.addEventListener('click', initFormValidation);
+  } else {
+    console.log("Captcha render element not found");
+  }
 }
