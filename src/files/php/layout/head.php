@@ -1,32 +1,28 @@
 <?php
-
-$distPath = $_SERVER['DOCUMENT_ROOT'] . '/dist';
-
-if (is_dir($distPath)) {
-  $currentUrl = "http://localhost:3000/dist/index.php";
-  $pathFile = $distPath;
-  $pathFile_URL = '/dist';
-} else {
-  $currentUrl = "/index.php";
-  $pathFile = $_SERVER['DOCUMENT_ROOT'];
-  $pathFile_URL = '';
-}
+include_once __DIR__ . '/../helpers/classes/setVariables.php';
 class Head
 {
   private $title;
   private $styles;
   private $meta_tags;
 
+  private $variables;
+
   public function __construct(string $title = null, array $styles = [], array $meta_tags = [])
   {
+
+    $variables = new SetVariables();
+
     $this->title = $title;
     $this->styles = $styles;
     $this->meta_tags = $meta_tags;
+    $this->variables = $variables;
   }
 
   public function setHead(): string
   {
-    global $pathFile_URL;
+    $this->variables->setVar();
+    $pathFile_URL = $this->variables->getPathFileURL();
     $title = $this->title ?? "Auto Security - магазин автоэлектроники и установочный центр d в г.Алматы. Авторизованный партнер Starline.";
     $headContent = <<<HTML
             <meta charset="utf-8">
@@ -59,9 +55,6 @@ class Head
     $headContent .= "<link rel='stylesheet' href='$pathFile_URL/files/css/style.css'>";
     $headContent .= "<script src='$pathFile_URL/assets/libs/libs.js' defer type='module'></script>";
     $headContent .= "<script src='$pathFile_URL/files/js/main.js?v=1.0.0' defer type='module'></script>";
-    $headContent .= "<link rel='preconnect' href='https://fonts.googleapis.com'>";
-    $headContent .= "<link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>";
-    $headContent .= "<link href='https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Oswald:wght@200..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap' rel='stylesheet'>";
     foreach ($this->styles as $style) {
       $headContent .= "<link rel='stylesheet' href='$style?v=1.0.0'>";
     }

@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../../helpers/components/filters/filters.php';
 
 $variables = new SetVariables();
 $variables->setVar();
@@ -8,11 +9,12 @@ $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 
-$title = 'Корзина | Auto Security';
+$title = 'Каталог | Auto Security';
 
 include_once $head_path;
 
 $head = new Head($title, [], []);
+$filters = new Filters();
 ?>
 
 
@@ -26,7 +28,10 @@ echo $head->setHead();
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
     <div class="container">
-      <h2>Корзина</h2>
+      <h2>Каталог Товаров</h2>
+      <aside class="aside">
+        <?php echo $filters->renderFilters() ?>
+      </aside>
     </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>

@@ -8,7 +8,7 @@ $variables->setVar();
 
 $path = $variables->getPathFileURL();
 $card = new PopularCard();
-$path_href = $path . '/files/php/pages/autosygnals/autosygnals.php?auto=parking-systems';
+$path_href = $path . '/files/php/pages/catalog/catalog.php';
 ?>
 <section class="popular" id="popular">
   <div class="container">
