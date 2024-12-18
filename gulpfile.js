@@ -171,7 +171,7 @@ const copyStatics = (cb) => {
   const tasks = [];
 
   tasks.push(
-    src(['./src/assets/**/*', '!./src/assets/images/**', '!./src/assets/videos/**'])
+    src(['./src/assets/**/*', '!./src/assets/images/**', '!./src/assets/videos/**'], { encoding: false })
       .pipe(dest('./dist/assets'))
   );
 
