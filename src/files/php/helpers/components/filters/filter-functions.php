@@ -16,35 +16,49 @@ class FilterFunctions
       </div>
       <div class="filter-functions__item">
         <label for="autosetup">
-          Автозапуск
+          УПРАВЛЕНИЕ С ТЕЛЕФОНА
           <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
         </label>
         <span class="count">111</span>
       </div>
       <div class="filter-functions__item">
         <label for="autosetup">
-          Автозапуск
+          БЕСПЛАТНЫЙ МОНИТОРИНГ
           <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
         </label>
         <span class="count">111</span>
       </div>
       <div class="filter-functions__item">
         <label for="autosetup">
-          Автозапуск
+          УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART
           <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
         </label>
         <span class="count">111</span>
       </div>
       <div class="filter-functions__item">
         <label for="autosetup">
-          Автозапуск
+          БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN
           <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
         </label>
         <span class="count">111</span>
       </div>
       <div class="filter-functions__item">
         <label for="autosetup">
-          Автозапуск
+          УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ
+          <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
+        </label>
+        <span class="count">111</span>
+      </div>
+      <div class="filter-functions__item">
+        <label for="autosetup">
+          УМНАЯ АВТОДИАГНОСТИКА
+          <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
+        </label>
+        <span class="count">111</span>
+      </div>
+      <div class="filter-functions__item">
+        <label for="autosetup">
+          ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА
           <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
         </label>
         <span class="count">111</span>

@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .service-card {
   position: relative;
@@ -7,9 +7,13 @@
   align-items: self-end;
   overflow: hidden;
   perspective: 1000px;
+  text-decoration: none;
 
-  &:hover img {
-    transform: translateZ(-20px);
+  &:hover {
+
+    img {
+      transform: translateZ(-20px);
+    }
   }
 
   &__title {

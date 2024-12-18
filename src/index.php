@@ -13,7 +13,7 @@ include_once $sections_path;
 $base_path = $docROOT . $path . '/files/php/layout';
 $path_components = $docROOT . $path . '/files/php/helpers/components';
 
-$title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
+$title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
 ?>
 

@@ -8,7 +8,6 @@ async function loadModule() {
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
 
-
   toToggleMenu();
   toggleList();
 
