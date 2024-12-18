@@ -17,7 +17,7 @@
           <label class="visually-hidden" for="vw">Volkswagen</label>
           <input class="form__radio form__radio--audi" type="radio" name="mark" id="audi">
           <label class="visually-hidden" for="audi">Audi</label>
-        </div>        
+        </div>
       </fieldset>
       <ul class="form__list list-style-none">
         <li class="form__item">
@@ -27,27 +27,33 @@
         </li>
         <li class="form__item">
           <label class="form__subtitle">Год выпуска:
-            <input class="form__input" type="number" name="release-year" id="release-year" placeholder="2024" pattern="\d{4}" required>
+            <input class="form__input" type="number" name="release-year" id="release-year" placeholder="2024"
+              pattern="\d{4}" required>
           </label>
         </li>
         <li class="form__item">
           <label class="form__subtitle">Имя:
-            <input class="form__input" type="text" name="name" id="name" placeholder="Ivanov Ivan Ivanovich" pattern="[A-Za-z\s]+" required>
+            <input class="form__input" type="text" name="name" id="name" placeholder="Ivanov Ivan Ivanovich"
+              pattern="[A-Za-z\s]+" required>
           </label>
         </li>
         <li class="form__item">
           <label class="form__subtitle">Телефон:
-            <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777" pattern="[0-9]+" required>
+            <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777"
+              pattern="[0-9]+" required>
           </label>
         </li>
         <li class="form__item form__item--textarea">
           <label class="form__subtitle">Ваше сообщение:
-            <textarea class="form__input form__input--textarea" name="message" id="message" placeholder="Вы купили автомобиль и желаете защитить его, установив сигнализацию?  Вы любите комфорт и хотите установить автозапуск на Ваше авто?  Вам необходимо отслеживать Ваш транспорт по GPS?  Обращайтесь к нам, и мы поможем Вам решить эти задачи!" required></textarea>
+            <textarea class="form__input form__input--textarea" name="message" id="message"
+              placeholder="Вы купили автомобиль и желаете защитить его, установив сигнализацию?  Вы любите комфорт и хотите установить автозапуск на Ваше авто?  Вам необходимо отслеживать Ваш транспорт по GPS?  Обращайтесь к нам, и мы поможем Вам решить эти задачи!"
+              required></textarea>
           </label>
         </li>
-      </ul> 
-      <div class="g-recaptcha" data-sitekey="КЛЮЧ_САЙТА" data-callback="onReCaptchaSuccess"></div>     
-      <button class="form__button y-button-primary" type="submit">Отправить заявку</button>      
+      </ul>
+      <div class="g-recaptcha" data-callback="onReCaptchaSuccess" id="RecaptchaField2"></div>
+      <button type="button" id="captcha-render">Капча!</button>
+      <button class="form__button y-button-primary" type="submit">Отправить заявку</button>
     </form>
   </div>
 </section>

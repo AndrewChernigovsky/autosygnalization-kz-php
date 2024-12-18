@@ -63,13 +63,13 @@ function validateForm() {
 }
 
 function onReCaptchaSuccess(token) {
-    const tokenInput = document.createElement('input');
-    tokenInput.type = 'hidden';
-    tokenInput.name = 'g-recaptcha-response';
-    tokenInput.value = token;
+  const tokenInput = document.createElement('input');
+  tokenInput.type = 'hidden';
+  tokenInput.name = 'g-recaptcha-response';
+  tokenInput.value = token;
 
-    feedbackForm.appendChild(tokenInput);
-    feedbackForm.submit();
+  feedbackForm.appendChild(tokenInput);
+  feedbackForm.submit();
 }
 
 window.onReCaptchaSuccess = onReCaptchaSuccess;
@@ -83,14 +83,34 @@ function initFormValidation() {
     document.head.appendChild(script);
 
     script.onload = function () {
-    grecaptcha.ready(function () {
-    submitButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      validateForm();
-    });
-  });
-};
+      grecaptcha.ready(function () {
+        submitButton.addEventListener('click', (e) => {
+          e.preventDefault();
+          validateForm();
+        });
+      });
+    };
   }
+  const recaptchaField2 = document.getElementById('RecaptchaField2');
+
+  function captchaCallback() {
+    if (recaptchaField2) {
+      widgetId2 = grecaptcha.render(recaptchaField2, {
+        'sitekey': '6LcXjXMqAAAAAOk-ZcPIIdan-9-WnbxIYv4Gbaav',
+        'callback': function (response) {
+          recaptchaResponse = response;
+        }
+      });
+    } else {
+      console.error("reCAPTCHA fields not found");
+    }
+  };
+
+  captchaCallback()
 }
 
-initFormValidation();
+if (feedbackForm != null) {
+  const captchaRender = feedbackForm.querySelector('#captcha-render');
+  console.log(captchaRender, 'captchaRender');
+  captchaRender.addEventListener('click', initFormValidation);
+}
