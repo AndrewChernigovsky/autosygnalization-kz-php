@@ -1,23 +1,39 @@
+const feedbackForm = document.getElementById('feedback-form');
+const fancyboxExist = document.querySelectorAll('[data-fancybox');
+const searchExist = document.getElementById('search');
+const phoneButton = document.querySelector('.phone-button');
+
 async function loadModule() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
-  const { initFormValidation } = await import("./modules/validation.js");
-  const { initSearch } = await import("./modules/search.js");
   const { toggleList } = await import("./modules/footer-menu.js");
-  const { validateSectionForm } = await import("./modules/validate-form.js");
-  const { initFancybox } = await import("./modules/fancybox.js");
-  const { initPhone } = await import("./modules/phone-button.js");
+
 
   toToggleMenu();
+  toggleList();
+
   setTimeout(
     initSwiper, 100
   );
-  initFormValidation();
-  initSearch();
-  toggleList();
-  validateSectionForm();
-  initPhone();
-  initFancybox();
+
+  if (phoneButton != null) {
+    const { initPhone } = await import("./modules/phone-button.js");
+    initPhone();
+  }
+  if (searchExist != null) {
+    const { initSearch } = await import("./modules/search.js");
+    initSearch();
+  }
+  if (feedbackForm != null) {
+    const { initFormValidation } = await import("./modules/validation.js");
+    const { validateSectionForm } = await import("./modules/validate-form.js");
+    initFormValidation();
+    validateSectionForm();
+  }
+  if (fancyboxExist.length > 0) {
+    const { initFancybox } = await import("./modules/fancybox.js");
+    initFancybox();
+  }
 }
 
-document.addEventListener('DOMContentLoaded', loadModule)
+document.addEventListener('DOMContentLoaded', loadModule);

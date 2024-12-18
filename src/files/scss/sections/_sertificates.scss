@@ -6,16 +6,17 @@
   padding: 50px 0;
 
   .swiper-sertificates {
+    padding-bottom: 30px;
+    height: 330px;
+
+    @media screen and (min-width: var.$desktop) {
+      height: 600px;
+    }
+
     li a {
       display: flex;
       justify-content: center;
       height: inherit;
-    }
-
-    height: 300px;
-
-    @media screen and (min-width: var.$desktop) {
-      height: 600px;
     }
   }
 
@@ -23,6 +24,7 @@
     display: flex;
     justify-content: center;
     padding: 0;
+    bottom: 0;
 
     .swiper-pagination-bullet {
       transition: 0.3s ease-in-out;

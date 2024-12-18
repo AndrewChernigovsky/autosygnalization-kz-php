@@ -2,34 +2,12 @@ import { setPopup } from './../helpers/popup.js'
 
 const form = document.querySelector('form');
 const hiddenInput = document.querySelector('#password-hash');
-const recaptchaField1 = document.getElementById('RecaptchaField1');
-const recaptchaField2 = document.getElementById('RecaptchaField2');
 const formCost = 'cost';
 const formSimple = 'form-simple';
 
 let widgetId1;
 let widgetId2;
 let recaptchaResponse;
-
-function captchaCallback() {
-  if (recaptchaField1 && recaptchaField2) {
-    widgetId1 = grecaptcha.render(recaptchaField1, {
-      'sitekey': '6LcXjXMqAAAAAOk-ZcPIIdan-9-WnbxIYv4Gbaav',
-      'callback': function (response) {
-        recaptchaResponse = response;
-      }
-    });
-
-    widgetId2 = grecaptcha.render(recaptchaField2, {
-      'sitekey': '6LcXjXMqAAAAAOk-ZcPIIdan-9-WnbxIYv4Gbaav',
-      'callback': function (response) {
-        recaptchaResponse = response;
-      }
-    });
-  } else {
-    console.error("reCAPTCHA fields not found");
-  }
-};
 
 function initFormSimple(form) {
   if (form) {
@@ -186,20 +164,3 @@ function sendFormValidation(formId) {
     });
   }
 }
-
-export function initFormValidation() {
-  if (form) {
-    const script = document.createElement('script');
-    script.src = 'https://www.google.com/recaptcha/api.js?render=explicit';
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-
-    script.onload = function () {
-      grecaptcha.ready(function () {
-        document.querySelectorAll('.captcha-btn').forEach(btn => btn.addEventListener('click', captchaCallback))
-      });
-    };
-  }
-}
-
