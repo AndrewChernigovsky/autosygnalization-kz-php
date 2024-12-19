@@ -1,6 +1,8 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 
+$id = $_GET['id'] ? $_GET['id'] : 0;
+
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();

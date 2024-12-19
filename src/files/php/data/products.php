@@ -13,6 +13,7 @@ $products = [
     "category-position" => "starline",
     "model" => "a93",
     "popular" => false,
+    'id' => $id = uniqid('product_', true),
     'gallery' => [
       "$path/assets/images/products/starline_a93/product-1.avif",
       "$path/assets/images/products/starline_a93/product-2.avif",
@@ -30,6 +31,7 @@ $products = [
     "category-position" => "starline",
     "model" => "e96",
     "popular" => false,
+    'id' => $id = uniqid('product_', true),
     'gallery' => [
       "$path/assets/images/products/starline_e96/product-1.avif",
       "$path/assets/images/products/starline_e96/product-2.avif",
@@ -47,6 +49,7 @@ $products = [
     "category-position" => "starline",
     "model" => "e96",
     "popular" => false,
+    'id' => $id = uniqid('product_', true),
     'gallery' => [
       "$path/assets/images/products/starline_e96/product-1.avif",
       "$path/assets/images/products/starline_e96/product-2.avif",
@@ -64,6 +67,7 @@ $products = [
     "category-position" => "starline",
     "model" => "e96",
     "popular" => false,
+    'id' => $id = uniqid('product_', true),
     'gallery' => [
       "$path/assets/images/products/starline_e96/product-1.avif",
       "$path/assets/images/products/starline_e96/product-2.avif",
@@ -81,6 +85,7 @@ $products = [
     "category-position" => "starline",
     "model" => "e96",
     "popular" => false,
+    'id' => $id = uniqid('product_', true),
     'gallery' => [
       "$path/assets/images/products/starline_e96/product-1.avif",
       "$path/assets/images/products/starline_e96/product-2.avif",

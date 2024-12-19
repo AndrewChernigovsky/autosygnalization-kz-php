@@ -14,6 +14,7 @@
 @use "./blocks/logo"as *;
 @use "./blocks/service-card"as *;
 @use "./blocks/phone-button"as *;
+@use "./blocks/product-card"as *;
 
 @use './sections/intro'as *;
 @use './sections/service'as *;
@@ -25,3 +26,4 @@
 @use './sections/form'as *;
 @use './sections/popular'as *;
 @use "./sections/service-page"as *;
+@use "./sections/catalog"as *;
