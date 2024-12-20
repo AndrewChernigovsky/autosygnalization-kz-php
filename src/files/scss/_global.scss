@@ -1,5 +1,5 @@
-@use 'variables'as var;
-@use 'mixins'as mix;
+@use "variables" as var;
+@use "mixins" as mix;
 
 html {
   height: 100%;
@@ -83,5 +83,34 @@ p {
   &:hover {
     background-color: var.$white;
     color: var.$black;
+  }
+}
+
+.error-validate {
+  position: absolute;
+  right: 5px;
+  top: 10%;
+  padding: 5px;
+  border-radius: 10px;
+  border: 2px solid var.$red;
+  font-size: 12px;
+  background-color: var.$gray-bg-autosygnals;
+  color: var.$white;
+  animation: showError 0.3s ease;
+
+  @media screen and (min-width: var.$desktop) {
+    right: 20px;
+    top: 40%;
+    font-size: 20px;
+  }
+}
+
+@keyframes showError {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
   }
 }
