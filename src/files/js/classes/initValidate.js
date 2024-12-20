@@ -1,9 +1,14 @@
 import Validate from "./Validate.js";
+import Inputmask from "inputmask";
+
 const yearInput = document.getElementById("release-year");
 const modelInput = document.getElementById("model");
 const nameInput = document.getElementById("name");
 const phoneInput = document.getElementById("phone");
 const feedbackForm = document.getElementById("feedback-form");
+
+const phoneMask = new Inputmask("+7 (999) 99 99 999");
+phoneMask.mask(phoneInput);
 
 const validate = new Validate();
 
@@ -39,7 +44,6 @@ export function initValidate() {
 
   feedbackForm.addEventListener("change", () => {
     const formBtn = feedbackForm.querySelector(".form__button");
-
     validate.validateYear(yearInput.value);
     validate.validateModel(modelInput.value);
     validate.validateName(nameInput.value);

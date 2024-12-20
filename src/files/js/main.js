@@ -1,3 +1,5 @@
+
+
 const feedbackForm = document.getElementById("feedback-form");
 const fancyboxExist = document.querySelectorAll("[data-fancybox");
 const searchExist = document.getElementById("search");

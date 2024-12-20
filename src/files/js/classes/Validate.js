@@ -37,8 +37,7 @@ export default class Validate {
   }
 
   validatePhone(value) {
-    const regex =
-      /^\+7[\s(]*[0-9]{3}[\s)]*[0-9]{3}[\s-]?[0-9]{2}[\s-]?[0-9]{2}$/;
+    const regex = /^\+7 \(\d{3}\) \d{2} \d{2} \d{3}$/;
 
     const isValid = regex.test(value);
     this.#isPhoneValid = isValid;
@@ -50,6 +49,10 @@ export default class Validate {
 
   onInputBlur(input, func, funcArg) {
     const isValid = func(funcArg);
+    this.reset(isValid, input);
+  }
+
+  reset(isValid, input) {
     const span = document.createElement("span");
 
     if (input.nextElementSibling) {
@@ -62,8 +65,10 @@ export default class Validate {
       span.classList.add("error-validate");
       input.after(span);
       input.classList.add("error");
+      input.classList.remove("succsess");
     } else {
       input.classList.remove("error");
+      input.classList.add("succsess");
     }
   }
 

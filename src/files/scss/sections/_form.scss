@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use "variables" as var;
 
 .form {
   &__wrapper {
@@ -94,27 +94,27 @@
   }
 
   &__radio--genesis {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/genesis.avif');
+    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/genesis.avif");
   }
 
   &__radio--kia {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/KIA.avif');
+    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/KIA.avif");
   }
 
   &__radio--lexus {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/lexus.avif');
+    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/lexus.avif");
   }
 
   &__radio--toyota {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/toyota.avif');
+    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/toyota.avif");
   }
 
   &__radio--vw {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/vw.avif');
+    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/vw.avif");
   }
 
   &__radio--audi {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/audi.avif');
+    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/audi.avif");
   }
 
   &__subtitle {
@@ -187,6 +187,10 @@
 
   &__input.error {
     border: 10px solid var.$red;
+  }
+
+  &__input.succsess {
+    border: 10px solid var.$green;
   }
 
   &__input--textarea {
