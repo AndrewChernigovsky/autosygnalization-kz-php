@@ -1,13 +1,24 @@
 <?php
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../helpers/components/cart.php';
+include_once __DIR__ . '/../data/products.php';
 
-$id = isset($_GET['id']) ? $_GET['id'] : 0;
-
+// $id = isset($_GET['id']) ? $_GET['id'] : 0;
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
+$id = isset($data["id"]) ? $data["id"] : null;
+echo $id;
+if ($id === null) {
+  echo "ID не был передан.";
+}
 $variables = new SetVariables();
 $variables->setVar();
 
 $path = $variables->getPathFileURL();
 $docROOT = $variables->getDocRoot();
+
+$cart = new Cart($products);
+$cart->addProduct($id);
 ?>
 
 <?php
@@ -79,7 +90,7 @@ $logo = new Logo();
               </a>
             </address>
           </div>
-
+          <?php echo $cart->initCart(); ?>
           <div class="menu-toggle">
             <button type="button" id="btn-open-menu" class="button"><span class="visually-hidden">Открыть
                 меню</span></button>
