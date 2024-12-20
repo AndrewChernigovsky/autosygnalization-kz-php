@@ -28,7 +28,7 @@ export default class Validate {
   }
 
   validateName(value) {
-    const isValid = value.length > 2 && value.length <= 40;
+    const isValid = value.length >= 2 && value.length <= 40;
     this.#isNameValid = isValid;
     return {
       isValid: isValid,
