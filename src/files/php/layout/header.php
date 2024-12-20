@@ -1,9 +1,8 @@
 <?php
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : 0;
-echo $id;
-var_dump($_POST);
+$id = isset($_GET['id']) ? $_GET['id'] : 0;
+
 $variables = new SetVariables();
 $variables->setVar();
 
@@ -80,14 +79,7 @@ $logo = new Logo();
               </a>
             </address>
           </div>
-          <div class="header__cart cart">
-            <a class="link" href="<?php echo $path . '/files/php/pages/cart/cart.php' ?>">
-              <svg width="50" height="50">
-                <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#cart' ?>"></use>
-              </svg>
-              <div class="counter"><?php echo htmlspecialchars($id); ?></div>
-            </a>
-          </div>
+
           <div class="menu-toggle">
             <button type="button" id="btn-open-menu" class="button"><span class="visually-hidden">Открыть
                 меню</span></button>
