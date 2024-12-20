@@ -23,16 +23,16 @@ export default class Validate {
     this.#isModelValid = isValid;
     return {
       isValid: isValid,
-      text: isValid ? "" : "Введите модель машины",
+      text: isValid ? "" : "Введите модель",
     };
   }
 
   validateName(value) {
-    const isValid = value.length > 0 && value.length <= 40;
+    const isValid = value.length > 2 && value.length <= 40;
     this.#isNameValid = isValid;
     return {
       isValid: isValid,
-      text: isValid ? "" : "Ошибка имени",
+      text: isValid ? "" : "Введите имя",
     };
   }
 
@@ -49,10 +49,10 @@ export default class Validate {
 
   onInputBlur(input, func, funcArg) {
     const isValid = func(funcArg);
-    this.reset(isValid, input);
+    this.showError(isValid, input);
   }
 
-  reset(isValid, input) {
+  showError(isValid, input) {
     const span = document.createElement("span");
 
     if (input.nextElementSibling) {
@@ -61,14 +61,13 @@ export default class Validate {
 
     if (!isValid.isValid) {
       span.textContent = isValid.text;
-      span.style.background = "red";
       span.classList.add("error-validate");
       input.after(span);
       input.classList.add("error");
-      input.classList.remove("succsess");
+      input.classList.remove("success");
     } else {
       input.classList.remove("error");
-      input.classList.add("succsess");
+      input.classList.add("success");
     }
   }
 
