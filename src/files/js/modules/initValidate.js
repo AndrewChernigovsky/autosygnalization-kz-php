@@ -1,4 +1,4 @@
-import Validate from "./Validate.js";
+import Validate from "../classes/Validate.js";
 import Inputmask from "inputmask";
 
 const yearInput = document.getElementById("release-year");
