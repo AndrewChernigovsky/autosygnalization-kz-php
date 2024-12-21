@@ -79,6 +79,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  font-size: 20px;
+  font-weight: bold;
 
   img {
     width: 20px;
@@ -92,10 +94,15 @@
 
   li {
     padding-bottom: 5px;
+    transition: 0.3 ease-in-out;
 
     &:not(:first-of-type) {
       padding-top: 5px;
       border-top: 2px solid var.$white;
+    }
+
+    &:hover {
+      opacity: 0.6;
     }
   }
 
@@ -228,6 +235,7 @@
         bottom: 0;
         left: 10%;
         display: flex;
+
 
         svg {
           width: 20px;

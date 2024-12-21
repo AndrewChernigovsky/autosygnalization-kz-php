@@ -23,7 +23,7 @@ const convertImages = async (inputDir, outputDir) => {
 };
 
 const inputDirectory = './src/assets/images/';
-const outputDirectory = './dist/assets/images';
+const outputDirectory = './statics/images';
 
 if (!fs.existsSync(outputDirectory)) {
   fs.mkdirSync(outputDirectory);

@@ -22,8 +22,8 @@ $slides = [
     'srcMob' => "$path/assets/videos/video-mob-2.webm",
     'src' => ["$path/assets/videos/video-2.webm", "$path/assets/videos/video-2.mp4"],
     'type' => ['video/webm', 'video/mp4'],
-    'title' => 'РУССИФИКАЦИЯ АВТОМОБИЛЕЙ ЧИПТЮНИНГ',
-    'list' => ['ЛЕЦИНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
+    'title' => 'РУСИФИКАЦИЯ АВТОМОБИЛЕЙ, ЧИПТЮНИНГ',
+    'list' => ['ЛЕЦЕНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
     'link' => "$path/files/php/pages/parking-systems/parking-systems.php"
   ],
   [

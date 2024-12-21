@@ -3,7 +3,8 @@
   "scripts": {
     "dev": "cross-env PRODUCTION=false gulp",
     "build": "cross-env PRODUCTION=true gulp build",
-    "statics": "cross-env PRODUCTION=true gulp statics && node sharp.js && gulp fonts",
+    "statics": "cross-env PRODUCTION=true gulp statics  && gulp fonts",
+    "images": "cross-env PRODUCTION=true node sharp.js",
     "sprite": "cross-env PRODUCTION=true gulp sprite"
   },
   "devDependencies": {

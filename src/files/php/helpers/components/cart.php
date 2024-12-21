@@ -6,15 +6,12 @@ class Cart
   private $path;
   private $variables;
   private $totalQuantity = 0;
-  private $products = [];
-
-  public function __construct($products)
+  public function __construct()
   {
     $this->variables = new SetVariables();
     $this->variables->setVar();
     $path = $this->variables->getPathFileURL();
     $this->path = $path;
-    $this->products[] = $products;
   }
 
   public function initCart()
@@ -28,7 +25,7 @@ class Cart
         <svg width="50" height="50">
           <use href='<?php echo $icon; ?>'></use>
         </svg>
-        <div class="counter"><?php echo $this->totalQuantity; ?></div>
+        <div class="counter"><?php echo $this->getQuantity(); ?></div>
       </a>
     </div>
     <?php
@@ -44,6 +41,15 @@ class Cart
       }
     }
 
+    return $this->totalQuantity;
+  }
+
+  public function setQuantity($quantity)
+  {
+    $this->totalQuantity = $quantity;
+  }
+  public function getQuantity()
+  {
     return $this->totalQuantity;
   }
 
