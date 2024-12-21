@@ -94,30 +94,6 @@
     }
   }
 
-  &__radio--genesis {
-    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/genesis.avif");
-  }
-
-  &__radio--kia {
-    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/KIA.avif");
-  }
-
-  &__radio--lexus {
-    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/lexus.avif");
-  }
-
-  &__radio--toyota {
-    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/toyota.avif");
-  }
-
-  &__radio--vw {
-    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/vw.avif");
-  }
-
-  &__radio--audi {
-    background-image: url("#{var.$DEV_PATH}assets/images/cars-brand/audi.avif");
-  }
-
   &__subtitle {
     position: relative;
     display: flex;
