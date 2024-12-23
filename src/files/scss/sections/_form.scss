@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use "variables" as var;
 
 .form {
   &__wrapper {
@@ -77,13 +77,14 @@
     background-size: 40px 40px;
     background-position: center;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 
     &:hover {
-      border: 3px solid var.$green;
+      border: 4 solid var.$red-64001E;
     }
 
     &:checked {
-      border: 3px solid var.$red-64001E;
+      border: 4px solid var.$green;
     }
 
     @media (min-width: var.$tablet) {
@@ -93,31 +94,8 @@
     }
   }
 
-  &__radio--genesis {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/genesis.avif');
-  }
-
-  &__radio--kia {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/KIA.avif');
-  }
-
-  &__radio--lexus {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/lexus.avif');
-  }
-
-  &__radio--toyota {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/toyota.avif');
-  }
-
-  &__radio--vw {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/vw.avif');
-  }
-
-  &__radio--audi {
-    background-image: url('#{var.$DEV_PATH}assets/images/cars-brand/audi.avif');
-  }
-
   &__subtitle {
+    position: relative;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -163,14 +141,15 @@
     line-height: 30px;
     padding: 10px;
     border-radius: 30px;
-    border: 10px solid #141212;
+    border: 2px solid #141212;
     background-color: #363535;
     color: var.$white;
     cursor: pointer;
+    transition: all 0.3s ease-in-out;
 
     &:hover,
     &:focus-visible {
-      border: 10px solid #363535;
+      border: 2px solid #363535;
       background-color: var.$white;
       color: var.$black;
     }
@@ -186,7 +165,17 @@
   }
 
   &__input.error {
-    border: 10px solid var.$red;
+    border: 2px solid var.$red;
+    outline: var.$red;
+  }
+
+  &__input.success {
+    border: 2px solid var.$green;
+
+    &:focus-visible {
+      border: 2px solid var.$green;
+      outline: var.$green;
+    }
   }
 
   &__input--textarea {
