@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../helpers/components/cart.php';
 include_once __DIR__ . '/../data/products.php';
@@ -13,15 +11,6 @@ $docROOT = $variables->getDocRoot();
 
 $cart = new Cart();
 $quantity = 0;
-
-if (isset($_SESSION['cart'])) {
-  foreach ($_SESSION['cart'] as $productId => $productData) {
-    $quantity += $productData['quantity'];
-    $cart->setQuantity($quantity);
-  }
-} else {
-  echo "No products in the cart.";
-}
 ?>
 
 <?php
