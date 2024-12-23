@@ -1,14 +1,21 @@
 const phoneButton = document.querySelector('.phone-button');
 const phoneButtonWrapper = document.querySelector('.phone-button__wrapper');
-const modalForm = document.querySelector('.modal-form');
+const modalFormMob = document.querySelector('.popup');
+const modalForm = document.querySelector('.popup.modal-form');
 const closeButton = document.querySelector('#modal-form-close');
 
 export function initPhone() {
-  if (phoneButton && modalForm) {
+  if (phoneButton && modalFormMob && modalForm) {
+    const getWindowWidth = () => window.innerWidth;
     phoneButton.addEventListener('click', () => {
-      modalForm.classList.add('active');
-      phoneButtonWrapper.classList.add('active');
-      phoneButton.classList.remove('animated-calling')
+      const width = getWindowWidth();
+      if (width > 768) {
+        modalForm.classList.toggle('active');
+      } else {
+        modalFormMob.classList.toggle('active');
+      }
+      phoneButtonWrapper.classList.toggle('active');
+      phoneButton.classList.toggle('animated-calling')
     })
 
     closeButton.addEventListener('click', () => {
