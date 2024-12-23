@@ -1,11 +1,27 @@
 <?php
+session_start();
+
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../helpers/components/cart.php';
+include_once __DIR__ . '/../data/products.php';
 
 $variables = new SetVariables();
 $variables->setVar();
 
 $path = $variables->getPathFileURL();
 $docROOT = $variables->getDocRoot();
+
+$cart = new Cart();
+$quantity = 0;
+
+if (isset($_SESSION['cart'])) {
+  foreach ($_SESSION['cart'] as $productId => $productData) {
+    $quantity += $productData['quantity'];
+    $cart->setQuantity($quantity);
+  }
+} else {
+  echo "No products in the cart.";
+}
 ?>
 
 <?php
@@ -77,14 +93,8 @@ $logo = new Logo();
               </a>
             </address>
           </div>
-          <div class="header__cart cart">
-            <a class="link" href="<?php echo $path . '/files/php/pages/cart/cart.php' ?>">
-              <svg width="50" height="50">
-                <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#cart' ?>"></use>
-              </svg>
-              <div class="counter">1</div>
-            </a>
-          </div>
+          <?php echo $cart->initCart();
+          ?>
           <div class="menu-toggle">
             <button type="button" id="btn-open-menu" class="button"><span class="visually-hidden">Открыть
                 меню</span></button>
@@ -110,6 +120,14 @@ $logo = new Logo();
             </ul>
           </div>
         </div>
+        <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link geo-address">
+          <div class="header__image image">
+            <svg width="50" height="50">
+              <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
+            </svg>
+          </div>
+          <?php echo $address ?>
+        </a>
       </div>
     </div>
   </div>

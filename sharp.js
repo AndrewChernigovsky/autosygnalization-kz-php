@@ -23,12 +23,23 @@ const convertImages = async (inputDir, outputDir) => {
 };
 
 const inputDirectory = './src/assets/images/';
-const outputDirectory = './dist/assets/images';
+const outputDirectory = './statics/images';
 
 if (!fs.existsSync(outputDirectory)) {
   fs.mkdirSync(outputDirectory);
 }
 
 convertImages(inputDirectory, outputDirectory)
+  .then(() => console.log('Conversion completed!'))
+  .catch(err => console.error('Error during conversion:', err));
+
+const inputDirectoryNewImages = './new_images/';
+const outputDirectoryNewImages = './statics/images';
+
+if (!fs.existsSync(outputDirectoryNewImages)) {
+  fs.mkdirSync(outputDirectoryNewImages);
+}
+
+convertImages(inputDirectoryNewImages, outputDirectoryNewImages)
   .then(() => console.log('Conversion completed!'))
   .catch(err => console.error('Error during conversion:', err));

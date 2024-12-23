@@ -7,16 +7,16 @@ class FilterBasic
     ?>
     <div class="filter-functions">
       <div class="filter-functions__item">
-        <label for="autosetup">
+        <label for="vnedorojnik">
           Для внедорожника
-          <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
+          <input type="checkbox" class="filter-cost__checkbox" id="vnedorojnik" name="vnedorojnik">
         </label>
         <span class="count">111</span>
       </div>
       <div class="filter-functions__item">
-        <label for="autosetup">
-          ДЛЯ ЛЕГКОВОГО АВТО
-          <input type="checkbox" class="filter-cost__checkbox" id="autosetup" name="autosetup">
+        <label for="legkoe-avto">
+          Для легкое авто
+          <input type="checkbox" class="filter-cost__checkbox" id="legkoe-avto" name="legkoe-avto">
         </label>
         <span class="count">111</span>
       </div>

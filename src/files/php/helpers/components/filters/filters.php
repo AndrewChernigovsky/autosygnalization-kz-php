@@ -6,6 +6,7 @@ $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $docROOT . $variables->getPathFileURL();
 
+include_once $path . '/files/php/data/filters.php';
 include_once $path . '/files/php/helpers/components/filters/filter-cost.php';
 include_once $path . '/files/php/helpers/components/filters/filter-functions.php';
 include_once $path . '/files/php/helpers/components/filters/filter-basic.php';
@@ -16,10 +17,10 @@ class Filters
 
   private $filterBasic;
 
-  public function __construct()
+  public function __construct($data_filters)
   {
     $this->filterCost = new FilterCost();
-    $this->filterFunctions = new FilterFunctions();
+    $this->filterFunctions = new FilterFunctions($data_filters);
     $this->filterBasic = new filterBasic();
   }
   public function renderFilters()

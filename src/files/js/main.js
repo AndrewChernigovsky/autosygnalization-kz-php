@@ -31,6 +31,8 @@ async function loadModule() {
     const { initFancybox } = await import("./modules/fancybox.js");
     initFancybox();
   }
+  const { cartButtonHandler } = await import('./modules/cart-button.js');
+  cartButtonHandler()
 }
 
 document.addEventListener("DOMContentLoaded", loadModule);

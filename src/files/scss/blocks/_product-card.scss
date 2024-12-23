@@ -1,0 +1,30 @@
+@use "variables"as var;
+
+.product-card {
+  background-color: var.$gray-bg;
+  border-radius: 15px;
+  transition: 0.3s ease-in-out;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  &__bg {
+    border-radius: 15px 15px 0 0;
+    background-color: var.$white;
+  }
+
+  &__body {
+    background-color: var.$gray-bg;
+    padding: 20px;
+    border-radius: 0 0 15px 15px;
+
+    a {
+      margin-bottom: 10px;
+    }
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+}

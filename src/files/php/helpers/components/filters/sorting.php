@@ -1,5 +1,5 @@
 <?php
-class Soritng
+class Sorting
 {
   public function renderFilters()
   {

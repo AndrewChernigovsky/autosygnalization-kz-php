@@ -1,0 +1,41 @@
+@use "variables"as var;
+
+.bank {
+  padding: 50px 0;
+
+
+
+  &__image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__phones {
+    display: grid;
+
+    a {
+      color: var.$white;
+      transition: 0.3s ease-in-out;
+      font-size: 14px;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
+
+  img {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    display: flex;
+  }
+
+  @media screen and (max-width: var.$tablet) {
+    h2 {
+      font-size: 16px;
+    }
+  }
+}

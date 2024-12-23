@@ -55,61 +55,30 @@ const rollupTask = (done) => {
 };
 
 const phpTask = (cb) => {
-  (() => {
-    return src(["./src/files/php/helpers/**/*.php"]).pipe(
-      dest(paths.dist + "/files/php/helpers")
-    );
-  })();
+  let tasks = []
 
-  (() => {
-    return src(["./src/files/php/functions/**/*.php"]).pipe(
-      dest(paths.dist + "/files/php/functions")
-    );
-  })();
-
-  (() => {
-    return src(["./src/files/php/data/**/*.php"]).pipe(
-      dest(paths.dist + "/files/php/data")
-    );
-  })();
-
-  (() => {
-    return src(["./src/index.php"]).pipe(dest(paths.dist));
-  })();
-
-  (() => {
-    return src(["./src/files/php/pages/**/*.php"]).pipe(
-      dest(paths.dist + "/files/php/pages")
-    );
-  })();
-
-  (() => {
-    return src(["./src/files/php/sections/**/*.php"]).pipe(
-      dest(paths.dist + "/files/php/sections")
-    );
-  })();
-
-  (() => {
-    return src(["./src/files/php/layout/**/*.php"]).pipe(
-      dest(paths.dist + "/files/php/layout")
-    );
-  })();
-
-  if (!PRODUCTION) {
-    return src(["./src/index.php", "./src/files/php/pages/**/*.php"]).pipe(
-      browserSync.stream()
-    );
-  }
-  cb();
+  tasks.push(
+    src(['./src/files/php/**'], { encoding: false })
+      .pipe(dest('./dist/files/php'))
+  );
+  return Promise.all(tasks)
+    .then(() => {
+      if (!PRODUCTION) {
+        return src(['./src/index.php', './src/files/php/pages/**/*.php'])
+          .pipe(browserSync.stream());
+      }
+      cb();
+    })
+    .catch(err => {
+      console.error('Ошибка при копировании php файлов:', err);
+      cb(err);
+    });
 };
+
 
 const watchTask = () => {
   browserSync.init({
     proxy: "http://autosygnalization-kz-php/dist",
-    // serveStatic: [{
-    //   route: '/',
-    //   dir: 'dist'
-    // }],
     notify: false,
   });
   if (!PRODUCTION) {
@@ -180,14 +149,8 @@ const copyStatics = (cb) => {
   const tasks = [];
 
   tasks.push(
-    src(
-      [
-        "./src/assets/**/*",
-        "!./src/assets/images/**",
-        "!./src/assets/videos/**",
-      ],
-      { encoding: false }
-    ).pipe(dest("./dist/assets"))
+    src(['./src/assets/**/*', '!./statics/images/**', '!./src/assets/videos/**'], { encoding: false })
+      .pipe(dest('./dist/assets'))
   );
 
   tasks.push(
@@ -215,9 +178,9 @@ const copyStatics = (cb) => {
 };
 
 const images = (cb) => {
-  return src(["./src/assets/images/**/*.{png,jpg,svg}"], { encoding: false })
-    .pipe(dest(paths.dist + "/assets/images"))
-    .on("end", cb);
+  return src(['./statics/images/**/*.{png,jpg,avif,webp}', './src/assets/images/**/*.svg'], { encoding: false })
+    .pipe(dest(paths.dist + '/assets/images'))
+    .on('end', cb)
 };
 
 const videos = (cb) => {
@@ -253,53 +216,9 @@ const fonts = (cb) => {
     .on("end", cb);
 };
 
-const statics = parallel(
-  () => cleanDist(["dist/assets"]),
-  copyStatics,
-  fonts,
-  images,
-  videos,
-  sprite,
-  sassTaskLibs,
-  rollupTask
-);
-const dev = series(
-  () => cleanDist(["dist/files", "dist/assets/libs"]),
-  copyStatics,
-  docs,
-  images,
-  sprite,
-  videos,
-  phpTask,
-  sassTask,
-  sassTaskLibs,
-  rollupTask,
-  watchTask
-);
-const build = series(
-  () => cleanDist(["dist/files"]),
-  copyStatics,
-  docs,
-  images,
-  videos,
-  phpTask,
-  sassTask,
-  sassTaskLibs,
-  rollupTask
-);
+const statics = parallel(() => cleanDist(['dist']), copyStatics, fonts, images, videos, sprite, sassTaskLibs, rollupTask);
+const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
+const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask);
 
-export {
-  images,
-  sassTask,
-  sassTaskLibs,
-  rollupTask,
-  phpTask,
-  watchTask,
-  build,
-  statics,
-  docs,
-  sprite,
-  fonts,
-  videos,
-};
+export { images, sassTask, sassTaskLibs, rollupTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
 export default dev;
