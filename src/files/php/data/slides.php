@@ -23,7 +23,7 @@ $slides = [
     'src' => ["$path/assets/videos/video-2.webm", "$path/assets/videos/video-2.mp4"],
     'type' => ['video/webm', 'video/mp4'],
     'title' => 'РУСИФИКАЦИЯ АВТОМОБИЛЕЙ, ЧИПТЮНИНГ',
-    'list' => ['ЛЕЦЕНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
+    'list' => ['ЛИЦЕНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
     'link' => "$path/files/php/pages/parking-systems/parking-systems.php"
   ],
   [

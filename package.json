@@ -5,6 +5,7 @@
     "build": "cross-env PRODUCTION=true gulp build",
     "statics": "cross-env PRODUCTION=true gulp statics  && gulp fonts",
     "images": "cross-env PRODUCTION=true node sharp.js",
+    "images:new": "cross-env PRODUCTION=true node sharp_new_images.js",
     "sprite": "cross-env PRODUCTION=true gulp sprite"
   },
   "devDependencies": {

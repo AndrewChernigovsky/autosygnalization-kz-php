@@ -120,6 +120,14 @@ $logo = new Logo();
             </ul>
           </div>
         </div>
+        <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link geo-address">
+          <div class="header__image image">
+            <svg width="50" height="50">
+              <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
+            </svg>
+          </div>
+          <?php echo $address ?>
+        </a>
       </div>
     </div>
   </div>

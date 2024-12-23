@@ -32,6 +32,7 @@ echo $head->setHead();
       'intro.php',
       'marks.php',
       'popular.php',
+      'bank.php',
       'service.php',
       'quality.php',
       'sertificates.php',

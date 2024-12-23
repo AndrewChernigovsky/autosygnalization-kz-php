@@ -4,3 +4,5 @@ dist
 dist/*
 assets/libs
 assets/videos
+new_images/
+statics/
