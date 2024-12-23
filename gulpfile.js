@@ -61,10 +61,14 @@ const phpTask = (cb) => {
     src(['./src/files/php/**'], { encoding: false })
       .pipe(dest('./dist/files/php'))
   );
+  tasks.push(
+    src(['./src/index.php', './src/404.php'], { encoding: false })
+      .pipe(dest('./dist/'))
+  );
   return Promise.all(tasks)
     .then(() => {
       if (!PRODUCTION) {
-        return src(['./src/index.php', './src/files/php/pages/**/*.php'])
+        return src(['./src/index.php', './src/404.php', './src/files/php/pages/**/*.php'])
           .pipe(browserSync.stream());
       }
       cb();
