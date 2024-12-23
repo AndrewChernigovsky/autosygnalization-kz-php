@@ -1,20 +1,17 @@
-const feedbackForm = document.getElementById('feedback-form');
-const fancyboxExist = document.querySelectorAll('[data-fancybox');
-const searchExist = document.getElementById('search');
-const phoneButton = document.querySelector('.phone-button');
+const feedbackForm = document.getElementById("feedback-form");
+const fancyboxExist = document.querySelectorAll("[data-fancybox");
+const searchExist = document.getElementById("search");
+const phoneButton = document.querySelector(".phone-button");
 
 async function loadModule() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
 
-
   toToggleMenu();
   toggleList();
 
-  setTimeout(
-    initSwiper, 100
-  );
+  setTimeout(initSwiper, 100);
 
   if (phoneButton != null) {
     const { initPhone } = await import("./modules/phone-button.js");
@@ -26,7 +23,9 @@ async function loadModule() {
   }
   if (feedbackForm != null) {
     const { validateSectionForm } = await import("./modules/validate-form.js");
+    const { initValidate } = await import("./modules/initValidate.js");
     validateSectionForm();
+    initValidate();
   }
   if (fancyboxExist.length > 0) {
     const { initFancybox } = await import("./modules/fancybox.js");
@@ -34,4 +33,4 @@ async function loadModule() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', loadModule);
+document.addEventListener("DOMContentLoaded", loadModule);
