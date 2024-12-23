@@ -10,7 +10,7 @@ class Aside
 
     <article class="aside">
       <h4><?= $title ?></h4>
-      <img src="<?= $src ?>" alt="описание товаров." width="130" heigth="130">
+      <img src="<?= $src ?>" alt="" width="130" heigth="130">
 
       <div class="menu-btns">
         <p><span><?= $quantity ?></span> товаров</p>
