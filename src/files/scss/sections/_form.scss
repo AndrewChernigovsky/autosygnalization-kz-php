@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .form {
   &__wrapper {
@@ -81,6 +81,7 @@
 
     &:hover {
       border: 4 solid var.$red-64001E;
+      opacity: 0.6;
     }
 
     &:checked {
