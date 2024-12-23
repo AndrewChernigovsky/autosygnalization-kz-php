@@ -9,12 +9,14 @@ $path = $variables->getPathFileURL();
 $marks_path = '/assets/images/cars-brand/';
 
 $marks = [
-  'genesis',
+  'changan',
   'KIA',
   'lexus',
   'toyota',
-  'vw',
-  'audi',
+  'chevrolet',
+  'haval',
+  'hyundai',
+  'mitsubishi',
 ]
   ?>
 

@@ -45,6 +45,7 @@ echo $head->setHead();
   <main class="main">
     <div class="container">
       <?= $content; ?>
+      <?= include_once __DIR__ . '/../../sections/card-characteristic.php'; ?>
     </div>
   </main>
   <?php include $base_path . '/footer.php'; ?>

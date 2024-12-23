@@ -7,8 +7,8 @@ $variables->setVar();
 $path = $variables->getPathFileURL();
 
 $brands = [
-  ["path" => "$path/assets/images/cars-brand/genesis.avif",
-   "name" => "genesis"
+  ["path" => "$path/assets/images/cars-brand/changan.avif",
+   "name" => "changan"
 ],
   [
     "path" => "$path/assets/images/cars-brand/KIA.avif",
@@ -23,16 +23,20 @@ $brands = [
     "name" => "toyota"
   ],
   [
-    "path" => "$path/assets/images/cars-brand/vw.avif",
-    "name" => "volkswagen"
+    "path" => "$path/assets/images/cars-brand/chevrolet.avif",
+    "name" => "chevrolet"
   ],
   [
-    "path" => "$path/assets/images/cars-brand/audi.avif",
-    "name" => "audi"
+    "path" => "$path/assets/images/cars-brand/haval.avif",
+    "name" => "haval"
   ],
   [
-    "path" => "$path/assets/images/cars-brand/audi.avif",
-    "name" => "audi"
+    "path" => "$path/assets/images/cars-brand/hyundai.avif",
+    "name" => "hyundai"
+  ],
+  [
+    "path" => "$path/assets/images/cars-brand/mitsubishi.avif",
+    "name" => "mitsubishi"
   ],
 ]
 ?>
