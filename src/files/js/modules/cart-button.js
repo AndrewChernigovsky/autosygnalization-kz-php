@@ -1,4 +1,3 @@
-import { CartButton } from "../helpers/classes/CartButton";
 import { ProductAPI } from "./api/getProduct.js";
 
 const cartButtons = document.querySelectorAll('.cart-button');
@@ -8,21 +7,16 @@ export function cartButtonHandler() {
   if (cartButtons.length > 0) {
     const productApi = new ProductAPI();
     cartButtons.forEach(btn => btn.addEventListener('click', () => {
-      console.log(btn.dataset.id, 'DATAID');
-      const initBnt = new CartButton();
-      // initBnt.updateProductQuantity(btn.dataset.id)
-      // productApi.getProduct(btn.dataset.id);
-      // productApi.createProducts();
-      productApi.addProduct(2);
-      productApi.getQuantity().then(data => {
-        cartCounter.textContent = data; // Обновляем текст счетчика корзины
-      }).catch(err => {
-        console.error('Ошибка при получении количества товаров: ', err);
-      });
-      // productApi.getProductAll();
-      // productApi.getProductByCategory('keychain');
-      // productApi.addProduct(btn.dataset.id);
-      // initBnt.updateCart();
+      productApi.addProduct(btn.dataset.id);
+      let currentCount = localStorage.getItem('count') ? JSON.parse(localStorage.getItem('count')) : {};
+      if (currentCount['count']) {
+        currentCount['count'] += 1;
+      } else {
+        currentCount['count'] = 1;
+      }
+
+      localStorage.setItem('count', JSON.stringify(currentCount));
+      cartCounter.textContent = currentCount['count'];
     }))
   }
 }
