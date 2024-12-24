@@ -41,6 +41,7 @@ $email = $contacts->getEmail();
 $web_site = $contacts->getWebsite();
 $address = $contacts->getAddress();
 $logo = new Logo();
+$navigationLinks = new NavigationLinks();
 ?>
 
 <header class="header">
@@ -51,7 +52,7 @@ $logo = new Logo();
         <nav class="nav">
           <ul class="nav-list list-type-none">
             <?php
-            foreach ($navigationLinks as $link) {
+            foreach ($navigationLinks->getNavlinks() as $link) {
               echo '<li class="nav-item">
             <a class="link ' . isActive($link['path'], $currentPath) . '" href="' . htmlspecialchars($link['path']) . '">' . htmlspecialchars($link['name']) . '</a>
           </li>';
