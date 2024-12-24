@@ -43,6 +43,21 @@ class CreateProducts extends CreateDatabase
     }
     error_log('Cart contents: ' . print_r($_SESSION['cart'], true));
   }
-}
 
+  public function getQuantity()
+  {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_GET['data'] === 'quantity') {
+
+      $totalQuantity = 0;
+
+      if (isset($_SESSION['cart'])) {
+        foreach ($_SESSION['cart'] as $item) {
+          $totalQuantity += $item['quantity'];
+        }
+
+        echo json_encode($totalQuantity);
+      }
+    }
+  }
+}
 ?>

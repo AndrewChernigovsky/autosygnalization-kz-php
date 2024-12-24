@@ -39,6 +39,10 @@ document.addEventListener("DOMContentLoaded", loadModule);
 
 const PRODUCTION = window.location.href.includes('/dist/');
 const url = `${PRODUCTION ? '/dist/' : '/'}files/php/api/sessions/session-destroy.php`;
+sessionStorage.setItem("is_reloaded", true);
+
 window.addEventListener("unload", function () {
-  navigator.sendBeacon(url, "");
+  if (sessionStorage.getItem("is_reloaded") !== 'true') {
+    navigator.sendBeacon(url, "");
+  }
 });

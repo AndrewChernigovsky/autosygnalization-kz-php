@@ -15,6 +15,9 @@ switch ($type) {
       $products->addProductById($id);
     }
     break;
+  case 'quantity':
+    $products->getQuantity();
+    break;
   default:
     error_log('Произошла ошибка при операции: ');
     break;

@@ -40,8 +40,13 @@ class Cart
 
   public function getQuantity()
   {
-    $product = $_SESSION['cart'];
-    return $product[2]['quantity'];
+    if (isset($_SESSION['cart'])) {
+      if (isset($_SESSION['cart'][2]) && isset($_SESSION['cart'][2]['quantity'])) {
+        $quantity = $_SESSION['cart'][2]['quantity'];
+        return $quantity;
+      }
+    }
+    return 0;
   }
 }
 
