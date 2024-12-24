@@ -1,9 +1,12 @@
 <?php
+include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/filters/filters.php';
 include_once __DIR__ . '/../../helpers/components/filters/sorting.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
+
+
 
 $variables = new SetVariables();
 $variables->setVar();

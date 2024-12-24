@@ -61,15 +61,33 @@ export class API {
       console.error('Не удалось обновить количество товаров: ', err);
     }
   }
+  async createProducts() {
+    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=create`;
 
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+      })
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      console.log(data, 'DATA');
+      return data
+    }
+    catch (err) {
+      console.error('Не удалось обновить количество товаров: ', err);
+    }
+  }
   async addProduct(id) {
-    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/add_product_count.php`;
+    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=add&id=${id}`;
 
     try {
       const response = await fetch(url, {
         method: 'POST',
-        body: JSON.stringify({ id: id })
+        body: JSON.stringify({ id: id }),
       })
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }

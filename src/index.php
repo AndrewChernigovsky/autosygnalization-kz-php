@@ -1,6 +1,5 @@
 <?php
 include_once __DIR__ . '/files/php/helpers/classes/setVariables.php';
-include_once __DIR__ . '/files/php/helpers/components/aside.php';
 
 $variables = new SetVariables();
 $variables->setVar();
@@ -16,7 +15,6 @@ $path_components = $docROOT . $path . '/files/php/helpers/components';
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
-$aside = new Aside();
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +26,6 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <?= $aside->createComponent(' УСТАНОВКА ВИДЕОРЕГИСТРАТОВ', '/dist/assets/images/services/service-1.avif', '/dist/404.php', 40) ?>
     <?php
     $file_2_section = './files/php/sections/';
     $files_to_include = [

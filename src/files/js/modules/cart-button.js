@@ -11,9 +11,11 @@ export function cartButtonHandler() {
       const initBnt = new CartButton();
       // initBnt.updateProductQuantity(btn.dataset.id)
       // productApi.getProduct(btn.dataset.id);
+      // productApi.createProducts();
+      productApi.addProduct(2);
       // productApi.getProductAll();
       // productApi.getProductByCategory('keychain');
-      productApi.addProduct(btn.dataset.id);
+      // productApi.addProduct(btn.dataset.id);
       // initBnt.updateCart();
     }))
   }
