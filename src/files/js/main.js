@@ -36,3 +36,30 @@ async function loadModule() {
 }
 
 document.addEventListener("DOMContentLoaded", loadModule);
+
+function showTabs() {
+  document.addEventListener('DOMContentLoaded', () => {
+  const buttons = document.querySelectorAll('.tab__button');
+  const tabLists = document.querySelectorAll('.tab__list');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        buttons.forEach(btn => btn.classList.remove('tab__button--active'));
+      
+        button.classList.add('tab__button--active');
+
+        const tabId = button.getAttribute('data-tab');
+
+        tabLists.forEach(list => {
+          if (list.getAttribute('data-content') === tabId) {
+            list.classList.add('tab__list--show');
+          } else {
+            list.classList.remove('tab__list--show');
+          }
+        });
+      });
+    });
+  });
+}
+
+showTabs();

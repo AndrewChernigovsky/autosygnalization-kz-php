@@ -1,0 +1,89 @@
+@use "variables" as var;
+
+.tab {
+  &__buttons {
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+
+    @media (min-width: var.$tablet) {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
+
+  &__button {
+    min-width: 280px;
+    padding: 10px;
+    font-family: var.$secondary-font;
+    line-height: 28px;
+    color: var.$white;
+  }
+
+  &__button--active {
+    background: var.$blue-gradient;
+  }
+
+  &__content {
+    display: grid;
+    grid-template-columns: 280px;
+    justify-content: center;
+
+    @media (min-width: var.$tablet) {
+      grid-template-columns: 728px;
+    }
+  }
+
+  &__title {
+    max-width: 240px;
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+    line-height: 20px;
+    text-transform: uppercase;
+  }
+
+  &__description {
+    width: 240px;
+    margin: 0;
+    font-family: var.$primary-font;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  &__list {
+    display: none;
+  }
+
+  &__list--show {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+
+    @media (min-width: var.$tablet) {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__item {
+    position: relative;
+    padding-left: 60px;
+  }
+
+  &__item::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 50px;
+    background-image: url("#{var.$DEV_PATH}assets/images/vectors/thermometer.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 40px 40px;
+  }
+}
