@@ -7,13 +7,17 @@ export function cartButtonHandler() {
   if (cartButtons.length > 0) {
     const productApi = new ProductAPI();
     cartButtons.forEach(btn => btn.addEventListener('click', () => {
-      productApi.addProduct(btn.dataset.id);
+      const productId = btn.dataset.id;
+      productApi.addProduct(productId);
+
       let currentCount = localStorage.getItem('count') ? JSON.parse(localStorage.getItem('count')) : {};
-      if (currentCount['count']) {
-        currentCount['count'] += 1;
+
+      if (currentCount[productId]) {
+        currentCount[productId] += 1; // Увеличиваем количество
       } else {
-        currentCount['count'] = 1;
+        currentCount[productId] = 1; // Устанавливаем количество в 1, если товара нет
       }
+
 
       localStorage.setItem('count', JSON.stringify(currentCount));
       cartCounter.textContent = currentCount['count'];
