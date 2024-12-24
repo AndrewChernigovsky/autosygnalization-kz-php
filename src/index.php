@@ -26,10 +26,10 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include $base_path . '/header.php'; ?>
-  <main class="main">
-    <?= $aside->createComponent(' УСТАНОВКА ВИДЕОРЕГИСТРАТОВ', '/dist/assets/images/services/service-1.avif', '/dist/404.php', 40) ?>
-    <?php
+    <?php include $base_path . '/header.php'; ?>
+    <main class="main">
+        <?= $aside->createComponent(' УСТАНОВКА ВИДЕОРЕГИСТРАТОВ', '/dist/assets/images/services/service-4.avif', '/dist/404.php', 40, 'Описание') ?>
+        <?php
     $file_2_section = './files/php/sections/';
     $files_to_include = [
       'intro.php',
@@ -45,10 +45,10 @@ echo $head->setHead();
     $sectionLoader = new IncludeSections($file_2_section, $files_to_include);
     $sectionLoader->includeFiles();
     ?>
-  </main>
-  <?php include $base_path . '/footer.php'; ?>
-  <?php include_once $path_components . '/phone-button.php'; ?>
-  <?php include_once $file_2_section . '/popups/modal-form.php'; ?>
+    </main>
+    <?php include $base_path . '/footer.php'; ?>
+    <?php include_once $path_components . '/phone-button.php'; ?>
+    <?php include_once $file_2_section . '/popups/modal-form.php'; ?>
 </body>
 
 </html>

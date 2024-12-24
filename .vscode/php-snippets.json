@@ -1,0 +1,27 @@
+{
+    "pfe": {
+        "scope": "php",
+        "prefix": "pfe",
+        "body": [
+            "<?php foreach($1):?>",
+            "<?php endforeach;?>"
+        ],
+        "description": "Expand PHP Tags"
+    },
+    "p=": {
+        "scope": "html",
+        "prefix": "p=",
+        "body": [
+            "<?= $1?>"
+        ],
+        "description": "Expand PHP Tags"
+    },
+    "i=": {
+        "scope": "php",
+        "prefix": "i=",
+        "body": [
+            "include_once DIR . '$1' ;"
+        ],
+        "description": "Expand PHP Tags"
+    }
+}
