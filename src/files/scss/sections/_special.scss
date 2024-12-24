@@ -1,0 +1,84 @@
+@use "variables" as *;
+
+.special {
+  &__wrapper {
+    background-color: $gray-bg-autosygnals;
+    border-radius: 25px;
+  }
+
+  &__title {
+    font-size: 20px;
+    margin: 0;
+    padding: 10px;
+    text-transform: uppercase;
+  }
+
+  &__item-img {
+    width: 100%;
+    padding: 20px;
+    background-color: $white;
+    border-radius: 20px;
+  }
+
+  &__item-title {
+    margin: 0;
+    padding: 10px;
+    text-align: end;
+    font-size: 24px;
+    text-transform: uppercase;
+  }
+
+  &__item-price {
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    font-family: $secondary-font;
+  }
+
+  &__item-link {
+    display: flex;
+    justify-content: center;
+    margin: 0 10px;
+    padding: 10px;
+    min-width: 240px;
+    font-weight: 700;
+    font-family: $secondary-font;
+    text-align: center;
+    text-decoration: none;
+    text-transform: uppercase;
+    color: $white;
+    background-color: $black;
+    border: 1px solid $white;
+    border-radius: 5px;
+  }
+
+  &__container-btn {
+    padding: 20px 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    & div {
+      padding: 10px;
+      padding-bottom: 0;
+    }
+  }
+
+  &__link {
+    text-transform: none;
+    color: $white;
+    font-size: 20px;
+  }
+
+  &__btn {
+    padding: 0;
+    width: 48px;
+    height: 48px;
+    border: 1px solid $gray_959090;
+    border-radius: 5px;
+    background-image: linear-gradient($red-280000, $red-FF0000);
+  }
+}
