@@ -24,7 +24,9 @@ $phones = $contacts->getPhones();
         }
         ?>
       </div>
-      <img src="<?= $path . '/assets/images/kaspi.avif' ?>" alt="" width='50' height='50'>
+      <div class="bank__image" style="background-color: #fff; border: 4px solid white; border-radius: 50%;">
+        <img src="<?= $path . '/assets/images/kaspi.avif' ?>" alt="логотип Каспи Банка" width='50' height='50'>
+      </div>
     </div>
   </div>
 </section>

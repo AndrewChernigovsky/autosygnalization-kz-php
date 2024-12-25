@@ -21,11 +21,11 @@ $path = $variables->getPathFileURL();
     ?>
   </div>
   <div class="popup__icons">
-    <a href="">
-      <img src="<?= $path . '/assets/images/icons/telegram.avif'; ?>" alt="">
+    <a href="https://t.me/auto_security_almaty">
+      <img src="<?= $path . '/assets/images/icons/telegram.avif'; ?>" alt="иконка телеграма" width="40" height="40">
     </a>
     <a href="https://clck.ru/3FQ7aJ">
-      <img src="<?= $path . '/assets/images/icons/whatsapp.avif'; ?>" alt="">
+      <img src="<?= $path . '/assets/images/icons/whatsapp.avif'; ?>" alt="иконка вотсапа" width="40" height="40">
     </a>
   </div>
 </div>

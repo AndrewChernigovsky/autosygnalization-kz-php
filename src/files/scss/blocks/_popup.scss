@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .popup {
   display: none;
@@ -98,6 +98,8 @@
       border: none;
       outline: none;
       position: relative;
+      transition: 0.3s ease-in-out;
+      cursor: pointer;
 
       &::after,
       &::before {
@@ -116,6 +118,16 @@
 
       &::after {
         transform: translate(-50%, -50%) rotate(-45deg);
+      }
+
+      &:hover {
+        opacity: 0.6;
+        transform: scale(1.14);
+      }
+
+      &:focus,
+      &:focus-visible {
+        border: 2px solid var.$black;
       }
     }
 
