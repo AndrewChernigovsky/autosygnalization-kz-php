@@ -1,5 +1,5 @@
 <section class="tab">
-  <div class="tabs__wrapper">
+  <div class="tab__wrapper">
     <div class="tab__buttons">
       <button class="tab__button tab__button--active y-button-secondary" type="button" data-tab="description">ОПИСАНИЕ</button>
       <button class="tab__button y-button-secondary" type="button" data-tab="characteristics">ХАРАКТЕРИСТИКИ</button>

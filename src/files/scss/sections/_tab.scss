@@ -1,8 +1,16 @@
 @use "variables" as var;
 
 .tab {
+  &__wrapper {
+    padding-top: 10px;
+
+    @media (min-width: var.$tablet) {
+      padding-top: 20px;
+    }
+  }
+
   &__buttons {
-    margin-bottom: 10px;
+    padding-bottom: 10px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -11,7 +19,17 @@
     @media (min-width: var.$tablet) {
       flex-direction: row;
       flex-wrap: wrap;
-      justify-content: center;
+      justify-content: space-around;
+    }
+
+    @media (min-width: var.$desktop-min) {
+        padding-bottom: 20px;
+      }
+
+    @media (min-width: var.$desktop) {
+      margin-bottom: 10px;
+      justify-content: flex-start;
+      border-bottom: 4px solid var.$white;
     }
   }
 
@@ -21,6 +39,16 @@
     font-family: var.$secondary-font;
     line-height: 28px;
     color: var.$white;
+
+    @media (min-width: var.$desktop-min) {
+      font-size: 20px;
+    }
+
+    @media (min-width: var.$desktop) {
+      min-width: 230px;
+      max-width: 269px;
+      padding: 0;
+    }
   }
 
   &__button--active {
@@ -35,6 +63,14 @@
     @media (min-width: var.$tablet) {
       grid-template-columns: 728px;
     }
+
+    @media (min-width: var.$desktop-min) {
+      grid-template-columns: 984px;
+    }
+
+    @media (min-width: var.$desktop) {
+      grid-template-columns: 1400px;
+    }
   }
 
   &__title {
@@ -44,6 +80,12 @@
     font-size: 16px;
     line-height: 20px;
     text-transform: uppercase;
+
+    @media (min-width: var.$desktop) {
+      max-width: 495px;
+      font-size: 24px;
+      line-height: 30px;
+    }
   }
 
   &__description {
@@ -52,6 +94,12 @@
     font-family: var.$primary-font;
     font-size: 12px;
     line-height: 16px;
+
+    @media (min-width: var.$desktop) {
+      width: 495px;
+      font-size: 24px;
+      line-height: 30px;
+    }
   }
 
   &__list {
@@ -66,12 +114,56 @@
     @media (min-width: var.$tablet) {
       flex-direction: row;
       flex-wrap: wrap;
+      column-gap: 50px;
+      row-gap: 20px;
+    }
+
+    @media (min-width: var.$desktop-min) {
+      column-gap: 175px;
+    }
+
+    @media (min-width: var.$desktop) {
+      position: relative;
+      column-gap: 23px;
+
+      &::after {
+        position: absolute;
+        content: "";
+        width: 4px;
+        height: 105%;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: var.$white;
+      }
     }
   }
 
   &__item {
     position: relative;
     padding-left: 60px;
+
+    @media (min-width: var.$tablet) {
+      margin-left: 20px;
+    }
+
+    @media (min-width: var.$desktop) {
+      width: 665px;
+      margin-left: 0;
+      padding-left: 170px;
+    }
+  }
+
+  &__item:nth-child(even) {
+    @media (min-width: var.$tablet) {
+      padding-left: 0;
+      padding-right: 60px;
+    }
+
+    @media (min-width: var.$desktop) {
+      padding-left: 36px;
+      padding-right: 170px;
+    }
   }
 
   &__item::before {
@@ -85,5 +177,18 @@
     background-repeat: no-repeat;
     background-position: center;
     background-size: 40px 40px;
+
+    @media (min-width: var.$desktop) {
+      width: 150px;
+      height: 150px;
+      background-size: 110px 110px;
+    }
+  }
+
+  &__item:nth-child(even)::before {
+    @media (min-width: var.$tablet) {
+      left: auto;
+      right: 0;
+    }
   }
 }
