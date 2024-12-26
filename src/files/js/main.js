@@ -2,8 +2,22 @@ const feedbackForm = document.getElementById("feedback-form");
 const fancyboxExist = document.querySelectorAll("[data-fancybox");
 const searchExist = document.getElementById("search");
 const phoneButton = document.querySelector(".phone-button");
+const moduleCache = {};
 
-async function loadModule() {
+async function loadModule(moduleName) {
+  if (moduleCache[moduleName]) {
+    return moduleCache[moduleName];
+  }
+
+  const module = await import(`./modules/${moduleName}.js`);
+
+  moduleCache[moduleName] = module;
+
+  return module;
+}
+
+
+async function loadModules() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
@@ -11,33 +25,33 @@ async function loadModule() {
 
   toToggleMenu();
   toggleList();
-
   setTimeout(initSwiper, 100);
 
   if (phoneButton != null) {
-    const { initPhone } = await import("./modules/phone-button.js");
+    if (moduleCache[moduleName]) {
+      return moduleCache[moduleName];
+    }
+    const { initPhone } = await loadModule("./modules/phone-button");
     initPhone();
   }
   if (searchExist != null) {
-    const { initSearch } = await import("./modules/search.js");
+    const { initSearch } = await loadModule("./modules/search");
     initSearch();
   }
   if (feedbackForm != null) {
-    const { validateSectionForm } = await import("./modules/validate-form.js");
-    const { initValidate } = await import("./modules/initValidate.js");
+    const { validateSectionForm } = await loadModule("./modules/validate-form");
+    const { initValidate } = await loadModule("./modules/initValidate");
     validateSectionForm();
     initValidate();
   }
   if (fancyboxExist.length > 0) {
-    const { initFancybox } = await import("./modules/fancybox.js");
+    const { initFancybox } = await loadModule("./modules/fancybox");
     initFancybox();
   }
   cartButtonHandler()
-
-  // localStorage.setItem('count', 0);
 }
 
-document.addEventListener("DOMContentLoaded", loadModule);
+document.addEventListener("DOMContentLoaded", loadModules);
 
 const PRODUCTION = window.location.href.includes('/dist/');
 const url = `${PRODUCTION ? '/dist/' : '/'}files/php/api/sessions/session-destroy.php`;
