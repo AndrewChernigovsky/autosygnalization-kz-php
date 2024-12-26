@@ -1,65 +1,51 @@
 <?php
-include __DIR__ . '/../../helpers/classes/setVariables.php';
-$autoType = isset($_GET['service']) ? $_GET['service'] : null;
+include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../../helpers/components/share.php';
+include_once __DIR__ . '/../../data/services.php';
+
+$type = isset($_GET['service']) ? $_GET['service'] : null;
 
 $variables = new SetVariables();
 $variables->setVar();
-$docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
-$head_path = $docROOT . $path . "/files/php/layout/head.php";
-$sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
-include $head_path;
-include_once $sections_path;
-$base_path = $docROOT . $path . '/files/php/layout';
-function getContent($base_path, $type)
-{
-  include $base_path . '/header.php';
-  "<main class='main'>";
-  "<div>";
-  include "./$type.php";
-  "</div>";
-  "</main>";
-  include $base_path . '/footer.php';
+if ($type && isset($services_data[$type])) {
+  $service = $services_data[$type];
+} else {
+  $service = [
+    'name' => 'Услуга не найдена',
+    'src' => '',
+    'description' => 'Описание услуги не доступно.'
+  ];
 }
-function getAutoContent($type, $base_path)
-{
-  switch ($type) {
-    case 'setup':
-      return getContent($base_path, 'setup');
-    case 'locks':
-      return getContent($base_path, 'locks');
-    case 'setup-media':
-      return getContent($base_path, 'setup-media');
-    case 'setup-system-parking':
-      return getContent($base_path, 'setup-system-parking');
-    case 'autoelectric':
-      return getContent($base_path, 'autoelectric');
-    case 'rus':
-      return getContent($base_path, 'rus');
-    case 'diagnostic':
-      return getContent($base_path, 'diagnostic');
-    case 'disabled-autosynal':
-      return getContent($base_path, 'disabled-autosynal');
-    case 'setup-videoregistration':
-      return getContent($base_path, 'setup-videoregistration');
-    default:
-      return getContent($base_path, 'default');
-  }
-}
-$content = getAutoContent($autoType, $base_path);
-$title = 'Установка и ремонт автосигнализаций | Auto Security';
-$head = new Head($title, [], []);
+
+$share = new Share();
 ?>
 
-<!DOCTYPE html>
-<html lang="ru">
+<section class="service-setup" id="service-setup">
+  <div class="container">
+    <h2 class="service-setup__title"><?= htmlspecialchars($service['name']) ?></h2>
+    <div class="service-setup service-setup--image">
+      <img src="<?= htmlspecialchars($path . $service['image']['src']) ?>"
+        alt="<?= htmlspecialchars($service['image']['description']) ?>">
+      <p class="service-setup__description"><?= htmlspecialchars($service['description']) ?></p>
+    </div>
+    <ul>
+      <?php foreach ($service['services'] as $item): ?>
+        <li style="background-image: url(<?= $path . 'assets/images/vectors/checkbox.svg'; ?>);">
+          <?= htmlspecialchars($item); ?>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <p>Стоимость услуг необходимо уточнять у мастера.</p>
+    <p>Насладитесь комфортом с прекрасно установленным и настроенным нами оборудованием!</p>
+    <?= $share->getShare(); ?>
+    <p>цена: <span><?= $service['cost'] ?></span><span><?= $service['currency']; ?></span></p>
+    <button type="button" class="button y-button-primary" id="buy-btn">заказать</button>
+  </div>
+</section>
+
 <?php
-echo $head->setHead();
+include_once __DIR__ . '/../../helpers/components/setup.php';
+echo getShop('shop');
 ?>
-
-<body>
-  <?php echo htmlspecialchars($content); ?>
-</body>
-
-</html>

@@ -3,6 +3,7 @@ const fancyboxExist = document.querySelectorAll("[data-fancybox");
 const searchExist = document.getElementById("search");
 const phoneButton = document.querySelector(".phone-button");
 const buttonPrint = document.getElementById('print-btn');
+const buyBtn = document.getElementById('buy-btn');
 
 async function loadModules() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
@@ -24,9 +25,7 @@ async function loadModules() {
     initSearch();
   }
   if (feedbackForm != null) {
-    const { validateSectionForm } = await import("./modules/validate-form.js");
     const { initValidate } = await import("./modules/initValidate.js");
-    validateSectionForm();
     initValidate();
   }
   if (fancyboxExist.length > 0) {
@@ -38,6 +37,11 @@ async function loadModules() {
     const PrintDocument = module.default;
     new PrintDocument(buttonPrint);
   }
+  if (buyBtn != null) {
+    const module = await import('./modules/buy.js');
+    const initBuy = module.default;
+    new initBuy(buyBtn);
+  }
   cartButtonHandler();
 }
 
@@ -45,13 +49,13 @@ document.addEventListener("DOMContentLoaded", loadModules);
 
 function showTabs() {
   document.addEventListener('DOMContentLoaded', () => {
-  const buttons = document.querySelectorAll('.tab__button');
-  const tabLists = document.querySelectorAll('.tab__list');
+    const buttons = document.querySelectorAll('.tab__button');
+    const tabLists = document.querySelectorAll('.tab__list');
 
     buttons.forEach(button => {
       button.addEventListener('click', () => {
         buttons.forEach(btn => btn.classList.remove('tab__button--active'));
-      
+
         button.classList.add('tab__button--active');
 
         const tabId = button.getAttribute('data-tab');

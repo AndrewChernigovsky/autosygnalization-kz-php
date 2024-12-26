@@ -41,7 +41,7 @@ $share = new Share();
     <p>Насладитесь комфортом с прекрасно установленным и настроенным нами оборудованием!</p>
     <?= $share->getShare(); ?>
     <p>цена: <span><?= $service['cost'] ?></span><span><?= $service['currency']; ?></span></p>
-    <button type="button" class="button y-button-primary">заказать</button>
+    <button type="button" class="button y-button-primary" id="buy-btn">заказать</button>
   </div>
 </section>
 
