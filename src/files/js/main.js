@@ -2,20 +2,7 @@ const feedbackForm = document.getElementById("feedback-form");
 const fancyboxExist = document.querySelectorAll("[data-fancybox");
 const searchExist = document.getElementById("search");
 const phoneButton = document.querySelector(".phone-button");
-const moduleCache = {};
-
-async function loadModule(moduleName) {
-  if (moduleCache[moduleName]) {
-    return moduleCache[moduleName];
-  }
-
-  const module = await import(`./modules/${moduleName}.js`);
-
-  moduleCache[moduleName] = module;
-
-  return module;
-}
-
+const buttonPrint = document.getElementById('print-btn');
 
 async function loadModules() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
@@ -23,32 +10,35 @@ async function loadModules() {
   const { toggleList } = await import("./modules/footer-menu.js");
   const { cartButtonHandler } = await import('./modules/cart-button.js');
 
+
   toToggleMenu();
   toggleList();
   setTimeout(initSwiper, 100);
 
   if (phoneButton != null) {
-    if (moduleCache[moduleName]) {
-      return moduleCache[moduleName];
-    }
-    const { initPhone } = await loadModule("./modules/phone-button");
+    const { initPhone } = await import("./modules/phone-button.js");
     initPhone();
   }
   if (searchExist != null) {
-    const { initSearch } = await loadModule("./modules/search");
+    const { initSearch } = await import("./modules/search.js");
     initSearch();
   }
   if (feedbackForm != null) {
-    const { validateSectionForm } = await loadModule("./modules/validate-form");
-    const { initValidate } = await loadModule("./modules/initValidate");
+    const { validateSectionForm } = await import("./modules/validate-form.js");
+    const { initValidate } = await import("./modules/initValidate.js");
     validateSectionForm();
     initValidate();
   }
   if (fancyboxExist.length > 0) {
-    const { initFancybox } = await loadModule("./modules/fancybox");
+    const { initFancybox } = await import("./modules/fancybox.js");
     initFancybox();
   }
-  cartButtonHandler()
+  if (buttonPrint) {
+    const module = await import('./modules/print-contacts.js');
+    const PrintDocument = module.default;
+    new PrintDocument(buttonPrint);
+  }
+  cartButtonHandler();
 }
 
 document.addEventListener("DOMContentLoaded", loadModules);

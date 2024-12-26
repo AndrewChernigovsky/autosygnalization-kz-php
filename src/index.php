@@ -43,6 +43,7 @@ echo $head->setHead();
     $sectionLoader->includeFiles();
     ?>
   </main>
+
   <?php include $base_path . '/footer.php'; ?>
   <?php include_once $path_components . '/phone-button.php'; ?>
   <?php include_once $file_2_section . '/popups/modal-form.php'; ?>

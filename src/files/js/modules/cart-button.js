@@ -13,7 +13,7 @@ export function cartButtonHandler() {
 
       let currentCount = localStorage.getItem('count') ? JSON.parse(localStorage.getItem('count')) : {};
 
-      console.log(cartCounter[productId], '323223333ыы33');
+      console.log(cartCounter[productId], '323223333ы33ы33');
       if (currentCount[productId]) {
         currentCount[productId] += 1;
       } else {
