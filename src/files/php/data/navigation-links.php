@@ -27,6 +27,7 @@ class NavigationLinks
       ['name' => 'О нас', 'path' => "$this->path_pages/about/about.php"],
       ['name' => 'Парковочные системы', 'path' => "$this->path_pages/parking-systems/parking-systems.php"],
       ['name' => 'Автосигнализации', 'path' => "$this->path_pages/autosygnals/autosygnals.php"],
+      ['name' => 'Контакты', 'path' => "$this->path_pages/contacts/contacts.php"],
     ];
     return $navigationLinks;
   }

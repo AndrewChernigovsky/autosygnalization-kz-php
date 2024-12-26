@@ -2,16 +2,17 @@ const feedbackForm = document.getElementById("feedback-form");
 const fancyboxExist = document.querySelectorAll("[data-fancybox");
 const searchExist = document.getElementById("search");
 const phoneButton = document.querySelector(".phone-button");
+const buttonPrint = document.getElementById('print-btn');
 
-async function loadModule() {
+async function loadModules() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
   const { cartButtonHandler } = await import('./modules/cart-button.js');
 
+
   toToggleMenu();
   toggleList();
-
   setTimeout(initSwiper, 100);
 
   if (phoneButton != null) {
@@ -32,10 +33,15 @@ async function loadModule() {
     const { initFancybox } = await import("./modules/fancybox.js");
     initFancybox();
   }
-  cartButtonHandler()
+  if (buttonPrint) {
+    const module = await import('./modules/print-contacts.js');
+    const PrintDocument = module.default;
+    new PrintDocument(buttonPrint);
+  }
+  cartButtonHandler();
 }
 
-document.addEventListener("DOMContentLoaded", loadModule);
+document.addEventListener("DOMContentLoaded", loadModules);
 
 function showTabs() {
   document.addEventListener('DOMContentLoaded', () => {
