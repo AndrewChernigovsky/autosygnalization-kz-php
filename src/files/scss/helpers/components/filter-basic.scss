@@ -1,0 +1,91 @@
+@use "variables" as var;
+
+.filter-basic {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 16px;
+  font-family: var.$secondary-font;
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__item-element {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__checkbox {
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var.$white;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: var.$white;
+      transform: translateX(35%) translateY(-45%);
+      clip-path: polygon(0 69%, 7% 67%, 10% 85%, 96% 0, 100% 5%, 5% 100%);
+      display: none;
+    }
+    &:checked::after {
+      display: block;
+    }
+
+    &:hover {
+      opacity: 0.7;
+      transition: 0.3s ease-in-out;
+
+      & + .filter-basic__item-title {
+        opacity: 0.7;
+        transition: 0.3s ease-in-out;
+      }
+
+      &:checked {
+        opacity: 1;
+        transition: none;
+
+        & + .filter-basic__item-title {
+          opacity: 1;
+          transition: none;
+        }
+      }
+    }
+
+    &:disabled {
+      opacity: 0.2;
+
+      &:not(:checked) + .filter-basic__item-title {
+        opacity: 0.2;
+        transition: none;
+      }
+
+      &:checked::after {
+        display: none;
+      }
+
+      &:checked + .filter-basic__item-title {
+        opacity: 0.2;
+      }
+
+      &:hover {
+        opacity: 0.2;
+      }
+    }
+  }
+
+  &__count {
+    background-color: var.$gray-bg;
+    border-radius: 20%;
+  }
+}

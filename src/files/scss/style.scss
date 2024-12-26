@@ -17,6 +17,9 @@
 @use "./blocks/product-card" as *;
 
 @use "./helpers/components/aside.scss" as *;
+@use "./helpers/components/filter-basic.scss" as *;
+@use "./helpers/components/filter-cost.scss" as *;
+@use "./helpers/components/filter-functions.scss" as *;
 
 @use './sections/intro'as *;
 @use './sections/service'as *;
