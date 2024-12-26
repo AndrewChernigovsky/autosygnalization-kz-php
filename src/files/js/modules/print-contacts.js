@@ -14,7 +14,6 @@ export default class PrintDocument {
     });
   }
 
-
   populateContainer() {
     this.container.innerHTML = 'Содержимое для печати';
   }

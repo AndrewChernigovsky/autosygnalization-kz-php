@@ -7,21 +7,16 @@ export function cartButtonHandler() {
   if (cartButtons.length > 0) {
     const productApi = new ProductAPI();
     productApi.createProducts();
+
+    let currentCount = localStorage.getItem('count') ? JSON.parse(localStorage.getItem('count')) : 0;
+    cartCounter.textContent = currentCount;
+
     cartButtons.forEach(btn => btn.addEventListener('click', () => {
       const productId = String(btn.dataset.id);
       productApi.addProduct(productId);
-
-      let currentCount = localStorage.getItem('count') ? JSON.parse(localStorage.getItem('count')) : {};
-
-      console.log(cartCounter[productId], '323223333ы33ы33');
-      if (currentCount[productId]) {
-        currentCount[productId] += 1;
-      } else {
-        currentCount[productId] = 1;
-      }
-
+      currentCount += 1;
       localStorage.setItem('count', JSON.stringify(currentCount));
-      cartCounter.textContent = currentCount['count'];
-    }))
+      cartCounter.textContent = currentCount;
+    }));
   }
 }
