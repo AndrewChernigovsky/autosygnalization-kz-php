@@ -48,3 +48,4 @@ export function showTabs() {
     });
   });
 }
+console.log(message)

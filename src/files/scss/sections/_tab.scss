@@ -10,6 +10,11 @@
     @media (min-width: var.$tablet) {
       padding: 20px;
     }
+
+    @media (min-width: var.$desktop) {
+      padding-left: 0;
+      padding-right: 0;
+    }
   }
 
   &__buttons {
@@ -20,19 +25,25 @@
     align-items: center;
 
     @media (min-width: var.$tablet) {
+      width: 660px;
+      margin: 0 auto;
       flex-direction: row;
       flex-wrap: wrap;
-      justify-content: space-around;
+      justify-content: flex-start;
+      column-gap: 100px;        
     }
 
     @media (min-width: var.$desktop-min) {
-        padding-bottom: 20px;
-      }
+      width: 904px;
+      padding-bottom: 20px;
+      margin-bottom: 10px;
+      column-gap: 176px;
+      border-bottom: 4px solid var.$white;
+    }
 
     @media (min-width: var.$desktop) {
-      margin-bottom: 10px;
-      justify-content: flex-start;
-      border-bottom: 4px solid var.$white;
+      width: 1400px;
+      gap: 30px;
     }
   }
 
@@ -65,11 +76,11 @@
     justify-content: center;
 
     @media (min-width: var.$tablet) {
-      grid-template-columns: 728px;
+      grid-template-columns: 660px;
     }
 
     @media (min-width: var.$desktop-min) {
-      grid-template-columns: 984px;
+      grid-template-columns: 904px;
     }
 
     @media (min-width: var.$desktop) {
@@ -85,6 +96,10 @@
     line-height: 20px;
     text-transform: uppercase;
 
+    @media (min-width: var.$desktop-min) {
+      max-width: 300px;
+    }
+
     @media (min-width: var.$desktop) {
       max-width: 495px;
       font-size: 24px;
@@ -98,6 +113,10 @@
     font-family: var.$primary-font;
     font-size: 12px;
     line-height: 16px;
+
+    @media (min-width: var.$desktop-min) {
+      max-width: 300px;
+    }
 
     @media (min-width: var.$desktop) {
       max-width: 495px;
@@ -117,40 +136,36 @@
     gap: 13px;
 
     @media (min-width: var.$tablet) {
-      flex-direction: row;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
       column-gap: 50px;
       row-gap: 20px;
     }
 
     @media (min-width: var.$desktop-min) {
+      position: relative;
       column-gap: 175px;
     }
 
-    @media (min-width: var.$desktop) {
-      position: relative;
-      column-gap: 23px;
+    &::after {
+      position: absolute;
+      content: "";
+      width: 4px;
+      height: 105%;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: var.$white;
+    }
 
-      &::after {
-        position: absolute;
-        content: "";
-        width: 4px;
-        height: 105%;
-        top: -10px;
-        left: 50%;
-        transform: translateX(-50%);
-        background-color: var.$white;
-      }
+    @media (min-width: var.$desktop) {      
+      column-gap: 23px;    
     }
   }
 
   &__item {
     position: relative;
     padding-left: 60px;
-
-    @media (min-width: var.$tablet) {
-      margin-left: 20px;
-    }
 
     @media (min-width: var.$desktop) {
       width: 665px;
@@ -163,10 +178,10 @@
     @media (min-width: var.$tablet) {
       padding-left: 0;
       padding-right: 60px;
+      text-align: right;
     }
 
     @media (min-width: var.$desktop) {
-      padding-left: 36px;
       padding-right: 170px;
     }
   }
