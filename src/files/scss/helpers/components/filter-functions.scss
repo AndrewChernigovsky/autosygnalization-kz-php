@@ -1,0 +1,115 @@
+@use "variables" as var;
+
+.filter-functions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 16px;
+  font-family: var.$secondary-font;
+  justify-content: center;
+
+  &__item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__item-element {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__checkbox {
+    appearance: none;
+    cursor: pointer;
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    border: 1px solid var.$white;
+    position: relative;
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+
+      height: 18px;
+      background-color: var.$white;
+      transform: translateX(35%) translateY(-45%);
+      clip-path: polygon(0 69%, 7% 67%, 10% 85%, 96% 0, 100% 5%, 5% 100%);
+      display: none;
+    }
+    &:checked::after {
+      display: block;
+    }
+
+    &:hover {
+      opacity: 0.7;
+      transition: 0.3s ease-in-out;
+
+      & + .filter-functions__item-title {
+        opacity: 0.7;
+        transition: 0.3s ease-in-out;
+      }
+
+      &:checked {
+        opacity: 1;
+        transition: none;
+
+        & + .filter-functions__item-title {
+          opacity: 1;
+          transition: none;
+        }
+      }
+    }
+
+    &:disabled {
+      opacity: 0.2;
+
+      &:not(:checked) + .filter-functions__item-title {
+        opacity: 0.2;
+        transition: none;
+      }
+
+      &:checked::after {
+        display: none;
+      }
+
+      &:checked + .filter-functions__item-title {
+        opacity: 0.2;
+      }
+
+      &:hover {
+        opacity: 0.2;
+      }
+    }
+  }
+
+  &__item-title {
+    overflow: hidden; /* Скрыть переполнение */
+    text-overflow: ellipsis; /* Добавить многоточие для длинного текста */
+  }
+
+  &__count {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var.$gray-bg;
+    min-width: 20px;
+    min-height: 25px;
+    border-radius: 20%;
+    margin: 1px;
+    padding: 1px;
+  }
+}
+
+.filters__buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+}
