@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .form {
   &__wrapper {
@@ -74,13 +74,14 @@
     border-radius: 5px;
     background-color: var.$white;
     background-repeat: no-repeat;
-    background-size: 40px 40px;
+    background-size: contain;
     background-position: center;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
 
     &:hover {
       border: 4 solid var.$red-64001E;
+      opacity: 0.6;
     }
 
     &:checked {
@@ -90,7 +91,6 @@
     @media (min-width: var.$tablet) {
       width: 150px;
       height: 150px;
-      background-size: 90px 90px;
     }
   }
 

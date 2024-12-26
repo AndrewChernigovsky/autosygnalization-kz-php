@@ -44,6 +44,7 @@ class SetVariables
 
   public function getPathFileURL()
   {
+    error_log($this->pathFile_URL);
     return $this->pathFile_URL;
   }
   public function getBasePath()

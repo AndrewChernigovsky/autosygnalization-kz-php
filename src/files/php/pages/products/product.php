@@ -3,6 +3,7 @@ include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../data/products.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 
+
 $category = isset($_GET['category']) ? $_GET['category'] : null;
 $model = isset($_GET['model']) ? $_GET['model'] : null;
 
@@ -43,10 +44,8 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <div class="container">
-      <?= $content; ?>
-      <?= include_once __DIR__ . '/../../sections/card-characteristic.php'; ?>
-    </div>
+    <?= $content; ?>
+    <?= include_once __DIR__ . '/../../sections/card-tabs.php'; ?>
   </main>
   <?php include $base_path . '/footer.php'; ?>
 </body>

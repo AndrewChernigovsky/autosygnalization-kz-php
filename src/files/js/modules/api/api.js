@@ -61,14 +61,12 @@ export class API {
       console.error('Не удалось обновить количество товаров: ', err);
     }
   }
-
-  async addProduct(id) {
-    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/add_product_count.php`;
+  async createProducts() {
+    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=create`;
 
     try {
       const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify({ id: id })
+        method: 'GET',
       })
       if (!response.ok) {
         throw new Error('Network response was not ok');
@@ -76,6 +74,44 @@ export class API {
       const data = await response.json();
       console.log(data, 'DATA');
       return data
+    }
+    catch (err) {
+      console.error('Не удалось обновить количество товаров: ', err);
+    }
+  }
+  async addProduct(id) {
+    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=add&id=${id}`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({ id: id }),
+      })
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      console.log(data, 'DATA');
+      return data
+    }
+    catch (err) {
+      console.error('Не удалось обновить количество товаров: ', err);
+    }
+  }
+  async getQuantity() {
+    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=quantity`;
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const data = await response.json();
+      return data;
     }
     catch (err) {
       console.error('Не удалось обновить количество товаров: ', err);

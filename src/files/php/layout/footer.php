@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../data/navigation-links.php';
 
 $variables = new SetVariables();
 $variables->setVar();
@@ -31,7 +32,8 @@ $email = $contacts->getEmail(true);
 $web_site = $contacts->getWebsite(true);
 $geos = new Geo();
 $logo = new Logo();
-$footerMenu = new GenerateFooterLinks($navigationFooterLinks);
+$navigationFooterLinks = new NavigationLinks();
+$footerMenu = new GenerateFooterLinks($navigationFooterLinks->getNavigationFooterLinks());
 
 $socialIcons = $contacts->getSocialIcons();
 $insertPHONE = new InsertPhone();

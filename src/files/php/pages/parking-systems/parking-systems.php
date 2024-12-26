@@ -36,7 +36,7 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <h2>Услуги</h2>
+    <h2>Парковочные системы</h2>
   </main>
   <?php include $base_path . '/footer.php'; ?>
 </body>

@@ -1,6 +1,4 @@
 <?php
-session_start();
-
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../helpers/components/cart.php';
 include_once __DIR__ . '/../data/products.php';
@@ -13,15 +11,6 @@ $docROOT = $variables->getDocRoot();
 
 $cart = new Cart();
 $quantity = 0;
-
-if (isset($_SESSION['cart'])) {
-  foreach ($_SESSION['cart'] as $productId => $productData) {
-    $quantity += $productData['quantity'];
-    $cart->setQuantity($quantity);
-  }
-} else {
-  echo "No products in the cart.";
-}
 ?>
 
 <?php
@@ -52,6 +41,7 @@ $email = $contacts->getEmail();
 $web_site = $contacts->getWebsite();
 $address = $contacts->getAddress();
 $logo = new Logo();
+$navigationLinks = new NavigationLinks();
 ?>
 
 <header class="header">
@@ -62,7 +52,7 @@ $logo = new Logo();
         <nav class="nav">
           <ul class="nav-list list-type-none">
             <?php
-            foreach ($navigationLinks as $link) {
+            foreach ($navigationLinks->getNavlinks() as $link) {
               echo '<li class="nav-item">
             <a class="link ' . isActive($link['path'], $currentPath) . '" href="' . htmlspecialchars($link['path']) . '">' . htmlspecialchars($link['name']) . '</a>
           </li>';

@@ -9,7 +9,11 @@ html {
 .container {
   max-width: var.$desktop;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 10px;
+
+  @media (min-width: var.$desktop) {
+    padding: 0 20px;
+  }
 }
 
 body {

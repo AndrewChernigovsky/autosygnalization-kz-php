@@ -2,19 +2,193 @@
 
 .popup {
   display: none;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  z-index: 23;
-  min-height: 300px;
-  background-color: var.$gray;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
+
+  @media screen and (max-width: var.$tablet) {
+    display: none;
+    position: fixed;
+    bottom: 80px;
+    right: 10px;
+    min-width: 300px;
+    max-width: 300px;
+    width: calc(100% - 40px);
+    z-index: 23;
+    background-color: var.$gray;
+    justify-content: flex-end;
+    text-align: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 20px 20px 0 20px;
+
+    #modal-form-close {
+      display: none;
+    }
+
+    &.active {
+      display: grid;
+    }
+
+    &__phones {
+      display: grid;
+
+      a {
+        color: var.$white;
+        text-decoration: none;
+        padding-right: 40px;
+        line-height: 45px;
+        font-weight: 700;
+        font-size: 14px;
+        font-family: var.$secondary-font;
+
+        &:first-of-type {
+          border-bottom: 2px solid var.$white;
+        }
+
+        span {
+          text-decoration: underline;
+        }
+
+        position: relative;
+
+        &::after {
+          content: "";
+          display: block;
+          position: absolute;
+          width: 30px;
+          height: 30px;
+          mask-repeat: no-repeat;
+          mask-image: url("#{var.$DEV_PATH}assets/images/vectors/phone-no-border.svg");
+          background-color: var.$white;
+          mask-position: center;
+          mask-size: cover;
+          right: 0px;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+      }
+    }
+
+    &__icons {
+      display: flex;
+      gap: 5px;
+      justify-content: flex-end;
+    }
+  }
+}
+
+.popup.modal-form {
+  display: none;
+
+  @media screen and (min-width: 769px) {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11;
+    border-radius: 15px;
+    padding: 50px 0;
+    background-color: var.$white;
+
+    .popup__button--close {
+      width: 40px;
+      height: 40px;
+      margin-left: auto;
+      margin-right: 20px;
+      background: transparent;
+      border: none;
+      outline: none;
+      position: relative;
+      transition: 0.3s ease-in-out;
+      cursor: pointer;
+
+      &::after,
+      &::before {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: var.$gray-bg-autosygnals;
+        top: 50%;
+        left: 50%;
+      }
+
+      &::before {
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      &::after {
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+
+      &:hover {
+        opacity: 0.6;
+        transform: scale(1.14);
+      }
+
+      &:focus,
+      &:focus-visible {
+        border: 2px solid var.$black;
+      }
+    }
+
+    .form {
+      .form__title {
+        color: var.$gray-bg-autosygnals;
+      }
+
+      .form__list {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .form__subtitle {
+        color: var.$gray-bg-autosygnals;
+        line-height: 40px;
+      }
+
+      .form__input {
+        max-width: 100%;
+      }
+
+      textarea {
+        min-height: 150px;
+      }
+    }
+  }
 
   &.active {
-    display: flex;
+    display: grid;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    & .form__wrapper {
+      grid-template-columns: 769px;
+    }
+
+    & .form__title {
+      font-size: 24px;
+      line-height: 35px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    & .form__input {
+      font-size: 24px;
+      line-height: 30px;
+      margin-bottom: 0;
+
+      &--textarea {
+        font-size: 16px;
+        line-height: normal;
+        margin-bottom: 20px;
+      }
+    }
+
+    & .form__subtitle {
+      font-size: 24px;
+      line-height: 40px;
+      text-align: start;
+      margin-bottom: 10px;
+    }
   }
 }

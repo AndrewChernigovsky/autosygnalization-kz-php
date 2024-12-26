@@ -27,6 +27,10 @@ RewriteRule ^files/php/functions - [L]
 
 # RewriteCond %{REQUEST_FILENAME} !-d
 # RewriteCond %{REQUEST_FILENAME} !-f
+# RewriteRule ^.*$ /404.php [L]
+
+# RewriteCond %{REQUEST_FILENAME} !-d
+# RewriteCond %{REQUEST_FILENAME} !-f
 # RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
 # RewriteCond %{THE_REQUEST} \s/index\.php [NC]

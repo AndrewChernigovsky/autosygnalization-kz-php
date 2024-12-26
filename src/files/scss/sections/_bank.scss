@@ -3,8 +3,6 @@
 .bank {
   padding: 50px 0;
 
-
-
   &__image {
     display: flex;
     justify-content: center;
@@ -36,6 +34,25 @@
   @media screen and (max-width: var.$tablet) {
     h2 {
       font-size: 16px;
+    }
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    h2 {
+      font-size: 38px;
+    }
+
+    &__image {
+      p {
+        font-size: 24px;
+      }
+    }
+
+    &__phones {
+
+      a {
+        font-size: 24px;
+      }
     }
   }
 }

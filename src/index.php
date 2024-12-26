@@ -1,5 +1,5 @@
 <?php
-include_once __DIR__ . '/files/php/helpers/classes/setVariables.php';
+include __DIR__ . '/files/php/helpers/classes/setVariables.php';
 
 $variables = new SetVariables();
 $variables->setVar();
