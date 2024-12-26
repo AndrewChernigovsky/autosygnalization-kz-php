@@ -13,34 +13,42 @@ phoneMask.mask(phoneInput);
 const validate = new Validate();
 
 export function initValidate() {
-  yearInput.addEventListener("blur", () => {
-    validate.onInputBlur(
-      yearInput,
-      validate.validateYear.bind(validate),
-      yearInput.value
-    );
-  });
-  modelInput.addEventListener("blur", () => {
-    validate.onInputBlur(
-      modelInput,
-      validate.validateModel.bind(validate),
-      modelInput.value
-    );
-  });
-  nameInput.addEventListener("blur", () => {
-    validate.onInputBlur(
-      nameInput,
-      validate.validateName.bind(validate),
-      nameInput.value
-    );
-  });
-  phoneInput.addEventListener("blur", () => {
-    validate.onInputBlur(
-      phoneInput,
-      validate.validatePhone.bind(validate),
-      phoneInput.value
-    );
-  });
+  if (yearInput) {
+    yearInput.addEventListener("blur", () => {
+      validate.onInputBlur(
+        yearInput,
+        validate.validateYear.bind(validate),
+        yearInput.value
+      );
+    });
+  }
+  if (modelInput) {
+    modelInput.addEventListener("blur", () => {
+      validate.onInputBlur(
+        modelInput,
+        validate.validateModel.bind(validate),
+        modelInput.value
+      );
+    });
+  }
+  if (nameInput) {
+    nameInput.addEventListener("blur", () => {
+      validate.onInputBlur(
+        nameInput,
+        validate.validateName.bind(validate),
+        nameInput.value
+      );
+    });
+  }
+  if (phoneInput) {
+    phoneInput.addEventListener("blur", () => {
+      validate.onInputBlur(
+        phoneInput,
+        validate.validatePhone.bind(validate),
+        phoneInput.value
+      );
+    });
+  }
 
   feedbackForm.addEventListener("change", () => {
     const formBtn = feedbackForm.querySelector(".form__button");
