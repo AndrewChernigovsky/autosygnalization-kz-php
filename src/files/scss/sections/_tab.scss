@@ -2,10 +2,13 @@
 
 .tab {
   &__wrapper {
-    padding-top: 10px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px;
+
 
     @media (min-width: var.$tablet) {
-      padding-top: 20px;
+      padding: 20px;
     }
   }
 
@@ -39,6 +42,7 @@
     font-family: var.$secondary-font;
     line-height: 28px;
     color: var.$white;
+    cursor: pointer;
 
     @media (min-width: var.$desktop-min) {
       font-size: 20px;
@@ -89,16 +93,17 @@
   }
 
   &__description {
-    width: 240px;
+    max-width: 240px;
     margin: 0;
     font-family: var.$primary-font;
     font-size: 12px;
     line-height: 16px;
 
     @media (min-width: var.$desktop) {
-      width: 495px;
+      max-width: 495px;
       font-size: 24px;
       line-height: 30px;
+      text-transform: none;
     }
   }
 
