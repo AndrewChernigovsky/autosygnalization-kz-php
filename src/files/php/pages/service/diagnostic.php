@@ -12,8 +12,7 @@ $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 include $head_path;
 include_once $sections_path;
 $base_path = $docROOT . $path . '/files/php/layout';
-$path_2 = $docROOT . $path;
-function getContent($base_path, $path_2, $type)
+function getContent($base_path, $type)
 {
   include $base_path . '/header.php';
   "<main class='main'>";
@@ -22,35 +21,33 @@ function getContent($base_path, $path_2, $type)
   "</div>";
   "</main>";
   include $base_path . '/footer.php';
-  include $path_2 . '/files/php/helpers/components/phone-button.php';
-  include $path_2 . '/files/php/sections/popups/modal-form.php';
 }
-function getAutoContent($type, $base_path, $path_2)
+function getAutoContent($type, $base_path)
 {
   switch ($type) {
     case 'setup':
-      return getContent($base_path, $path_2, 'setup');
+      return getContent($base_path, 'setup');
     case 'locks':
-      return getContent($base_path, $path_2, 'locks');
+      return getContent($base_path, 'locks');
     case 'setup-media':
-      return getContent($base_path, $path_2, 'setup-media');
+      return getContent($base_path, 'setup-media');
     case 'setup-system-parking':
-      return getContent($base_path, $path_2, 'setup-system-parking');
+      return getContent($base_path, 'setup-system-parking');
     case 'autoelectric':
-      return getContent($base_path, $path_2, 'autoelectric');
+      return getContent($base_path, 'autoelectric');
     case 'rus':
-      return getContent($base_path, $path_2, 'rus');
+      return getContent($base_path, 'rus');
     case 'diagnostic':
-      return getContent($base_path, $path_2, 'diagnostic');
+      return getContent($base_path, 'diagnostic');
     case 'disabled-autosynal':
-      return getContent($base_path, $path_2, 'disabled-autosynal');
+      return getContent($base_path, 'disabled-autosynal');
     case 'setup-videoregistration':
-      return getContent($base_path, $path_2, 'setup-videoregistration');
+      return getContent($base_path, 'setup-videoregistration');
     default:
-      return getContent($base_path, $path_2, 'default');
+      return getContent($base_path, 'default');
   }
 }
-$content = getAutoContent($autoType, $base_path, $path_2);
+$content = getAutoContent($autoType, $base_path);
 $title = 'Установка и ремонт автосигнализаций | Auto Security';
 $head = new Head($title, [], []);
 ?>
