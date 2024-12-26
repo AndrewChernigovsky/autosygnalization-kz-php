@@ -9,7 +9,7 @@ class FilterBasic
       <div class="filter-basic__item">
         <label for="vnedorojnik" class="filter-basic__item-element">
           <input type="checkbox" class="filter-basic__checkbox" id="vnedorojnik" name="vnedorojnik">
-          <span class="filter-basic__item-title"></span>
+          <span class="filter-basic__item-title">Для внедорожника</span>
         </label>
         <span class="filter-basic__count">111</span>
       </div>
