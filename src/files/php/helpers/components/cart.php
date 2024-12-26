@@ -1,10 +1,13 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../../db/createDataBase.php';
+include_once __DIR__ . '/../../api/sessions/session.php';
 
 class Cart
 {
   private $path;
   private $variables;
+  private $pdo;
   private $totalQuantity = 0;
   public function __construct()
   {
@@ -12,6 +15,9 @@ class Cart
     $this->variables->setVar();
     $path = $this->variables->getPathFileURL();
     $this->path = $path;
+
+    $db = new CreateDatabase();
+    $this->pdo = $db->getConnection();
   }
 
   public function initCart()
@@ -31,64 +37,16 @@ class Cart
     <?php
     return ob_get_clean();
   }
-  public function calculateTotalQuantity($id, $quantity)
-  {
-    $this->totalQuantity = 0;
 
-    foreach ($this->products as &$existingProduct) {
-      if ($existingProduct['id'] === $id) {
-        $this->totalQuantity += $quantity;
-      }
-    }
-
-    return $this->totalQuantity;
-  }
-
-  public function setQuantity($quantity)
-  {
-    $this->totalQuantity = $quantity;
-  }
   public function getQuantity()
   {
-    return $this->totalQuantity;
-  }
-
-  public function getProducts()
-  {
-    return $this->products;
-  }
-  public function addProduct($id)
-  {
-    foreach ($this->products as &$product) {
-      foreach ($product as $pro) {
-        if ($pro['id'] === $id) {
-          $pro['quantity'] += 1;
-          $this->calculateTotalQuantity($id, 1);
-          echo $this->totalQuantity;
-          return;
-        }
+    if (isset($_SESSION['cart'])) {
+      if (isset($_SESSION['cart'][2]) && isset($_SESSION['cart'][2]['quantity'])) {
+        $quantity = $_SESSION['cart'][2]['quantity'];
+        return $quantity;
       }
     }
-  }
-  public function updateProduct($id, $newData)
-  {
-    foreach ($this->products as &$product) {
-      if ($product['id'] === $id) {
-        $product = array_merge($product, $newData);
-        return true;
-      }
-    }
-    return false;
-  }
-  public function removeProduct($id)
-  {
-    foreach ($this->products as $key => $product) {
-      if ($product['id'] === $id) {
-        unset($this->products[$key]);
-        return true;
-      }
-    }
-    return false;
+    return 0;
   }
 }
 

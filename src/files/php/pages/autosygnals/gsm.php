@@ -11,7 +11,7 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
 
 <section class="autosygnals" id="autosygnals">
   <div class="container">
-    <h2 class="autosygnals__title">Автосигнализации с автозапуском</h2>
+    <h2 class="autosygnals__title">АВТОСИГНАЛИЗАЦИИ С GSM</h2>
   </div>
   </div>
 </section>

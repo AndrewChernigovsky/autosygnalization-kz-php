@@ -7,6 +7,7 @@ async function loadModule() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
+  const { cartButtonHandler } = await import('./modules/cart-button.js');
 
   toToggleMenu();
   toggleList();
@@ -31,7 +32,6 @@ async function loadModule() {
     const { initFancybox } = await import("./modules/fancybox.js");
     initFancybox();
   }
-  const { cartButtonHandler } = await import('./modules/cart-button.js');
   cartButtonHandler()
 }
 
@@ -63,3 +63,13 @@ function showTabs() {
 }
 
 showTabs();
+
+const PRODUCTION = window.location.href.includes('/dist/');
+const url = `${PRODUCTION ? '/dist/' : '/'}files/php/api/sessions/session-destroy.php`;
+sessionStorage.setItem("is_reloaded", true);
+
+window.addEventListener("unload", function () {
+  if (sessionStorage.getItem("is_reloaded") !== 'true') {
+    navigator.sendBeacon(url, "");
+  }
+});

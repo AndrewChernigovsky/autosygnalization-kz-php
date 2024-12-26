@@ -3,6 +3,7 @@ include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../data/products.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 
+
 $category = isset($_GET['category']) ? $_GET['category'] : null;
 $model = isset($_GET['model']) ? $_GET['model'] : null;
 

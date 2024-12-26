@@ -4,17 +4,19 @@
 
 @use "./helpers/animations" as *;
 
-@use "./blocks/footer"as *;
-@use "./blocks/header"as *;
-@use "./blocks/nav"as *;
-@use "./blocks/geo"as *;
-@use "./blocks/phones"as *;
-@use "./blocks/popup"as *;
-@use "./blocks/button"as *;
-@use "./blocks/logo"as *;
-@use "./blocks/service-card"as *;
-@use "./blocks/phone-button"as *;
-@use "./blocks/product-card"as *;
+@use "./blocks/footer" as *;
+@use "./blocks/header" as *;
+@use "./blocks/nav" as *;
+@use "./blocks/geo" as *;
+@use "./blocks/phones" as *;
+@use "./blocks/popup" as *;
+@use "./blocks/button" as *;
+@use "./blocks/logo" as *;
+@use "./blocks/service-card" as *;
+@use "./blocks/phone-button" as *;
+@use "./blocks/product-card" as *;
+
+@use "./helpers/components/aside.scss" as *;
 
 @use './sections/intro'as *;
 @use './sections/service'as *;

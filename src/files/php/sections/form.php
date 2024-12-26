@@ -1,5 +1,5 @@
 <?php
-  include_once __DIR__ . '/../data/brands.php';
+include_once __DIR__ . '/../data/brands.php';
 ?>
 <section class="form" id="form">
   <div class="form__wrapper">
@@ -9,7 +9,8 @@
         <legent class="form__subtitle">Марка:</legent>
         <div class="form__group-radio">
           <?php foreach ($brands as $brand): ?>
-            <input class="form__radio" style="background-image: url(<?= $brand['path'] ?>);" type="radio" name="mark" id="<?= $brand['name'] ?>">
+            <input class="form__radio" style="background-image: url(<?= $brand['path'] ?>);" type="radio" name="mark"
+              id="<?= $brand['name'] ?>">
             <label class="visually-hidden" for="<?= $brand['name'] ?>"><?= $brand['name'] ?></label>
           <?php endforeach; ?>
         </div>
@@ -27,13 +28,13 @@
           </label>
         </li>
         <li class="form__item">
-          <label class="form__subtitle">Имя:
+          <label class="form__subtitle">Имя*:
             <input class="form__input" type="text" name="name" id="name" placeholder="Ivanov Ivan Ivanovich"
               pattern="[A-Za-z\s]+" required>
           </label>
         </li>
         <li class="form__item">
-          <label class="form__subtitle">Телефон:
+          <label class="form__subtitle">Телефон*:
             <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777"
               pattern="[0-9]+" required>
           </label>

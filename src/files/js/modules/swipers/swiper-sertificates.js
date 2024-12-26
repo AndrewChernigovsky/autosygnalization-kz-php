@@ -1,3 +1,6 @@
+import Swiper from "swiper";
+import { Autoplay, Pagination, EffectCards } from "swiper/modules";
+
 export function initSwiperSertificates() {
   const swiperSertificates = document.querySelector('.swiper-sertificates');
 
