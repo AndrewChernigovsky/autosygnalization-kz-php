@@ -33,8 +33,6 @@ async function loadModule() {
     initFancybox();
   }
   cartButtonHandler()
-
-  // localStorage.setItem('count', 0);
 }
 
 document.addEventListener("DOMContentLoaded", loadModule);

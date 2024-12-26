@@ -1,3 +1,6 @@
+import Swiper from "swiper";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+
 export function initSwiperAutosygnal() {
   const swiperAutosygnals = document.querySelector('.swiper-autosygnals');
   let autosygnalsSwiper;
