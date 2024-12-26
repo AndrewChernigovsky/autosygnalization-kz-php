@@ -1,3 +1,6 @@
+import Swiper from "swiper";
+import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+
 export function initSwiperService() {
   const swiperService = document.querySelector('.swiper-service');
 

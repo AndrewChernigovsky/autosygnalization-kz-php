@@ -1,3 +1,6 @@
+import Swiper from "swiper";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+
 export function initSwiperPopular() {
   const swiperPopular = document.querySelector('.swiper-popular');
   const swiperPopularGallery = document.querySelectorAll('.popular__item .swiper-popular-gallery');

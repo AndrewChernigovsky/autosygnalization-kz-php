@@ -9,6 +9,7 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import svgSprite from "gulp-svg-sprite";
+import { esbuildFoo } from "./esbuild.js";
 
 const config = {
   mode: {
@@ -41,18 +42,23 @@ const paths = {
   dist: "./dist",
 };
 
-const rollupTask = (done) => {
-  exec("rollup -c", (err, stdout, stderr) => {
-    if (err) {
-      console.error(stderr);
-      done(err);
-      return;
-    }
-    console.log(stdout);
-    browserSync.reload();
-    done();
-  });
+const esbuildTask = async (done) => {
+  await esbuildFoo();
+  browserSync.reload();
+  done();
 };
+// const esbuildTask = (done) => {
+//   exec("esbuild -c", (err, stdout, stderr) => {
+//     if (err) {
+//       console.error(stderr);
+//       done(err);
+//       return;
+//     }
+//     console.log(stdout);
+//     browserSync.reload();
+//     done();
+//   });
+// };
 
 const phpTask = (cb) => {
   let tasks = []
@@ -87,7 +93,7 @@ const watchTask = () => {
   });
   if (!PRODUCTION) {
     watch([paths.styles.watch], sassTask);
-    watch([paths.scripts.src], rollupTask);
+    watch([paths.scripts.src], esbuildTask);
     watch(["./src/**/*.php"], phpTask);
   }
 };
@@ -220,9 +226,9 @@ const fonts = (cb) => {
     .on("end", cb);
 };
 
-const statics = parallel(() => cleanDist(['dist']), copyStatics, fonts, images, videos, sprite, sassTaskLibs, rollupTask);
-const dev = series(() => cleanDist(['dist/files', 'dist/assets/libs']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, rollupTask, watchTask);
-const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, rollupTask);
+const statics = parallel(() => cleanDist(['dist']), copyStatics, fonts, images, videos, sprite, sassTaskLibs, esbuildTask);
+const dev = series(() => cleanDist(['dist/files']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, esbuildTask, watchTask);
+const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, esbuildTask);
 
-export { images, sassTask, sassTaskLibs, rollupTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
+export { images, sassTask, sassTaskLibs, esbuildTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
 export default dev;

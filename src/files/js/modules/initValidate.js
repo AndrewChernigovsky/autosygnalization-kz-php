@@ -1,13 +1,13 @@
 import Validate from "../classes/Validate.js";
-import Inputmask from "inputmask";
-
 const yearInput = document.getElementById("release-year");
 const modelInput = document.getElementById("model");
 const nameInput = document.getElementById("name");
 const phoneInput = document.getElementById("phone");
 const feedbackForm = document.getElementById("feedback-form");
-
-const phoneMask = new Inputmask("+7 (999) 99 99 999");
+import "inputmask";
+const phoneMask = new Inputmask({
+  mask: "+7 (999) 99 99 999",
+});
 phoneMask.mask(phoneInput);
 
 const validate = new Validate();
