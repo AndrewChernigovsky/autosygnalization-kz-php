@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 
 $autoType = isset($_GET['auto']) ? $_GET['auto'] : null;
