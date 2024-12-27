@@ -27,7 +27,7 @@ class Filters
   {
     ob_start();
     ?>
-    <button class="filter-button">Фильтр</button>
+    <button class="filter-button" type="button" id="filter-btn">Фильтр</button>
     <form class="filter-form open" id="filter-catalog" action="" method="get">
       <?php echo $this->filterBasic->renderFilters() ?>
       <?php echo $this->filterCost->renderFilters() ?>

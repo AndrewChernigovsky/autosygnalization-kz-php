@@ -8,6 +8,11 @@
   font-size: 16px;
   font-family: var.$secondary-font;
   justify-content: center;
+  margin-bottom: 20px;
+
+  &__title {
+    text-transform: uppercase;
+  }
 
   &__item {
     display: flex;
@@ -112,4 +117,5 @@
   flex-direction: column;
   gap: 10px;
   padding-top: 10px;
+  align-items: center;
 }
