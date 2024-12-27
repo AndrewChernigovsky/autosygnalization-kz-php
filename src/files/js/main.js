@@ -5,13 +5,13 @@ async function loadModules() {
   const phoneButton = document.querySelector(".phone-button");
   const buttonPrint = document.getElementById("print-btn");
   const buyBtn = document.getElementById("buy-btn");
-  const minValue = document.getElementById('minValue');
-  const fliterBtn = document.getElementById("filter-btn");
+  const minValue = document.getElementById("minValue");
+  const filterBtn = document.getElementById("filter-btn");
+  const filterBtnClose = document.getElementById("filter-btn-close");
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
   const { cartButtonHandler } = await import("./modules/cart-button.js");
-
 
   toToggleMenu();
   toggleList();
@@ -21,7 +21,7 @@ async function loadModules() {
     const { initPhone } = await import("./modules/phone-button.js");
     initPhone();
   }
-  if (fliterBtn != null) {
+  if (filterBtn != null) {
     const { filterToggleMenu } = await import("./modules/filter.js");
     filterToggleMenu();
   }
@@ -39,7 +39,12 @@ async function loadModules() {
   }
   if (minValue) {
     const { initializeRangeFilter } = await import("./modules/filter-cost.js");
-    initializeRangeFilter('.filter-cost__range--min', '.filter-cost__range--max', 'minValue', 'maxValue');
+    initializeRangeFilter(
+      ".filter-cost__range--min",
+      ".filter-cost__range--max",
+      "minValue",
+      "maxValue"
+    );
   }
   if (buttonPrint) {
     const module = await import("./modules/print-contacts.js");
