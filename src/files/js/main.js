@@ -5,11 +5,13 @@ async function loadModules() {
   const phoneButton = document.querySelector(".phone-button");
   const buttonPrint = document.getElementById("print-btn");
   const buyBtn = document.getElementById("buy-btn");
+  const minValue = document.getElementById('minValue');
   const fliterBtn = document.getElementById("filter-btn");
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
   const { cartButtonHandler } = await import("./modules/cart-button.js");
+
 
   toToggleMenu();
   toggleList();
@@ -34,6 +36,10 @@ async function loadModules() {
   if (fancyboxExist.length > 0) {
     const { initFancybox } = await import("./modules/fancybox.js");
     initFancybox();
+  }
+  if (minValue) {
+    const { initializeRangeFilter } = await import("./modules/filter-cost.js");
+    initializeRangeFilter('.filter-cost__range--min', '.filter-cost__range--max', 'minValue', 'maxValue');
   }
   if (buttonPrint) {
     const module = await import("./modules/print-contacts.js");
