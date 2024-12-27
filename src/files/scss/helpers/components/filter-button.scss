@@ -14,11 +14,11 @@
     display: none;
   }
 
-  & + .filter-form {
+  & + .filter-button-close + .filter-form {
     display: none;
   }
 
-  & + .filter-form.open {
+  & + .filter-button-close + .filter-form.open {
     display: block;
     position: absolute;
     z-index: 100;
@@ -27,8 +27,29 @@
     left: 0;
     right: 0;
     padding: 20px 0;
+    padding-top: 90px;
   }
 }
+
+.filter-button-close {
+  appearance: none;
+  border: none;
+  display: flex;
+  position: absolute;
+  justify-content: center;
+  align-items: center;
+  background-color: var.$black;
+  height: 27px;
+  width: 43px;
+  cursor: pointer;
+  background-image: url("#{var.$DEV_PATH}assets/images/vectors/arrow-close.svg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  top: 40px;
+  left: 0;
+  z-index: 101;
+}
+
 .filter-button + .filter-form.open {
   @media screen and (min-width: var.$desktop-min) {
     display: block;

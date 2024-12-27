@@ -1,8 +1,15 @@
 export function filterToggleMenu() {
-    const fliterBtn = document.getElementById('filter-btn');
-    const fliterCatalog = document.getElementById('filter-catalog');
+  const filterBtn = document.getElementById("filter-btn");
+  const filterCatalog = document.getElementById("filter-catalog");
+  const filterBtnClose = document.getElementById("filter-btn-close");
 
-    fliterBtn.addEventListener('click',() => {
-        fliterCatalog.classList.toggle('open');
-    });
-};
+  filterBtn.addEventListener("click", () => {
+    filterCatalog.classList.toggle("open");
+    filterBtnClose.style.display = "flex";
+  });
+
+  filterBtnClose.addEventListener("click", () => {
+    filterCatalog.classList.toggle("open");
+    filterBtnClose.style.display = "none";
+  });
+}
