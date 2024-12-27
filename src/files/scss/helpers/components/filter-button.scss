@@ -10,6 +10,10 @@
   align-self: flex-start;
   padding: 0;
 
+  @media screen and (min-width: var.$desktop-min) {
+    display: none;
+  }
+
   & + .filter-form {
     display: none;
   }
@@ -23,5 +27,12 @@
     left: 0;
     right: 0;
     padding: 20px 0;
+  }
+}
+.filter-button + .filter-form.open {
+  @media screen and (min-width: var.$desktop-min) {
+    display: block;
+    position: static;
+    background-color: transparent;
   }
 }
