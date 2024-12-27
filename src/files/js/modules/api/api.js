@@ -99,22 +99,27 @@ export class API {
       console.error('Не удалось обновить количество товаров: ', err);
     }
   }
-  async getQuantity() {
-    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=quantity`;
+  async sendCart(products) {
+    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=cart`;
 
     try {
       const response = await fetch(url, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(products)
       })
 
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
+      console.log('Response data:', data);
       return data;
     }
     catch (err) {
-      console.error('Не удалось обновить количество товаров: ', err);
+      console.error('Не удалось отправить данные в базу данных: ', err);
     }
   }
 }

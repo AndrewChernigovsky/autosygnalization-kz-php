@@ -48,6 +48,11 @@ function getProductCardWModel($products)
         <a class="button y-button-secondary" href="<?php echo $product['link'] ?>">Подробнее</a>
         <button type="button" class="button y-button-primary cart-button"
           data-id="<?php echo $product['id'] ?>">Купить</button>
+        <?php
+        if (isset($product['quantity'])) {
+          echo "<p>{$product['quantity']}</p>";
+        }
+        ?>
       </div>
     </article>
     <?php

@@ -8,13 +8,14 @@ class Cart
   private $path;
   private $variables;
   private $pdo;
-  private $totalQuantity = 0;
+  private $totalQuantity;
   public function __construct()
   {
     $this->variables = new SetVariables();
     $this->variables->setVar();
     $path = $this->variables->getPathFileURL();
     $this->path = $path;
+    $this->totalQuantity = $this->getTotalQuantity();
 
     $db = new CreateDatabase();
     $this->pdo = $db->getConnection();
@@ -31,22 +32,36 @@ class Cart
         <svg width="50" height="50">
           <use href='<?php echo $icon; ?>'></use>
         </svg>
-        <div class="counter"><?php echo $this->getQuantity(); ?></div>
+        <div class="counter">0</div>
       </a>
     </div>
     <?php
     return ob_get_clean();
   }
 
-  public function getQuantity()
+  public function setQuantity($id)
   {
+    error_log(print_r($_SESSION['cart'], true) . ' : CART');
+    error_log(print_r($_SESSION['cart'][$id], true) . ' : CART');
     if (isset($_SESSION['cart'])) {
-      if (isset($_SESSION['cart'][2]) && isset($_SESSION['cart'][2]['quantity'])) {
-        $quantity = $_SESSION['cart'][2]['quantity'];
+      if (isset($_SESSION['cart'][$id]) && isset($_SESSION['cart'][$id]['quantity'])) {
+        $quantity = $_SESSION['cart'][$id]['quantity'];
         return $quantity;
       }
     }
     return 0;
+  }
+  public function getTotalQuantity()
+  {
+    if (isset($_SESSION['cart'])) {
+      $products = $_SESSION['cart'];
+      foreach ($products as $product) {
+        $this->totalQuantity += $product['quantity'];
+      }
+      return $this->totalQuantity;
+    } else {
+      return 0;
+    }
   }
 }
 

@@ -1,22 +1,26 @@
 <?php
 include_once './../../db/createProducts.php';
+include_once './../../data/products.php';
 
 $type = isset($_GET['data']) ? $_GET['data'] : null;
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
-$products = new CreateProducts();
+$productsInit = new CreateProducts();
 
 switch ($type) {
   case 'create':
-    $products->createProducts();
+    $productsInit->createProducts();
     break;
   case 'add':
     if ($id) {
-      $products->addProductById($id);
+      $productsInit->addProductById($id);
     }
     break;
   case 'quantity':
-    $products->getQuantity();
+    $productsInit->getQuantity();
+    break;
+  case 'cart':
+    $productsInit->getCart($products);
     break;
   default:
     error_log('Произошла ошибка при операции: ');

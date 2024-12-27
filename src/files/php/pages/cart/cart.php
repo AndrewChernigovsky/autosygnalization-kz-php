@@ -2,6 +2,7 @@
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
+include_once __DIR__ . '/../../helpers/components/product.php';
 
 $id = $_GET['id'] ? $_GET['id'] : 0;
 
@@ -30,6 +31,7 @@ echo $head->setHead();
   <main class="main">
     <div class="container">
       <h2>Корзина</h2>
+      <?php echo getProductCardWModel($_SESSION['cart']) ?>
       <?= getShop('setup'); ?>
       <?= getShop('shop'); ?>
     </div>
