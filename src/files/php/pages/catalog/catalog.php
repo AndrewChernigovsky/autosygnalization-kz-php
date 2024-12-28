@@ -65,6 +65,8 @@ echo $head->setHead();
     </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
+
+
 </body>
 
 </html>

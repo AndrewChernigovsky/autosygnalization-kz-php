@@ -32,13 +32,15 @@ function getProductCardWModel(array $products, bool $cart = false)
   }
   $groupedProducts = [];
 
-  foreach ($products as $product) {
-    if (isset($product['id'])) {
-      if (!isset($groupedProducts[$product['id']])) {
-        $groupedProducts[$product['id']] = $product;
-        $groupedProducts[$product['id']]['quantity'] = 1;
-      } else {
-        $groupedProducts[$product['id']]['quantity'] += 1;
+  foreach ($products['category'] as $category) {
+    foreach ($category as $product) {
+      if (isset($product['id'])) {
+        if (!isset($groupedProducts[$product['id']])) {
+          $groupedProducts[$product['id']] = $product;
+          $groupedProducts[$product['id']]['quantity'] = 1;
+        } else {
+          $groupedProducts[$product['id']]['quantity'] += 1;
+        }
       }
     }
   }

@@ -9,6 +9,7 @@ export function cartButtonHandler() {
   const setPopup = new Popup();
 
   if (cartCounter) {
+
     const currentCount = products.reduce((total, product) => total + product.quantity, 0);
     cartCounter.textContent = currentCount;
 
@@ -27,10 +28,9 @@ export function cartButtonHandler() {
           products.push({ id: productId, quantity: 1 });
         }
 
+        console.log(131231);
         localStorage.setItem('cart', JSON.stringify(products));
         productApi.addProduct(productId);
-
-
 
         const newCount = products.reduce((total, product) => {
           if (e.currentTarget.dataset.id === product.id) {

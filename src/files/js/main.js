@@ -88,6 +88,56 @@ async function loadModules() {
     const { showTabs } = await import("./modules/tabs.js");
     showTabs();
   }
+
+  window.addEventListener('beforeunload', function () {
+    localStorage.removeItem('cart');
+  });
 }
 
 document.addEventListener("DOMContentLoaded", loadModules);
+
+const data = { data: 'true' };
+fetch('/dist/files/php/data/products.php', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(data)
+})
+  .then(response => response.json())
+  .then(products => {
+    console.log(products);
+    renderProducts(products)
+  })
+  .catch(error => console.error('Error:', error));
+
+  
+  const template = document.getElementById('product-template');
+  const productsContainer = document.querySelector('.cart-section__products');
+  if (template) {
+    console.log(products, 'PRODUCTS');
+  }
+  function renderProducts(products) {
+  const products = localStorage.getItem('cart');
+  
+  renderProducts(JSON.parse(products))
+
+
+    productsContainer.innerHTML = '';
+    Object.values(products.category).forEach(product => {
+      product.forEach(el => {
+        const template = document.getElementById('product-template').content.cloneNode(true);
+        template.querySelector('article').id = el.id;
+        template.querySelector('img').src = el.gallery[0];
+        template.querySelector('img').alt = el.title;
+        template.querySelector('h3').textContent = el.title;
+        template.querySelector('.price').textContent = `Цена: ${el.price} ${el.currency}`;
+        template.querySelector('.button.y-button-secondary').href = el.link;
+        template.querySelector('.cart-button').dataset.id = el.id;
+        template.querySelector('.quantity').textContent = `Количество: ${el.quantity}`;
+        productsContainer.appendChild(template);
+      })
+    });
+  
+}
+

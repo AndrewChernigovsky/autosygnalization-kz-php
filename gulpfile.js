@@ -9,7 +9,7 @@ import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import svgSprite from "gulp-svg-sprite";
-import { esbuildFoo } from "./esbuild.js";
+import { esbuildFooWatch } from "./esbuild.js";
 
 const config = {
   mode: {
@@ -43,7 +43,7 @@ const paths = {
 };
 
 const esbuildTask = async (done) => {
-  await esbuildFoo();
+  await esbuildFooWatch();
   browserSync.reload();
   done();
 };

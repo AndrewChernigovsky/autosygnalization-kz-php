@@ -72,6 +72,22 @@ echo $head->setHead();
   </main>
 
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
+  <template id="product-template">
+    <article class='product-card' id="">
+      <div class="product-card__bg">
+        <img src="" alt="" width="300" height="250">
+      </div>
+      <div class="product-card__body">
+        <h3></h3>
+        <p class="price"></p>
+        <div class="actions">
+          <a class="button y-button-secondary" href="">Подробнее</a>
+          <button type="button" class="button y-button-primary cart-button" data-id="">Купить</button>
+        </div>
+        <p class="quantity"></p>
+      </div>
+    </article>
+  </template>
 </body>
 
 </html>
