@@ -4,12 +4,12 @@ import gulpSass from "gulp-sass";
 import autoPrefixer from "gulp-autoprefixer";
 import cleanCSS from "gulp-clean-css";
 import browserSync from "browser-sync";
-import { exec } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import svgSprite from "gulp-svg-sprite";
 import { esbuildFooWatch } from "./esbuild.js";
+import changed from 'gulp-changed';
 
 const config = {
   mode: {
@@ -47,30 +47,28 @@ const esbuildTask = async (done) => {
   browserSync.reload();
   done();
 };
-// const esbuildTask = (done) => {
-//   exec("esbuild -c", (err, stdout, stderr) => {
-//     if (err) {
-//       console.error(stderr);
-//       done(err);
-//       return;
-//     }
-//     console.log(stdout);
-//     browserSync.reload();
-//     done();
-//   });
-// };
 
 const phpTask = (cb) => {
-  let tasks = []
+  let tasks = [];
 
+  // Путь для выходных файлов
+  const destPathPhp = './dist/files/php';
+  const destPathRoot = './dist/';
+
+  // Копируем измененные PHP файлы из src/files/php
   tasks.push(
     src(['./src/files/php/**'], { encoding: false })
-      .pipe(dest('./dist/files/php'))
+      .pipe(changed(destPathPhp)) // Отслеживаем изменения
+      .pipe(dest(destPathPhp))
   );
+
+  // Копируем измененные index.php и 404.php
   tasks.push(
     src(['./src/index.php', './src/404.php'], { encoding: false })
-      .pipe(dest('./dist/'))
+      .pipe(changed(destPathRoot)) // Отслеживаем изменения
+      .pipe(dest(destPathRoot))
   );
+
   return Promise.all(tasks)
     .then(() => {
       if (!PRODUCTION) {
@@ -84,7 +82,6 @@ const phpTask = (cb) => {
       cb(err);
     });
 };
-
 
 const watchTask = () => {
   browserSync.init({

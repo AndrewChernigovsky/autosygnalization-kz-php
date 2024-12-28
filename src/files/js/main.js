@@ -111,33 +111,42 @@ fetch('/dist/files/php/data/products.php', {
   })
   .catch(error => console.error('Error:', error));
 
-  
-  const template = document.getElementById('product-template');
-  const productsContainer = document.querySelector('.cart-section__products');
-  if (template) {
-    console.log(products, 'PRODUCTS');
-  }
-  function renderProducts(products) {
-  const products = localStorage.getItem('cart');
-  
-  renderProducts(JSON.parse(products))
 
+const template = document.getElementById('product-template');
+const productsContainer = document.querySelector('.cart-section__products');
+if (template) {
+  console.log(products, 'PRODUCTS');
+}
+function renderProducts(products) {
+  const localProducts = localStorage.getItem('cart');
 
-    productsContainer.innerHTML = '';
-    Object.values(products.category).forEach(product => {
-      product.forEach(el => {
-        const template = document.getElementById('product-template').content.cloneNode(true);
-        template.querySelector('article').id = el.id;
-        template.querySelector('img').src = el.gallery[0];
-        template.querySelector('img').alt = el.title;
-        template.querySelector('h3').textContent = el.title;
-        template.querySelector('.price').textContent = `Цена: ${el.price} ${el.currency}`;
-        template.querySelector('.button.y-button-secondary').href = el.link;
-        template.querySelector('.cart-button').dataset.id = el.id;
-        template.querySelector('.quantity').textContent = `Количество: ${el.quantity}`;
-        productsContainer.appendChild(template);
-      })
-    });
-  
+  Object.values(products.category).forEach(productList => {
+    productList.forEach(product => {
+      const matchingProduct = localProducts.find(localProduct => localProduct.id === product.id);
+
+      if (matchingProduct) {
+        console.log(`Найдено совпадение: ${product.title}, Количество в корзине: ${matchingProduct.quantity}`);
+
+        product.quantity = matchingProduct.quantity;
+      }
+    })
+  });
+
+  productsContainer.innerHTML = '';
+  Object.values(products.category).forEach(product => {
+    product.forEach(el => {
+      const template = document.getElementById('product-template').content.cloneNode(true);
+      template.querySelector('article').id = el.id;
+      template.querySelector('img').src = el.gallery[0];
+      template.querySelector('img').alt = el.title;
+      template.querySelector('h3').textContent = el.title;
+      template.querySelector('.price').textContent = `Цена: ${el.price} ${el.currency}`;
+      template.querySelector('.button.y-button-secondary').href = el.link;
+      template.querySelector('.cart-button').dataset.id = el.id;
+      template.querySelector('.quantity').textContent = `Количество: ${el.quantity}`;
+      productsContainer.appendChild(template);
+    })
+  });
+
 }
 

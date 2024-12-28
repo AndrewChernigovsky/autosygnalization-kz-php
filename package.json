@@ -17,6 +17,7 @@
     "cross-env": "^7.0.3",
     "esbuild": "^0.24.2",
     "gulp": "^5.0.0",
+    "gulp-changed": "^5.0.2",
     "gulp-sass": "^5.1.0",
     "gulp-svg-sprite": "^2.0.3",
     "inputmask": "^5.0.9",

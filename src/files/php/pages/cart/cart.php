@@ -13,6 +13,7 @@ $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $title = 'Корзина | Auto Security';
 
 include_once $head_path;
+include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);
 ?>
@@ -35,36 +36,30 @@ echo $head->setHead();
             корзине</p>
           <button type="button" id="reset-cart" class="button y-button-secondary">очистить корзину</button>
         </div>
-        <?php
-        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
-          ?>
-          <div class="cart-section__products">
-            <?php echo getProductCardWModel($_SESSION['cart'], true); ?>
-          </div>
-          <p>
-            <span>Итого: </span>
-            <span>
-              <?php
-              $total = 0;
-              foreach ($_SESSION['cart'] as $item) {
-                $total += $item['price'] * $item['quantity'];
-              }
-              echo $total;
-              ?>
-            </span>
-            <span>₸</span>
-          </p>
-          <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
-            магазин</a>
-          <?php
-        } else {
-          ?>
+
+        <div class="cart-section__products">
+          <?php echo getProductCardWModel($products); ?>
+        </div>
+        <p>
+          <span>Итого: </span>
+          <span>
+            <?php
+            $total = 0;
+            foreach ($_SESSION['cart'] as $item) {
+              $total += $item['price'] * $item['quantity'];
+            }
+            echo $total;
+            ?>
+          </span>
+          <span>₸</span>
+        </p>
+        <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
+          магазин</a>
+        <!-- 
           <p>В корзине нет товаров</p>
           <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
-            магазин</a>
-          <?php
-        }
-        ?>
+            магазин</a> -->
+
       </div>
     </section>
     <?= getShop('setup'); ?>

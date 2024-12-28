@@ -31,7 +31,7 @@ function getProductCardWModel(array $products, bool $cart = false)
     return '';
   }
   $groupedProducts = [];
-
+  error_log(print_r($products['category'], true) . ' : PRODUCTSSS');
   foreach ($products['category'] as $category) {
     foreach ($category as $product) {
       if (isset($product['id'])) {
