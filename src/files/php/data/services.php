@@ -1,13 +1,163 @@
 <?php
 $services_data = [
-  ["name" => " УСТАНОВКА И РЕМОНТ АВТОСИГНАЛИЗАЦИЙ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=setup"],
-  ["name" => " РЕМОНТ ЦЕНТРОЗАМКОВ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=locks"],
-  ["name" => " УСТАНОВКА АВТОЗВУКА И МУЛЬТИМЕДИА ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=setup-media"],
-  ["name" => " УСТАНОВКА СИСТЕМ ПАРКИНГА ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=setup-system-parking"],
-  ["name" => " УСЛУГИ АВТОЭЛЕКТРИКА ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=autoelectric"],
-  ["name" => " РУСИФИКАЦИЯ АВТО И ЧИПТЮНИНГ ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=rus"],
-  ["name" => "  КОМПЬЮТЕРНАЯ ДИАГНОСТИКА ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=diagnostic"],
-  ["name" => "  ОТКЛЮЧЕНИЕ СИГНАЛИЗАЦИИ  ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=disabled-autosynal"],
-  ["name" => " УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ И АНТИРАДАРОВ ", "description" => "Картинка на которой изображена услуга Auto Security", "src" => "/assets/images/services/service", "href" => "/files/php/pages/service/service.php?service=setup-videoregistration"],
+  "setup" => [
+    "name" => " УСТАНОВКА И РЕМОНТ АВТОСИГНАЛИЗАЦИЙ",
+    "description" => "Вы купили автомобиль и желаете защитить его, установив сигнализацию?Вы любите комфорт и хотите установить автозапуск на Ваше авто?Вам необходимо отслеживать Ваш транспорт по GPS?Обращайтесь к нам, и мы поможем Вам решить эти задачи!",
+    "image" => [
+      "src" => "/assets/images/services/service-1.avif",
+      "description" => "Картинка на которой изображена услуга Auto Security",
+    ],
+    "href" => "/files/php/pages/service/service.php?service=setup",
+    "services" => [
+      "Продажу автосигнализаций, охранных комплексов, маяков GPS и мн.др.",
+      "Профессиональную установку, ремонт, и настройку автосигнализаций различных брендов.",
+      "Установку иммобилайзеров и противоугонных систем.",
+      "Установку автозапуска, в том числе и со штатных пультов от автомобилей (некоторых видов).",
+      "Привязку штатных охранных систем к современным охранно-телематическим комплексам.",
+      "Установку сигнализаций с функцией GSM и GPS.",
+      "Подключение модулей закрывания стекол.",
+      "Подключение функции открывания багажника и др.",
+      "Монтаж маячков и систем слежения за автомобилем.",
+      "Диагностику неисправностей автосигнализаций.",
+      "Ремонт автозапуска и обхода иммобилайзера.",
+      "Настройку и запись пультов.",
+      "Настройку чувствительности датчика удара.",
+      "Замену сирен и клаксонов.",
+      "Демонтаж старых автосигнализаций.",
+      "Отключение блокировок двигателя.",
+      "Установку оборудования с выездом.",
+      "Гарантию на работу и на материал.",
+      "Бесплатные консультации.",
+      "Возможность выезда квалифицированного мастера к Вам на место для установки оборудования - от 3.000 тг."
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  "locks" => [
+    "name" => "РЕМОНТ ЦЕНТРОЗАМКОВ",
+    "description" => "Картинка на которой изображена услуга Ремонт Центрозамков.",
+    "image" => [
+      "src" => "/assets/images/services/service-2.avif",
+      "description" => "Картинка на которой изображена услуга Ремонт Центрозамков",
+    ],
+    "href" => "/files/php/pages/service/service.php?service=locks",
+    "services" => [
+      "Ремонт замков зажигания.",
+      "Установка новых замков.",
+      "Замена личинок замков."
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  "setup-media" => [
+    "name" => "УСТАНОВКА АВТОЗВУКА И МУЛЬТИМЕДИА",
+    "description" => "Картинка на которой изображена услуга Установка Автозвука и Мультимедиа.",
+    "image" => [
+      "src" => "/assets/images/services/service-3.avif",
+      "description" => "Картинка на которой изображена услуга Установка Автозвука и Мультимедиа",
+    ],
+    "href" => "/files/php/pages/service/service.php?service=setup-media",
+    "services" => [
+      "Установка аудиосистем.",
+      "Настройка мультимедийных систем.",
+      "Интеграция с мобильными устройствами."
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  "setup-system-parking" => [
+    "name" => "УСТАНОВКА СИСТЕМ ПАРКИНГА",
+    "description" => "Картинка на которой изображена услуга Установка Систем Паркинга.",
+    "image" => [
+      "src" => "/assets/images/services/service-4.avif",
+      "description" => "Картинка на которой изображена услуга Установка Систем Паркинга",
+    ],
+    "href" => "/files/php/pages/service/service.php?service=setup-system-parking",
+    "services" => [
+      "Установка датчиков парковки.",
+      "Настройка камер заднего вида."
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  "autoelectric" => [
+    "name" => "УСЛУГИ АВТОЭЛЕКТРИКА",
+    "description" => "Картинка на которой изображена услуга Автоэлектрика.",
+    "image" => [
+      "src" => "/assets/images/services/service-5.avif",
+      "description" => "Картинка на которой изображена услуга Услуги Автоэлектрика",
+    ],
+    "href" => "/files/php/pages/service/service.php?service=autoelectric",
+    'services' => [
+      'Диагностика электрической системы автомобиля.',
+      'Ремонт электропроводки.',
+      'Замена аккумуляторов.',
+      'Установка дополнительного оборудования.'
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  'rus' => [
+    'name' => 'РУСИФИКАЦИЯ АВТО И ЧИПТЮНИНГ',
+    'description' => 'Картинка на которой изображена услуга Русификация авто.',
+    'image' => [
+      'src' => '/assets/images/services/service-6.avif',
+      'description' => 'Картинка на которой изображена услуга Русификация авто.',
+    ],
+    'href' => '/files/php/pages/service/service.php?service=rus',
+    'services' => [
+      'Русификация бортового компьютера.',
+      'Чип-тюнинг для улучшения производительности.',
+      'Настройка параметров двигателя.'
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  'diagnostic' => [
+    'name' => 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА',
+    'description' => 'Картинка на которой изображена услуга Компьютерная диагностика.',
+    'image' => [
+      'src' => '/assets/images/services/service-7.avif',
+      'description' => 'Картинка на которой изображена услуга Компьютерная диагностика.',
+    ],
+    'href' => '/files/php/pages/service/service.php?service=diagnostic',
+    'services' => [
+      'Полная диагностика автомобиля.',
+      'Определение ошибок системы.',
+      'Рекомендации по устранению неисправностей.'
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  'disabled-autosynal' => [
+    'name' => 'ОТКЛЮЧЕНИЕ СИГНАЛИЗАЦИИ',
+    'description' => 'Картинка на которой изображена услуга Отключение сигнализации.',
+    'image' => [
+      'src' => '/assets/images/services/service-8.avif',
+      'description' => 'Картинка на которой изображена услуга Отключение сигнализации.',
+    ],
+    'href' => '/files/php/pages/service/service.php?service=disabled-autosynal',
+    'services' => [
+      'Отключение старых сигнализаций.',
+      'Настройка новых систем безопасности.'
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ],
+  'setup-videoregistration' => [
+    'name' => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ И АНТИРАДАРОВ',
+    'description' => 'Картинка на которой изображена услуга Установка видеорегистраторов и антирадаров.',
+    'image' => [
+      'src' => '/assets/images/services/service-9.avif',
+      'description' => 'Картинка на которой изображена услуга Установка видеорегистраторов и антирадаров.'
+    ],
+    'href' => '/files/php/pages/service/service.php?service=setup-videoregistration',
+    'services' => [
+      'Установка видеорегистраторов.',
+      'Настройка антирадаров.'
+    ],
+    "cost" => 15000,
+    "currency" => "₸"
+  ]
 ];
 ?>

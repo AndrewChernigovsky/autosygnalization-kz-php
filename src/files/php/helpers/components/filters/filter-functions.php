@@ -11,15 +11,15 @@ class FilterFunctions
     ob_start();
     ?>
     <div class="filter-functions">
-      <p>Функции</p>
+      <p class="filter-functions__title">Функции</p>
       <?php foreach ($this->data_filters as $category): ?>
         <div class="filter-functions__item">
-          <label>
-            <?php echo $category['text'] ?>
-            <input type="checkbox" class="filter-cost__checkbox" id="<?php echo $category['name'] ?>"
+          <label class="filter-functions__item-element">
+            <input type="checkbox" class="filter-functions__checkbox" id="<?php echo $category['name'] ?>"
               name="<?php echo $category['name'] ?>">
+              <span class="filter-functions__item-title"> <?php echo $category['text'] ?></span>
           </label>
-          <span class="count"><?php echo $category['count'] ?></span>
+          <span class="filter-functions__count"><?php echo $category['count'] ?></span>
         </div>
       <?php endforeach; ?>
     </div>
