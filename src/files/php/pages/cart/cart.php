@@ -45,9 +45,9 @@ echo $head->setHead();
           <span>
             <?php
             $total = 0;
-            foreach ($_SESSION['cart'] as $item) {
-              $total += $item['price'] * $item['quantity'];
-            }
+            // foreach ($_SESSION['cart'] as $item) {
+            //   $total += $item['price'] * $item['quantity'];
+            // }
             echo $total;
             ?>
           </span>
@@ -73,9 +73,11 @@ echo $head->setHead();
         <img src="" alt="" width="300" height="250">
       </div>
       <div class="product-card__body">
-        <h3></h3>
-        <p class="price"></p>
-        <div class="actions">
+        <div class="product-card__head">
+          <h3></h3>
+          <p class="price"></p>
+        </div>
+        <div class="product-card__buttons">
           <a class="button y-button-secondary" href="">Подробнее</a>
           <button type="button" class="button y-button-primary cart-button" data-id="">Купить</button>
         </div>

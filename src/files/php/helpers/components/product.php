@@ -8,19 +8,21 @@ function getProductCard($products, $model)
 
   ob_start();
 
-  foreach ($products as $product) {
-    if ($product['model'] === $model) {
-      ?>
-      <article class='product-card'>
-        <h3><?php echo htmlspecialchars($product['title']); ?></h3>
-        <?php if (isset($product['description'])): ?>
-          <p><?php echo htmlspecialchars($product['description']); ?></p>
-        <?php endif; ?>
-        <?php if (isset($product['price'])): ?>
-          <p>Цена: <?php echo htmlspecialchars($product['price']); ?>         <?php echo htmlspecialchars($product['currency']); ?></p>
-        <?php endif; ?>
-      </article>
-      <?php
+  foreach ($products['category'] as $category) {
+    foreach ($category as $product) {
+      if ($product['model'] === $model) {
+        ?>
+        <article class='product-card'>
+          <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+          <?php if (isset($product['description'])): ?>
+            <p><?php echo htmlspecialchars($product['description']); ?></p>
+          <?php endif; ?>
+          <?php if (isset($product['price'])): ?>
+            <p>Цена: <?php echo htmlspecialchars($product['price']); ?>           <?php echo htmlspecialchars($product['currency']); ?></p>
+          <?php endif; ?>
+        </article>
+        <?php
+      }
     }
   }
   return ob_get_clean();
@@ -55,17 +57,21 @@ function getProductCardWModel(array $products, bool $cart = false)
           alt="<?php echo htmlspecialchars($product['description']); ?>" width="300" height="250">
       </div>
       <div class="product-card__body">
-        <h3><?php echo htmlspecialchars($product['title']); ?></h3>
-        <?php if (isset($product['price'])): ?>
-          <p>Цена: <?php echo htmlspecialchars($product['price']); ?><?php echo htmlspecialchars($product['currency']); ?>
-          </p>
-        <?php endif; ?>
+        <div class="product-card__head">
+          <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+          <?php if (isset($product['price'])): ?>
+            <p>Цена: <?php echo htmlspecialchars($product['price']); ?><?php echo htmlspecialchars($product['currency']); ?>
+            </p>
+          <?php endif; ?>
+        </div>
         <?php if (!$cart): ?>
-          <a class="button y-button-secondary" href="<?php echo htmlspecialchars($product['link']); ?>">Подробнее</a>
-          <button type="button" class="button y-button-primary cart-button"
-            data-id="<?php echo htmlspecialchars($product['id']); ?>">Купить</button>
+          <div class="product-card__buttons">
+            <a class="button y-button-secondary" href="<?php echo htmlspecialchars($product['link']); ?>">Подробнее</a>
+            <button type="button" class="button y-button-primary cart-button"
+              data-id="<?php echo htmlspecialchars($product['id']); ?>">Купить</button>
+          </div>
         <?php endif; ?>
-        <?php if (isset($product['quantity'])): ?>
+        <?php if (isset($product['quantity']) && $cart): ?>
           <p>Количество: <?php echo htmlspecialchars($product['quantity']); ?></p>
         <?php endif; ?>
       </div>

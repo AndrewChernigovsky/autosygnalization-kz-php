@@ -1,9 +1,14 @@
 @use "variables"as var;
 
+.cart-section:has(.container):has(.cart-section__products) {
+  min-height: 100%;
+}
+
 .product-card {
   background-color: var.$gray-bg;
   border-radius: 15px;
   transition: 0.3s ease-in-out;
+  min-height: 100%;
 
   &:hover {
     transform: scale(1.05);
@@ -15,9 +20,12 @@
   }
 
   &__body {
+    display: grid;
+    align-content: space-between;
     background-color: var.$gray-bg;
     padding: 20px;
     border-radius: 0 0 15px 15px;
+    min-height: 70%;
 
     a {
       margin-bottom: 10px;
