@@ -4,6 +4,10 @@ const searchExist = document.getElementById("search");
 const phoneButton = document.querySelector(".phone-button");
 const buttonPrint = document.getElementById('print-btn');
 
+import { showTabs } from "./modules/tabs.js";
+
+showTabs();
+
 async function loadModules() {
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
@@ -43,32 +47,6 @@ async function loadModules() {
 
 document.addEventListener("DOMContentLoaded", loadModules);
 
-function showTabs() {
-  document.addEventListener('DOMContentLoaded', () => {
-  const buttons = document.querySelectorAll('.tab__button');
-  const tabLists = document.querySelectorAll('.tab__list');
-
-    buttons.forEach(button => {
-      button.addEventListener('click', () => {
-        buttons.forEach(btn => btn.classList.remove('tab__button--active'));
-      
-        button.classList.add('tab__button--active');
-
-        const tabId = button.getAttribute('data-tab');
-
-        tabLists.forEach(list => {
-          if (list.getAttribute('data-content') === tabId) {
-            list.classList.add('tab__list--show');
-          } else {
-            list.classList.remove('tab__list--show');
-          }
-        });
-      });
-    });
-  });
-}
-
-showTabs();
 
 const PRODUCTION = window.location.href.includes('/dist/');
 const url = `${PRODUCTION ? '/dist/' : '/'}files/php/api/sessions/session-destroy.php`;

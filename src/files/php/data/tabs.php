@@ -17,13 +17,23 @@ $tabs = [
     'title' => 'ОПИСАНИЕ',
     'items' => [
       [
-        'title' => 'title 1',
-        'description' => 'description 1',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
       [
-        'title' => 'title 2',
-        'description' => 'description 2',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+        'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+      ],
+      [
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+        'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+      ],
+      [
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ]
     ]
@@ -33,13 +43,18 @@ $tabs = [
     'title' => 'ХАРАКТЕРИСТИКИ',
     'items' => [
       [
-        'title' => 'title 3',
-        'description' => 'description 3',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
       [
-        'title' => 'title 4',
-        'description' => 'description 4',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+        'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+      ],
+      [
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ]
     ]
@@ -49,13 +64,28 @@ $tabs = [
     'title' => 'ГАРАНТИЯ',
     'items' => [
       [
-        'title' => 'title 5',
-        'description' => 'description 5',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
       [
-        'title' => 'title 6',
-        'description' => 'description 6',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+        'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+      ],
+      [
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+        'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+      ],
+      [
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+        'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+      ],
+      [
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ]
     ]
@@ -65,13 +95,13 @@ $tabs = [
     'title' => 'СООТВЕТСТВУЮЩИЕ ТОВАРЫ',
     'items' => [
       [
-        'title' => 'title 7',
-        'description' => 'description 7',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
       [
-        'title' => 'title 8',
-        'description' => 'description 8',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ]
     ]
