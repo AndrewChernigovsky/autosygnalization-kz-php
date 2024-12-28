@@ -1,33 +1,20 @@
-// const tabs = document.querySelectorAll('#tarifs-tabs li button');
-// const tabsItems = document.querySelectorAll('#tarifs-tabs-items .tarifs__list-item ')
-
-
-// export function initTarifsTabs() {
-//   function clearReset() {
-//     Array.from(tabs).forEach((tab, index) => {
-//       tab.parentElement.classList.remove('active');
-//       tabsItems[index].classList.remove('active');
-//     });
-//   }
-
-//   if (tabs && tabsItems) {
-//     console.log(tabs);
-//     console.log(tabsItems);
-//     Array.from(tabs).forEach((tab, index) => {
-//       tab.addEventListener('click', () => {
-//         clearReset()
-//         tab.parentElement.classList.toggle('active')
-//         tabsItems[index].classList.toggle('active')
-//       })
-//     });
-//   }
-//   return;
-// }
-
 export function showTabs() {
   document.addEventListener('DOMContentLoaded', () => {
-  const buttons = document.querySelectorAll('.tab__button');
-  const tabLists = document.querySelectorAll('.tab__list');
+    const buttons = document.querySelectorAll('.tab__button');
+    const tabLists = document.querySelectorAll('.tab__list');
+
+    if (buttons.length > 0) {
+      buttons[0].classList.add('tab__button--active');
+      const firstTabId = buttons[0].getAttribute('data-tab');
+
+      tabLists.forEach(list => {
+        if (list.getAttribute('data-content') === firstTabId) {
+          list.classList.add('tab__list--show');
+        } else {
+          list.classList.remove('tab__list--show');
+        }
+      });
+    }
 
     buttons.forEach(button => {
       button.addEventListener('click', () => {
@@ -48,4 +35,3 @@ export function showTabs() {
     });
   });
 }
-console.log(message)

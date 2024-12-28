@@ -9,17 +9,13 @@ $path = $variables->getPathFileURL();
 
 error_log(print_r($tabs, true) . ": TABS");
 
-function isActiveClass()
-{
-  return 'tab__button tab__button--active y-button-secondary';
-}
 ?>
 
 <section class="tab">
   <div class="tab__wrapper">
     <div class="tab__buttons">
       <?php foreach ($tabs as $tab): ?>
-        <button type="button" class="<?= isActiveClass() ?>"
+        <button type="button" class="tab__button y-button-secondary"
           data-tab="<?php echo $tab['id']; ?>"><?= $tab['title'] ?></button>
       <?php endforeach; ?>
     </div>

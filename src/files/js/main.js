@@ -62,7 +62,6 @@ async function loadModules() {
 document.addEventListener("DOMContentLoaded", loadModules);
 
 function showTabs() {
-  document.addEventListener("DOMContentLoaded", () => {
     const buttons = document.querySelectorAll(".tab__button");
     const tabLists = document.querySelectorAll(".tab__list");
 
@@ -83,7 +82,6 @@ function showTabs() {
         });
       });
     });
-  });
 }
 
 showTabs();
