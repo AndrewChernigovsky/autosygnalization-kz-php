@@ -1,0 +1,22 @@
+@use 'variables'as var;
+
+.cart-section {
+  &__head {
+    display: flex;
+    justify-content: space-between;
+
+    button {
+      font-size: 24px;
+    }
+  }
+
+  &__products {
+    display: flex;
+    gap: 1%;
+    flex-wrap: wrap;
+
+    article {
+      max-width: 300px;
+    }
+  }
+}

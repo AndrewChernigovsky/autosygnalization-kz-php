@@ -122,4 +122,20 @@ export class API {
       console.error('Не удалось отправить данные в базу данных: ', err);
     }
   }
+  async clearCart() {
+    const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/sessions/session-destroy.php`;
+    if (localStorage.getItem('cart')) {
+      localStorage.removeItem('cart');
+    }
+    try {
+      const response = await fetch(url, {
+        method: 'POST'
+      })
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+    } catch (err) {
+      console.error('Товары не удалились: ', err);
+    }
+  }
 }

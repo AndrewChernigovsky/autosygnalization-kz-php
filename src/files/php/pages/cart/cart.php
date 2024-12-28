@@ -4,8 +4,6 @@ include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 
-$id = $_GET['id'] ? $_GET['id'] : 0;
-
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
@@ -29,13 +27,50 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
-    <div class="container">
-      <h2>Корзина</h2>
-      <?php echo getProductCardWModel($_SESSION['cart']) ?>
-      <?= getShop('setup'); ?>
-      <?= getShop('shop'); ?>
-    </div>
+    <section class="cart-section">
+      <div class="container">
+        <h2>Корзина</h2>
+        <div class="cart-section__head">
+          <p><span id="cart-count"><?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?></span> товара/ов в
+            корзине</p>
+          <button type="button" id="reset-cart" class="button y-button-secondary">очистить корзину</button>
+        </div>
+        <?php
+        if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+          ?>
+          <div class="cart-section__products">
+            <?php echo getProductCardWModel($_SESSION['cart'], true); ?>
+          </div>
+          <p>
+            <span>Итого: </span>
+            <span>
+              <?php
+              $total = 0;
+              foreach ($_SESSION['cart'] as $item) {
+                $total += $item['price'] * $item['quantity'];
+              }
+              echo $total;
+              ?>
+            </span>
+            <span>₸</span>
+          </p>
+          <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
+            магазин</a>
+          <?php
+        } else {
+          ?>
+          <p>В корзине нет товаров</p>
+          <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
+            магазин</a>
+          <?php
+        }
+        ?>
+      </div>
+    </section>
+    <?= getShop('setup'); ?>
+    <?= getShop('shop'); ?>
   </main>
+
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
 </body>
 
