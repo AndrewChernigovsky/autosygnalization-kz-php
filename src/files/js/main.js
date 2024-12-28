@@ -7,7 +7,7 @@ async function loadModules() {
   const buyBtn = document.getElementById("buy-btn");
   const minValue = document.getElementById("minValue");
   const filterBtn = document.getElementById("filter-btn");
-  const filterBtnClose = document.getElementById("filter-btn-close");
+  const selected = document.querySelector(".select-selected");
   const { toToggleMenu } = await import("./modules/menu-burger.js");
   const { initSwiper } = await import("./modules/swiper.js");
   const { toggleList } = await import("./modules/footer-menu.js");
@@ -24,6 +24,10 @@ async function loadModules() {
   if (filterBtn != null) {
     const { filterToggleMenu } = await import("./modules/filter.js");
     filterToggleMenu();
+  }
+  if (selected != null) {
+    const { initSelect } = await import("./modules/select.js");
+    initSelect();
   }
   if (searchExist != null) {
     const { initSearch } = await import("./modules/search.js");
