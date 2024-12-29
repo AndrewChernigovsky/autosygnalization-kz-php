@@ -41,8 +41,6 @@ class Cart
 
   public function setQuantity($id)
   {
-    error_log(print_r($_SESSION['cart'], true) . ' : CART');
-    error_log(print_r($_SESSION['cart'][$id], true) . ' : CART');
     if (isset($_SESSION['cart'])) {
       if (isset($_SESSION['cart'][$id]) && isset($_SESSION['cart'][$id]['quantity'])) {
         $quantity = $_SESSION['cart'][$id]['quantity'];

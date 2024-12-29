@@ -6,6 +6,7 @@ const wrapper = document.querySelector('.nav');
 
 export function toToggleMenu() {
   function toggleMenu() {
+    const links = document.querySelectorAll('.nav .link');
 
     wrapper.classList.toggle('active')
     toggleMenuButton.classList.toggle('active')
@@ -25,6 +26,7 @@ export function toToggleMenu() {
       }))
     }
   }
+
 
   if (toggleMenuButton && wrapper) {
     toggleMenuButton.addEventListener('click', toggleMenu)

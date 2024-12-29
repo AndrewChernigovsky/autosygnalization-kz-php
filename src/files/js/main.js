@@ -15,7 +15,7 @@ const {
 } = {
   feedbackForm: document.getElementById("feedback-form"),
   fancyboxExist: document.querySelectorAll("[data-fancybox]"),
-  searchExist: document.getElementById("search"),
+  searchExist: document.querySelector(".search"),
   phoneButton: document.querySelector(".phone-button"),
   buttonPrint: document.getElementById("print-btn"),
   buyBtn: document.getElementById("buy-btn"),

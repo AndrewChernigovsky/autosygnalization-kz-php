@@ -64,13 +64,11 @@ class CreateProducts extends CreateDatabase
   {
     header('Content-Type: application/json');
     $data = json_decode(file_get_contents('php://input'), true);
-    error_log(print_r($data, true) . ' :DATA ');
 
     if ($data) {
       $filteredProducts = array_filter($products, function ($product) use ($data) {
         return in_array($product['id'], array_column($data, 'id'));
       });
-      error_log(print_r($filteredProducts, true) . ' :FILTERED PRODUCTS ');
 
       $updatedProducts = array_map(function ($product) use ($data) {
         $matchingProduct = current(array_filter($data, function ($item) use ($product) {
@@ -83,9 +81,7 @@ class CreateProducts extends CreateDatabase
 
         return $product;
       }, $filteredProducts);
-      error_log(print_r($updatedProducts, true) . ' :UPDATED PRODUCTS ');
       $_SESSION['cart'] = $updatedProducts;
-      error_log(print_r($_SESSION['cart'], true) . ' : SESSION_DATA ');
 
       return json_encode(array_values($updatedProducts));
     } else {
