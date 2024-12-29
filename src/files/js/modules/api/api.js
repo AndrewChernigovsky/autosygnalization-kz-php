@@ -124,8 +124,8 @@ export class API {
   }
   async clearCart() {
     const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/sessions/session-destroy.php`;
-    if (localStorage.getItem('cart')) {
-      localStorage.removeItem('cart');
+    if (sessionStorage.getItem('cart')) {
+      sessionStorage.removeItem('cart');
     }
     try {
       const response = await fetch(url, {

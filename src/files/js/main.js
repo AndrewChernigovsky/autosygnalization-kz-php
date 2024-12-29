@@ -1,3 +1,7 @@
+import { render } from 'preact';
+import { html } from 'htm/preact';
+import { Card } from './card.jsx';
+
 const {
   feedbackForm,
   fancyboxExist,
@@ -27,6 +31,9 @@ const {
   cartCounter: document.querySelector('.cart .counter'),
   resetCartButton: document.getElementById('reset-cart')
 };
+function renderApp() {
+  render(html`<${Card} title="Hello!" />`, document.body);
+}
 
 async function loadModules() {
   if (menuButton != null) {
@@ -102,7 +109,6 @@ fetch('/dist/files/php/data/products.php', {
 })
   .then(response => response.json())
   .then(products => {
-    console.log(products);
     renderProducts(products)
   })
   .catch(error => console.error('Error:', error));
@@ -112,7 +118,14 @@ const template = document.getElementById('product-template');
 
 function renderProducts(products) {
   if (template) {
-    const localProducts = localStorage.getItem('cart') || [];
+    const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
+    const productsContainerCart = document.querySelector('.cart-section__products');
+
+    if (productsContainerCart) {
+      productsContainerCart.innerHTML = '';
+    }
+
+    const cardComponents = [];
 
     Object.values(products.category).forEach(productList => {
       productList.forEach(product => {
@@ -120,33 +133,28 @@ function renderProducts(products) {
 
         if (matchingProduct) {
           console.log(`Найдено совпадение: ${product.title}, Количество в корзине: ${matchingProduct.quantity}`);
-
           product.quantity = matchingProduct.quantity;
-        }
-      })
-    });
 
-    const productsContainerCart = document.querySelector('.cart-section__products');
+          const cardElement = html`<${Card} 
+            title=${product.title} 
+            id=${product.id} 
+            imageSrc=${product.gallery[0]} 
+            imageAlt=${product.title} 
+            price=${product.price} 
+            currency=${product.currency} 
+            link=${product.link} 
+            quantity=${product.quantity} 
+          />`;
+
+          cardComponents.push(cardElement);
+        } else {
+          product.quantity = 0;
+        }
+      });
+    });
 
     if (productsContainerCart) {
-      productsContainerCart.innerHTML = '';
+      render(html`${cardComponents}`, productsContainerCart);
     }
-    Object.values(products.category).forEach(product => {
-      product.forEach(el => {
-        const template = document.getElementById('product-template').content.cloneNode(true);
-        template.querySelector('article').id = el.id;
-        template.querySelector('img').src = el.gallery[0];
-        template.querySelector('img').alt = el.title;
-        template.querySelector('h3').textContent = el.title;
-        template.querySelector('.price').textContent = `Цена: ${el.price} ${el.currency}`;
-        template.querySelector('.button.y-button-secondary').href = el.link;
-        template.querySelector('.cart-button').dataset.id = el.id;
-        template.querySelector('.quantity').textContent = `Количество: ${el.quantity}`;
-
-        if (productsContainerCart) {
-          productsContainerCart.appendChild(template);
-        }
-      })
-    });
   }
 }

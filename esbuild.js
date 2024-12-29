@@ -18,6 +18,9 @@ const buildOptions = {
   sourcemap: !PRODUCTION,
   minify: PRODUCTION,
   format: 'esm',
+  loader: {
+    '.js': 'jsx'
+  },
 };
 
 export async function esbuildFooWatch() {

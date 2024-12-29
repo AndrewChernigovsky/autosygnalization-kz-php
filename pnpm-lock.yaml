@@ -46,9 +46,15 @@ devDependencies:
   gulp-svg-sprite:
     specifier: ^2.0.3
     version: 2.0.3
+  htm:
+    specifier: ^3.1.1
+    version: 3.1.1
   inputmask:
     specifier: ^5.0.9
     version: 5.0.9
+  preact:
+    specifier: ^10.25.4
+    version: 10.25.4
   sass:
     specifier: ^1.82.0
     version: 1.83.0
@@ -3942,6 +3948,10 @@ packages:
       lru-cache: 6.0.0
     dev: false
 
+  /htm@3.1.1:
+    resolution: {integrity: sha512-983Vyg8NwUE7JkZ6NmOqpCZ+sh1bKv2iYTlUkzlWmA5JD2acKoxd4KVxbMmxX/85mtfdnDmTFoNKcg5DGAvxNQ==}
+    dev: true
+
   /htmlparser2@3.10.1:
     resolution: {integrity: sha512-IgieNijUMbkDovyoKObU1DUhm1iwNYE/fuifEoEHfd1oZKZDaONBSkal7Y01shxsM49R4XaMdGez3WnF9UfiCQ==}
     dependencies:
@@ -5340,6 +5350,10 @@ packages:
     dependencies:
       posthtml-parser: 0.2.1
       posthtml-render: 1.4.0
+    dev: true
+
+  /preact@10.25.4:
+    resolution: {integrity: sha512-jLdZDb+Q+odkHJ+MpW/9U5cODzqnB+fy2EiHSZES7ldV5LK7yjlVzTp7R8Xy6W6y75kfK8iWYtFVH7lvjwrCMA==}
     dev: true
 
   /prettysize@2.0.0:

@@ -5,7 +5,7 @@ const cartButtons = document.querySelectorAll('.cart-button');
 const cartCounter = document.querySelector('.cart .counter');
 
 export function cartButtonHandler() {
-  let products = JSON.parse(localStorage.getItem('cart')) || [];
+  let products = JSON.parse(sessionStorage.getItem('cart')) || [];
   // const setPopup = new Popup();
 
   if (cartCounter) {
@@ -29,7 +29,7 @@ export function cartButtonHandler() {
         }
 
         console.log(131231);
-        localStorage.setItem('cart', JSON.stringify(products));
+        sessionStorage.setItem('cart', JSON.stringify(products));
         productApi.addProduct(productId);
 
         const newCount = products.reduce((total, product) => {
