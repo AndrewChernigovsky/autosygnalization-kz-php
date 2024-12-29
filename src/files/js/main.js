@@ -1,7 +1,3 @@
-import { render } from 'preact';
-import { html } from 'htm/preact';
-import { Card } from './card.jsx';
-
 const {
   feedbackForm,
   fancyboxExist,
@@ -31,9 +27,6 @@ const {
   cartCounter: document.querySelector('.cart .counter'),
   resetCartButton: document.getElementById('reset-cart')
 };
-function renderApp() {
-  render(html`<${Card} title="Hello!" />`, document.body);
-}
 
 async function loadModules() {
   if (menuButton != null) {
@@ -98,63 +91,3 @@ async function loadModules() {
 }
 
 document.addEventListener("DOMContentLoaded", loadModules);
-
-const data = { data: 'true' };
-fetch('/dist/files/php/data/products.php', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify(data)
-})
-  .then(response => response.json())
-  .then(products => {
-    renderProducts(products)
-  })
-  .catch(error => console.error('Error:', error));
-
-
-const template = document.getElementById('product-template');
-
-function renderProducts(products) {
-  if (template) {
-    const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
-    const productsContainerCart = document.querySelector('.cart-section__products');
-
-    if (productsContainerCart) {
-      productsContainerCart.innerHTML = '';
-    }
-
-    const cardComponents = [];
-
-    Object.values(products.category).forEach(productList => {
-      productList.forEach(product => {
-        const matchingProduct = localProducts.find(localProduct => localProduct.id === product.id);
-
-        if (matchingProduct) {
-          console.log(`Найдено совпадение: ${product.title}, Количество в корзине: ${matchingProduct.quantity}`);
-          product.quantity = matchingProduct.quantity;
-
-          const cardElement = html`<${Card} 
-            title=${product.title} 
-            id=${product.id} 
-            imageSrc=${product.gallery[0]} 
-            imageAlt=${product.title} 
-            price=${product.price} 
-            currency=${product.currency} 
-            link=${product.link} 
-            quantity=${product.quantity} 
-          />`;
-
-          cardComponents.push(cardElement);
-        } else {
-          product.quantity = 0;
-        }
-      });
-    });
-
-    if (productsContainerCart) {
-      render(html`${cardComponents}`, productsContainerCart);
-    }
-  }
-}

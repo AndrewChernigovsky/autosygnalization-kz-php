@@ -36,7 +36,7 @@ const paths = {
     dest: "./dist/files/css/",
   },
   scripts: {
-    src: "./src/files/js/**/*.js",
+    src: "./src/files/js/**/*.{js,jsx}",
   },
   src: "./src",
   dist: "./dist",
@@ -51,21 +51,18 @@ const esbuildTask = async (done) => {
 const phpTask = (cb) => {
   let tasks = [];
 
-  // Путь для выходных файлов
   const destPathPhp = './dist/files/php';
   const destPathRoot = './dist/';
 
-  // Копируем измененные PHP файлы из src/files/php
   tasks.push(
     src(['./src/files/php/**'], { encoding: false })
-      .pipe(changed(destPathPhp)) // Отслеживаем изменения
+      .pipe(changed(destPathPhp))
       .pipe(dest(destPathPhp))
   );
 
-  // Копируем измененные index.php и 404.php
   tasks.push(
     src(['./src/index.php', './src/404.php'], { encoding: false })
-      .pipe(changed(destPathRoot)) // Отслеживаем изменения
+      .pipe(changed(destPathRoot))
       .pipe(dest(destPathRoot))
   );
 

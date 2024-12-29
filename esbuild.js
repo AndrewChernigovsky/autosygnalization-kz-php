@@ -19,7 +19,7 @@ const buildOptions = {
   minify: PRODUCTION,
   format: 'esm',
   loader: {
-    '.js': 'jsx'
+    '.js': 'jsx',
   },
 };
 

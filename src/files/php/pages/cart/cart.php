@@ -32,22 +32,16 @@ echo $head->setHead();
       <div class="container">
         <h2>Корзина</h2>
         <div class="cart-section__head">
-          <p><span id="cart-count"><?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0; ?></span> товара/ов в
-            корзине</p>
-          <button type="button" id="reset-cart" class="button y-button-secondary">очистить корзину</button>
         </div>
 
         <div class="cart-section__products">
-          <?php echo getProductCardWModel($products); ?>
+          <!-- <?php echo getProductCardWModel($products); ?> -->
         </div>
         <p>
           <span>Итого: </span>
           <span>
             <?php
             $total = 0;
-            // foreach ($_SESSION['cart'] as $item) {
-            //   $total += $item['price'] * $item['quantity'];
-            // }
             echo $total;
             ?>
           </span>
@@ -55,10 +49,6 @@ echo $head->setHead();
         </p>
         <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
           магазин</a>
-        <!-- 
-          <p>В корзине нет товаров</p>
-          <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
-            магазин</a> -->
 
       </div>
     </section>
