@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/files/php/api/sessions/session.php';
 include __DIR__ . '/files/php/helpers/classes/setVariables.php';
 
 $variables = new SetVariables();

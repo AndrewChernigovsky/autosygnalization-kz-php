@@ -9,7 +9,7 @@ $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 $service_data = new Services($services_data);
-$services = $service_data->getServices();
+$services = array_values($service_data->getServices());
 ?>
 <section class="service" id="service">
   <div class="container">

@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
 

@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 
 $autoType = isset($_GET['auto']) ? $_GET['auto'] : null;
@@ -45,8 +46,6 @@ function getAutoContent($type, $base_path)
 }
 
 $content = getAutoContent($autoType, $base_path);
-
-
 $title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
 $head = new Head($title, [], []);
 ?>

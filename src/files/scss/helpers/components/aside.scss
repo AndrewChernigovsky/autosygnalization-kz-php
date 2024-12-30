@@ -9,6 +9,7 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  grid-column: 1 / -1;
 
   &__title {
     margin: 0;

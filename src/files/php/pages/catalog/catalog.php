@@ -50,7 +50,7 @@ echo $head->setHead();
           </div>
 
         </aside>
-        <div class="catalog__products-wrapper">
+        <!-- <div class="catalog__products-wrapper">
           <div class="catalog__products-sort">
             <button type="button" class="catalog__products-sort-button" id="button-filter">Фильтр</button>
             <?= $sorting->renderFilters() ?>
@@ -58,7 +58,7 @@ echo $head->setHead();
           <div class="catalog__products">
             <?= getProductCardWModel($products) ?>
           </div>
-        </div>
+        </div> -->
       </div>
       <?= getShop('setup'); ?>
 

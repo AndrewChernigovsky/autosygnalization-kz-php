@@ -2,10 +2,14 @@
 
 class CreateDatabase
 {
+  // private $host = 'localhost';
+  // private $username = 'u2642915_default';
+  // private $password = 'yPIgyj5791pNxJPr';
+  // private $dbname = 'u2642915_default';
+  private $dbname = 'auto_security';
   private $host = 'localhost';
   private $username = 'root';
   private $password = '';
-  private $dbname = 'auto_security';
   private $pdo;
 
   public function __construct()
