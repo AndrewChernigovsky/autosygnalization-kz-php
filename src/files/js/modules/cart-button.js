@@ -20,27 +20,22 @@ export function cartButtonHandler() {
 
       cartButtons.forEach(btn => btn.addEventListener('click', (e) => {
         const productId = btn.dataset.id;
+        const productPrice = btn.dataset.cost;
         const existingProduct = products.find(product => product.id === productId);
 
         if (existingProduct) {
           existingProduct.quantity += 1;
         } else {
-          products.push({ id: productId, quantity: 1 });
+          products.push({ id: productId, quantity: 1, price: productPrice });
         }
 
-        console.log(131231);
         sessionStorage.setItem('cart', JSON.stringify(products));
         productApi.addProduct(productId);
 
         const newCount = products.reduce((total, product) => {
-          // if (e.currentTarget.dataset.id === product.id) {
-          //   setPopup.initPopup(e.currentTarget, productId, product.quantity);
-          // }
           return total + product.quantity;
         }, 0);
         cartCounter.textContent = newCount;
-
-        console.log(products, 'PRODUTCS');
         productApi.sendCart(products).then(responseData => {
           console.log('Данные успешно отправлены:', responseData);
         }).catch(error => {

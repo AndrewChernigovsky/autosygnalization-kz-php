@@ -37,7 +37,7 @@ echo $head->setHead();
         </div>
         <p>
           <span>Итого: </span>
-          <span>
+          <span id="cost-total">
             <?php
             $total = 0;
             echo $total;

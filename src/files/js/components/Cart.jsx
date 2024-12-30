@@ -2,15 +2,16 @@ import { render, Component } from 'preact';
 import { html } from 'htm/preact';
 import { CartProductCard } from './CartProductCard.jsx';
 import { CartCountTotal } from './CartCountTotal.jsx';
-import { CartButton } from './CartButton.jsx';
 
 const data = { data: 'true' };
-
+const cartCounter = document.querySelector('.cart .counter');
+const costTotal = document.getElementById('cost-total');
 export class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
       totalQuantity: 0,
+      totalCost: 0,
       products: []
     };
   }
@@ -20,7 +21,10 @@ export class Cart extends Component {
   }
 
   fetchProducts() {
-    fetch('/dist/files/php/data/products.php', {
+    const PRODUCTION = window.location.href.includes('/dist/');
+    const url = `${PRODUCTION ? '/dist/' : '/'}files/php/data/products.php`;
+
+    fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -39,10 +43,6 @@ export class Cart extends Component {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
     const productsContainerCart = document.querySelector('.cart-section__products');
 
-    if (productsContainerCart) {
-      // productsContainerCart.innerHTML = '';
-    }
-
     const cardComponents = [];
 
     const handleRemoveProduct = (id) => {
@@ -53,6 +53,19 @@ export class Cart extends Component {
         this.updateTotalQuantity();
         this.renderProducts(products);
       }
+    };
+
+    const handleUpdateQuantity = (id, newQuantity) => {
+      const updatedProducts = localProducts.map(localProduct => {
+        if (localProduct.id === id) {
+          return { ...localProduct, quantity: newQuantity };
+        }
+        return localProduct;
+      }).filter(product => product.quantity > 0);
+
+      sessionStorage.setItem('cart', JSON.stringify(updatedProducts));
+      this.updateTotalQuantity(updatedProducts);
+      this.renderProducts(products);
     };
 
     Object.values(products.category).forEach(productList => {
@@ -72,8 +85,8 @@ export class Cart extends Component {
               link=${product.link} 
               quantity=${product.quantity} 
               onRemove=${handleRemoveProduct} 
+              onUpdateQuantity=${handleUpdateQuantity}
             />`;
-
           cardComponents.push(cardElement);
         } else {
           product.quantity = 0;
@@ -91,7 +104,15 @@ export class Cart extends Component {
   updateTotalQuantity() {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
     const totalQuantity = localProducts.reduce((acc, product) => acc + product.quantity, 0);
-    this.setState({ totalQuantity });
+    const totalCost = localProducts.reduce((acc, product) => acc + (Number(product.price) * product.quantity), 0);
+
+    cartCounter.textContent = totalQuantity;
+    this.setState({ totalQuantity, totalCost }, () => {
+      if (costTotal) {
+        costTotal.textContent = this.state.totalCost.toFixed(2);
+
+      }
+    });
   }
 
   render() {
@@ -110,7 +131,7 @@ export class Cart extends Component {
   handleClearCart = () => {
     console.log("Корзина очищена");
     sessionStorage.removeItem('cart');
-    this.setState({ totalQuantity: 0, products: [] });
+    this.setState({ totalQuantity: 0, totalCost: 0, products: [] });
     this.renderProducts({ category: [] });
   };
 }

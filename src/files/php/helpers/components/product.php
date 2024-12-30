@@ -67,7 +67,7 @@ function getProductCardWModel(array $products, bool $cart = false)
           <div class="product-card__buttons">
             <a class="button y-button-secondary" href="<?php echo htmlspecialchars($product['link']); ?>">Подробнее</a>
             <button type="button" class="button y-button-primary cart-button"
-              data-id="<?php echo htmlspecialchars($product['id']); ?>">Купить</button>
+              data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">Купить</button>
           </div>
         <?php endif; ?>
         <?php if (isset($product['quantity']) && $cart): ?>
