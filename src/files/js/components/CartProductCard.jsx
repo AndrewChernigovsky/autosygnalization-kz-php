@@ -16,10 +16,10 @@ export class CartProductCard extends Component {
   handleRemoveToCart = () => {
     this.setState(prevState => {
       const newQuantity = prevState.quantity - 1;
-      if (newQuantity < 0) return { quantity: 0 }
 
-      if (newQuantity === 0) {
+      if (newQuantity <= 0) {
         this.props.onRemove(this.props.id);
+        return { quantity: 0 };
       }
 
       return { quantity: newQuantity };
@@ -29,11 +29,12 @@ export class CartProductCard extends Component {
   };
   handleAddToCart = () => {
     this.setState(prevState => ({ quantity: prevState.quantity + 1 }));
-
     console.log(`Товар с id ${this.props.id} добавлен в корзину. Текущее количество: ${this.state.quantity + 1}`);
+
+    return { quantity: newQuantity };
   };
 
-  render({ title, id, imageSrc, imageAlt, price, currency, link, quantity }) {
+  render({ title, id, imageSrc, imageAlt, price, currency, link }) {
     return html`
       <article id=${id} class='product-card'>
         <div class="product-card__bg">

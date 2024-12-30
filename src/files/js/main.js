@@ -1,3 +1,7 @@
+import { render, Component } from 'preact';
+import { html } from 'htm/preact';
+import { Cart } from './components/Cart.jsx';
+
 const {
   feedbackForm,
   fancyboxExist,
@@ -11,7 +15,8 @@ const {
   menuButton,
   swiper,
   cartCounter,
-  resetCartButton
+  resetCartButton,
+  productsContainerCart
 } = {
   feedbackForm: document.getElementById("feedback-form"),
   fancyboxExist: document.querySelectorAll("[data-fancybox]"),
@@ -25,7 +30,8 @@ const {
   menuButton: document.querySelector('.menu-toggle'),
   swiper: document.querySelector('.swiper'),
   cartCounter: document.querySelector('.cart .counter'),
-  resetCartButton: document.getElementById('reset-cart')
+  resetCartButton: document.getElementById('reset-cart'),
+  productsContainerCart: document.querySelector('.cart-section__products')
 };
 
 async function loadModules() {
@@ -87,6 +93,11 @@ async function loadModules() {
   if (buttonsTabs != null) {
     const { showTabs } = await import("./modules/tabs.js");
     showTabs();
+  }
+
+  if (productsContainerCart != null) {
+    const { Cart } = await import("./components/Cart.jsx");
+    render(html`<${Cart} />`, document.body);
   }
 }
 

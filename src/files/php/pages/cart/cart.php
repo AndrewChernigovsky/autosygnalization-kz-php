@@ -33,9 +33,7 @@ echo $head->setHead();
         <h2>Корзина</h2>
         <div class="cart-section__head">
         </div>
-
         <div class="cart-section__products">
-          <!-- <?php echo getProductCardWModel($products); ?> -->
         </div>
         <p>
           <span>Итого: </span>
