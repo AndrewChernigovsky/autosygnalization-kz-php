@@ -1,12 +1,10 @@
 import { ProductAPI } from "./api/getProduct.js";
-// import Popup from "../helpers/classes/Popup.js";
 
 const cartButtons = document.querySelectorAll('.cart-button');
 const cartCounter = document.querySelector('.cart .counter');
 
 export function cartButtonHandler() {
   let products = JSON.parse(sessionStorage.getItem('cart')) || [];
-  // const setPopup = new Popup();
 
   if (cartCounter) {
 

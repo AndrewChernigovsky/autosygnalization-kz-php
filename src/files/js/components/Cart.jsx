@@ -41,17 +41,23 @@ export class Cart extends Component {
 
   renderProducts(products) {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
+    console.log(localProducts, 'localProducts Cart.jsx');
     const productsContainerCart = document.querySelector('.cart-section__products');
 
     const cardComponents = [];
 
     const handleRemoveProduct = (id) => {
+      console.log(id, 'id handleRemoveProduct Cart.jsx');
       const index = localProducts.findIndex(localProduct => localProduct.id === id);
+      console.log(index, 'index Cart.jsx');
       if (index !== -1) {
+        console.log(localProducts, 'localProducts');
         localProducts.splice(index, 1);
+        console.log(localProducts, 'localProducts splice');
         sessionStorage.setItem('cart', JSON.stringify(localProducts));
         this.updateTotalQuantity();
-        this.renderProducts(products);
+        console.log(localProducts, 'products CART.jsx');
+        this.renderProducts(localProducts);
       }
     };
 
@@ -105,12 +111,10 @@ export class Cart extends Component {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
     const totalQuantity = localProducts.reduce((acc, product) => acc + product.quantity, 0);
     const totalCost = localProducts.reduce((acc, product) => acc + (Number(product.price) * product.quantity), 0);
-
     cartCounter.textContent = totalQuantity;
     this.setState({ totalQuantity, totalCost }, () => {
       if (costTotal) {
         costTotal.textContent = this.state.totalCost.toFixed(2);
-
       }
     });
   }

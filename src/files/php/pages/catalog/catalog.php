@@ -65,8 +65,7 @@ echo $head->setHead();
     </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
-
-
+  <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
 </body>
 
 </html>

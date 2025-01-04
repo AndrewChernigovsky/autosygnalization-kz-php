@@ -11,14 +11,12 @@ export class CartProductCard extends Component {
   handleRemoveToCart = () => {
     this.setState(prevState => {
       const newQuantity = prevState.quantity - 1;
-
-      if (newQuantity < 0) {
-        return { quantity: 0 };
-      }
+      console.log(newQuantity, 'newQuantity CartProductCard.jsx');
 
       this.props.onUpdateQuantity(this.props.id, newQuantity);
       this.updateSessionStorage(this.props.id, newQuantity);
 
+      console.log(this.props.id, 'ID PROPS CartProductCard.jsx');
       if (newQuantity === 0) {
         this.props.onRemove(this.props.id);
       }
