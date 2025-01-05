@@ -48,7 +48,7 @@ export class CartProductCard extends Component {
     }
   }
 
-  render({ title, id, imageSrc, imageAlt, price, currency }) {
+  render({ title, id, imageSrc, imageAlt, price, currency, order = false }) {
     return html`
       <article id=${id} class='product-card'>
         <div class="product-card__bg">

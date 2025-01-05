@@ -9,8 +9,8 @@ $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
-include_once $head_path;
-include_once $sections_path;
+include $head_path;
+include $sections_path;
 $base_path = $docROOT . $path . '/files/php/layout';
 $path_components = $docROOT . $path . '/files/php/helpers/components';
 

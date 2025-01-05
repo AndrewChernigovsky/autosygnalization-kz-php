@@ -47,15 +47,16 @@ export class ModalForm extends Component {
                     pattern="[0-9]+" required onInput=${this.handleInputChange} value=${this.state.phone}>
                 </label>
               </li>
-              <li class="form__item form__item--textarea">
-                <label class="form__subtitle">Оставьте Комментарий:
-                  <textarea class="form__input form__input--textarea" name="message" id="message"
-                    placeholder="Ваш комментарий" onInput=${this.handleInputChange} value=${this.state.message}></textarea>
-                </label>
-              </li>
+              ${!this.props.fast && html`
+                <li class="form__item form__item--textarea">
+                  <label class="form__subtitle">Оставьте Комментарий:
+                    <textarea class="form__input form__input--textarea" name="message" id="message"
+                      placeholder="Ваш комментарий" onInput=${this.handleInputChange} value=${this.state.message}></textarea>
+                  </label>
+                </li>
+              `}
             </ul>
             <button class="form__button y-button-primary" type="submit">Отправить заявку</button>
-            <button class="form__button y-button-secondary" type="button" onClick=${this.props.onClose}>Закрыть</button>
           </form>
         </div>
   </div>
