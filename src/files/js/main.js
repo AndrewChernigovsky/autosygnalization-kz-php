@@ -3,6 +3,7 @@ import { html } from 'htm/preact';
 
 const {
   feedbackForm,
+  footer,
   fancyboxExist,
   searchExist,
   phoneButton,
@@ -19,6 +20,7 @@ const {
   modalCart
 } = {
   feedbackForm: document.getElementById("feedback-form"),
+  footer: document.querySelector('footer'),
   fancyboxExist: document.querySelectorAll("[data-fancybox]"),
   searchExist: document.querySelector(".search"),
   phoneButton: document.querySelector(".phone-button"),
@@ -44,7 +46,7 @@ async function loadModules() {
     const { initSwiper } = await import("./modules/swiper.js");
     initSwiper();
   }
-  if (phoneButton != null) {
+  if (footer != null) {
     const { toggleList } = await import("./modules/footer-menu.js");
     toggleList();
   }
@@ -53,8 +55,9 @@ async function loadModules() {
     cartButtonHandler();
   }
   if (phoneButton != null) {
-    const { initPhone } = await import("./modules/phone-button.js");
-    initPhone();
+    const module = await import("./modules/initFormModal.js");
+    const InitFormModal = module.default;
+    new InitFormModal().initPhone();
   }
   if (filterBtn != null) {
     const { filterToggleMenu } = await import("./modules/filter.js");

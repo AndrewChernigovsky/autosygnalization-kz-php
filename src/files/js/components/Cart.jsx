@@ -12,7 +12,8 @@ export class Cart extends Component {
     this.state = {
       totalQuantity: 0,
       totalCost: 0,
-      products: []
+      products: [],
+      errorMessage: null
     };
   }
 
@@ -36,7 +37,10 @@ export class Cart extends Component {
         this.setState({ products });
         this.renderProducts(products);
       })
-      .catch(error => console.error('Error:', error));
+      .catch(error => {
+        console.error('Error:', error);
+        this.setState({ errorMessage: 'Не удалось загрузить продукты' });
+      });
   }
 
   renderProducts(products) {
@@ -45,6 +49,8 @@ export class Cart extends Component {
     const productsContainerCart = document.querySelector('.cart-section__products');
 
     const cardComponents = [];
+
+
 
     const handleRemoveProduct = (id) => {
       console.log(id, 'id handleRemoveProduct Cart.jsx');
@@ -101,12 +107,15 @@ export class Cart extends Component {
     });
 
     if (productsContainerCart) {
-      if (this.state.totalQuantity <= 0) {
-        render(html`<p class="cart-section__count-products">Нет добавленных товаров</p>`, productsContainerCart)
-      } else {
-        render(html`${cardComponents}`,
-          productsContainerCart);
-      }
+      const totalQuantity = localProducts.reduce((acc, el) => acc + el.quantity, 0);
+      this.setState({ totalQuantity: totalQuantity }, () => {
+        if (this.state.totalQuantity <= 0) {
+          render(html`<p class="cart-section__count-products">Нет добавленных товаров</p>`, productsContainerCart)
+        } else {
+          render(html`${cardComponents}`,
+            productsContainerCart);
+        }
+      });
     }
 
     this.updateTotalQuantity();

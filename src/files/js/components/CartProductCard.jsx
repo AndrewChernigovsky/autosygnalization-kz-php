@@ -56,12 +56,14 @@ export class CartProductCard extends Component {
         <div class="product-card__body">
           <div class="product-card__head">
             <h3>${title}</h3>
-            <div class="price"><span>Цена: </span> <span>${price} ${currency}</span>  </div>
+            <div class="price">
+              <span>Цена: </span>
+              <span>${price} ${currency}</span>
+            </div>
           </div>
         </div>
-        <div class="product-card__buttons">
-          <a class="button y-button-secondary" href=${link}>Купить</a>
-          <div class="product-card__buttons-count">
+        <div class="product-card__buttons cart-btn">
+          <div class="product-card__buttons-count ">
             <button type="button" class="button y-button-primary cart-button" data-id=${id} onClick=${this.handleRemoveToCart} aria-label="Убрать товар">-</button>
             <div class="product-card__quantity">${this.state.quantity}</div>
             <button type="button" class="button y-button-primary cart-button" data-id=${id} onClick=${this.handleAddToCart} aria-label="Добавить товар">+</button>

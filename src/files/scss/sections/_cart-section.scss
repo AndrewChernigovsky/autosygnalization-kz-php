@@ -11,16 +11,37 @@
     }
   }
 
+  &__options {
+    display: grid;
+    gap: 5px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__option {
+    display: grid;
+    gap: 5px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      gap: 5px;
+    }
+
+    .button {
+      font-size: 20px;
+    }
+  }
+
   &__products {
     display: flex;
     gap: 1%;
     flex-wrap: wrap;
     min-height: 350px;
     height: 100%;
-
-    article {
-      max-width: 300px;
-    }
   }
 
   #cost-total,
