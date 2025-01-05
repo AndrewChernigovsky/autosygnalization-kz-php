@@ -15,7 +15,6 @@ export function cartButtonHandler() {
       const productApi = new ProductAPI();
       productApi.createProducts();
 
-
       cartButtons.forEach(btn => btn.addEventListener('click', (e) => {
         const productId = btn.dataset.id;
         const productPrice = btn.dataset.cost;
@@ -33,7 +32,9 @@ export function cartButtonHandler() {
         const newCount = products.reduce((total, product) => {
           return total + product.quantity;
         }, 0);
+
         cartCounter.textContent = newCount;
+
         productApi.sendCart(products).then(responseData => {
           console.log('Данные успешно отправлены:', responseData);
         }).catch(error => {
@@ -42,5 +43,4 @@ export function cartButtonHandler() {
       }));
     }
   }
-
 }
