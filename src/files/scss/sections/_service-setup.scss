@@ -42,6 +42,7 @@
     @media (min-width: var.$desktop) {
       max-width: 1298px;
       margin: 0 auto;
+      margin-bottom: 20px;
       padding: 0;
     }
   }
@@ -136,7 +137,6 @@
     @media (min-width: var.$desktop) {
       font-size: 48px;
       line-height: 70px;
-      padding: 10px 10px 0;
     }
   }
 
@@ -296,6 +296,17 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 20px;
+
+      img {
+        width: 20px;
+        height: 20px;
+
+        @media (min-width: var.$desktop) {
+          width: 40px;
+          height: 40px;
+        }        
+      }
     }
   }
 
