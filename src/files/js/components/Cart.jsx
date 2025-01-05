@@ -50,8 +50,6 @@ export class Cart extends Component {
 
     const cardComponents = [];
 
-
-
     const handleRemoveProduct = (id) => {
       console.log(id, 'id handleRemoveProduct Cart.jsx');
       const index = localProducts.findIndex(localProduct => localProduct.id === id);
@@ -145,7 +143,6 @@ export class Cart extends Component {
       render(wrapper, head);
     }
     return null;
-
   }
 
   handleClearCart = () => {

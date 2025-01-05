@@ -1,4 +1,5 @@
 import { html, Component } from 'htm/preact';
+import { CartButtonCounter } from './CartButtonCounter.jsx';
 
 export class CartProductCard extends Component {
   constructor(props) {
@@ -47,7 +48,7 @@ export class CartProductCard extends Component {
     }
   }
 
-  render({ title, id, imageSrc, imageAlt, price, currency, link }) {
+  render({ title, id, imageSrc, imageAlt, price, currency }) {
     return html`
       <article id=${id} class='product-card'>
         <div class="product-card__bg">
@@ -63,11 +64,7 @@ export class CartProductCard extends Component {
           </div>
         </div>
         <div class="product-card__buttons cart-btn">
-          <div class="product-card__buttons-count ">
-            <button type="button" class="button y-button-primary cart-button" data-id=${id} onClick=${this.handleRemoveToCart} aria-label="Убрать товар">-</button>
-            <div class="product-card__quantity">${this.state.quantity}</div>
-            <button type="button" class="button y-button-primary cart-button" data-id=${id} onClick=${this.handleAddToCart} aria-label="Добавить товар">+</button>
-          </div>
+          <${CartButtonCounter} id=${id} onRemove=${this.handleRemoveToCart} onAdd=${this.handleAddToCart} quantity=${this.state.quantity}/>
         </div>  
       </article>
     `;
