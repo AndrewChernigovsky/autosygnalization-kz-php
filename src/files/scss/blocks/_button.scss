@@ -1,121 +1,125 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .y-button {
-    border: 1px solid var.$white;
-    padding: 10px;
-    min-height: 50px;
-    color: var.$white;
-    font-family: var.$primary-font;
-    font-weight: 700;
-    font-style: italic;
-    font-size: 24px;
-    text-transform: uppercase;
-    text-decoration: none;
-    width: calc(100% - 20px);
-    min-width: 300px;
-    max-width: 400px;
-    text-align: center;
-    border-radius: 5px;
+  border: 1px solid var.$white;
+  padding: 10px;
+  min-height: 50px;
+  color: var.$white;
+  font-family: var.$primary-font;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 24px;
+  text-transform: uppercase;
+  text-decoration: none;
+  width: calc(100% - 20px);
+  min-width: 300px;
+  max-width: 400px;
+  text-align: center;
+  border-radius: 5px;
 }
 
 .captcha {
-    display: grid;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
+  display: grid;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
 }
 
 .captcha-btn {
-    border: 1px solid var.$white;
-    background: none;
-    color: var.$white;
-    font-size: 16px;
-    font-weight: 700;
-    width: 150px;
-    height: 30px;
-    margin: 0 auto;
+  border: 1px solid var.$white;
+  background: none;
+  color: var.$white;
+  font-size: 16px;
+  font-weight: 700;
+  width: 150px;
+  height: 30px;
+  margin: 0 auto;
 }
 
 @media screen and (min-width: 768px) {
-    .captcha {
-        display: flex;
-        gap: 20px;
-    }
+  .captcha {
+    display: flex;
+    gap: 20px;
+  }
 
-    .captcha-btn {
-        width: 300px;
-        height: 50px;
-        margin: 0;
-    }
+  .captcha-btn {
+    width: 300px;
+    height: 50px;
+    margin: 0;
+  }
 }
 
 .link {
-    text-decoration: none;
-    color: var.$white;
-    transition: 0.3s ease-in-out;
-    cursor: pointer;
+  text-decoration: none;
+  color: var.$white;
+  transition: 0.3s ease-in-out;
+  cursor: pointer;
 
-    &:hover {
-        opacity: 0.3;
-    }
+  &:hover {
+    opacity: 0.3;
+  }
 }
 
 .button {
-    cursor: pointer;
-    text-decoration: none;
-    color: var.$white;
-    padding: 5px 10px;
+  cursor: pointer;
+  text-decoration: none;
+  color: var.$white;
+  padding: 5px 10px;
 }
 
 .y-button-secondary {
-    display: flex;
-    width: 260px;
-    min-height: 40px;
-    border-radius: 5px;
-    border: 1px solid var.$white;
-    justify-content: center;
-    align-items: center;
-    font-weight: 700;
-    font-size: 20px;
-    gap: 10px;
-    background-color: var.$black;
-    text-transform: uppercase;
+  display: flex;
+  width: 260px;
+  min-height: 40px;
+  border-radius: 5px;
+  border: 1px solid var.$white;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 20px;
+  gap: 10px;
+  background-color: var.$black;
+  text-transform: uppercase;
 
-    @media screen and (min-width: var.$desktop-min) {
-        font-size: 36px;
-        width: 100%;
-        min-width: 260px;
-        max-width: 364px;
-        min-height: 65px;
+  @media screen and (min-width: var.$desktop-min) {
+    font-size: 36px;
+    width: 100%;
+    min-width: 260px;
+    max-width: 364px;
+    min-height: 65px;
 
-        &:hover {
-            opacity: 0.3;
-        }
+    &:hover {
+      opacity: 0.3;
     }
+  }
+}
+
+.y-button-third {
+  background: var.$blue-gradient;
 }
 
 .y-button-primary {
-    display: flex;
-    background: linear-gradient(var.$red-280000, var.$red-FF0000);
-    width: 260px;
-    min-height: 40px;
-    border-radius: 5px;
-    border: 1px solid var.$white;
-    justify-content: center;
-    align-items: center;
-    font-weight: 700;
-    font-size: 20px;
-    text-transform: uppercase;
+  display: flex;
+  background: linear-gradient(var.$red-280000, var.$red-FF0000);
+  width: 260px;
+  min-height: 40px;
+  border-radius: 5px;
+  border: 1px solid var.$white;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 20px;
+  text-transform: uppercase;
 
-    @media screen and (min-width: var.$desktop-min) {
-        font-size: 24px;
-        width: 100%;
-        min-width: 260px;
-        max-width: 364px;
-        min-height: 65px;
+  @media screen and (min-width: var.$desktop-min) {
+    font-size: 24px;
+    width: 100%;
+    min-width: 260px;
+    max-width: 364px;
+    min-height: 65px;
 
-        &:hover {
-            opacity: 0.3;
-        }
+    &:hover {
+      opacity: 0.3;
     }
+  }
 }

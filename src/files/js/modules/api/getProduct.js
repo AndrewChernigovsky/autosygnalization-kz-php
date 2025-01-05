@@ -4,6 +4,4 @@ export class ProductAPI extends API {
   constructor(PRODUCTION) {
     super(PRODUCTION);
   }
-
-
 }

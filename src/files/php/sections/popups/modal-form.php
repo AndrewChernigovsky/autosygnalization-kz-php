@@ -36,33 +36,6 @@ $path = $variables->getPathFileURL();
       Закрыть форму
     </span>
   </button>
-  <section class="form" id="form-modal">
-    <div class="form__wrapper">
-      <h2 class="form__title">Оставьте заявку
-        и мы вам перезвоним</h2>
-      <form class="form__main-form" action="#" method="post" id="feedback-form">
-        <ul class="form__list list-style-none">
-          <li class="form__item">
-            <label class="form__subtitle">Введите ФИО*:
-              <input class="form__input" type="text" name="name" id="name" placeholder="Ivanov Ivan Ivanovich"
-                pattern="[A-Za-z\s]+" required>
-            </label>
-          </li>
-          <li class="form__item">
-            <label class="form__subtitle">Введите Телефон*:
-              <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777"
-                pattern="[0-9]+" required>
-            </label>
-          </li>
-          <li class="form__item form__item--textarea">
-            <label class="form__subtitle">Оставьте Комментарий:
-              <textarea class="form__input form__input--textarea" name="message" id="message"
-                placeholder="Вы купили автомобиль и желаете защитить его, установив сигнализацию?  Вы любите комфорт и хотите установить автозапуск на Ваше авто?  Вам необходимо отслеживать Ваш транспорт по GPS?  Обращайтесь к нам, и мы поможем Вам решить эти задачи!"></textarea>
-            </label>
-          </li>
-        </ul>
-        <button class="form__button y-button-primary" type="submit">Отправить заявку</button>
-      </form>
-    </div>
-  </section>
+  <div class="popup-body">
+  </div>
 </div>

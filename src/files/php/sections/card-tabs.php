@@ -9,19 +9,25 @@ $path = $variables->getPathFileURL();
 
 error_log(print_r($tabs, true) . ": TABS");
 
+function isActiveClassTab($index)
+{
+  if($index === 0) {
+    return 'tab__button--active';
+  }
+}
 ?>
 
 <section class="tab">
   <div class="tab__wrapper">
     <div class="tab__buttons">
-      <?php foreach ($tabs as $tab): ?>
-        <button type="button" class="tab__button y-button-secondary"
+      <?php foreach ($tabs as $index => $tab): ?>
+        <button type="button" class="tab__button  <?= isActiveClassTab($index) ?>  y-button-secondary"
           data-tab="<?php echo $tab['id']; ?>"><?= $tab['title'] ?></button>
       <?php endforeach; ?>
     </div>
     <div class="tab__content">
-      <?php foreach ($tabs as $tab): ?>
-        <ul class="tab__list tab__list--show list-style-none" data-content="<?= $tab['id']; ?>">
+      <?php foreach ($tabs as $index => $tab): ?>
+        <ul class="tab__list <?= isActiveClassTabContent($index)?> list-style-none" data-content="<?= $tab['id']; ?>">
           <?php foreach ($tab['items'] as $item): ?>
             <li class="tab__item"
               style="background-image: url('<?php echo isset($item['path-icon']) ? htmlspecialchars($item['path-icon']) : '' ?>')">

@@ -4,7 +4,6 @@ function getShop($type = 'shop')
   include __DIR__ . '/../../data/setup.php';
 
   $shop = $setups[$type];
-  error_log(print_r($shop, true));
   ob_start();
 
   ?>
