@@ -1,7 +1,6 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 
-
 class Share
 {
   private $path;
@@ -14,7 +13,6 @@ class Share
     $path = $variables->getPathFileURL();
     $this->path = $path;
     $this->icons = $icons;
-
   }
   public function getShare()
   {
