@@ -17,13 +17,14 @@ const {
   cartCounter,
   resetCartButton,
   productsContainerCart,
-  modalCart
+  modalCart, selected
 } = {
   feedbackForm: document.getElementById("feedback-form"),
   footer: document.querySelector('footer'),
   fancyboxExist: document.querySelectorAll("[data-fancybox]"),
   searchExist: document.querySelector(".search"),
   phoneButton: document.querySelector(".phone-button"),
+  selected: document.querySelector(".select-selected"),
   buttonPrint: document.getElementById("print-btn"),
   buyBtn: document.getElementById("buy-btn"),
   minValue: document.getElementById('minValue'),

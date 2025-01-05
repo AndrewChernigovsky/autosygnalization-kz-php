@@ -11,17 +11,14 @@ export function initSelect() {
     item.classList.toggle("select-hide");
     selected.classList.toggle("open");
 
-    // Добавляем обработчик клика на документ
     const handleClickOutside = function (event) {
       if (!selected.contains(event.target) && !item.contains(event.target)) {
         item.classList.add("select-hide");
         selected.classList.remove("open");
-        // Удаляем обработчик после выполнения
         document.removeEventListener("click", handleClickOutside);
       }
     };
 
-    // Добавляем обработчик клика на документ
     document.addEventListener("click", handleClickOutside);
   });
 
