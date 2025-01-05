@@ -1,3 +1,4 @@
+import FormatNumber from "../helpers/classes/FormatNumber";
 export function setModalCart() {
   const template = document.getElementById('cart-popup');
 
@@ -16,8 +17,9 @@ export function setModalCart() {
     allQuantity += item.quantity;
     allCost += item.price * item.quantity;
   });
+  const format = new FormatNumber();
   countItem.textContent = `Товаров в корзине: ${allQuantity}`;
-  cost.textContent = `Сумма: ${allCost}`;
+  cost.textContent = `Сумма: ${format.customFormatNumber(allCost)} ₸`;
 
 
   let timer = 5;
@@ -29,7 +31,7 @@ export function setModalCart() {
 
     if (timer <= 0) {
       clearInterval(interval);
-      popup.remove();
+      // popup.remove();
     }
   }, 1000);
 

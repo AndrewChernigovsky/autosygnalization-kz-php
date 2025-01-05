@@ -56,7 +56,7 @@ export class CartProductCard extends Component {
         <div class="product-card__body">
           <div class="product-card__head">
             <h3>${title}</h3>
-            <div class="price">Цена: ${price} ${currency}</div>
+            <div class="price"><span>Цена: </span> <span>${price} ${currency}</span>  </div>
           </div>
         </div>
         <div class="product-card__buttons">

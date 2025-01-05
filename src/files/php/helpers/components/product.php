@@ -18,7 +18,9 @@ function getProductCard($products, $model)
             <p><?php echo htmlspecialchars($product['description']); ?></p>
           <?php endif; ?>
           <?php if (isset($product['price'])): ?>
-            <p>Цена: <?php echo htmlspecialchars($product['price']); ?>           <?php echo htmlspecialchars($product['currency']); ?></p>
+            <p><span>Цена: </span><?php echo htmlspecialchars($product['price']); ?>
+              <?php echo htmlspecialchars($product['currency']); ?>
+            </p>
           <?php endif; ?>
         </article>
         <?php
@@ -59,7 +61,8 @@ function getProductCardWModel(array $products, bool $cart = false)
         <div class="product-card__head">
           <h3><?php echo htmlspecialchars($product['title']); ?></h3>
           <?php if (isset($product['price'])): ?>
-            <p>Цена: <?php echo htmlspecialchars($product['price']); ?><?php echo htmlspecialchars($product['currency']); ?>
+            <p><span>Цена:
+              </span><?php echo htmlspecialchars($product['price']); ?><?php echo htmlspecialchars($product['currency']); ?>
             </p>
           <?php endif; ?>
         </div>

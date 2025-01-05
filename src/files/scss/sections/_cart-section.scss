@@ -4,6 +4,7 @@
   &__head {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
 
     button {
       font-size: 24px;
@@ -14,10 +15,24 @@
     display: flex;
     gap: 1%;
     flex-wrap: wrap;
+    min-height: 350px;
     height: 100%;
 
     article {
       max-width: 300px;
     }
+  }
+
+  #cost-total,
+  #cost-total+span {
+    font-size: 36px;
+    font-weight: 700;
+  }
+
+  &__count-products {
+    text-align: center;
+    width: 100%;
+    display: grid;
+    align-items: center;
   }
 }

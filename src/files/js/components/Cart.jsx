@@ -101,7 +101,12 @@ export class Cart extends Component {
     });
 
     if (productsContainerCart) {
-      render(html`${cardComponents}`, productsContainerCart);
+      if (this.state.totalQuantity <= 0) {
+        render(html`<p class="cart-section__count-products">Нет добавленных товаров</p>`, productsContainerCart)
+      } else {
+        render(html`${cardComponents}`,
+          productsContainerCart);
+      }
     }
 
     this.updateTotalQuantity();
@@ -121,6 +126,7 @@ export class Cart extends Component {
 
   render() {
     const head = document.querySelector('.cart-section__head');
+
     if (head) {
       const wrapper = html`
         <div>
@@ -130,6 +136,7 @@ export class Cart extends Component {
       render(wrapper, head);
     }
     return null;
+
   }
 
   handleClearCart = () => {

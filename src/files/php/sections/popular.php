@@ -17,9 +17,7 @@ $path_href = $path . '/files/php/pages/catalog/catalog.php';
       <div class="swiper swiper-popular">
         <ul class="popular__list swiper-wrapper list-style-none">
           <?php
-          // Перебираем все категории
           foreach ($products['category'] as $category):
-            // Перебираем продукты в каждой категории
             foreach ($category as $product): ?>
               <li class="popular__item swiper-slide">
                 <div class="popular__item-bg">
