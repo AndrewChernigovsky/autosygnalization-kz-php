@@ -44,7 +44,7 @@ echo $head->setHead();
     <div class="container">
       <h2>АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
       <div class="catalog">
-        <aside class="aside">
+        <!-- <aside class="aside">
           <?= $filters->renderFilters() ?>
           <div class="aside__offers">
             <?php foreach ($asideData->getAsideData() as $data): ?>
@@ -52,8 +52,8 @@ echo $head->setHead();
             <?php endforeach; ?>
           </div>
 
-        </aside>
-        <!-- <div class="catalog__products-wrapper">
+        </aside> -->
+        <div class="catalog__products-wrapper">
           <div class="catalog__products-sort">
             <button type="button" class="catalog__products-sort-button" id="button-filter">Фильтр</button>
             <?= $sorting->renderFilters() ?>
@@ -61,24 +61,18 @@ echo $head->setHead();
           <div class="catalog__products">
             <?= getProductCardWModel($products) ?>
           </div>
+
+        </div>
+      </div>
         </div> -->
           
         <?= $select->createComponent($selectData->getSelectData())?>
-<!-- <div class="custom-select">
-            <div class="select-selected">Выберите опцию</div>
-              <div class="select-items select-hide">
-                <div data-value="1">Опция 1</div>
-                <div data-value="2">Опция 2</div>
-                <div data-value="3">Опция 3</div>
-              </div>
-            </div>
-        </div>
-      </div> -->
       <?= getShop('setup'); ?>
 
     </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
+  <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
 </body>
 
 </html>

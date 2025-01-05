@@ -4,12 +4,12 @@ import gulpSass from "gulp-sass";
 import autoPrefixer from "gulp-autoprefixer";
 import cleanCSS from "gulp-clean-css";
 import browserSync from "browser-sync";
-import { exec } from "child_process";
 import fs from "fs/promises";
 import path from "path";
 import { fileURLToPath } from "url";
 import svgSprite from "gulp-svg-sprite";
-import { esbuildFoo } from "./esbuild.js";
+import { esbuildFooWatch } from "./esbuild.js";
+import changed from 'gulp-changed';
 
 const config = {
   mode: {
@@ -36,41 +36,36 @@ const paths = {
     dest: "./dist/files/css/",
   },
   scripts: {
-    src: "./src/files/js/**/*.js",
+    src: "./src/files/js/**/*.{js,jsx}",
   },
   src: "./src",
   dist: "./dist",
 };
 
 const esbuildTask = async (done) => {
-  await esbuildFoo();
+  await esbuildFooWatch();
   browserSync.reload();
   done();
 };
-// const esbuildTask = (done) => {
-//   exec("esbuild -c", (err, stdout, stderr) => {
-//     if (err) {
-//       console.error(stderr);
-//       done(err);
-//       return;
-//     }
-//     console.log(stdout);
-//     browserSync.reload();
-//     done();
-//   });
-// };
 
 const phpTask = (cb) => {
-  let tasks = []
+  let tasks = [];
+
+  const destPathPhp = './dist/files/php';
+  const destPathRoot = './dist/';
 
   tasks.push(
     src(['./src/files/php/**'], { encoding: false })
-      .pipe(dest('./dist/files/php'))
+      .pipe(changed(destPathPhp))
+      .pipe(dest(destPathPhp))
   );
+
   tasks.push(
     src(['./src/index.php', './src/404.php'], { encoding: false })
-      .pipe(dest('./dist/'))
+      .pipe(changed(destPathRoot))
+      .pipe(dest(destPathRoot))
   );
+
   return Promise.all(tasks)
     .then(() => {
       if (!PRODUCTION) {
@@ -84,7 +79,6 @@ const phpTask = (cb) => {
       cb(err);
     });
 };
-
 
 const watchTask = () => {
   browserSync.init({

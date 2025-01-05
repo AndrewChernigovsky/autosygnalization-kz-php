@@ -59,5 +59,34 @@ class CreateProducts extends CreateDatabase
       }
     }
   }
+
+  public function getCart($products)
+  {
+    header('Content-Type: application/json');
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if ($data) {
+      $filteredProducts = array_filter($products, function ($product) use ($data) {
+        return in_array($product['id'], array_column($data, 'id'));
+      });
+
+      $updatedProducts = array_map(function ($product) use ($data) {
+        $matchingProduct = current(array_filter($data, function ($item) use ($product) {
+          return $item['id'] === $product['id'];
+        }));
+
+        if ($matchingProduct) {
+          $product['quantity'] = intval($matchingProduct['quantity']);
+        }
+
+        return $product;
+      }, $filteredProducts);
+      $_SESSION['cart'] = $updatedProducts;
+
+      return json_encode(array_values($updatedProducts));
+    } else {
+      return json_encode(["message" => "No data received."]);
+    }
+  }
 }
 ?>

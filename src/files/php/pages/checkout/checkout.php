@@ -30,7 +30,7 @@ echo $head->setHead();
   <main class="main">
     <section class="cart-section">
       <div class="container">
-        <h2>Корзина</h2>
+        <h2>Оформление заказа</h2>
         <div class="cart-section__head">
         </div>
         <div class="cart-section__products">
@@ -45,17 +45,8 @@ echo $head->setHead();
           </span>
           <span>₸</span>
         </p>
-        <div class="cart-section__options">
-          <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
-            магазин</a>
-          <div class="cart-section__option">
-            <button type="button" class="button y-button-secondary  y-button-third">Быстрый заказ</button>
-            <a href="<?= "$path/files/php/pages/checkout/checkout.php"; ?>"
-              class="button y-button-secondary  y-button-third">Оформить
-              заказ</a>
-          </div>
-        </div>
-
+        <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
+          магазин</a>
 
       </div>
     </section>

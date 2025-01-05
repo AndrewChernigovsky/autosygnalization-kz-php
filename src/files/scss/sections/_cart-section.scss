@@ -1,0 +1,59 @@
+@use 'variables'as var;
+
+.cart-section {
+  &__head {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    button {
+      font-size: 24px;
+    }
+  }
+
+  &__options {
+    display: grid;
+    gap: 5px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__option {
+    display: grid;
+    gap: 5px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      gap: 5px;
+    }
+
+    .button {
+      font-size: 20px;
+    }
+  }
+
+  &__products {
+    display: flex;
+    gap: 1%;
+    flex-wrap: wrap;
+    min-height: 350px;
+    height: 100%;
+  }
+
+  #cost-total,
+  #cost-total+span {
+    font-size: 36px;
+    font-weight: 700;
+  }
+
+  &__count-products {
+    text-align: center;
+    width: 100%;
+    display: grid;
+    align-items: center;
+  }
+}

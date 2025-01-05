@@ -8,46 +8,74 @@ function getProductCard($products, $model)
 
   ob_start();
 
-  foreach ($products as $product) {
-    if ($product['model'] === $model) {
-      ?>
-      <article class='product-card'>
-        <h3><?php echo htmlspecialchars($product['title']); ?></h3>
-        <?php if (isset($product['description'])): ?>
-          <p><?php echo htmlspecialchars($product['description']); ?></p>
-        <?php endif; ?>
-        <?php if (isset($product['price'])): ?>
-          <p>Цена: <?php echo htmlspecialchars($product['price']); ?>         <?php echo htmlspecialchars($product['currency']); ?></p>
-        <?php endif; ?>
-      </article>
-      <?php
+  foreach ($products['category'] as $category) {
+    foreach ($category as $product) {
+      if ($product['model'] === $model) {
+        ?>
+        <article class='product-card'>
+          <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+          <?php if (isset($product['description'])): ?>
+            <p><?php echo htmlspecialchars($product['description']); ?></p>
+          <?php endif; ?>
+          <?php if (isset($product['price'])): ?>
+            <p><span>Цена: </span><?php echo htmlspecialchars($product['price']); ?>
+              <?php echo htmlspecialchars($product['currency']); ?>
+            </p>
+          <?php endif; ?>
+        </article>
+        <?php
+      }
     }
   }
   return ob_get_clean();
 }
-function getProductCardWModel($products)
+function getProductCardWModel(array $products, bool $cart = false)
 {
   if (!is_array($products)) {
     return '';
   }
+  $groupedProducts = [];
+  foreach ($products['category'] as $category) {
+    foreach ($category as $product) {
+      if (isset($product['id'])) {
+        if (!isset($groupedProducts[$product['id']])) {
+          $groupedProducts[$product['id']] = $product;
+          $groupedProducts[$product['id']]['quantity'] = 1;
+        } else {
+          $groupedProducts[$product['id']]['quantity'] += 1;
+        }
+      }
+    }
+  }
 
   ob_start();
 
-  foreach ($products as $product) {
+  foreach ($groupedProducts as $product) {
     ?>
-    <article class='product-card' id="<?php echo $product['id']; ?>">
+    <article class='product-card' id="<?php echo htmlspecialchars($product['id']); ?>">
       <div class="product-card__bg">
-        <img src="<?php echo $product['gallery'][0]; ?>" alt="<?php echo $product['description'] ?>" width="300"
-          heigth="250">
+        <img src="<?php echo htmlspecialchars($product['gallery'][0]); ?>"
+          alt="<?php echo htmlspecialchars($product['description']); ?>" width="300" height="250">
       </div>
       <div class="product-card__body">
-        <h3><?php echo htmlspecialchars($product['title']); ?></h3>
-        <?php if (isset($product['price'])): ?>
-          <p>Цена: <?php echo htmlspecialchars($product['price']); ?><?php echo htmlspecialchars($product['currency']); ?></p>
+        <div class="product-card__head">
+          <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+          <?php if (isset($product['price'])): ?>
+            <p><span>Цена:
+              </span><?php echo htmlspecialchars($product['price']); ?><?php echo htmlspecialchars($product['currency']); ?>
+            </p>
+          <?php endif; ?>
+        </div>
+        <?php if (!$cart): ?>
+          <div class="product-card__buttons">
+            <a class="button y-button-secondary" href="<?php echo htmlspecialchars($product['link']); ?>">Подробнее</a>
+            <button type="button" class="button y-button-primary cart-button"
+              data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">Купить</button>
+          </div>
         <?php endif; ?>
-        <a class="button y-button-secondary" href="<?php echo $product['link'] ?>">Подробнее</a>
-        <button type="button" class="button y-button-primary cart-button"
-          data-id="<?php echo $product['id'] ?>">Купить</button>
+        <?php if (isset($product['quantity']) && $cart): ?>
+          <p>Количество: <?php echo htmlspecialchars($product['quantity']); ?></p>
+        <?php endif; ?>
       </div>
     </article>
     <?php
