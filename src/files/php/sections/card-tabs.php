@@ -11,8 +11,14 @@ error_log(print_r($tabs, true) . ": TABS");
 
 function isActiveClassTab($index)
 {
-  if($index === 0) {
+  if ($index === 0) {
     return 'tab__button--active';
+  }
+}
+function isActiveClassTabContent($index)
+{
+  if ($index === 0) {
+    return 'tab__list--show';
   }
 }
 ?>
@@ -27,7 +33,7 @@ function isActiveClassTab($index)
     </div>
     <div class="tab__content">
       <?php foreach ($tabs as $index => $tab): ?>
-        <ul class="tab__list <?= isActiveClassTabContent($index)?> list-style-none" data-content="<?= $tab['id']; ?>">
+        <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab['id']; ?>">
           <?php foreach ($tab['items'] as $item): ?>
             <li class="tab__item"
               style="background-image: url('<?php echo isset($item['path-icon']) ? htmlspecialchars($item['path-icon']) : '' ?>')">

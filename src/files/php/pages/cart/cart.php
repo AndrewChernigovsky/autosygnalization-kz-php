@@ -49,7 +49,7 @@ echo $head->setHead();
           <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
             магазин</a>
           <div class="cart-section__option">
-            <button type="button" class="button y-button-secondary  y-button-third">Быстрый заказ</button>
+            <button type="button" class="button y-button-secondary  y-button-third" id="">Быстрый заказ</button>
             <a href="<?= "$path/files/php/pages/checkout/checkout.php"; ?>"
               class="button y-button-secondary  y-button-third">Оформить
               заказ</a>
