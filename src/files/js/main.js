@@ -63,6 +63,10 @@ async function loadModules() {
     const { filterToggleMenu } = await import("./modules/filter.js");
     filterToggleMenu();
   }
+  if (selected != null) {
+    const { initSelect } = await import("./modules/select.js");
+    initSelect();
+  }
   if (searchExist != null) {
     const { initSearch } = await import("./modules/search.js");
     initSearch();
@@ -77,7 +81,12 @@ async function loadModules() {
   }
   if (minValue) {
     const { initializeRangeFilter } = await import("./modules/filter-cost.js");
-    initializeRangeFilter('.filter-cost__range--min', '.filter-cost__range--max', 'minValue', 'maxValue');
+    initializeRangeFilter(
+      ".filter-cost__range--min",
+      ".filter-cost__range--max",
+      "minValue",
+      "maxValue"
+    );
   }
   if (buttonPrint) {
     const module = await import("./modules/print-contacts.js");

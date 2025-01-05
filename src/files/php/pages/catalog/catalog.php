@@ -7,7 +7,8 @@ include_once __DIR__ . '/../../helpers/components/setup.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/aside.php';
 include_once __DIR__ . '/../../data/aside.php';
-
+include_once __DIR__ . '/../../data/select.php';
+include_once __DIR__ . '/../../helpers/components/select.php';
 
 $variables = new SetVariables();
 $variables->setVar();
@@ -26,6 +27,8 @@ $filters = new Filters($data_categories_filters);
 $sorting = new Sorting();
 $aside = new Aside();
 $asideData = new AsideData();
+$select = new Select();
+$selectData = new SelectData();
 ?>
 
 
@@ -58,8 +61,12 @@ echo $head->setHead();
           <div class="catalog__products">
             <?= getProductCardWModel($products) ?>
           </div>
+
         </div>
       </div>
+        </div> -->
+          
+        <?= $select->createComponent($selectData->getSelectData())?>
       <?= getShop('setup'); ?>
 
     </div>

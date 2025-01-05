@@ -15,12 +15,6 @@ function isActiveClassTab($index)
     return 'tab__button--active';
   }
 }
-function isActiveClassTabContent($index)
-{
-  if($index === 0) {
-    return 'tab__list--show';
-  }
-}
 ?>
 
 <section class="tab">

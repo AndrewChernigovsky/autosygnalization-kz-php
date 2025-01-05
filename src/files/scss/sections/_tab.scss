@@ -27,18 +27,18 @@
     @media (min-width: var.$tablet) {
       width: 660px;
       margin: 0 auto;
+      padding-bottom: 20px;
+      margin-bottom: 10px;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
       column-gap: 100px;
+      border-bottom: 4px solid var.$white;
     }
 
     @media (min-width: var.$desktop-min) {
-      width: 904px;
-      padding-bottom: 20px;
-      margin-bottom: 10px;
-      column-gap: 176px;
-      border-bottom: 4px solid var.$white;
+      width: 904px;      
+      column-gap: 176px;      
     }
 
     @media (min-width: var.$desktop) {
@@ -136,14 +136,11 @@
     gap: 13px;
 
     @media (min-width: var.$tablet) {
+      position: relative;
       display: grid;
       grid-template-columns: 1fr 1fr;
       column-gap: 50px;
       row-gap: 20px;
-    }
-
-    @media (min-width: var.$desktop-min) {
-      position: relative;
 
       &::after {
         position: absolute;
@@ -157,49 +154,38 @@
       }
     }
 
-
     @media (min-width: var.$desktop) {
       column-gap: 23px;
     }
   }
 
   &__item {
-    position: relative;
     padding-left: 60px;
     background-repeat: no-repeat;
-    background-position: left;
+    background-position: left top;
     background-size: 40px 40px;
 
     @media (min-width: var.$desktop) {
+      width: 665px;
+      margin-left: 0;
+      padding-left: 170px;
       background-size: 110px 110px;
     }
   }
 
-  @media (min-width: var.$desktop) {
-    width: 665px;
-    margin-left: 0;
-    padding-left: 170px;
-  }
-
-
   &__item:nth-child(even) {
     @media (min-width: var.$tablet) {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
       padding-left: 0;
       padding-right: 60px;
       text-align: right;
+      background-position: right top;
     }
 
     @media (min-width: var.$desktop) {
       padding-right: 170px;
-    }
-  }
-
-
-  &__item:nth-child(even) {
-    @media (min-width: var.$tablet) {
-      padding-left: 0;
-      padding-right: 60px;
-      background-position: right;
     }
   }
 }
