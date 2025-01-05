@@ -10,7 +10,7 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Корзина | Auto Security';
+$title = 'Оформление заказа | Auto Security';
 
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
@@ -33,7 +33,7 @@ echo $head->setHead();
         <h2>Оформление заказа</h2>
         <div class="cart-section__head">
         </div>
-        <div class="cart-section__products">
+        <div class="cart-section__products checkout">
         </div>
         <p>
           <span>Итого: </span>
@@ -50,8 +50,6 @@ echo $head->setHead();
 
       </div>
     </section>
-    <?= getShop('setup'); ?>
-    <?= getShop('shop'); ?>
   </main>
 
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>

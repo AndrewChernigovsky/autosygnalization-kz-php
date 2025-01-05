@@ -17,7 +17,9 @@ const {
   cartCounter,
   resetCartButton,
   productsContainerCart,
-  modalCart, selected
+  modalCart,
+  selected,
+  buyBtnFast
 } = {
   feedbackForm: document.getElementById("feedback-form"),
   footer: document.querySelector('footer'),
@@ -35,7 +37,8 @@ const {
   cartCounter: document.querySelector('.cart .counter'),
   resetCartButton: document.getElementById('reset-cart'),
   modalCart: document.getElementById('cart-popup'),
-  productsContainerCart: document.querySelector('.cart-section__products')
+  productsContainerCart: document.querySelector('.cart-section__products'),
+  buyBtnFast: document.getElementById('buy-fast-order'),
 };
 
 async function loadModules() {
@@ -59,6 +62,11 @@ async function loadModules() {
     const module = await import("./modules/initFormModal.js");
     const InitFormModal = module.default;
     new InitFormModal().initPhone();
+  }
+  if (buyBtnFast != null) {
+    const module = await import("./modules/initFormModal.js");
+    const InitFormModal = module.default;
+    new InitFormModal().initBtnFast();
   }
   if (filterBtn != null) {
     const { filterToggleMenu } = await import("./modules/filter.js");

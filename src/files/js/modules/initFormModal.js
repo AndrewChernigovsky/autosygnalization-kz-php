@@ -9,8 +9,8 @@ export default class InitFormModal {
     this.phoneButtonWrapper = document.querySelector('.phone-button__wrapper');
     this.closeButton = document.querySelector('#modal-form-close');
 
-    // Привязываем методы к контексту
     this.handlePhoneButtonClick = this.handlePhoneButtonClick.bind(this);
+    this.handleButtonClick = this.handleButtonClick.bind(this);
     this.handleCloseButtonClick = this.handleCloseButtonClick.bind(this);
   }
 
@@ -18,10 +18,21 @@ export default class InitFormModal {
     if (this.phoneButton && this.modalForm && this.modalFormMob) {
       const { ModalForm } = await import("./../components/ModalForm.jsx");
 
-      // Передаем метод закрытия в компонент
       render(html`<${ModalForm} onClose=${this.closeModal.bind(this)} />`, document.querySelector('.popup-body'));
 
       this.phoneButton.addEventListener('click', this.handlePhoneButtonClick);
+      this.closeButton.addEventListener('click', this.handleCloseButtonClick);
+    }
+  }
+
+  async initBtnFast() {
+    this.buyBtnFast = document.getElementById('buy-fast-order');
+    if (this.buyBtnFast && this.modalForm && this.modalFormMob) {
+      const { ModalForm } = await import("./../components/ModalForm.jsx");
+
+      render(html`<${ModalForm} onClose=${this.closeModal.bind(this)} fast=${true}/>`, document.querySelector('.popup-body'));
+
+      this.buyBtnFast.addEventListener('click', this.handleButtonClick);
       this.closeButton.addEventListener('click', this.handleCloseButtonClick);
     }
   }
@@ -35,6 +46,10 @@ export default class InitFormModal {
     }
     this.phoneButtonWrapper.classList.toggle('active');
     this.phoneButton.classList.toggle('animated-calling');
+  }
+
+  handleButtonClick() {
+    this.modalForm.classList.toggle('active')
   }
 
   handleCloseButtonClick() {

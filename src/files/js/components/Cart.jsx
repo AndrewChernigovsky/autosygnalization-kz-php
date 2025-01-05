@@ -109,9 +109,15 @@ export class Cart extends Component {
       this.setState({ totalQuantity: totalQuantity }, () => {
         if (this.state.totalQuantity <= 0) {
           render(html`<p class="cart-section__count-products">Нет добавленных товаров</p>`, productsContainerCart)
+
         } else {
           render(html`${cardComponents}`,
             productsContainerCart);
+
+          if (productsContainerCart.classList.contains('checkout')) {
+            render(html`${cardComponents}`,
+              productsContainerCart);
+          }
         }
       });
     }
@@ -136,9 +142,7 @@ export class Cart extends Component {
 
     if (head) {
       const wrapper = html`
-        <div>
           <${CartCountTotal} quantity=${this.state.totalQuantity} onClear=${this.handleClearCart} />
-        </div>
       `;
       render(wrapper, head);
     }
