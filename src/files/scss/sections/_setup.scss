@@ -60,6 +60,11 @@
     line-height: 26px;
     font-weight: 700;
     font-family: var.$primary-font;
+    text-align: center;
+
+    @media screen and (min-width: var.$tablet) {
+      text-align: left;
+    }
 
     @media screen and (min-width: var.$desktop) {
       font-size: 34px;
@@ -112,6 +117,12 @@
   &__img-container {
     align-self: center;
     width: 100%;
+    max-width: 340px;
+
+    @media screen and (min-width: var.$tablet) {
+      justify-self: flex-end;
+      max-width: 500px;
+    }
 
     & picture {
       width: 100%;
