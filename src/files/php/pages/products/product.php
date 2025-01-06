@@ -6,21 +6,21 @@ include_once __DIR__ . '/../../helpers/components/product.php';
 
 
 $category = isset($_GET['category']) ? $_GET['category'] : null;
-$model = isset($_GET['model']) ? $_GET['model'] : null;
+$id = isset($_GET['id']) ? $_GET['id'] : null;
 
-function getAutoContent($products, $category, $model)
+function getAutoContent($products, $category, $id)
 {
   $result = "";
   switch ($category) {
     case 'keychain':
-      $result .= getProductCard($products, $model);
+      $result .= getProductCard($products, $id);
       return $result;
     default:
       return 'Контент не найден.';
   }
 }
 
-$content = getAutoContent($products, $category, $model);
+$content = getAutoContent($products, $category, $id);
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
@@ -45,7 +45,16 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <?= $content; ?>
+    <div class="container">
+      <div class="product-card__wrapper">
+        <div class="product-card__container">
+          <p class="product-card__text">Доставка:</p>
+          <a class="product-card__link" href="#" style="background-image: url(<?= $path . '/assets/images/vectors/link-icon.svg'; ?>);">о доставке и оплате</a>
+        </div>      
+        <a class="product-card__link" href="#">Наличие товара уточняйте у продавца.</a>
+      </div>
+      <?= $content; ?>
+    </div>    
     <?= include_once __DIR__ . '/../../sections/card-tabs.php'; ?>
   </main>
   <?php include $base_path . '/footer.php'; ?>
