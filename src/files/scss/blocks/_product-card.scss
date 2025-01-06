@@ -91,4 +91,46 @@
       font-weight: 700;
     }
   }
+
+  &__wrapper {
+    margin-bottom: 10px;
+  }
+
+  &__container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  &__text {
+    margin: 0;
+    padding-bottom: 4px;
+    text-transform: uppercase;
+    font-family: var.$primary-font;
+    font-size: 12px;
+    line-height: 16px;
+
+    @media (min-width: var.$desktop-min) {
+      font-size: 24px;
+      line-height: 30px;
+    }
+  }
+
+  &__link {
+    padding: 0 30px 4px 0;
+    text-decoration: none;
+    color: var.$white;
+    background-position: right;
+    background-repeat: no-repeat;
+    background-size: 20px 20px;
+    font-size: 12px;
+    line-height: 16px;
+
+    @media (min-width: var.$desktop-min) {
+      padding-right: 40px;
+      background-size: 30px 30px;
+      font-size: 24px;
+      line-height: 30px;
+    }
+  }
 }

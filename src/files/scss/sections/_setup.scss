@@ -10,7 +10,9 @@
     background-color: var.$black-121010;
 
     @media screen and (min-width: var.$tablet) {
-      flex-direction: row;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
     }
   }
 
@@ -58,6 +60,11 @@
     line-height: 26px;
     font-weight: 700;
     font-family: var.$primary-font;
+    text-align: center;
+
+    @media screen and (min-width: var.$tablet) {
+      text-align: left;
+    }
 
     @media screen and (min-width: var.$desktop) {
       font-size: 34px;
@@ -110,6 +117,12 @@
   &__img-container {
     align-self: center;
     width: 100%;
+    max-width: 340px;
+
+    @media screen and (min-width: var.$tablet) {
+      justify-self: flex-end;
+      max-width: 500px;
+    }
 
     & picture {
       width: 100%;
@@ -121,12 +134,8 @@
 
       @media screen and (min-width: var.$tablet) {
         margin-left: auto;
-        margin-right: auto;
-        max-width: 540px;
-      }
-
-      @media screen and (min-width: var.$desktop) {
-        max-width: 700px;
+        min-width: 342px;
+        max-width: 500px;
       }
     }
   }

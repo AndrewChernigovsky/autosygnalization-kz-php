@@ -26,7 +26,7 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&model=a93"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_a93"
       ],
       [
         "category-position" => "starline",
@@ -44,7 +44,7 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&model=e96"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96"
       ]
     ],
     "keychain1" => [
@@ -64,7 +64,7 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&model=a93"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_a931"
       ],
       [
         "category-position" => "starline",
@@ -82,7 +82,7 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&model=e96"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e961"
       ]
     ]
   ]
