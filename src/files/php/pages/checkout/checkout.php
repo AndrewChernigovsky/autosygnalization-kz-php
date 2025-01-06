@@ -31,13 +31,13 @@ echo $head->setHead();
     <section class="cart-section">
       <div class="container">
         <h2>Оформление заказа</h2>
-        <div class="cart-section__head">
+        <div class="cart-section__head checkout">
         </div>
         <div class="cart-section__products checkout">
         </div>
         <p>
           <span>Итого: </span>
-          <span id="cost-total">
+          <span class="cost-total">
             <?php
             $total = 0;
             echo $total;
@@ -45,9 +45,21 @@ echo $head->setHead();
           </span>
           <span>₸</span>
         </p>
-        <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
-          магазин</a>
-
+        <form action="" class="form" method="post" class="checkout-form">
+          <div class="checkout-form__body"></div>
+          <div class="checkout-form__footer">
+            <a href="" class="link button y-button-third">Продолжить покупки</a>
+            <p>
+              <span>Итого: </span>
+              <span class="quantity-total"></span>
+              <span>Товар/ов на сумму: </span>
+              <span class="cost-total"></span>
+              <span>₸</span>
+            </p>
+            <button type="submit" class="button y-button-primary">Оформить заказ</button>
+          </div>
+        </form>
+      </div>
       </div>
     </section>
   </main>

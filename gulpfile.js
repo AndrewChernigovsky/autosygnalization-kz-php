@@ -196,10 +196,10 @@ const videos = (cb) => {
 };
 
 const docs = async () => {
-  await cleanDist(["./src/files/docs"]);
+  await cleanDist(["./dist/files/docs"]);
 
   return new Promise((resolve, reject) => {
-    src(["./src/files/docs/**/*.pdf"], { encoding: false })
+    src(["./src/files/docs/**/*.{pdf,txt,md}"], { encoding: false })
       .pipe(dest(paths.dist + "/files/docs/"))
       .on("end", resolve)
       .on("error", reject);
