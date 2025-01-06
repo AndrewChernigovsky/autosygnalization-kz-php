@@ -11,7 +11,7 @@ export class CartProductCard extends Component {
 
   handleRemoveToCart = () => {
     this.setState(prevState => {
-      const newQuantity = prevState.quantity - 1;
+      const newQuantity = Math.max(prevState.quantity - 1, 0); // Убедитесь, что количество не меньше 0
       console.log(newQuantity, 'newQuantity CartProductCard.jsx');
 
       this.props.onUpdateQuantity(this.props.id, newQuantity);
@@ -47,9 +47,18 @@ export class CartProductCard extends Component {
     }
   }
 
-  render({ title, id, imageSrc, imageAlt, price, currency, order = false }) {
+  render({ title, id, imageSrc, imageAlt, price, currency, checkout, index }) {
     return html`
-      <article id=${id} class='product-card'>
+
+        ${checkout ? html`
+          <p class="checkout-info">
+            <span class="checkout-info__count">${index + 1} </span>
+            <span>Количество: ${this.props.quantity} </span>
+            <span>${title} </span>
+            <span>${price} ${currency}</span>
+          </p>
+        ` : html`
+        <article id=${id} class='product-card'>
         <div class="product-card__bg">
           <img src=${imageSrc} alt=${imageAlt} width="300" height="250"/>
         </div>
@@ -61,11 +70,16 @@ export class CartProductCard extends Component {
               <span>${price} ${currency}</span>
             </div>
           </div>
+          <div class="product-card__buttons cart-btn">
+            <${CartButtonCounter} 
+              id=${id} 
+              onRemove=${this.handleRemoveToCart} 
+              onAdd=${this.handleAddToCart} 
+              quantity=${this.state.quantity} 
+            />
+          </div>
         </div>
-        <div class="product-card__buttons cart-btn">
-          <${CartButtonCounter} id=${id} onRemove=${this.handleRemoveToCart} onAdd=${this.handleAddToCart} quantity=${this.state.quantity}/>
-        </div>  
-      </article>
-    `;
+        </article>`
+      }`;
   }
 }

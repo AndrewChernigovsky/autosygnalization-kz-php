@@ -19,7 +19,8 @@ const {
   productsContainerCart,
   modalCart,
   selected,
-  buyBtnFast
+  buyBtnFast,
+  checkoutForm
 } = {
   feedbackForm: document.getElementById("feedback-form"),
   footer: document.querySelector('footer'),
@@ -39,6 +40,7 @@ const {
   modalCart: document.getElementById('cart-popup'),
   productsContainerCart: document.querySelector('.cart-section__products'),
   buyBtnFast: document.getElementById('buy-fast-order'),
+  checkoutForm: document.querySelector('.checkout-form__body'),
 };
 
 async function loadModules() {
@@ -124,6 +126,10 @@ async function loadModules() {
   if (productsContainerCart != null) {
     const { Cart } = await import("./components/Cart.jsx");
     render(html`<${Cart} />`, document.body);
+  }
+  if (checkoutForm != null) {
+    const { CheckoutForm } = await import("./components/Checkout/CheckoutForm.jsx");
+    render(html`<${CheckoutForm} />`, checkoutForm);
   }
 }
 

@@ -6,6 +6,10 @@
     justify-content: space-between;
     margin-bottom: 10px;
 
+    &.checkout {
+      font-weight: 700;
+    }
+
     button {
       font-size: 24px;
     }
@@ -42,6 +46,17 @@
     flex-wrap: wrap;
     min-height: 350px;
     height: 100%;
+
+    &.checkout {
+      display: grid;
+      gap: 10px;
+      align-content: flex-start;
+      min-height: auto;
+
+      p {
+        margin: 0;
+      }
+    }
   }
 
   #cost-total,

@@ -5,7 +5,8 @@ import { CartCountTotal } from './CartCountTotal.jsx';
 
 const data = { data: 'true' };
 const cartCounter = document.querySelector('.cart .counter');
-const costTotal = document.getElementById('cost-total');
+const costTotal = document.querySelectorAll('.cost-total');
+const quantityTotal = document.querySelectorAll('.quantity-total');
 export class Cart extends Component {
   constructor(props) {
     super(props);
@@ -13,7 +14,7 @@ export class Cart extends Component {
       totalQuantity: 0,
       totalCost: 0,
       products: [],
-      errorMessage: null
+      errorMessage: null,
     };
   }
 
@@ -28,16 +29,16 @@ export class Cart extends Component {
     fetch(url, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
     })
-      .then(response => response.json())
-      .then(products => {
+      .then((response) => response.json())
+      .then((products) => {
         this.setState({ products });
         this.renderProducts(products);
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error:', error);
         this.setState({ errorMessage: 'Не удалось загрузить продукты' });
       });
@@ -45,58 +46,70 @@ export class Cart extends Component {
 
   renderProducts(products) {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
-    console.log(localProducts, 'localProducts Cart.jsx');
-    const productsContainerCart = document.querySelector('.cart-section__products');
+    const productsContainerCart = document.querySelectorAll(
+      '.cart-section__products'
+    );
 
     const cardComponents = [];
 
     const handleRemoveProduct = (id) => {
-      console.log(id, 'id handleRemoveProduct Cart.jsx');
-      const index = localProducts.findIndex(localProduct => localProduct.id === id);
+      const index = localProducts.findIndex(
+        (localProduct) => localProduct.id === id
+      );
       console.log(index, 'index Cart.jsx');
       if (index !== -1) {
-        console.log(localProducts, 'localProducts');
         localProducts.splice(index, 1);
-        console.log(localProducts, 'localProducts splice');
         sessionStorage.setItem('cart', JSON.stringify(localProducts));
         this.updateTotalQuantity();
-        console.log(localProducts, 'products CART.jsx');
         this.renderProducts(localProducts);
       }
     };
 
     const handleUpdateQuantity = (id, newQuantity) => {
-      const updatedProducts = localProducts.map(localProduct => {
-        if (localProduct.id === id) {
-          return { ...localProduct, quantity: newQuantity };
-        }
-        return localProduct;
-      }).filter(product => product.quantity > 0);
+      const updatedProducts = localProducts
+        .map((localProduct) => {
+          if (localProduct.id === id) {
+            return { ...localProduct, quantity: newQuantity };
+          }
+          return localProduct;
+        })
+        .filter((product) => product.quantity > 0);
 
       sessionStorage.setItem('cart', JSON.stringify(updatedProducts));
       this.updateTotalQuantity(updatedProducts);
       this.renderProducts(products);
     };
 
-    Object.values(products.category).forEach(productList => {
-      productList.forEach(product => {
-        const matchingProduct = localProducts.find(localProduct => localProduct.id === product.id);
+    Object.values(products.category).forEach((productList) => {
+      productList.forEach((product, index) => {
+        const matchingProduct = localProducts.find(
+          (localProduct) => localProduct.id === product.id
+        );
 
         if (matchingProduct) {
           product.quantity = matchingProduct.quantity;
 
-          const cardElement = html`<${CartProductCard} 
-              title=${product.title} 
-              id=${product.id} 
-              imageSrc=${product.gallery[0]} 
-              imageAlt=${product.title} 
-              price=${product.price} 
-              currency=${product.currency} 
-              link=${product.link} 
-              quantity=${product.quantity} 
-              onRemove=${handleRemoveProduct} 
-              onUpdateQuantity=${handleUpdateQuantity}
-            />`;
+          let checkout = false;
+          productsContainerCart.forEach((container) => {
+            if (container.classList.contains('checkout')) {
+              checkout = true;
+            }
+          });
+
+          const cardElement = html`<${CartProductCard}
+            title=${product.title}
+            id=${product.id}
+            imageSrc=${product.gallery[0]}
+            imageAlt=${product.title}
+            price=${product.price}
+            currency=${product.currency}
+            link=${product.link}
+            quantity=${product.quantity}
+            onRemove=${handleRemoveProduct}
+            onUpdateQuantity=${handleUpdateQuantity}
+            checkout=${checkout}
+            index=${index}
+          />`;
           cardComponents.push(cardElement);
         } else {
           product.quantity = 0;
@@ -104,20 +117,29 @@ export class Cart extends Component {
       });
     });
 
-    if (productsContainerCart) {
-      const totalQuantity = localProducts.reduce((acc, el) => acc + el.quantity, 0);
+    if (productsContainerCart.length > 0) {
+      const totalQuantity = localProducts.reduce(
+        (acc, el) => acc + el.quantity,
+        0
+      );
       this.setState({ totalQuantity: totalQuantity }, () => {
         if (this.state.totalQuantity <= 0) {
-          render(html`<p class="cart-section__count-products">Нет добавленных товаров</p>`, productsContainerCart)
-
+          productsContainerCart.forEach((container) => {
+            render(
+              html`<p class="cart-section__count-products">
+                Нет добавленных товаров
+              </p>`,
+              container
+            );
+          });
         } else {
-          render(html`${cardComponents}`,
-            productsContainerCart);
+          productsContainerCart.forEach((container) => {
+            render(html`${cardComponents}`, container);
 
-          if (productsContainerCart.classList.contains('checkout')) {
-            render(html`${cardComponents}`,
-              productsContainerCart);
-          }
+            if (container.classList.contains('checkout')) {
+              render(html`${cardComponents}`, container);
+            }
+          });
         }
       });
     }
@@ -127,12 +149,25 @@ export class Cart extends Component {
 
   updateTotalQuantity() {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
-    const totalQuantity = localProducts.reduce((acc, product) => acc + product.quantity, 0);
-    const totalCost = localProducts.reduce((acc, product) => acc + (Number(product.price) * product.quantity), 0);
+    const totalQuantity = localProducts.reduce(
+      (acc, product) => acc + product.quantity,
+      0
+    );
+    const totalCost = localProducts.reduce(
+      (acc, product) => acc + Number(product.price) * product.quantity,
+      0
+    );
     cartCounter.textContent = totalQuantity;
     this.setState({ totalQuantity, totalCost }, () => {
-      if (costTotal) {
-        costTotal.textContent = this.state.totalCost.toFixed(2);
+      if (costTotal.length > 0) {
+        costTotal.forEach((cost) => {
+          cost.textContent = this.state.totalCost.toFixed(2);
+        });
+      }
+      if (quantityTotal.length > 0) {
+        quantityTotal.forEach((quantity) => {
+          quantity.textContent = this.state.totalQuantity;
+        });
       }
     });
   }
@@ -143,14 +178,21 @@ export class Cart extends Component {
     if (head) {
       if (head.classList.contains('checkout')) {
         const wrapper = html`
-            <${CartCountTotal} quantity=${this.state.totalQuantity} onClear=${this.handleClearCart} checkout=${true}/>
+          <${CartCountTotal}
+            quantity=${this.state.totalQuantity}
+            onClear=${this.handleClearCart}
+            checkout=${true}
+          />
         `;
         render(wrapper, head);
         return null;
       } else {
         const wrapper = html`
-        <${CartCountTotal} quantity=${this.state.totalQuantity} onClear=${this.handleClearCart} />
-    `;
+          <${CartCountTotal}
+            quantity=${this.state.totalQuantity}
+            onClear=${this.handleClearCart}
+          />
+        `;
         render(wrapper, head);
         return null;
       }
@@ -158,7 +200,6 @@ export class Cart extends Component {
   }
 
   handleClearCart = () => {
-    console.log("Корзина очищена");
     sessionStorage.removeItem('cart');
     this.setState({ totalQuantity: 0, totalCost: 0, products: [] });
     this.renderProducts({ category: [] });

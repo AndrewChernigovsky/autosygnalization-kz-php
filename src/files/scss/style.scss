@@ -15,6 +15,7 @@
 @use "./blocks/service-card"as *;
 @use "./blocks/phone-button"as *;
 @use "./blocks/product-card"as *;
+@use "./blocks/checkout-info"as *;
 
 @use "./helpers/components/aside.scss"as *;
 @use "./helpers/components/filter-basic.scss"as *;

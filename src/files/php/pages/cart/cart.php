@@ -37,13 +37,7 @@ echo $head->setHead();
         </div>
         <p>
           <span>Итого: </span>
-          <span id="cost-total">
-            <?php
-            $total = 0;
-            echo $total;
-            ?>
-          </span>
-          <span>₸</span>
+          <span class="cost-total"></span>
         </p>
         <div class="cart-section__options">
           <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
