@@ -31,7 +31,6 @@ $select = new Select();
 $selectData = new SelectData();
 ?>
 
-
 <!DOCTYPE html>
 <html lang="ru">
 <?php
@@ -44,31 +43,27 @@ echo $head->setHead();
     <div class="container">
       <h2>АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
       <div class="catalog">
-        <!-- <aside class="aside">
+        <aside class="aside">
           <?= $filters->renderFilters() ?>
           <div class="aside__offers">
             <?php foreach ($asideData->getAsideData() as $data): ?>
               <?= $aside->createComponent($data); ?>
             <?php endforeach; ?>
           </div>
-
-        </aside> -->
+        </aside>
         <div class="catalog__products-wrapper">
           <div class="catalog__products-sort">
             <button type="button" class="catalog__products-sort-button" id="button-filter">Фильтр</button>
-            <?= $sorting->renderFilters() ?>
+            <?= $sorting->renderFilters(); ?>
           </div>
           <div class="catalog__products">
             <?= getProductCardWModel($products) ?>
           </div>
-
         </div>
       </div>
-        </div> -->
-          
-        <?= $select->createComponent($selectData->getSelectData())?>
-      <?= getShop('setup'); ?>
-
+    </div>
+    <?= $select->createComponent($selectData->getSelectData()) ?>
+    <?= getShop('setup'); ?>
     </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
