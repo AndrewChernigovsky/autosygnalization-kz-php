@@ -141,12 +141,20 @@ export class Cart extends Component {
     const head = document.querySelector('.cart-section__head');
 
     if (head) {
-      const wrapper = html`
-          <${CartCountTotal} quantity=${this.state.totalQuantity} onClear=${this.handleClearCart} />
-      `;
-      render(wrapper, head);
+      if (head.classList.contains('checkout')) {
+        const wrapper = html`
+            <${CartCountTotal} quantity=${this.state.totalQuantity} onClear=${this.handleClearCart} checkout=${true}/>
+        `;
+        render(wrapper, head);
+        return null;
+      } else {
+        const wrapper = html`
+        <${CartCountTotal} quantity=${this.state.totalQuantity} onClear=${this.handleClearCart} />
+    `;
+        render(wrapper, head);
+        return null;
+      }
     }
-    return null;
   }
 
   handleClearCart = () => {

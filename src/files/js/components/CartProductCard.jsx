@@ -32,7 +32,6 @@ export class CartProductCard extends Component {
     this.setState(prevState => {
       const newQuantity = prevState.quantity + 1;
       this.props.onUpdateQuantity(this.props.id, newQuantity);
-
       console.log(`Товар с id ${this.props.id} добавлен в корзину. Текущее количество: ${newQuantity}`);
       return { quantity: newQuantity };
     });

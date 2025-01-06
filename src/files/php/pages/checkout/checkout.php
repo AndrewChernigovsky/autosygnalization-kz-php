@@ -31,7 +31,7 @@ echo $head->setHead();
     <section class="cart-section">
       <div class="container">
         <h2>Оформление заказа</h2>
-        <div class="cart-section__head">
+        <div class="cart-section__head checkout">
         </div>
         <div class="cart-section__products checkout">
         </div>
