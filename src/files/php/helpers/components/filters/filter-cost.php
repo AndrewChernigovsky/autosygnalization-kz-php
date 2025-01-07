@@ -5,16 +5,47 @@ class FilterCost
   {
     ob_start();
     ?>
-      <div class="filter-cost">
-        <p class="filter-cost__title">Стоимость</p>
-        <div class="filter-cost__range-block">
-          <input type="range" class="filter-cost__range filter-cost__range--min" min="0" max="1000000" value="20000">
-          <input type="range" class="filter-cost__range filter-cost__range--max" min="0" max="1000000" value="800000">
-        </div>
-        <div class="filter-cost__range-values">
-          <span class="filter-cost__range-span" id="minValue">19999</span><span class="filter-cost__range-span" id="maxValue">129999</span>
+      <div class="double-range-wrapper filter-cost">
+        <div class="range-slider-container">
+        <div class="range-container">
+            <div class="range-scale">
+              <div class="range-progress"></div>
+            </div>
+            <div class="range-wrapper">
+              <input
+                type="range"
+                class="range-input range-min"
+                min="100"
+                max="10000"
+                step="100"
+              />
+              <input type="range" class="range-input range-max" />
+            </div>
+          </div>
+          <div class="number-container">
+            <div class="numbers-wrapper">
+              <input
+                type="number"
+                class="number-input input-min"
+                min="100"
+                max="10000"
+                step="100"
+              />
+            </div>
+            <div class="numbers-wrapper">
+              <input
+                type="number"
+                class="number-input input-max"
+                min="100"
+                max="10000"
+                step="100"
+              />
+            </div>
+          </div>
+
         </div>
       </div>
+
     <?php
     return ob_get_clean();
   }
