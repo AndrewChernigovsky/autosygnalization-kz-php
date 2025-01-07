@@ -1,6 +1,6 @@
 <?php
 
-function getProductCard($products, $model)
+function getProductCard($products, $id)
 {
   if (!is_array($products)) {
     return '';
@@ -10,15 +10,17 @@ function getProductCard($products, $model)
 
   foreach ($products['category'] as $category) {
     foreach ($category as $product) {
-      if ($product['model'] === $model) {
+      if ($product['id'] === $id) {
         ?>
         <article class='product-card'>
-          <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+          <img class="product-card__image" src="<?php echo htmlspecialchars($product['gallery'][0]); ?>"
+            alt="<?php echo htmlspecialchars($product['description']); ?>" width="300" height="250">
+          <h3 class="product-card__title"><?php echo htmlspecialchars($product['title']); ?></h3>
           <?php if (isset($product['description'])): ?>
-            <p><?php echo htmlspecialchars($product['description']); ?></p>
+            <p class="product-card__description"><?php echo htmlspecialchars($product['description']); ?></p>
           <?php endif; ?>
           <?php if (isset($product['price'])): ?>
-            <p><span>Цена: </span><?php echo htmlspecialchars($product['price']); ?>
+            <p class="product-card__price"><span>Цена: </span><?php echo htmlspecialchars($product['price']); ?>
               <?php echo htmlspecialchars($product['currency']); ?>
             </p>
           <?php endif; ?>
