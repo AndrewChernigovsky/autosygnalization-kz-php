@@ -1,10 +1,10 @@
 import { html, Component } from 'htm/preact';
 import { CheckoutSelect } from './CheckoutSelect';
-import { CartCountTotal } from './../CartCountTotal';
-
+import { CheckoutCompany } from './CheckoutCompany';
 export class CheckoutForm extends Component {
   constructor() {
     super();
+    this.isCompany = false;
     this.PRODUCTION = window.location.href.includes('/dist/');
     this.path2Policy = `${
       this.PRODUCTION ? '/dist/' : '/'
@@ -22,17 +22,34 @@ export class CheckoutForm extends Component {
     );
   };
 
+  changeFace = (e) => {
+    console.log(e.target.value);
+    const value = parseInt(e.target.value, 10); // Преобразуем строку в число
+    this.setState({ isCompany: value === 2 }); // Устанавливаем состояние на основе числового значения
+  };
+
   render() {
     return html`
       <p>Оформление заказа</p>
       <fieldset>
         <legend>Вы оформляете заказ как</legend>
         <label>
-          <input type="checkbox" name="client_type" value="1" checked />
+          <input
+            type="radio"
+            name="client_type"
+            value="1"
+            onChange=${this.changeFace}
+            checked=${!this.state.isCompany}
+          />
           Физическое лицо
         </label>
         <label>
-          <input type="checkbox" name="client_type" value="2" />
+          <input
+            type="radio"
+            name="client_type"
+            value="2"
+            onChange=${this.changeFace}
+          />
           Юридическое лицо
         </label>
       </fieldset>
@@ -89,6 +106,12 @@ export class CheckoutForm extends Component {
           <input type="email" required name="email" />
         </label>
       </fieldset>
+      ${this.state.isCompany &&
+      html`
+        <fieldset>
+          <${CheckoutCompany} />
+        </fieldset>
+      `}
       <fieldset>
         <legend>Способ доставки</legend>
         <label>

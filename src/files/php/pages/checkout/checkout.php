@@ -54,7 +54,6 @@ echo $head->setHead();
               <span class="quantity-total"></span>
               <span>Товар/ов на сумму: </span>
               <span class="cost-total"></span>
-              <span>₸</span>
             </p>
             <button type="submit" class="button y-button-primary">Оформить заказ</button>
           </div>
