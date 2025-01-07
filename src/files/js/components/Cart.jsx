@@ -161,7 +161,7 @@ export class Cart extends Component {
     this.setState({ totalQuantity, totalCost }, () => {
       if (costTotal.length > 0) {
         costTotal.forEach((cost) => {
-          cost.textContent = this.state.totalCost.toFixed(2);
+          cost.textContent = this.state.totalCost.toFixed(2) + ' ₸';
         });
       }
       if (quantityTotal.length > 0) {
