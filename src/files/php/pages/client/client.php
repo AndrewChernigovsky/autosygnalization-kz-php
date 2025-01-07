@@ -1,26 +1,9 @@
 <?php
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+
 $autoType = isset($_GET['client']) ? $_GET['client'] : null;
 
-function getAutoContent($type)
-{
-  switch ($type) {
-    case 'special':
-      return 'Контент для клиента с автозапуском.';
-    case 'cart':
-      return 'Контент для клиента с GSM.';
-    case 'review':
-      return 'Контент для клиента без автозапуска.';
-    case 'gallery':
-      return 'Контент для клиента каталога.';
-    case 'map':
-      return 'Контент для клиента аксессуары.';
-    default:
-      return 'Контент не найден.';
-  }
-}
-$content = getAutoContent($autoType);
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
@@ -31,8 +14,31 @@ $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 include_once $head_path;
 include_once $sections_path;
 $base_path = $docROOT . $path . '/files/php/layout';
+function getContent($base_path, $type)
+{
+  include $base_path . '/header.php';
+  "<main class='main'>";
+  "<div>";
+  include_once "./$type.php";
+  include_once './../../helpers/components/setup.php';
+  "</div>";
+  "</main>";
+  include $base_path . '/footer.php';
+}
+function getAutoContent($type, $base_path)
+{
+  switch ($type) {
+    case 'special':
+      return getContent($base_path, 'special');
+    case 'review':
+      return getContent($base_path, 'review');
+    default:
+      return getContent($base_path, 'default');
+  }
+}
 
-$title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
+$content = getAutoContent($autoType, $base_path);
+$title = 'Клиенту | Auto Security';
 $head = new Head($title, [], []);
 ?>
 
@@ -43,14 +49,7 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include $base_path . '/header.php'; ?>
-  <main class="main">
-    <h1>Автосигнализации</h1>
-    <div>
-      <?php echo htmlspecialchars($content); ?>
-    </div>
-  </main>
-  <?php include $base_path . '/footer.php'; ?>
+  <?php echo htmlspecialchars($content); ?>
 </body>
 
 </html>

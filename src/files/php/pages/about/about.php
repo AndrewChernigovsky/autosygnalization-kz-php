@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../../data/aboutus.php';
 
 $variables = new SetVariables();
 $variables->setVar();
@@ -13,6 +14,8 @@ $title = 'О нас | Auto Security';
 include_once $head_path;
 
 $head = new Head($title, [], []);
+
+$aboutUs = new AboutusData();
 ?>
 
 
@@ -43,8 +46,11 @@ echo $head->setHead();
       <p>Дружная команда опытных установщиков с удовольствием воплотит ваши мечты в реальность!</p>
       <p>Обращайтесь к нам,будем рады Вам помочь!</p>
       <h3>ФОТОГРАФИИ ТЕХ ЦЕНТРА</h3>
-      <img src="" alt="картинка">
-      <img src="" alt="картинка">
+      <?php
+      foreach ($aboutUs->getImagesAboutUs() as $image) {
+        echo "<img src='{$image['src']}' alt='картинка' width='600' height='300'>";
+      }
+      ?>
       <p>Обращайтесь в "Auto Security" - Вам будет оказана квалифицированная помощь по установке дополнительного
         электронного оборудования на Ваш автомобиль! Мы продиагностируем Ваш авто, отремонтируем, установим, настроим
         Ваше оборудование! Доверяйте профессионалам!</p>
@@ -52,41 +58,20 @@ echo $head->setHead();
 
       <div class="reviews">
         <ul>
-          <li>
-            <p><span>07.11.2022</span><span>Денис</span></p>
-            <p>Toyota Fortuner</p>
-            <img src="" alt="картинка">
-            <img src="" alt="картинка">
-            <p>Быстро и качественно!</p>
-          </li>
-          <li>
-            <p><span>07.11.2022</span><span>Денис</span></p>
-            <p>Toyota Fortuner</p>
-            <img src="" alt="картинка">
-            <img src="" alt="картинка">
-            <p>Быстро и качественно!</p>
-          </li>
-          <li>
-            <p><span>07.11.2022</span><span>Денис</span></p>
-            <p>Toyota Fortuner</p>
-            <img src="" alt="картинка">
-            <img src="" alt="картинка">
-            <p>Быстро и качественно!</p>
-          </li>
-          <li>
-            <p><span>07.11.2022</span><span>Денис</span></p>
-            <p>Toyota Fortuner</p>
-            <img src="" alt="картинка">
-            <img src="" alt="картинка">
-            <p>Быстро и качественно!</p>
-          </li>
-          <li>
-            <p><span>07.11.2022</span><span>Денис</span></p>
-            <p>Toyota Fortuner</p>
-            <img src="" alt="картинка">
-            <img src="" alt="картинка">
-            <p>Быстро и качественно!</p>
-          </li>
+          <?php
+          foreach ($aboutUs->getReviewsAboutUs() as $review) {
+            echo "
+            <li>
+                <p>
+                  <span>{$review['date']}</span>
+                  <span>{$review['name']}</span>
+                </p>
+                <p>{$review['model']}</p>
+                <p>{$review['text']}</p>
+            </li>
+            ";
+          }
+          ?>
         </ul>
       </div>
     </div>
