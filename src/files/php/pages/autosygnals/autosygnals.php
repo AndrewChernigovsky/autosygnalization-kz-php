@@ -46,7 +46,7 @@ function getAutoContent($type, $base_path)
 }
 
 $content = getAutoContent($autoType, $base_path);
-$title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
+$title = 'Автосигнализации | Auto Security';
 $head = new Head($title, [], []);
 ?>
 

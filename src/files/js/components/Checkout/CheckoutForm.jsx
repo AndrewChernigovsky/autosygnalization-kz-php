@@ -23,9 +23,7 @@ export class CheckoutForm extends Component {
   };
 
   changeFace = (e) => {
-    console.log(e.target.value);
-    const value = parseInt(e.target.value, 10); // Преобразуем строку в число
-    this.setState({ isCompany: value === 2 }); // Устанавливаем состояние на основе числового значения
+    this.setState({ isCompany: Number(e.target.value) === 2 });
   };
 
   render() {
