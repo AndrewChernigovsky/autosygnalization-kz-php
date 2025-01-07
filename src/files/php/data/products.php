@@ -26,7 +26,21 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_a93"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_a93",
+        "functions" => [
+          "Автозапуск",
+          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
+          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
+          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
+          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
+          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
+          "УМНАЯ АВТОДИАГНОСТИКА",
+          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
+        ],
+        "options" => [
+          "Для легкового авто",
+          "Для внедорожника",
+        ]
       ],
       [
         "category-position" => "starline",
@@ -44,7 +58,21 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "functions" => [
+          "Автозапуск",
+          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
+          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
+          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
+          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
+          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
+          "УМНАЯ АВТОДИАГНОСТИКА",
+          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
+        ],
+        "options" => [
+          "Для легкового авто",
+          "Для внедорожника",
+        ],
       ]
     ],
     "keychain1" => [
@@ -64,7 +92,21 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_a931"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_a931",
+        "functions" => [
+          "Автозапуск",
+          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
+          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
+          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
+          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
+          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
+          "УМНАЯ АВТОДИАГНОСТИКА",
+          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
+        ],
+        "options" => [
+          "Для легкового авто",
+          "Для внедорожника",
+        ],
       ],
       [
         "category-position" => "starline",
@@ -82,7 +124,21 @@ $products = [
         "price" => 86000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e961"
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e961",
+        "functions" => [
+          "Автозапуск",
+          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
+          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
+          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
+          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
+          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
+          "УМНАЯ АВТОДИАГНОСТИКА",
+          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
+        ],
+        "options" => [
+          "Для легкового авто",
+          "Для внедорожника",
+        ],
       ]
     ]
   ]
