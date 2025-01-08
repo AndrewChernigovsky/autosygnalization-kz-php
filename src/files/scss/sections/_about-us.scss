@@ -1,0 +1,130 @@
+@use 'variables' as var;
+
+.about-us {
+  .present {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &__main-title {
+      margin: 0;
+    }
+
+    &__text {
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    &__text:first-of-type {
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: normal;
+    }
+
+    &__list-title {
+      text-align: center;
+    }
+
+    &__list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      margin-bottom: 30px;
+    }
+
+    &__comment-text {
+      margin: 0;
+      font-size: 15px;
+    }
+  }
+
+  .tech-photo {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &__title {
+      margin: 0;
+      padding-top: 1em;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 23px;
+      text-decoration-color: var.$red;
+      z-index: 2;
+    }
+
+    &__swiper {
+      border-top: 1px solid var.$white;
+      border-bottom: 1px solid var.$white;
+      padding-top: 20px;
+      padding-bottom: 50px;
+    }
+
+    &__text {
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      line-height: 20px;
+    }
+  }
+
+  .reviews {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    &__title {
+      margin: 0;
+      padding-top: 1em;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 23px;
+      text-decoration-color: var.$red;
+      z-index: 2;
+    }
+
+    &__swiper {
+      border-top: 1px solid var.$white;
+      border-bottom: 1px solid var.$white;
+      padding-top: 20px;
+      padding-bottom: 50px;
+    }
+
+    &__swiper-wrapper {
+      gap: 10px;
+      height: 600px;
+
+      li {
+        display: flex;
+        flex-direction: column;
+        width: 300px;
+        background-color: var.$gray_424242;
+        padding: 20px;
+        gap: 20px;
+        border-radius: 10px;
+
+        &p {
+          background: red;
+        }
+        p {
+          margin: 0;
+        }
+
+        div {
+          display: flex;
+          justify-content: space-between;
+
+          p {
+            display: flex;
+            flex-direction: column;
+          }
+        }
+      }
+    }
+  }
+}
