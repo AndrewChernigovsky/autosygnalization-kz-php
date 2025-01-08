@@ -55,11 +55,11 @@ echo $head->setHead();
       </div>
       <div class="about-us__tech-photo tech-photo">
         <h3 class="tech-photo__title">ФОТОГРАФИИ ТЕХ ЦЕНТРА</h3>
-        <div class="tech-photo__swiper swiper">
+        <div class="tech-photo__swiper swiper swiper-tech-photo">
           <div class="tech-photo__swiper-wrapper swiper-wrapper">
             <?php
               foreach ($aboutUs->getImagesAboutUs() as $image) {
-              echo "<img src='{$image['src']}' alt='картинка' width='600' height='300'>";
+              echo "<img src='{$image['src']}' class='tech-photo__swiper-slide swiper-slide' alt='картинка' width='600' height='300'>";
               }
              ?>
           </div>
@@ -71,12 +71,12 @@ echo $head->setHead();
       </div>
       <div class="about-us__reviews reviews">
         <h3 class="reviews__title">Отзывы наших клиентов</h3>
-        <div class="reviews__swiper swiper">
+        <div class="reviews__swiper swiper swiper-reviews">
           <ul class="reviews__swiper-wrapper swiper-wrapper list-style-none">
             <?php
               foreach ($aboutUs->getReviewsAboutUs() as $review) {
               echo "
-              <li>
+              <li class='swiper-slide'>
               <div>
                 <p>
                   <span>{$review['date']}</span>
