@@ -65,7 +65,9 @@ echo $head->setHead();
             <div class="tech-photo__swiper-wrapper swiper-wrapper">
               <?php
               foreach ($aboutUs->getImagesAboutUs() as $image) {
-                echo "<img src='{$image['src']}' class='tech-photo__swiper-slide swiper-slide' alt='картинка' width='600' height='300'>";
+                echo "<div class='tech-photo__swiper-slide swiper-slide'>
+                <img src='{$image['src']}' alt='картинка' width='600' height='300'>
+                </div>";
               }
               ?>
             </div>
