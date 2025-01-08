@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .about-us {
   .present {
@@ -62,6 +62,24 @@
       border-bottom: 1px solid var.$white;
       padding-top: 20px;
       padding-bottom: 50px;
+      max-width: 100%;
+    }
+
+    &__swiper-wrapper {
+      @media screen and (min-width: var.$tablet) {
+        gap: 10px;
+      }
+    }
+
+    &__swiper-slide {
+      @media screen and (max-width: var.$tablet) {
+        display: flex;
+        justify-content: center;
+      }
+
+      @media screen and (min-width: var.$tablet) {
+        flex-basis: 50%;
+      }
     }
 
     &__text {
@@ -93,25 +111,24 @@
       border-bottom: 1px solid var.$white;
       padding-top: 20px;
       padding-bottom: 50px;
+      max-width: 100%;
     }
 
     &__swiper-wrapper {
-      gap: 10px;
-      height: 600px;
+      min-height: 600px;
 
       li {
         display: flex;
         flex-direction: column;
         width: 300px;
+        min-height: inherit;
         background-color: var.$gray_424242;
         padding: 20px;
         gap: 20px;
         border-radius: 10px;
 
-        &p {
-          background: red;
-        }
         p {
+          background: var.$red;
           margin: 0;
         }
 

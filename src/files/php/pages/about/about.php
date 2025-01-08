@@ -56,48 +56,21 @@ echo $head->setHead();
                 в реальность!</p>
               <p class="present__comment-text">Обращайтесь к нам,будем рады Вам помочь!</p>
             </div>
-<<<<<<< HEAD
-             
-        </div>
-      </div>
-      <div class="about-us__tech-photo tech-photo">
-        <h3 class="tech-photo__title">ФОТОГРАФИИ ТЕХ ЦЕНТРА</h3>
-        <div class="tech-photo__swiper swiper swiper-tech-photo">
-          <div class="tech-photo__swiper-wrapper swiper-wrapper">
-            <?php
-              foreach ($aboutUs->getImagesAboutUs() as $image) {
-              echo "<img src='{$image['src']}' class='tech-photo__swiper-slide swiper-slide' alt='картинка' width='600' height='300'>";
-              }
-             ?>
-=======
 
->>>>>>> d33088f468c95c773f9902417ae0a6d06010ee2e
           </div>
         </div>
-<<<<<<< HEAD
-        <p class="tech-photo__text">Обращайтесь в "Auto Security" - Вам будет оказана квалифицированная помощь по установке дополнительного
-          электронного оборудования на Ваш автомобиль! Мы продиагностируем Ваш авто, отремонтируем, установим, настроим
-          Ваше оборудование! Доверяйте профессионалам!</p>
-      </div>
-      <div class="about-us__reviews reviews">
-        <h3 class="reviews__title">Отзывы наших клиентов</h3>
-        <div class="reviews__swiper swiper swiper-reviews">
-          <ul class="reviews__swiper-wrapper swiper-wrapper list-style-none">
-            <?php
-              foreach ($aboutUs->getReviewsAboutUs() as $review) {
-              echo "
-=======
         <div class="about-us__tech-photo tech-photo">
           <h3 class="tech-photo__title">ФОТОГРАФИИ ТЕХ ЦЕНТРА</h3>
-          <div class="tech-photo__swiper swiper">
+          <div class="tech-photo__swiper swiper swiper-tech-photo">
             <div class="tech-photo__swiper-wrapper swiper-wrapper">
               <?php
               foreach ($aboutUs->getImagesAboutUs() as $image) {
-                echo "<div class='swiper-slide'><img class='adsdfsdf' src='{$image['src']}' alt='картинка' width='600' height='300'></div>";
+                echo "<div class='tech-photo__swiper-slide swiper-slide'>
+                <img src='{$image['src']}' alt='картинка' width='600' height='300'>
+                </div>";
               }
               ?>
             </div>
-            <div class="tech-photo__swiper-pagination swiper-pagination"></div>
           </div>
           <p class="tech-photo__text">Обращайтесь в "Auto Security" - Вам будет оказана квалифицированная помощь по
             установке дополнительного
@@ -107,12 +80,11 @@ echo $head->setHead();
         </div>
         <div class="about-us__reviews reviews">
           <h3 class="reviews__title">Отзывы наших клиентов</h3>
-          <div class="reviews__swiper swiper">
+          <div class="reviews__swiper swiper swiper-reviews">
             <ul class="reviews__swiper-wrapper swiper-wrapper list-style-none">
               <?php
               foreach ($aboutUs->getReviewsAboutUs() as $review) {
                 echo "
->>>>>>> d33088f468c95c773f9902417ae0a6d06010ee2e
               <li class='swiper-slide'>
               <div>
                 <p>

@@ -4,41 +4,30 @@ import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
 export function initSwiperReviews() {
   const swiperReviews = document.querySelector('.swiper-reviews');
 
-  let reviewsSwiper;
-
   function createReviewsSwiper() {
-    if (!reviewsSwiper && swiperReviews) {
+    if (swiperReviews) {
+      console.log(swiperReviews);
       reviewsSwiper = new Swiper(swiperReviews, {
         loop: true,
         modules: [Autoplay, Pagination, EffectFade],
-        effect: 'fade',
         speed: 1000,
         pagination: {
           el: '.swiper-pagination',
           clickable: true,
         },
+        spaceBetween: 10,
         slidesPerView: 1,
+        breakpoints: {
+          768: {
+            slidesPerView: 2,
+          },
+          1024: {
+            slidesPerView: 3
+          }
+        }
       });
     }
   }
 
-  function destroyReviewsSwiper() {
-    if (reviewsSwiper) {
-      reviewsSwiper.destroy(true, true);
-      reviewsSwiper = null;
-    }
-  }
-
   createReviewsSwiper();
-
-  function checkWindowSize() {
-    if (window.innerWidth <= 768) {
-      createReviewsSwiper();
-    } else {
-      destroyReviewsSwiper();
-    }
-  }
-
-  checkWindowSize();
-  window.addEventListener('resize', checkWindowSize);
 }
