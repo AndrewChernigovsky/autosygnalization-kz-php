@@ -5,12 +5,14 @@ class Logo
 {
   private $variables;
   private $icon;
+  private $path;
 
   public function __construct()
   {
     $this->variables = new SetVariables();
     $this->variables->setVar();
     $this->icon = new Contacts();
+    $this->path = $this->variables->getPathFileURL();
   }
 
   public function getLogo()
@@ -26,7 +28,7 @@ class Logo
     }
 
     $output = "
-            <a href='/' class='logo'>
+            <a href='$this->path' class='logo'>
                 <img src='" . htmlspecialchars($logo_path) . "' alt='" . htmlspecialchars($logo_description) . "' width='142' height='40'/>
             </a>";
 

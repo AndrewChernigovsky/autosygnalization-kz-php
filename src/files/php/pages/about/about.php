@@ -39,7 +39,7 @@ echo $head->setHead();
               качественные услуги в сфере установки и ремонта автоэлектроники.</p>
           </div>
           <div class="present__block">
-            <h3 class="present__list-title">Наши преимущества:</h3>
+            <h3 class="present__list-title">Наши преимущества</h3>
             <ul class="present__list list-style-none">
               <li class="present__list-item">Наши мастера имеют богатый опыт по инсталляции разнообразного электронного
                 оборудования на различные автомобили.</li>
@@ -71,6 +71,7 @@ echo $head->setHead();
               }
               ?>
             </div>
+            <div class="tech-photo__swiper-pagination swiper-pagination"></div>
           </div>
           <p class="tech-photo__text">Обращайтесь в "Auto Security" - Вам будет оказана квалифицированная помощь по
             установке дополнительного

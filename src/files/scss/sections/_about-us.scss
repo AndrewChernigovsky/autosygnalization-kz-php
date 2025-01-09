@@ -1,4 +1,4 @@
-@use 'variables'as var;
+@use 'variables' as var;
 
 .about-us {
   .present {
@@ -6,37 +6,82 @@
     flex-direction: column;
     gap: 20px;
 
+    &__block {
+      border-bottom: 1px solid red;
+      padding-bottom: 10px;
+      padding-top: 20px;
+    }
+
     &__main-title {
+      position: relative;
       margin: 0;
+      padding-top: 10px;
+      margin-bottom: 30px;
+      text-align: center;
+
+      &::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        right: 0;
+        width: 95%;
+        height: 90%;
+        background-color: var.$red;
+        filter: blur(20px);
+        opacity: 0.7;
+        z-index: -1;
+      }
     }
 
     &__text {
-      font-size: 14px;
+      font-size: 16px;
       letter-spacing: 1px;
+      text-align: center;
     }
 
     &__text:first-of-type {
       font-weight: 700;
-      font-size: 16px;
+      font-size: 20px;
       letter-spacing: normal;
+      text-align: center;
     }
 
     &__list-title {
       text-align: center;
+      font-size: 20px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 0;
+    }
+
+    &__list-item {
+      padding-left: 20px;
+      border-left: 4px solid var.$red;
     }
 
     &__list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 20px;
       font-size: 12px;
       letter-spacing: 0.5px;
       margin-bottom: 30px;
     }
 
+    &__list-comment {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 10px;
+    }
+
     &__comment-text {
       margin: 0;
-      font-size: 15px;
+      font-size: 20px;
+      text-align: center;
+      letter-spacing: 1px;
     }
   }
 
@@ -141,6 +186,43 @@
             flex-direction: column;
           }
         }
+      }
+    }
+  }
+}
+
+@media screen and (min-width: var.$tablet) {
+  .about-us {
+    .present {
+      &__main-title {
+        font-size: 50px;
+        padding-top: 5px;
+
+        &::after {
+          left: 15px;
+        }
+      }
+      &__list-item {
+        position: relative;
+        padding-left: 25px;
+        line-height: 21px;
+        border-left: none;
+
+        &::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 16px;
+          height: 16px;
+          background-image: url('#{var.$DEV_PATH}assets/images/vectors/aprove.svg');
+          background-size: cover;
+          z-index: -1;
+        }
+      }
+
+      &__block:last-of-type {
+        padding-bottom: 20px;
       }
     }
   }
