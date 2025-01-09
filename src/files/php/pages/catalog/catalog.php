@@ -29,6 +29,7 @@ $aside = new Aside();
 $asideData = new AsideData();
 $select = new Select();
 $selectData = new SelectData();
+
 ?>
 
 <!DOCTYPE html>
@@ -40,6 +41,12 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
+    <script>
+      var products = <?php echo json_encode($products); ?>;
+      console.log(products, 'Products');
+      console.log(products.category.keychain, 'category');
+
+    </script>
     <div class="container">
       <h2>АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
       <div class="catalog">
