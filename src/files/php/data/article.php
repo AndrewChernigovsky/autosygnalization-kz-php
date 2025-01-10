@@ -1,7 +1,7 @@
 <?php
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
 
-class AsideData
+class ArticleData
 {
 
   private $variables;
@@ -13,7 +13,7 @@ class AsideData
     $this->variables->setVar();
     $this->path = $this->variables->getPathFileURL();
   }
-  public function getAsideData()
+  public function getArticleData()
   {
 
     $data = [
