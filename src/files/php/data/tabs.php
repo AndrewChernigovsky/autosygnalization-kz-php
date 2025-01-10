@@ -6,14 +6,9 @@ $variables->setVar();
 
 $path = $variables->getPathFileURL();
 
-function generateID()
-{
-  return uniqid();
-}
-
 $tabs = [
   [
-    "id" => generateID(),
+    "id" => "product_keychain_starline_a93",
     'title' => 'ОПИСАНИЕ',
     'items' => [
       [
@@ -39,7 +34,7 @@ $tabs = [
     ]
   ],
   [
-    "id" => generateID(),
+    "id" => "product_keychain_starline_a96",
     'title' => 'ХАРАКТЕРИСТИКИ',
     'items' => [
       [
@@ -60,7 +55,7 @@ $tabs = [
     ]
   ],
   [
-    "id" => generateID(),
+    "id" => "product_keychain_starline_a931",
     'title' => 'ГАРАНТИЯ',
     'items' => [
       [
@@ -91,7 +86,7 @@ $tabs = [
     ]
   ],
   [
-    "id" => generateID(),
+    "id" => "product_keychain_starline_e961",
     'title' => 'СООТВЕТСТВУЮЩИЕ ТОВАРЫ',
     'items' => [
       [
