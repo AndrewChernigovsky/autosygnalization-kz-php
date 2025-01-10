@@ -1,14 +1,19 @@
 @use "variables" as var;
 
 .filter-button {
+  padding: 0;
+  padding-right: 21px;
+  min-height: 36px;
   border: none;
   background-color: inherit;
   color: var.$white;
   font-family: var.$primary-font;
   text-transform: uppercase;
   font-size: 14px;
-  align-self: flex-start;
-  padding: 0;
+  align-self: flex-start;  
+  background-repeat: no-repeat;
+  background-size: 16px 16px;
+  background-position: right;
 
   @media screen and (min-width: var.$desktop-min) {
     display: none;
@@ -16,18 +21,34 @@
 
   & + .filter-button-close + .filter-form {
     display: none;
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: block;
+    }
   }
 
   & + .filter-button-close + .filter-form.open {
     display: block;
     position: absolute;
     z-index: 100;
-    background-color: var.$black;
-    top: 20px;
+    background-color: var.$gray_2B2B2B;
+    top: 36px;
     left: 0;
     right: 0;
-    padding: 20px 0;
-    padding-top: 90px;
+    padding: 20px 10px;
+    padding-top: 50px;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 50%;
+      left: 20px;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      width: 320px;
+      padding-top: 10px;
+      top: 0;
+      background-color: var.$black-0E0C0C;
+    }
   }
 }
 
@@ -38,16 +59,24 @@
   position: absolute;
   justify-content: center;
   align-items: center;
-  background-color: var.$black;
+  background-color: var.$gray_2B2B2B;
   height: 27px;
   width: 43px;
   cursor: pointer;
   background-image: url("#{var.$DEV_PATH}assets/images/vectors/arrow-close.svg");
   background-size: cover;
   background-repeat: no-repeat;
-  top: 40px;
-  left: 0;
+  top: 46px;
+  left: 10px;
   z-index: 101;
+
+  @media screen and (min-width: var.$tablet) {
+    left: 30px;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    display: none;
+  }
 }
 
 .filter-button + .filter-form.open {

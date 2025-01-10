@@ -17,7 +17,10 @@ class Select
     ?>
 
 
+        
+
         <div class="custom-select">
+          <p class="custom-select__title">Сортировка: </p>
             <div class="select-selected">Выберите опцию</div>
               <div class="select-items select-hide">
                 <?php foreach($data as $option):?>
@@ -26,6 +29,7 @@ class Select
               </div>
             </div>
         </div>
+
 
     <?php
     return ob_get_clean();
