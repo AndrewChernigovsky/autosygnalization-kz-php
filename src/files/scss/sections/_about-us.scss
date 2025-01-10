@@ -156,10 +156,6 @@
       text-align: center;
       letter-spacing: 1px;
       margin: 0;
-
-      span {
-        text-shadow: 1px 2px 3px var.$red;
-      }
     }
 
     &__text {
@@ -192,8 +188,6 @@
     }
 
     &__swiper {
-      border-top: 1px solid var.$white;
-      border-bottom: 1px solid var.$white;
       padding-top: 20px;
       padding-bottom: 50px;
       max-width: 100%;
@@ -217,7 +211,7 @@
       flex-direction: column;
       width: 300px;
       min-height: inherit;
-      background-color: var.$gray_424242;
+      background-color: #0f0e0e;
       padding: 20px;
       border-radius: 10px;
       transform: scale(0.95);
@@ -229,11 +223,6 @@
         content: '';
         position: absolute;
         width: 100%;
-        background-color: var.$red;
-        background-image: url('#{var.$DEV_PATH}assets/images/vectors/checkbox.svg');
-        background-size: 40%;
-        background-position: bottom;
-        background-repeat: no-repeat;
         opacity: 0.1;
         min-height: 100%;
         left: 0;
@@ -264,12 +253,10 @@
 
         &:first-of-type {
           letter-spacing: 1px;
-          text-shadow: 1px 2px 3px var.$white;
         }
 
         &:last-of-type {
           font-size: 20px;
-          color: var.$red;
         }
       }
 
@@ -280,9 +267,6 @@
         padding: 5px;
         gap: 10px;
         min-height: 40px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-        border-top: 1px solid rgba(255, 255, 255, 0.5);
-
         .star {
           width: 30px;
           height: 30px;
@@ -351,7 +335,6 @@
       }
 
       &__comment {
-        background-color: var.$black;
         padding: 10px;
         border-radius: 20px;
       }
