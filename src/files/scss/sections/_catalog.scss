@@ -84,11 +84,11 @@
       }
     }
   }
+}
 
-  & .container {
-    @media screen and (min-width: var.$desktop-min) {
+.catalog .container {
+  @media screen and (min-width: var.$desktop-min) {
       width: 320px;
       grid-row: 9;
     }
-  }
 }

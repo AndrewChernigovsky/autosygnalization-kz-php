@@ -17,16 +17,19 @@ class Select
     ?>
 
 
-        <div class="select">
-          <p class="select__title">Сортировка: </p>
-            <div class="select__selected">Выберите опцию</div>
-              <div class="select__items select__hide">
+        
+
+        <div class="custom-select">
+          <p class="custom-select__title">Сортировка: </p>
+            <div class="select-selected">Выберите опцию</div>
+              <div class="select-items select-hide">
                 <?php foreach($data as $option):?>
                 <div data-value="<?= $option['title']?>"><?= $option["title"]?></div>
                 <?php endforeach;?>
               </div>
             </div>
         </div>
+
 
     <?php
     return ob_get_clean();
