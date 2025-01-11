@@ -4,14 +4,23 @@ export function filterToggleMenu() {
   const filterBtnClose = document.getElementById('filter-btn-close');
   let flag = false;
 
+  function toggleFiltersMenu() {
+    if (flag) {
+      filterCatalog.classList.remove('open');
+      filterBtnClose.style.display = 'none';
+      flag = false;
+    } else {
+      filterCatalog.classList.add('open');
+      filterBtnClose.style.display = 'flex';
+      flag = true;
+    }
+  }
+
   filterBtn.addEventListener('click', () => {
-    filterCatalog.classList.toggle('open');
-    filterBtnClose.style.display = 'flex';
-    flag = true;
+    toggleFiltersMenu()
   });
 
   filterBtnClose.addEventListener('click', () => {
-    filterCatalog.classList.toggle('open');
-    filterBtnClose.style.display = 'none';
+    toggleFiltersMenu()
   });
 }
