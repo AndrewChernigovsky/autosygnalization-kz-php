@@ -53,8 +53,8 @@ echo $head->setHead();
         <aside class="aside">
           <?= $filters->renderFilters() ?>
           <div class="aside__offers">
-            <?php foreach ($asideData->getAsideData() as $data): ?>
-              <?= $aside->createComponent($data); ?>
+            <?php foreach ($articleData->getArticleData() as $data): ?>
+              <?= $article->createComponent($data); ?>
             <?php endforeach; ?>
           </div>
         </aside>
