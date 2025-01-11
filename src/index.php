@@ -1,6 +1,9 @@
 <?php
-include __DIR__ . '/files/php/api/sessions/session.php';
-include __DIR__ . '/files/php/helpers/classes/setVariables.php';
+$path_to_include = __DIR__ . '/files/php/helpers/classes/setVariables.php';
+if (!file_exists($path_to_include)) {
+  die("Файл не найден: $path_to_include");
+}
+include $path_to_include;
 
 $variables = new SetVariables();
 $variables->setVar();
