@@ -1,31 +1,84 @@
 @use "variables" as var;
 
 .custom-select {
-  font-family: var.$secondary-font;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   min-width: 217px;
-  color: var.$white;
-  text-transform: none;
+  font-family: var.$primary-font;
+  font-size: 12px;
+  line-height: 16px;
   letter-spacing: 0.25px;
-  font-size: 20px;
+  text-transform: none;
+  color: var.$white;
+
+  @media screen and (min-width: var.$tablet) {
+    min-width: 265px;
+    gap: 15px;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {    
+    grid-column: 4;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    min-width: 410px;
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var.$primary-font;
+    font-size: 14px;
+    line-height: 16px;
+    text-transform: uppercase;
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 34px;
+      line-height: 42px;
+      text-transform: none;
+    }
+  }
 }
 
 .select-selected {
+  min-width: 120px;
   background-color: var.$gray_413E3E;
-  padding: 10px;
+  padding: 10px 5px;
   cursor: pointer;
   border-radius: 20px;
   position: relative;
 
+  @media screen and (min-width: var.$tablet) {
+    min-width: 150px;
+    padding: 10px;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    min-width: 200px;
+    font-size: 18px;
+    line-height: 22px;
+  }
+
   &::after {
     content: "";
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
     background-color: var.$white;
     transform: translateY(-40%);
     top: 50%;
-    right: 10px;
+    right: 5px;
     clip-path: polygon(50% 70%, 0 20%, 0 30%, 50% 80%, 100% 30%, 100% 20%);
+    
+    @media screen and (min-width: var.$tablet) {
+      right: 10px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      right: 15px;
+    }
+
   }
 }
 
@@ -39,16 +92,19 @@
 
 .select-items {
   position: absolute;
+  display: block;
+  top: 36px;
   background-color: var.$gray_413E3E;
   min-width: inherit;
-  z-index: 99;
-  border-radius: 0 0 20px 20px;
+  z-index: 101;
+  border-radius: 20px 0 20px 20px;
 }
 
 .select-items div {
   padding: 10px;
   cursor: pointer;
   text-transform: lowercase;
+  text-align: center;
 }
 
 .select-items div:hover {

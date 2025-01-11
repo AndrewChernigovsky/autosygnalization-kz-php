@@ -1,0 +1,22 @@
+@use "variables" as var;
+
+.title {
+  &__h2 {
+    margin: 0;
+    padding-top: 10px;
+    padding-bottom: 22px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      padding-top: 45px;
+      font-size: 40px;
+      line-height: 44px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      padding-top: 90px;
+      padding-bottom: 30px;
+      font-size: 64px;
+      line-height: 88px;
+    }
+  }
+}
