@@ -48,38 +48,42 @@ export class CartProductCard extends Component {
   }
 
   render({ title, id, imageSrc, imageAlt, price, currency, checkout, index }) {
-    return html`
-
-        ${checkout ? html`
+    return html` ${checkout
+      ? html`
           <p class="checkout-info">
             <span class="checkout-info__count">${index + 1} </span>
-            <span>Количество: ${this.props.quantity} </span>
             <span>${title} </span>
-            <span>${price} ${currency}</span>
+            <div>
+              <span>Количество:</span>
+              <span>${this.props.quantity} </span> 
+            </div> 
+            <div>
+              <span>${price} </span>
+              <span>${currency} </span>
+            </div>
           </p>
-        ` : html`
-        <article id=${id} class='product-card'>
-        <div class="product-card__bg">
-          <img src=${imageSrc} alt=${imageAlt} width="300" height="250"/>
-        </div>
-        <div class="product-card__body">
-          <div class="product-card__head">
-            <h3>${title}</h3>
-            <div class="price">
-              <span>Цена: </span>
-              <span>${price} ${currency}</span>
+        `
+      : html` <article id=${id} class="product-card">
+          <div class="product-card__bg">
+            <img src=${imageSrc} alt=${imageAlt} width="300" height="250" />
+          </div>
+          <div class="product-card__body">
+            <div class="product-card__head">
+              <h3>${title}</h3>
+              <div class="price">
+                <span>Цена: </span>
+                <span>${price} ${currency}</span>
+              </div>
+            </div>
+            <div class="product-card__buttons cart-btn">
+              <${CartButtonCounter}
+                id=${id}
+                onRemove=${this.handleRemoveToCart}
+                onAdd=${this.handleAddToCart}
+                quantity=${this.state.quantity}
+              />
             </div>
           </div>
-          <div class="product-card__buttons cart-btn">
-            <${CartButtonCounter} 
-              id=${id} 
-              onRemove=${this.handleRemoveToCart} 
-              onAdd=${this.handleAddToCart} 
-              quantity=${this.state.quantity} 
-            />
-          </div>
-        </div>
-        </article>`
-      }`;
+        </article>`}`;
   }
 }

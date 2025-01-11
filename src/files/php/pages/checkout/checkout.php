@@ -30,12 +30,12 @@ echo $head->setHead();
   <main class="main">
     <section class="cart-section">
       <div class="container">
-        <h2>Оформление заказа</h2>
+        <h2 class="title__h2">Оформление заказа</h2>
         <div class="cart-section__head checkout">
         </div>
         <div class="cart-section__products checkout">
         </div>
-        <p>
+        <p class="cart-section__total">
           <span>Итого: </span>
           <span class="cost-total">
             <?php
@@ -43,9 +43,8 @@ echo $head->setHead();
             echo $total;
             ?>
           </span>
-          <span>₸</span>
-        </p>
-        <form action="" class="form" method="post" class="checkout-form">
+        </p>      
+        <form action="" method="post" class="checkout-form">
           <div class="checkout-form__body"></div>
           <div class="checkout-form__footer">
             <a href="" class="link button y-button-third">Продолжить покупки</a>
@@ -58,7 +57,6 @@ echo $head->setHead();
             <button type="submit" class="button y-button-primary">Оформить заказ</button>
           </div>
         </form>
-      </div>
       </div>
     </section>
   </main>

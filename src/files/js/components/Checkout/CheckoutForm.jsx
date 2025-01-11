@@ -28,10 +28,10 @@ export class CheckoutForm extends Component {
 
   render() {
     return html`
-      <p>Оформление заказа</p>
+      <p class="checkout-form__title">Оформление заказа</p>
       <fieldset>
-        <legend>Вы оформляете заказ как</legend>
-        <label>
+        <legend>Вы оформляете заказ как:</legend>
+        <label class="checkout-form__label-radio">
           <input
             type="radio"
             name="client_type"
@@ -41,7 +41,7 @@ export class CheckoutForm extends Component {
           />
           Физическое лицо
         </label>
-        <label>
+        <label class="checkout-form__label-radio">
           <input
             type="radio"
             name="client_type"
@@ -52,7 +52,7 @@ export class CheckoutForm extends Component {
         </label>
       </fieldset>
       <fieldset>
-        <legend>Выберите город</legend>
+        <legend>Выберите город:</legend>
         <label>
           <p>Страна*</p>
           <${CheckoutSelect} />
