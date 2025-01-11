@@ -41,39 +41,30 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
-    <script>
-      var products = <?php echo json_encode($products); ?>;
-      console.log(products, 'Products');
-      console.log(products.category.keychain, 'category');
-
-    </script>
-    <div class="container">
-      <h2>АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
-      <div class="catalog">
-        <aside class="aside">
-          <?= $filters->renderFilters() ?>
-          <div class="aside__offers">
-            <?php foreach ($articleData->getArticleData() as $data): ?>
-              <?= $article->createComponent($data); ?>
-            <?php endforeach; ?>
-          </div>
-        </aside>
-        <div class="catalog__products-wrapper">
-          <div class="catalog__products-sort">
-            <button type="button" class="catalog__products-sort-button" id="button-filter">Фильтр</button>
-            <?= $sorting->renderFilters(); ?>
-          </div>
-          <div class="catalog__products">
-            <?= getProductCardWModel($products) ?>
-          </div>
+    <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
+    <div class="catalog">
+      <div class="catalog__wrapper">
+        <?= $filters->renderFilters() ?>
+        <?= $select->createComponent($selectData->getSelectData()) ?>
+        <div class="catalog__products">
+          <?= getProductCardWModel($products) ?>
+        </div>
+        <div class="container">
+          <aside class="aside">
+            <div class="aside__offers">
+              <?php foreach ($articleData->getArticleData() as $data): ?>
+                <?= $article->createComponent($data); ?>
+              <?php endforeach; ?>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
-    <?= $select->createComponent($selectData->getSelectData()) ?>
     <?= getShop('setup'); ?>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
   <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
 </body>
+
 
 </html>
