@@ -15,20 +15,19 @@ class Select
   {
     ob_start();
     ?>
-
-
-        
+    
 
         <div class="custom-select">
-          <p class="custom-select__title">Сортировка: </p>
             <div class="select-selected">Выберите опцию</div>
               <div class="select-items select-hide">
                 <?php foreach($data as $option):?>
-                <div data-value="<?= $option['title']?>"><?= $option["title"]?></div>
+                <div data-value="<?= $option['value']?>"><?= $option["name"]?></div>
                 <?php endforeach;?>
               </div>
             </div>
         </div>
+
+
 
 
     <?php

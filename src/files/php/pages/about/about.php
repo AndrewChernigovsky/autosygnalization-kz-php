@@ -39,7 +39,7 @@ echo $head->setHead();
               качественные услуги в сфере установки и ремонта автоэлектроники.</p>
           </div>
           <div class="present__block">
-            <h3 class="present__list-title">Наши преимущества:</h3>
+            <h3 class="present__list-title">Наши преимущества</h3>
             <ul class="present__list list-style-none">
               <li class="present__list-item">Наши мастера имеют богатый опыт по инсталляции разнообразного электронного
                 оборудования на различные автомобили.</li>
@@ -71,12 +71,17 @@ echo $head->setHead();
               }
               ?>
             </div>
+            <div class="tech-photo__swiper-pagination swiper-pagination"></div>
           </div>
-          <p class="tech-photo__text">Обращайтесь в "Auto Security" - Вам будет оказана квалифицированная помощь по
-            установке дополнительного
-            электронного оборудования на Ваш автомобиль! Мы продиагностируем Ваш авто, отремонтируем, установим,
-            настроим
-            Ваше оборудование! Доверяйте профессионалам!</p>
+          <div class="tech-photo__block">
+            <h3 class="tech-photo__block-title"><span>Обращайтесь в</span> <span>Auto Security</span></h3>
+                      <p class="tech-photo__text">Вам будет оказана квалифицированная помощь по
+                        установке дополнительного
+                        электронного оборудования на Ваш автомобиль! Мы продиагностируем Ваш авто, отремонтируем, установим,
+                        настроим
+                        Ваше оборудование! Доверяйте профессионалам!</p>
+          </div>
+
         </div>
         <div class="about-us__reviews reviews">
           <h3 class="reviews__title">Отзывы наших клиентов</h3>
@@ -85,18 +90,25 @@ echo $head->setHead();
               <?php
               foreach ($aboutUs->getReviewsAboutUs() as $review) {
                 echo "
-              <li class='swiper-slide'>
-              <div>
-                <p>
-                  <span>{$review['date']}</span>
-                  <span>{$review['model']}</span>
+              <li class='reviews__swiper-slide swiper-slide'>
+              <div class='swiper-slide__header'>
+                <p class='swiper-slide__header-block'>
+                  <span class='swiper-slide__header-date'>{$review['date']}</span>
+                  <span class='swiper-slide__header-model'>{$review['model']}</span>
                 </p>
-                <p>
-                  <span>{$review['name']}</span>
+                <p class='swiper-slide__header-block'>
+                  <span class='swiper-slide__header-name'>{$review['name']}</span>
                 </p>
               </div>
-                <p>
-                  <span>{$review['text']}</span>
+              <div class='swiper-slide__star-block star-one'>
+                <span class='swiper-slide__star-one star'></span>
+                <span class='swiper-slide__star-two star'></span>
+                <span class='swiper-slide__star-three star'></span>
+                <span class='swiper-slide__star-four star'></span>
+                <span class='swiper-slide__star-five star'></span>
+              </div>
+                <p class='swiper-slide__comment'>
+                  <span class='swiper-slide__comment-text'>{$review['text']}</span>
                 </p>
               </li>
               ";
