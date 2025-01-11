@@ -1,10 +1,14 @@
 import { html, Component } from 'htm/preact';
 import { CheckoutSelect } from './CheckoutSelect';
 import { CheckoutCompany } from './CheckoutCompany';
+
 export class CheckoutForm extends Component {
   constructor() {
     super();
-    this.isCompany = false;
+    this.state = {
+      isCompany: false, // Состояние для отслеживания типа клиента
+      selectedClientType: '1', // Состояние для отслеживания выбранного типа клиента
+    };
     this.PRODUCTION = window.location.href.includes('/dist/');
     this.path2Policy = `${
       this.PRODUCTION ? '/dist/' : '/'
@@ -23,30 +27,45 @@ export class CheckoutForm extends Component {
   };
 
   changeFace = (e) => {
-    this.setState({ isCompany: Number(e.target.value) === 2 });
+    const value = e.target.value;
+    this.setState({
+      selectedClientType: value,
+      isCompany: value === '2', // Проверяем, является ли выбранный тип "Юридическое лицо"
+    });
   };
 
   render() {
+    const { isCompany, selectedClientType } = this.state; // Деструктурируем состояние для удобства
+
     return html`
       <p class="checkout-form__title">Оформление заказа</p>
       <fieldset>
         <legend>Вы оформляете заказ как:</legend>
-        <label class="checkout-form__label-radio">
+        <label
+          class="${selectedClientType === '1'
+            ? 'checkout-form__label-radio selected'
+            : 'checkout-form__label-radio'}"
+        >
           <input
             type="radio"
             name="client_type"
             value="1"
             onChange=${this.changeFace}
-            checked=${!this.state.isCompany}
+            checked=${selectedClientType === '1'}
           />
           Физическое лицо
         </label>
-        <label class="checkout-form__label-radio">
+        <label
+          class="${selectedClientType === '2'
+            ? 'checkout-form__label-radio selected'
+            : 'checkout-form__label-radio'}"
+        >
           <input
             type="radio"
             name="client_type"
             value="2"
             onChange=${this.changeFace}
+            checked=${selectedClientType === '2'}
           />
           Юридическое лицо
         </label>
@@ -104,7 +123,7 @@ export class CheckoutForm extends Component {
           <input type="email" required name="email" />
         </label>
       </fieldset>
-      ${this.state.isCompany &&
+      ${isCompany &&
       html`
         <fieldset>
           <${CheckoutCompany} />

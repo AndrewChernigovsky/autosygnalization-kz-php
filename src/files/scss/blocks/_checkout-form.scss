@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .checkout-form {
   display: flex;
@@ -40,6 +40,10 @@
       input[type="radio"] {
         appearance: none;
       }
-    }  
+
+      &.selected {
+        background: red;
+      }
+    }
   }
 }
