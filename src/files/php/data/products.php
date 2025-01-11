@@ -139,6 +139,38 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+      ],
+      [
+        "category-position" => "starline",
+        "model" => "e96",
+        "cart" => false,
+        "popular" => false,
+        "id" => 'product_keychain_starline_e961',
+        "gallery" => [
+          "$path/assets/images/products/starline_e96/product-1.avif",
+          "$path/assets/images/products/starline_e96/product-2.avif",
+          "$path/assets/images/products/starline_e96/product-3.avif",
+        ],
+        'title' => 'Модель E96',
+        "description" => "Надежный автомобильный охранно-телематический комплекс с интеллектуальным автозапуском, несканируемым диалоговым кодом управления, возможностью авторизации по защищенному протоколу через персональную метку или смартфон на iOS и Android с мобильным приложением StarLine, интегрированным 2CAN+4LIN интерфейсом, ударопрочным брелком управления, помехозащищенным трансивером с малошумящим усилителем",
+        "price" => 86000,
+        "currency" => "₸",
+        "quantity" => 1,
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e961",
+        "functions" => [
+          "Автозапуск",
+          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
+          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
+          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
+          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
+          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
+          "УМНАЯ АВТОДИАГНОСТИКА",
+          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
+        ],
+        "options" => [
+          "Для легкового авто",
+          "Для внедорожника",
+        ],
       ]
     ]
   ]
