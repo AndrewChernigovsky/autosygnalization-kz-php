@@ -5,8 +5,8 @@ include_once __DIR__ . '/../../helpers/components/filters/filters.php';
 include_once __DIR__ . '/../../helpers/components/filters/sorting.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
-include_once __DIR__ . '/../../helpers/components/aside.php';
-include_once __DIR__ . '/../../data/aside.php';
+include_once __DIR__ . '/../../helpers/components/article.php';
+include_once __DIR__ . '/../../data/article.php';
 include_once __DIR__ . '/../../data/select.php';
 include_once __DIR__ . '/../../helpers/components/select.php';
 
@@ -25,8 +25,8 @@ include_once $docROOT . $path . '/files/php/data/products.php';
 $head = new Head($title, [], []);
 $filters = new Filters($data_categories_filters);
 $sorting = new Sorting();
-$aside = new Aside();
-$asideData = new AsideData();
+$article = new Article();
+$articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
 
@@ -71,7 +71,6 @@ echo $head->setHead();
     </div>
     <?= $select->createComponent($selectData->getSelectData()) ?>
     <?= getShop('setup'); ?>
-    </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
   <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
