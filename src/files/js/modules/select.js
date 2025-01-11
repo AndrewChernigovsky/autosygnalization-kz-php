@@ -1,15 +1,15 @@
 export function initSelect() {
   const selected = document.querySelector('.select-selected');
   const item = document.querySelector('.select-items');
-  const container = document.querySelector('.custom-select');
   const options = item.querySelectorAll('div');
-  const rect = container.getBoundingClientRect();
-  const width = rect.width;
+  let value;
 
-  options.forEach((option) => (option.style.width = `${width}px`));
   selected.addEventListener('click', function () {
     item.classList.toggle('select-hide');
     selected.classList.toggle('open');
+    const currentRect = selected.getBoundingClientRect();
+    const currentWidth = currentRect.width;
+    options.forEach((option) => (option.style.width = `${currentWidth}px`));
 
     const handleClickOutside = function (event) {
       if (!selected.contains(event.target) && !item.contains(event.target)) {
@@ -27,6 +27,8 @@ export function initSelect() {
       selected.innerHTML = event.target.innerHTML;
       item.classList.add('select-hide');
       selected.classList.remove('open');
+      value = event.target.dataset.value;
+      console.log(value);
     }
   });
 }
