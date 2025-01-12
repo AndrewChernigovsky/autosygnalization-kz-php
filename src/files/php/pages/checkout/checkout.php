@@ -33,8 +33,8 @@ echo $head->setHead();
         <h2 class="title__h2">Оформление заказа</h2>
         <div class="cart-section__head checkout">
         </div>
-        <div class="cart-section__products checkout">
-        </div>
+        <ol class="cart-section__products checkout">
+        </ol>
         <p class="cart-section__total">
           <span>Итого: </span>
           <span class="cost-total">
@@ -43,7 +43,7 @@ echo $head->setHead();
             echo $total;
             ?>
           </span>
-        </p>      
+        </p>
         <form action="" method="post" class="checkout-form">
           <div class="checkout-form__body"></div>
           <div class="checkout-form__footer">
