@@ -1,7 +1,7 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
 import DoubleRangeSlider from './modules/filter-cost.js';
-const rangeSlider = new DoubleRangeSlider('.filter-cost', {
+new DoubleRangeSlider('.filter-cost', {
   minValue: 100,
   maxValue: 1000,
   step: 10,

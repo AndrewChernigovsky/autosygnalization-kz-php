@@ -16,10 +16,10 @@ class FilterFunctions
         <div class="filter-functions__item">
           <label class="filter-functions__item-element">
             <input type="checkbox" class="filter-functions__checkbox" id="<?php echo $category['name'] ?>"
-              name="<?php echo $category['name'] ?>">
-              <span class="filter-functions__item-title"> <?php echo $category['text'] ?></span>
+              name="<?= $category['name'] ?>">
+            <span class="filter-functions__item-title"> <?= $category['text'] ?></span>
           </label>
-          <span class="filter-functions__count"><?php echo $category['count'] ?></span>
+          <span class="filter-functions__count"><?= $category['count'] ?></span>
         </div>
       <?php endforeach; ?>
     </div>
