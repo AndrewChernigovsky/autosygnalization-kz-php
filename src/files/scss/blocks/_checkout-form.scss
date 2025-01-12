@@ -13,6 +13,10 @@
   background-color: var.$gray_413E3E;
   border-radius: 20px;
 
+  &__body {
+    margin-bottom: 20px;
+  }
+
   &__title {
     margin: 0;
     margin-bottom: 20px;
@@ -31,6 +35,11 @@
     flex-direction: column;
     gap: 15px;
 
+    @media screen and (min-width: var.$tablet) {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
     legend {
       margin-bottom: 10px;
       padding: 0;
@@ -42,6 +51,10 @@
       padding: 5px;
       border-radius: 10px;
       cursor: pointer;
+
+      @media screen and (min-width: var.$tablet) {
+        max-width: 165px;
+      }
 
       input[type="radio"] {
         appearance: none;
@@ -66,6 +79,10 @@
         border: 1px solid var.$gray_959090;
         border-radius: 10px;
         background-color: var.$gray_959090;
+
+        @media screen and (min-width: var.$tablet) {
+          max-width: 100%;
+        }
       }
 
       p {
@@ -138,6 +155,56 @@
         grid-row: auto;
         text-transform: none;
       }
+    }
+  }
+
+  &__wrapper {
+    display: grid;
+    grid-template-columns: min-content 1fr;
+    align-items: start;
+    gap: 10px;
+
+    input {
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border: 1px solid var.$white;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 15px 15px;
+
+      &:checked {
+        border: 1px solid var.$red;
+        background-image: url("/dist/assets/images/vectors/checkbox-mark-icon.svg");
+      }
+    }
+
+    label a {
+      margin: 0 5px;
+      text-decoration: none;
+      color: var.$red-FF0000;
+      cursor: pointer;
+    }
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+    a {
+      display: inline-block;
+      border-radius: 5px;
+    }
+
+    p {
+      margin: 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      align-items: center;
     }
   }
 }

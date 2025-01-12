@@ -58,7 +58,6 @@ export class CartProductCard extends Component {
     return html` ${checkout
       ? html`
           <li class="checkout-info">
-            <span class="checkout-info__count"></span>
             <span>${title} </span>
             <div>
               <span>Количество:</span>

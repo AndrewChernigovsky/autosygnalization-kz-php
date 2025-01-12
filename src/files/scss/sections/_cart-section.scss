@@ -51,6 +51,7 @@
     flex-wrap: wrap;
     min-height: 350px;
     height: 100%;
+    counter-reset: item;
 
     &.checkout {
       display: grid;
@@ -61,6 +62,10 @@
       padding: 10px;
       background-color: var.$gray_413E3E;
       border-radius: 20px;
+
+      @media screen and (min-width: var.$tablet) {
+        grid-template-columns: 1fr 1fr;
+      }
 
       p {
         margin: 0;

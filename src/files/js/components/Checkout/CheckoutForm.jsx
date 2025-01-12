@@ -209,7 +209,13 @@ export class CheckoutForm extends Component {
             При поступлении средств на кошелек Ваш заказ будет считаться
             оформленным.
           </p>
-          <input type="radio" required name="payment-method" value="pay-caspy-bank" checked />
+          <input
+            type="radio"
+            required
+            name="payment-method"
+            value="pay-caspy-bank"
+            checked
+          />
         </label>
         <label class="checkout-form__label">
           <p class="checkout-form__subtitle">Наличными при получении</p>
@@ -230,17 +236,26 @@ export class CheckoutForm extends Component {
           <input name="call-me" id="call-me" />
         </label>
       </fieldset>
-      <input type="checkbox" id="privacy" name="privacy" required />
-      <label for="privacy">
-        Оформляя заказ, подтверждаю, что я ознакомлен и согласен с условиями
-        <a href="#" onClick=${(e) => this.openWindow(e, 'policy')}>
-          политики конфиденциальности</a
-        >
-        и договором
-        <a href="#" onClick=${(e) => this.openWindow(e, 'deal')}
-          >купли-продажи</a
-        >
-      </label>
+      <div class="checkout-form__wrapper">
+        <input
+          class="checkout-form__checkbox"
+          type="checkbox"
+          id="privacy"
+          name="privacy"
+          required
+        />
+        <label class="checkout-form__label-privacy" for="privacy">
+          Оформляя заказ, подтверждаю, что я ознакомлен и согласен с условиями 
+          <a href="#" onClick=${(e) => this.openWindow(e, 'policy')}>
+            политики конфиденциальности</a
+          >
+          и договором
+          <a href="#" onClick=${(e) => this.openWindow(e, 'deal')}
+            >купли-продажи</a
+          >
+        </label>
+      </div>
+      
     `;
   }
 }

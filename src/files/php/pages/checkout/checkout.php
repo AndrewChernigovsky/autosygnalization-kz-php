@@ -33,7 +33,7 @@ echo $head->setHead();
         <h2 class="title__h2">Оформление заказа</h2>
         <div class="cart-section__head checkout">
         </div>
-        <ol class="cart-section__products checkout">
+        <ol class="cart-section__products list-style-none checkout">
         </ol>
         <p class="cart-section__total">
           <span>Итого: </span>
