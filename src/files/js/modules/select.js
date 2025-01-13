@@ -2,7 +2,14 @@ export function initSelect() {
   const selected = document.querySelector('.select-selected');
   const item = document.querySelector('.select-items');
   const options = item.querySelectorAll('div');
+  const def = item.querySelector('.default');
   let value;
+
+  function setDefault() {
+    selected.innerHTML = def.textContent;
+  }
+
+  setDefault();
 
   selected.addEventListener('click', function () {
     item.classList.toggle('select-hide');
