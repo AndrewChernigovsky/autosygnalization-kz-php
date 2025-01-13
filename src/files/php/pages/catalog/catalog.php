@@ -40,6 +40,10 @@ echo $head->setHead();
 
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
+  <script>
+    const products = <?= json_encode($products) ?>;
+    console.log(products, 'products');
+  </script>
   <main class="main">
     <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
     <div class="catalog">
@@ -47,7 +51,12 @@ echo $head->setHead();
         <?= $filters->renderFilters() ?>
         <?= $select->createComponent($selectData->getSelectData()) ?>
         <div class="catalog__products">
-          <?= getProductCardWModel($products) ?>
+          <script type="module">
+            import Catalog from "<?= "$docROOT$path/files/js/components/Catalog/Catalog.jsx"; ?>";
+            const catalogElement = document.querySelector('.catalog__products');
+            render(html`<${Catalog} />`, catalogElement);
+          </script>
+          <!-- <?= getProductCardWModel($products) ?> -->
         </div>
         <div class="container">
           <aside class="aside">
@@ -65,6 +74,5 @@ echo $head->setHead();
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
   <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
 </body>
-
 
 </html>
