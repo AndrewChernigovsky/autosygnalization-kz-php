@@ -1,15 +1,24 @@
 export function initSelect() {
   const selected = document.querySelector('.select-selected');
   const item = document.querySelector('.select-items');
-  const options = item.querySelectorAll('div');
-  const def = item.querySelector('.default');
+  const options = item.querySelectorAll('.select-item');
   let value;
 
-  function setDefault() {
-    selected.innerHTML = def.textContent;
+  function setDefaultSelect(object, container) {
+    if (object !== null && object !== undefined) {
+      for (let element of object) {
+        if (element.classList.contains('default')) {
+          container.innerHTML = element.innerHTML;
+          container.dataset.value = element.dataset.value;
+        }
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  setDefault();
+  setDefaultSelect(options, selected);
 
   selected.addEventListener('click', function () {
     item.classList.toggle('select-hide');

@@ -107,12 +107,12 @@
   border-radius: 0 0 20px 20px;
 }
 
-.select-items div {
+.select-item {
   padding: 10px;
   cursor: pointer;
 }
 
-.select-items div:hover {
+.select-item:hover {
   background-color: #e0e0e0;
 
   &:last-child {
