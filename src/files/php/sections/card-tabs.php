@@ -34,6 +34,7 @@ function isActiveClassTabContent($index)
     <div class="tab__content">
       <?php foreach ($tabs as $index => $tab): ?>
         <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab['id']; ?>">
+          <!-- Вывод элементов из 'items' -->
           <?php foreach ($tab['items'] as $item): ?>
             <li class="tab__item"
               style="background-image: url('<?php echo isset($item['path-icon']) ? htmlspecialchars($item['path-icon']) : '' ?>')">
@@ -42,6 +43,21 @@ function isActiveClassTabContent($index)
             </li>
           <?php endforeach; ?>
         </ul>
+
+        <!-- Новый ul для вывода 'items-service', только если есть элементы -->
+        <?php if (!empty($tab['items-service'])): ?>
+          <p>Удобный сервис</p>
+          <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="service-<?= $tab['id']; ?>">
+            <?php foreach ($tab['items-service'] as $itemService): ?>
+              <li class="tab__item"
+                style="background-image: url('<?php echo isset($itemService['path-icon']) ? htmlspecialchars($itemService['path-icon']) : '' ?>')">
+                <h3 class="tab__title"><?= $itemService['title']; ?></h3>
+                <p class="tab__description"><?= $itemService['description'] ?></p>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endif; ?>
+
       <?php endforeach; ?>
     </div>
   </div>
