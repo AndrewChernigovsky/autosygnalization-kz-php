@@ -11,11 +11,10 @@ $products = [
   "category" => [
     "keychain" => [
       [
-        "category-position" => "starline",
         "model" => "a93-eco",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_a93_eco',
+        "id" => 'product_keychain_a93-eco',
         "gallery" => [
           "$path/assets/images/products/starline_a93/product-1.avif",
           "$path/assets/images/products/starline_a93/product-2.avif",
@@ -26,7 +25,7 @@ $products = [
         "price" => 64900,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_a93",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a93-eco",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -43,11 +42,10 @@ $products = [
         ]
       ],
       [
-        "category-position" => "starline",
         "model" => "e96-eco",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_e96_eco',
+        "id" => 'product_keychain_e96-eco',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
@@ -58,7 +56,7 @@ $products = [
         "price" => 99800,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_e96-eco",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -75,11 +73,10 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "s96-2can-2lin-gsm",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_s96_2can_2lin_gsm',
+        "id" => 'product_keychain_s96-2can-2lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
@@ -90,7 +87,7 @@ $products = [
         "price" => 113600,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_s96-2can-2lin-gsm",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -107,11 +104,10 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a93-v2",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_a93_v2',
+        "id" => 'product_keychain_a93-v2',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
@@ -122,7 +118,7 @@ $products = [
         "price" => 74300,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a93-v2",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -139,22 +135,21 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "e96-gsm",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_e96_gsm',
+        "id" => 'product_keychain_e96-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
           "$path/assets/images/products/starline_e96/product-3.avif",
         ],
         'title' => 'Starline E96 V2 BT GSM',
-        "description" => "Надежный автомобильный охранно-телематический комплекс с интеллектуальным автозапуском с вашего смартфона, несканируемым диалоговым кодом управления, возможностью авторизации по защищенной технологии через смартфон и метку, интегрированным 2CAN+4LIN. Благодаря GSM интерфейсу обеспечивается возможность управления комплексом из любой точки мира.м",
+        "description" => "Надежный автомобильный охранно-телематический комплекс с интеллектуальным автозапуском с вашего смартфона, несканируемым диалоговым кодом управления, возможностью авторизации по защищенной технологии через смартфон и метку, интегрированным 2CAN+4LIN. Благодаря GSM интерфейсу обеспечивается возможность управления комплексом из любой точки мира.",
         "price" => 147100,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_e96-gsm",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -171,11 +166,10 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "s96-lte",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_s96_lte',
+        "id" => 'product_keychain_s96-lte',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
@@ -186,7 +180,7 @@ $products = [
         "price" => 128200,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_s96-lte",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -203,11 +197,10 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a93-2can-2lin",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_a93_2can_2lin',
+        "id" => 'product_keychain_a93-2can-2lin',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
@@ -218,7 +211,7 @@ $products = [
         "price" => 99800,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a93-2can-2lin",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -235,11 +228,10 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "e96-2can-4lin-gsm",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_e96_2can_4lin_gsm',
+        "id" => 'product_keychain_e96-2can-4lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
@@ -250,7 +242,7 @@ $products = [
         "price" => 167200,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_e96-2can-4lin-gsm",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -266,11 +258,10 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "s96-2can-4lin",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_keychain_starline_s96_2can_4lin',
+        "id" => 'product_keychain_s96-2can-4lin',
         "gallery" => [
           "$path/assets/images/products/starline_e96/product-1.avif",
           "$path/assets/images/products/starline_e96/product-2.avif",
@@ -281,7 +272,7 @@ $products = [
         "price" => 140000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_starline_e96",
+        "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_s96-2can-4lin",
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
@@ -298,7 +289,6 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a93-v2-gsm",
         "cart" => false,
         "popular" => false,
@@ -330,7 +320,6 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a93-2can-2lin",
         "cart" => false,
         "popular" => false,
@@ -362,7 +351,6 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a60",
         "cart" => false,
         "popular" => false,
@@ -394,7 +382,6 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a63-eco-v2",
         "cart" => false,
         "popular" => false,
@@ -426,7 +413,6 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a63",
         "cart" => false,
         "popular" => false,
@@ -458,7 +444,6 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "b97",
         "cart" => false,
         "popular" => false,
@@ -490,7 +475,6 @@ $products = [
         ],
       ],
       [
-        "category-position" => "starline",
         "model" => "a90",
         "cart" => false,
         "popular" => false,
