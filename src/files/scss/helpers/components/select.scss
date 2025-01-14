@@ -54,6 +54,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-left: 10px;
   padding-right: 25px;
 
   @media screen and (min-width: var.$tablet) {
@@ -110,6 +111,9 @@
 .select-item {
   padding: 10px;
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .select-item:hover {
