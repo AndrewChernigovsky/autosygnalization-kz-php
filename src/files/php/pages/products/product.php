@@ -54,6 +54,13 @@ echo $head->setHead();
         <a class="product-card__link" href="#">Наличие товара уточняйте у продавца.</a>
       </div>
       <?= $content; ?>
+      <p>Цена за материал указана без установки.</p>
+      <p>
+        <span>Итоговая стоимость</span>
+        <span class="cost-total"></span>
+      </p>
+      <button type="button" class="button y-button-primary cart-button"
+        data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В корзину</button>
     </div>    
     <?= include_once __DIR__ . '/../../sections/card-tabs.php'; ?>
   </main>
