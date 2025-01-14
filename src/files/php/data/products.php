@@ -11,7 +11,7 @@ $products = [
   "category" => [
     "keychain" => [
       [
-        "category-position" => "starline",
+        "category-position" => "starline1",
         "model" => "a93-eco",
         "cart" => false,
         "popular" => false,
