@@ -60,17 +60,22 @@ $tabs = [
     'items-service' => [
       [
         'title' => 'ТЕЛЕМАТИКА (ОПЦИЯ)',
-        'description' => 'Интеграция опциональных GSM, GPS-ГЛОНАСС телематических интерфейсов позволяет дистанционно управлять охраной вашего автомобиля и осуществлять мониторинг.',
+        'description' => 'Интеграция опциональных <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/?ncc=1" target="_blank">GSM</a>,<a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> телематических интерфейсов позволяет дистанционно управлять охраной вашего автомобиля и осуществлять мониторинг.',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
       [
         'title' => 'УПРАВЛЕНИЕ С ТЕЛЕФОНА (ОПЦИЯ)',
-        'description' => 'Интеграция опционального GSM-интерфейса позволяет управлять охранными и сервисными функциями, получать оповещения о статусе охраны на ваш мобильный телефон.',
+        'description' => 'Интеграция опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/" target="_blank"> GSM-ИНТЕРФЕЙСА</a> позволяет управлять охранными и сервисными функциями, получать оповещения о статусе охраны на ваш мобильный телефон.',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
       [
         'title' => 'БЕСПЛАТНЫЙ МОНИТОРИНГ (ОПЦИЯ)',
-        'description' => 'С помощью простого и удобного мониторинга starline.online вы сможете с точностью до нескольких метров узнать местонахождение своего транспортного средства. Опция доступна при подключении GPS-ГЛОНАСС и наличии опционального GSM-интерфейса.',
+        'description' => 'С помощью простого и удобного мониторинга <a href="https://www.starline-online.ru/" target="_blank">STARLINE.ONLINE</a> вы сможете с точностью до нескольких метров узнать местонахождение своего транспортного средства. Опция доступна при подключении <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> и наличии опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/ target="_blank"> GSM-ИНТЕРФЕЙСА</a>.',
+        'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+      ],
+      [
+        'title' => 'АВТОЗАПУСК',
+        'description' => 'Интеллектуальный автозапуск позволяет осуществлять дистанционный и автоматический запуск двигателя по температуре, в заданное время или периодически.',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
       [
@@ -90,7 +95,7 @@ $tabs = [
       ],
       [
         'title' => 'УМНЫЙ БЕСКЛЮЧЕВОЙ ОБХОД (ОПЦИЯ)',
-        'description' => 'StarLine iKey позволяет реализовать бесключевой обход штатного иммобилайзера в автомобилях, оборудованных охранными комплексами StarLine. Опция доступна при подключении 2CAN+2LIN интерфейса* <br>. *Список автомобилей, поддерживающих данную функцию, смотрите на can.starline.ru',
+        'description' => 'StarLine iKey позволяет реализовать бесключевой обход штатного иммобилайзера в автомобилях, оборудованных охранными комплексами StarLine. Опция доступна при подключении 2CAN+2LIN интерфейса*.<br><i>*Список автомобилей, поддерживающих данную функцию, смотрите на <a href="https://can.starline.ru/" target="_blank">CAN.STARLINE.RU</i>',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
     ]
