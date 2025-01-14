@@ -67,11 +67,7 @@
       border-radius: 20px;
 
       @media screen and (min-width: var.$tablet) {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      @media screen and (min-width: var.$desktop-min) {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr;
       }
 
       p {

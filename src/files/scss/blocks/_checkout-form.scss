@@ -51,12 +51,17 @@
       max-width: 165px;
       display: block;
       font-family: var.$secondary-font;
-      padding: 5px;
+      padding: 5px 8px;
       border-radius: 10px;
-      cursor: pointer;      
+      border: 1px solid var.$gray_413E3E; 
+      cursor: pointer;  
+      
+      &:hover {
+        border: 1px solid var.$green;
+      }
 
       input[type="radio"] {
-        appearance: none;
+        display: none;
       }
 
       &.selected {
