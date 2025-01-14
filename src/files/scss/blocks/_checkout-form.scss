@@ -7,6 +7,8 @@
 // $path = $variables->getPathFileURL();
 
 .checkout-form {
+  max-width: 1000px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -46,15 +48,12 @@
     }
 
     .checkout-form__label-radio {
+      max-width: 165px;
       display: block;
       font-family: var.$secondary-font;
       padding: 5px;
       border-radius: 10px;
-      cursor: pointer;
-
-      @media screen and (min-width: var.$tablet) {
-        max-width: 165px;
-      }
+      cursor: pointer;      
 
       input[type="radio"] {
         appearance: none;
@@ -184,6 +183,14 @@
       text-decoration: none;
       color: var.$red-FF0000;
       cursor: pointer;
+    }
+  }
+
+  &__comment {
+    @media screen and (min-width: var.$tablet) {
+      label {
+        grid-column: 1/3;
+      }
     }
   }
 

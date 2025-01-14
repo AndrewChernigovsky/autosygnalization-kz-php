@@ -225,7 +225,7 @@ export class CheckoutForm extends Component {
           <input type="radio" required name="payment-method" value="cash" />
         </label>
       </fieldset>
-      <fieldset>
+      <fieldset class="checkout-form__comment">
         <legend>Комментарий к заказу:</legend>
         <label>
           <p>Ваш комментарий</p>

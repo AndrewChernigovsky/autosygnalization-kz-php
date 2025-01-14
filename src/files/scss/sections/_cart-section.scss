@@ -1,6 +1,9 @@
 @use 'variables'as var;
 
 .cart-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  
   &__head {
     display: flex;
     justify-content: space-between;
@@ -65,6 +68,10 @@
 
       @media screen and (min-width: var.$tablet) {
         grid-template-columns: 1fr 1fr;
+      }
+
+      @media screen and (min-width: var.$desktop-min) {
+        grid-template-columns: repeat(3, 1fr);
       }
 
       p {
