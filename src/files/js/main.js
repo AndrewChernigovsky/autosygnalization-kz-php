@@ -1,6 +1,12 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
 import DoubleRangeSlider from './modules/filter-cost.js';
+import CustomSelect from './modules/select.js';
+const customSelect = new CustomSelect({
+  selected: '.select-selected',
+  item: '.select-items',
+  options: '.select-item',
+});
 const rangeSlider = new DoubleRangeSlider('.filter-cost', {
   minValue: 100,
   maxValue: 1000,
@@ -24,7 +30,7 @@ const {
   resetCartButton,
   productsContainerCart,
   modalCart,
-  selected,
+  // selected,
   buyBtnFast,
   checkoutForm,
 } = {
@@ -33,7 +39,7 @@ const {
   fancyboxExist: document.querySelectorAll('[data-fancybox]'),
   searchExist: document.querySelector('.search'),
   phoneButton: document.querySelector('.phone-button'),
-  selected: document.querySelector('.select-selected'),
+  // selected: document.querySelector('.select-selected'),
   buttonPrint: document.getElementById('print-btn'),
   buyBtn: document.getElementById('buy-btn'),
   minValue: document.getElementById('minValue'),
@@ -79,10 +85,6 @@ async function loadModules() {
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
     filterToggleMenu();
-  }
-  if (selected != null) {
-    const { initSelect } = await import('./modules/select.js');
-    initSelect();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');

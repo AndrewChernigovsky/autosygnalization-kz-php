@@ -1,50 +1,70 @@
-export function initSelect() {
-  const selected = document.querySelector('.select-selected');
-  const item = document.querySelector('.select-items');
-  const options = item.querySelectorAll('.select-item');
-  let value;
+export default class CustomSelect {
+  constructor(block) {
+    this.selected = document.querySelector(block.selected);
+    this.item = document.querySelector(block.item);
+    this.options = this.item.querySelectorAll(block.options);
+    this.value = null;
+    this.init();
+  }
 
-  function setDefaultSelect(object, container) {
-    if (object !== null && object !== undefined) {
-      for (let element of object) {
+  init() {
+    this.setDefaultSelect();
+    this.addEventListeners();
+  }
+
+  setDefaultSelect() {
+    if (this.options && this.options.length) {
+      for (let element of this.options) {
         if (element.classList.contains('default')) {
-          container.innerHTML = element.innerHTML;
-          container.dataset.value = element.dataset.value;
+          this.selected.innerHTML = element.innerHTML;
+          this.value = element.dataset.value;
+          this.selected.dataset.value = this.value;
+          break;
         }
       }
-      return true;
-    } else {
-      return false;
     }
   }
 
-  setDefaultSelect(options, selected);
+  addEventListeners() {
+    this.selected.addEventListener(
+      'click',
+      this.handleSelectedClick.bind(this)
+    );
+    this.item.addEventListener('click', this.handleItemClick.bind(this));
+  }
 
-  selected.addEventListener('click', function () {
-    item.classList.toggle('select-hide');
-    selected.classList.toggle('open');
-    const currentRect = selected.getBoundingClientRect();
+  handleSelectedClick() {
+    this.item.classList.toggle('select-hide');
+    this.selected.classList.toggle('open');
+    const currentRect = this.selected.getBoundingClientRect();
     const currentWidth = currentRect.width;
-    options.forEach((option) => (option.style.width = `${currentWidth}px`));
+    this.options.forEach(
+      (option) => (option.style.width = `${currentWidth}px`)
+    );
 
-    const handleClickOutside = function (event) {
-      if (!selected.contains(event.target) && !item.contains(event.target)) {
-        item.classList.add('select-hide');
-        selected.classList.remove('open');
-        document.removeEventListener('click', handleClickOutside);
-      }
-    };
+    document.addEventListener('click', this.handleClickOutside.bind(this));
+  }
 
-    document.addEventListener('click', handleClickOutside);
-  });
-
-  item.addEventListener('click', function (event) {
-    if (event.target.matches('div')) {
-      selected.innerHTML = event.target.innerHTML;
-      item.classList.add('select-hide');
-      selected.classList.remove('open');
-      value = event.target.dataset.value;
-      console.log(value);
+  handleClickOutside(e) {
+    if (!this.selected.contains(e.target) && !this.item.contains(e.target)) {
+      this.item.classList.add('select-hide');
+      this.selected.classList.remove('open');
+      document.removeEventListener('click', this.handleClickOutside.bind(this));
     }
-  });
+  }
+
+  handleItemClick(e) {
+    if (e.target.closest('.select-item')) {
+      this.selected.innerHTML = e.target.innerHTML;
+      this.item.classList.add('select-hide');
+      this.selected.classList.remove('open');
+      this.value = e.target.dataset.value;
+      this.selected.dataset.value = this.value;
+      console.log(this.value);
+    }
+  }
+
+  getValue() {
+    return this.value;
+  }
 }
