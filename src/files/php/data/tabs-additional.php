@@ -1,12 +1,7 @@
 <?php
-include_once __DIR__ . '/../helpers/classes/setVariables.php';
 
-$variables = new SetVariables();
-$variables->setVar();
 
-$path = $variables->getPathFileURL();
-
-$tabs = [
+$tabs-2 = [
   [
     "id" => "product_keychain_a93-eco",
     'title' => 'ОПИСАНИЕ',
@@ -100,12 +95,12 @@ $tabs = [
       ],
     ]
   ],
-  [
-    "id" => "product_keychain_e96-eco",
+  /* [
+    "id" => "product_keychain_starline_a96",
     'title' => 'ХАРАКТЕРИСТИКИ',
     'items' => [
       [
-        'title' => 'РРРАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+        'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
         'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ],
@@ -120,7 +115,7 @@ $tabs = [
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ]
     ]
-  ],
+  ], */
   [
     "id" => "product_keychain_starline_a931",
     'title' => 'ГАРАНТИЯ',
