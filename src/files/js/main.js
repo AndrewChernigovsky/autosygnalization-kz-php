@@ -1,12 +1,7 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
 import DoubleRangeSlider from './modules/filter-cost.js';
-import CustomSelect from './modules/select.js';
-const customSelect = new CustomSelect({
-  selected: '.select-selected',
-  item: '.select-items',
-  options: '.select-item',
-});
+
 const rangeSlider = new DoubleRangeSlider('.filter-cost', {
   minValue: 100,
   maxValue: 1000,
@@ -30,7 +25,7 @@ const {
   resetCartButton,
   productsContainerCart,
   modalCart,
-  // selected,
+  selected,
   buyBtnFast,
   checkoutForm,
 } = {
@@ -39,7 +34,7 @@ const {
   fancyboxExist: document.querySelectorAll('[data-fancybox]'),
   searchExist: document.querySelector('.search'),
   phoneButton: document.querySelector('.phone-button'),
-  // selected: document.querySelector('.select-selected'),
+  selected: document.querySelector('.select-selected'),
   buttonPrint: document.getElementById('print-btn'),
   buyBtn: document.getElementById('buy-btn'),
   minValue: document.getElementById('minValue'),
@@ -67,6 +62,16 @@ async function loadModules() {
   if (footer != null) {
     const { toggleList } = await import('./modules/footer-menu.js');
     toggleList();
+  }
+  if (selected != null) {
+    const select = await import('./modules/select.js');
+    const CustomSelect = select.default;
+    const newCustomSelect = new CustomSelect({
+      selected: '.select-selected',
+      item: '.select-items',
+      options: '.select-item',
+    });
+    console.log(newCustomSelect.getValue());
   }
   if (cartCounter != null) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');

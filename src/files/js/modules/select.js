@@ -1,5 +1,7 @@
 export default class CustomSelect {
   constructor(block) {
+    const mainSelector = document.querySelector(block.selected);
+    if (!mainSelector) return;
     this.selected = document.querySelector(block.selected);
     this.item = document.querySelector(block.item);
     this.options = this.item.querySelectorAll(block.options);
@@ -41,7 +43,6 @@ export default class CustomSelect {
     this.options.forEach(
       (option) => (option.style.width = `${currentWidth}px`)
     );
-
     document.addEventListener('click', this.handleClickOutside.bind(this));
   }
 
@@ -60,7 +61,7 @@ export default class CustomSelect {
       this.selected.classList.remove('open');
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
-      console.log(this.value);
+      this.getValue();
     }
   }
 
