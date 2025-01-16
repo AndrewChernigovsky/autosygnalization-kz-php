@@ -232,8 +232,8 @@ export class CheckoutForm extends Component {
           <textarea name="comments" id="comments"></textarea>
         </label>
         <label>
+          <input type="checkbox" name="call-me" id="call-me" />
           <p>Перезвоните мне</p>
-          <input name="call-me" id="call-me" />
         </label>
       </fieldset>
       <div class="checkout-form__wrapper">
@@ -245,7 +245,7 @@ export class CheckoutForm extends Component {
           required
         />
         <label class="checkout-form__label-privacy" for="privacy">
-          Оформляя заказ, подтверждаю, что я ознакомлен и согласен с условиями 
+          Оформляя заказ, подтверждаю, что я ознакомлен и согласен с условиями
           <a href="#" onClick=${(e) => this.openWindow(e, 'policy')}>
             политики конфиденциальности</a
           >
@@ -255,7 +255,6 @@ export class CheckoutForm extends Component {
           >
         </label>
       </div>
-      
     `;
   }
 }

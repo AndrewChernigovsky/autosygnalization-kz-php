@@ -59,11 +59,21 @@
     
   
 
-  & div span {
+  & div span, p {
     text-transform: uppercase;
+    font-family: var.$primary-font;
   }
 
-  & div span:nth-child(2) {
-    color: aqua;
+  & div span:nth-child(2),
+  & div p span {
+    font-size: 20px;
+    line-height: 20px;
+    font-weight: 700;
+    color: var.$red-B40036;
+  }
+
+  & div p {
+    display: flex;
+    gap: 10px;
   }
 }
