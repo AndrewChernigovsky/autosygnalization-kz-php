@@ -179,7 +179,7 @@ $tabs = [
           [
             'title' => 'ДИАЛОГОВАЯ ЗАЩИТА',
             'description' => 'Диалоговый код управления StarLine c индивидуальными ключами шифрования 128 бит гарантирует надежную защиту от всех известных кодграбберов.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection.avif",
           ],
           [
             'title' => 'ЗАЩИТА ОТ РАДИОПОМЕХ',
