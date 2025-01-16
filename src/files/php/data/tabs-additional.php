@@ -1,7 +1,6 @@
 <?php
 
-
-$tabs-2 = [
+$tabs_2 = [
   [
     "id" => "product_keychain_a93-eco",
     'title' => 'ОПИСАНИЕ',
@@ -95,7 +94,7 @@ $tabs-2 = [
       ],
     ]
   ],
-  /* [
+  [
     "id" => "product_keychain_starline_a96",
     'title' => 'ХАРАКТЕРИСТИКИ',
     'items' => [
@@ -115,7 +114,7 @@ $tabs-2 = [
         'path-icon' => "$path/assets/images/vectors/thermometer.svg",
       ]
     ]
-  ], */
+  ],
   [
     "id" => "product_keychain_starline_a931",
     'title' => 'ГАРАНТИЯ',

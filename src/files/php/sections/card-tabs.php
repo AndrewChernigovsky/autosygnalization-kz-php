@@ -7,58 +7,95 @@ $variables->setVar();
 
 $path = $variables->getPathFileURL();
 
-error_log(print_r($tabs, true) . ": TABS");
+// ID текущего товара
+$current_product_id = 'product_keychain_a93-eco';
+
+// Найти вкладки для текущего товара
+$product_tabs = [];
+foreach ($tabs as $product) {
+    if ($product['id'] === $current_product_id && isset($product['tabs'])) {
+        $product_tabs = $product['tabs'];
+        break;
+    }
+}
 
 function isActiveClassTab($index)
 {
-  if ($index === 0) {
-    return 'tab__button--active';
-  }
+    return $index === 0 ? 'tab__button--active' : '';
 }
+
 function isActiveClassTabContent($index)
 {
-  if ($index === 0) {
-    return 'tab__list--show';
-  }
+    return $index === 0 ? 'tab__list--show' : '';
 }
 ?>
 
+<?php if (!empty($product_tabs)): ?>
 <section class="tab">
-  <div class="tab__wrapper">
-    <div class="tab__buttons">
-      <?php foreach ($tabs as $index => $tab): ?>
-        <button type="button" class="tab__button  <?= isActiveClassTab($index) ?>  y-button-secondary"
-          data-tab="<?php echo $tab['id']; ?>"><?= $tab['title'] ?></button>
-      <?php endforeach; ?>
-    </div>
-    <div class="tab__content">
-      <?php foreach ($tabs as $index => $tab): ?>
-        <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab['id']; ?>">
-          <!-- Вывод элементов из 'items' -->
-          <?php foreach ($tab['items'] as $item): ?>
-            <li class="tab__item"
-              style="background-image: url('<?php echo isset($item['path-icon']) ? htmlspecialchars($item['path-icon']) : '' ?>')">
-              <h3 class="tab__title"><?= $item['title']; ?></h3>
-              <p class="tab__description"><?= $item['description'] ?></p>
-            </li>
-          <?php endforeach; ?>
-        </ul>
-
-        <!-- Новый ul для вывода 'items-service', только если есть элементы -->
-        <?php if (!empty($tab['items-service'])): ?>
-          <p>Удобный сервис</p>
-          <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="service-<?= $tab['id']; ?>">
-            <?php foreach ($tab['items-service'] as $itemService): ?>
-              <li class="tab__item"
-                style="background-image: url('<?php echo isset($itemService['path-icon']) ? htmlspecialchars($itemService['path-icon']) : '' ?>')">
-                <h3 class="tab__title"><?= $itemService['title']; ?></h3>
-                <p class="tab__description"><?= $itemService['description'] ?></p>
-              </li>
+    <div class="tab__wrapper">
+        <!-- Кнопки вкладок -->
+        <div class="tab__buttons">
+            <?php $index = 0; ?>
+            <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
+                <button type="button" class="tab__button <?= isActiveClassTab($index) ?> y-button-secondary"
+                        data-tab="<?= $tab_title; ?>"><?= $tab_title; ?></button>
+                <?php $index++; ?>
             <?php endforeach; ?>
-          </ul>
-        <?php endif; ?>
+        </div>
 
-      <?php endforeach; ?>
+        <!-- Контент вкладок -->
+        <div class="tab__content">
+            <?php $index = 0; ?>
+            <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
+                <?php if ($tab_title === 'ОПИСАНИЕ'): ?>
+                    <!-- Список items -->
+                    <?php if (isset($tab_content['items'])): ?>
+                        <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                            <?php foreach ($tab_content['items'] as $item): ?>
+                                <li class="tab__item"
+                                    style="background-image: url('<?= isset($item['path-icon']) ? htmlspecialchars($item['path-icon']) : '' ?>')">
+                                    <?php if (!empty($item['title'])): ?>
+                                        <h3 class="tab__title"><?= htmlspecialchars($item['title']); ?></h3>
+                                    <?php endif; ?>
+                                    <p class="tab__description"><?= htmlspecialchars($item['description']); ?></p>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+
+                    <!-- Список items-service -->
+                    <?php if (isset($tab_content['items-service'])): ?>
+                        <p>Удобный сервис</p>
+                        <ul class="tab__list tab__list--service <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                            <?php foreach ($tab_content['items-service'] as $item): ?>
+                                <li class="tab__item"
+                                    style="background-image: url('<?= isset($item['path-icon']) ? ($item['path-icon']) : '' ?>')">
+                                    <?php if (!empty($item['title'])): ?>
+                                        <h3 class="tab__title"><?=($item['title']); ?></h3>
+                                    <?php endif; ?>
+                                    <p class="tab__description"><?=($item['description']); ?></p>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <!-- Для других вкладок -->
+                    <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                        <?php foreach ($tab_content as $item): ?>
+                            <li class="tab__item">
+                                <?php if (!empty($item['title'])): ?>
+                                    <h3 class="tab__title"><?= htmlspecialchars($item['title']); ?></h3>
+                                <?php endif; ?>
+                                <p class="tab__description"><?= htmlspecialchars($item['description']); ?></p>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+                <?php $index++; ?>
+            <?php endforeach; ?>
+        </div>
     </div>
-  </div>
 </section>
+<?php else: ?>
+    <p>Информация о товаре недоступна.</p>
+<?php endif; ?>

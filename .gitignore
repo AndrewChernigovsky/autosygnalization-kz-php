@@ -7,3 +7,4 @@ assets/videos
 new_images/
 .vscode
 .DS_Store
+gulpfile.js
