@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use "variables" as var;
 
 .checkout-form {
   max-width: 1000px;
@@ -146,7 +146,7 @@
       
       & input:checked {
           border: none;
-          mask-image: url("/dist/assets/images/vectors/aprove.svg");
+          mask-image: url("#{var.$DEV_PATH}assets/images/vectors/aprove.svg");
           background-color: var.$green;
         }
 
@@ -211,7 +211,7 @@
 
     &:checked {
       border: none;
-      mask-image: url("/dist/assets/images/vectors/aprove.svg");
+      mask-image: url("#{var.$DEV_PATH}assets/images/vectors/aprove.svg");
       background-color: var.$green;
     }
   }
