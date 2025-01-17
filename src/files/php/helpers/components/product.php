@@ -64,7 +64,8 @@ function getProductCardWModel(array $products, bool $cart = false)
           <h3><?php echo htmlspecialchars($product['title']); ?></h3>
           <?php if (isset($product['price'])): ?>
             <p><span>Цена:
-              </span><?php echo htmlspecialchars($product['price']); ?><?php echo htmlspecialchars($product['currency']); ?>
+              </span><?php echo htmlspecialchars($product['price']); ?>
+              <span><?php echo htmlspecialchars($product['currency']); ?></span>              
             </p>
           <?php endif; ?>
         </div>
