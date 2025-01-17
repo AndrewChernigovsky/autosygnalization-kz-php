@@ -4,9 +4,10 @@ import { Autoplay, Pagination, EffectFade } from 'swiper/modules';
 export function initSwiperReviews() {
   const swiperReviews = document.querySelector('.swiper-reviews');
 
+  let reviewsSwiper;
+
   function createReviewsSwiper() {
     if (swiperReviews) {
-      console.log(swiperReviews);
       reviewsSwiper = new Swiper(swiperReviews, {
         loop: true,
         modules: [Autoplay, Pagination, EffectFade],
@@ -22,9 +23,9 @@ export function initSwiperReviews() {
             slidesPerView: 2,
           },
           1024: {
-            slidesPerView: 3
-          }
-        }
+            slidesPerView: 3,
+          },
+        },
       });
     }
   }
