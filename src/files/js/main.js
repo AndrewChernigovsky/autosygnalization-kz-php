@@ -1,6 +1,7 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
 import DoubleRangeSlider from './modules/filter-cost.js';
+
 const rangeSlider = new DoubleRangeSlider('.filter-cost', {
   minValue: 100,
   maxValue: 1000,
@@ -62,6 +63,16 @@ async function loadModules() {
     const { toggleList } = await import('./modules/footer-menu.js');
     toggleList();
   }
+  if (selected != null) {
+    const select = await import('./modules/select.js');
+    const CustomSelect = select.default;
+    const newCustomSelect = new CustomSelect({
+      selected: '.select-selected',
+      item: '.select-items',
+      options: '.select-item',
+    });
+    console.log(newCustomSelect.getValue());
+  }
   if (cartCounter != null) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');
     cartButtonHandler();
@@ -79,10 +90,6 @@ async function loadModules() {
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
     filterToggleMenu();
-  }
-  if (selected != null) {
-    const { initSelect } = await import('./modules/select.js');
-    initSelect();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');

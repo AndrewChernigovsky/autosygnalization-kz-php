@@ -54,7 +54,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 20px;
+  padding-left: 10px;
+  padding-right: 25px;
 
   @media screen and (min-width: var.$tablet) {
     min-width: 150px;
@@ -76,7 +77,7 @@
     background-color: var.$white;
     transform: translateY(-40%);
     top: 50%;
-    right: 5px;
+    right: 10px;
     clip-path: polygon(50% 70%, 0 20%, 0 30%, 50% 80%, 100% 30%, 100% 20%);
 
     @media screen and (min-width: var.$tablet) {
@@ -107,14 +108,15 @@
   border-radius: 0 0 20px 20px;
 }
 
-.select-items div {
+.select-item {
   padding: 10px;
   cursor: pointer;
-  text-transform: lowercase;
-  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.select-items div:hover {
+.select-item:hover {
   background-color: #e0e0e0;
 
   &:last-child {

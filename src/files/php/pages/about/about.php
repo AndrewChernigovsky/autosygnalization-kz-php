@@ -100,12 +100,8 @@ echo $head->setHead();
                   <span class='swiper-slide__header-name'>{$review['name']}</span>
                 </p>
               </div>
-              <div class='swiper-slide__star-block star-one'>
-                <span class='swiper-slide__star-one star'></span>
-                <span class='swiper-slide__star-two star'></span>
-                <span class='swiper-slide__star-three star'></span>
-                <span class='swiper-slide__star-four star'></span>
-                <span class='swiper-slide__star-five star'></span>
+              <div class='swiper-slide__star-block star star-5'>
+
               </div>
                 <p class='swiper-slide__comment'>
                   <span class='swiper-slide__comment-text'>{$review['text']}</span>
