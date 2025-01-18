@@ -37,6 +37,7 @@ function getProductCardWModel(array $products, bool $cart = false)
     return '';
   }
   $groupedProducts = [];
+
   foreach ($products['category'] as $category) {
     foreach ($category as $product) {
       if (isset($product['id'])) {
@@ -49,7 +50,7 @@ function getProductCardWModel(array $products, bool $cart = false)
       }
     }
   }
-
+  $groupedProducts = array_slice($groupedProducts, 0, 10);
   ob_start();
 
   foreach ($groupedProducts as $product) {
@@ -65,7 +66,7 @@ function getProductCardWModel(array $products, bool $cart = false)
           <?php if (isset($product['price'])): ?>
             <p><span>Цена:
               </span><?php echo htmlspecialchars($product['price']); ?>
-              <span><?php echo htmlspecialchars($product['currency']); ?></span>              
+              <span><?php echo htmlspecialchars($product['currency']); ?></span>
             </p>
           <?php endif; ?>
         </div>
