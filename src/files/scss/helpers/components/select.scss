@@ -36,7 +36,7 @@
   }
 
   @media screen and (min-width: var.$desktop-min) {
-    grid-column: 4;
+    grid-column: 3/auto;
   }
 
   @media screen and (min-width: var.$desktop) {
