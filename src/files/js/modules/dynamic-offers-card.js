@@ -6,7 +6,6 @@ const aside = document.querySelector('.aside');
 const catalog = document.querySelector('.catalog__products');
 
 let isMobile = null;
-let resizeEventListener = null;
 let containerElement = null;
 
 function checkWindowSize() {
@@ -49,24 +48,10 @@ function dynamicCardsRenders(isMobile) {
 }
 
 function addResizeEventListener() {
-  resizeEventListener = window.addEventListener('resize', checkWindowSize);
-}
-
-function removeResizeEventListener() {
-  if (resizeEventListener) {
-    window.removeEventListener('resize', checkWindowSize);
-    resizeEventListener = null;
-  }
+  window.addEventListener('resize', checkWindowSize);
 }
 
 export function renderCardsOffers() {
   checkWindowSize();
   addResizeEventListener();
-}
-
-export function unmountCardsOffers() {
-  removeResizeEventListener();
-  if (containerElement) {
-    destroyOfferCard(containerElement);
-  }
 }

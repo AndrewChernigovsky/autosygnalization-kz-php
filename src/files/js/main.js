@@ -1,7 +1,5 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
-import { renderCardsOffers } from './modules/dynamic-offers-card.js';
-renderCardsOffers();
 
 const {
   feedbackForm,
@@ -23,7 +21,9 @@ const {
   selected,
   buyBtnFast,
   checkoutForm,
-  filterCost
+  filterCost,
+  aside,
+  catalog
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -44,7 +44,9 @@ const {
   productsContainerCart: document.querySelector('.cart-section__products'),
   buyBtnFast: document.getElementById('buy-fast-order'),
   checkoutForm: document.querySelector('.checkout-form__body'),
-  filterCost: document.querySelector('.filter-cost')
+  filterCost: document.querySelector('.filter-cost'),
+  aside: document.querySelector('.aside'),
+  catalog: document.querySelector('.catalog__products')
 };
 
 async function loadModules() {
@@ -59,6 +61,10 @@ async function loadModules() {
     });
   }
 
+  if (aside != null && catalog != null) {
+    const { renderCardsOffers } = await import('./modules/dynamic-offers-card.js');
+    renderCardsOffers();
+  }
   if (menuButton != null) {
     const { toToggleMenu } = await import('./modules/menu-burger.js');
     toToggleMenu();
