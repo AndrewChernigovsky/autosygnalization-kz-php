@@ -39,7 +39,12 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
-        ]
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
+        ],
       ],
       [
         "model" => "e96-eco",
@@ -71,6 +76,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "starline" ,
+        ],
       ],
       [
         "model" => "s96-2can-2lin-gsm",
@@ -81,7 +90,7 @@ $products = [
           "$path/assets/images/products/starline_s96/StarLine-S96-V2-BT-2CAN-2LIN-GSM.avif",
           "$path/assets/images/products/starline_s96/StarLine-S96-V2-BT-2CAN-2LIN-GSM-2.avif",
         ],
-        'title' => 'StarLine S96 V2 BT 2CAN 2LIN GSM',
+        'title' => 'StarLine S96 V2 BT 2CAN2LIN GSM',
         "description" => "Надежный автомобильный охранно-телематический комплекс с интеллектуальным автозапуском с вашего смартфона, несканируемым диалоговым кодом управления, возможностью авторизации по технологии Bluetooth Smart, интегрированными 2CAN+2LIN и GSM интерфейсами.",
         "price" => 113600,
         "currency" => "₸",
@@ -100,6 +109,11 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
         ],
       ],
       [
@@ -132,6 +146,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "starline" ,
+        ],
       ],
       [
         "model" => "e96-gsm",
@@ -163,6 +181,11 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
+        ],
       ],
       [
         "model" => "s96-lte",
@@ -192,6 +215,11 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
         ],
       ],
       [
@@ -224,6 +252,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "starline" ,
+        ],
       ],
       [
         "model" => "e96-2can-4lin-gsm",
@@ -252,6 +284,11 @@ $products = [
         ],
         "options" => [
           "Для легкового авто"
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
         ],
       ],
       [
@@ -283,6 +320,11 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
+        ],
       ],
       [
         "model" => "a93-v2-gsm",
@@ -312,6 +354,11 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
         ],
       ],
       [
@@ -344,6 +391,11 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline" ,
+        ],
       ],
       [
         "model" => "a60",
@@ -374,6 +426,10 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "without-auto",
+          "starline",
         ],
       ],
       [
@@ -406,6 +462,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "without-auto",
+          "starline",
+        ],
       ],
       [
         "model" => "a63",
@@ -436,6 +496,10 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "without-auto",
+          "starline",
         ],
       ],
       [
@@ -468,6 +532,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "gsm",
+          "starline",
+        ],
       ],
       [
         "model" => "a90",
@@ -498,6 +566,9 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "starline",
         ],
       ],
     ],

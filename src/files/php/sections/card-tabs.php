@@ -8,6 +8,7 @@ $variables->setVar();
 $path = $variables->getPathFileURL();
 
 // ID текущего товара
+/* $current_product_id = 'product_keychain_a93-eco'; */
 $current_product_id = 'product_keychain_a93-eco';
 
 // Найти вкладки для текущего товара
