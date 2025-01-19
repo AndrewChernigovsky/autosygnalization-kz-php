@@ -15,7 +15,6 @@ class SetVariables
     self::$docRoot = $_SERVER['DOCUMENT_ROOT'];
   }
 
-
   public function setVar()
   {
     $distPath = self::$docRoot . '/dist';

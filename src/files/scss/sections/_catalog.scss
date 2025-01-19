@@ -81,7 +81,7 @@
       clip-path: polygon(0 0%, 100% 0, 100% 90%, 0% 100%);
 
       img {
-        height: 250px;
+        height: 200px;
       }
     }
 
@@ -114,7 +114,9 @@
     }
 
     .product-card__buttons {
-      a, button {
+
+      a,
+      button {
         font-family: var.$secondary-font;
         font-size: 20px;
         line-height: 28px;
@@ -138,7 +140,7 @@
 
 .catalog .container {
   @media screen and (min-width: var.$desktop-min) {
-      width: 320px;
-      grid-row: 9;
-    }
+    width: 320px;
+    grid-row: 9;
+  }
 }
