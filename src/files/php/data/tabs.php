@@ -15,6 +15,197 @@ $tabs = [
           [
             'title' => 'ДИАЛОГОВАЯ ЗАЩИТА',
             'description' => 'Диалоговый код управления StarLine c индивидуальными ключами шифрования 128 бит гарантирует надежную защиту от всех известных кодграбберов.',
+            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection-white.avif",
+          ],
+          [
+            'title' => 'ЗАЩИТА ОТ РАДИОПОМЕХ',
+            'description' => 'StarLine уверенно работает в условиях экстремальных городских радиопомех, благодаря уникальному 128-канальному трансиверу.',
+            'path-icon' => "$path/assets/images/products/advantages/radio-protection-white.avif",
+          ],
+          [
+            'title' => 'SUPER SLAVE (ОПЦИЯ)',
+            'description' => 'Управление охраной автомобиля штатным брелком с надежной дополнительной диалоговой авторизацией брелком StarLine. Опция доступна при интеграции 2CAN+2LIN интерфейса.',
+            'path-icon' => "$path/assets/images/products/advantages/super-slave-white.avif",
+          ],
+          [
+            'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+            'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 50 до плюс 85 °С благодаря высококачественным комплектующим.',
+            'path-icon' => "$path/assets/images/products/advantages/temperature-range-white.avif",
+          ],
+          [
+            'title' => 'РЕКОРДНАЯ ЭНЕРГОЭКОНОМИЧНОСТЬ',
+            'description' => 'StarLine гарантирует сохранность достаточного заряда аккумулятора до 60 дней в режиме охраны благодаря использованию запатентованных технологий и программных решений.',
+            'path-icon' => "$path/assets/images/products/advantages/energy-eco-white.avif",
+          ],
+          [
+            'title' => 'КОНТРОЛЬ КАНАЛА СВЯЗИ',
+            'description' => 'Автоматический контроль канала связи обеспечивает прoверку нахождения брелка в зоне действия приемопередатчика охранного оборудования.',
+            'path-icon' => "$path/assets/images/products/advantages/control-channel-white.avif",
+          ],
+          [
+            'title' => 'АВТОРИЗАЦИЯ ПО PIN-КОДУ (ОПЦИЯ)',
+            'description' => 'Защитите автомобиль от угона даже в случае кражи ключей или меток благодаря умной дополнительной авторизации. Поездка возможна только после ввода индивидуального PIN-кода при помощи штатных кнопок автомобиля. <br> Опция доступна при интеграции 2CAN+2LIN интерфейса.',
+            'path-icon' => "$path/assets/images/products/advantages/pin-authorization-white.avif",
+          ],
+          [
+            'title' => '3D ДАТЧИК УДАРА И НАКЛОНА',
+            'description' => 'Интегрированный цифровой датчик удара и наклона с дистанционной настройкой регистрирует поддомкрачивание и эвакуацию транспортного средства.',
+            'path-icon' => "$path/assets/images/products/advantages/3d-control-white.avif",
+          ],
+          [
+            'title' => 'НЕВИДИМАЯ БЛОКИРОВКА (ОПЦИЯ)',
+            'description' => 'iCAN гарантирует надежную защиту благодаря уникальной запатентованной технологии скрытой блокировки двигателя по штатным цифровым шинам автомобиля. Опция доступна при интеграции 2CAN+2LIN интерфейса.',
+            'path-icon' => "$path/assets/images/products/advantages/invisible-blocking-white.avif",
+          ],
+        ],
+        'items-service' => [
+          [
+            'title' => 'ТЕЛЕМАТИКА (ОПЦИЯ)',
+            'description' => 'Интеграция опциональных <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/?ncc=1" target="_blank">GSM</a>,<a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> телематических интерфейсов позволяет дистанционно управлять охраной вашего автомобиля и осуществлять мониторинг.',
+            'path-icon' => "$path/assets/images/products/advantages/telematics.avif",
+          ],
+          [
+            'title' => 'УПРАВЛЕНИЕ С ТЕЛЕФОНА (ОПЦИЯ)',
+            'description' => 'Интеграция опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/" target="_blank"> GSM-ИНТЕРФЕЙСА</a> позволяет управлять охранными и сервисными функциями, получать оповещения о статусе охраны на ваш мобильный телефон.',
+            'path-icon' => "$path/assets/images/products/advantages/gsm-control.avif",
+          ],
+          [
+            'title' => 'БЕСПЛАТНЫЙ МОНИТОРИНГ (ОПЦИЯ)',
+            'description' => 'С помощью простого и удобного мониторинга <a href="https://www.starline-online.ru/" target="_blank">STARLINE.ONLINE</a> вы сможете с точностью до нескольких метров узнать местонахождение своего транспортного средства. Опция доступна при подключении <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> и наличии опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/" target="_blank"> GSM-ИНТЕРФЕЙСА</a>.',
+            'path-icon' => "$path/assets/images/products/advantages/gps-glonass.avif",
+          ],
+          [
+            'title' => 'АВТОЗАПУСК',
+            'description' => 'Интеллектуальный автозапуск позволяет осуществлять дистанционный и автоматический запуск двигателя по температуре, в заданное время или периодически.',
+            'path-icon' => "$path/assets/images/products/advantages/autostart.avif",
+          ],
+          [
+            'title' => '2CAN+2LIN (ОПЦИЯ)',
+            'description' => 'Интеграция опционального 2CAN+2LIN интерфейса обеспечивает быструю, удобную и безопасную установку охранного оборудования StarLine на современные автомобили, оснащенные шинами CAN или LIN.',
+            'path-icon' => "$path/assets/images/products/advantages/2can2lin.avif",
+          ],
+          [
+            'title' => 'ГИБКИЕ СЕРВИСНЫЕ КАНАЛЫ',
+            'description' => 'Программируемые параметры управления аварийной световой сигнализацией, складыванием зеркал, настройкой сидений под владельца и многое другое.',
+            'path-icon' => "$path/assets/images/products/advantages/flex-channel.avif",
+          ],
+          [
+            'title' => 'УДАРОПРОЧНЫЙ БРЕЛОК',
+            'description' => 'Брелок StarLine имеет инновационную, ударопрочную конструкцию, эргономичный дизайн и внутреннюю защищенную антенну.',
+            'path-icon' => "$path/assets/images/products/advantages/shockproff-keychain.avif",
+          ],
+          [
+            'title' => 'УМНЫЙ БЕСКЛЮЧЕВОЙ ОБХОД (ОПЦИЯ)',
+            'description' => 'StarLine iKey позволяет реализовать бесключевой обход штатного иммобилайзера в автомобилях, оборудованных охранными комплексами StarLine. Опция доступна при подключении 2CAN+2LIN интерфейса*.<br><i>*Список автомобилей, поддерживающих данную функцию, смотрите на <a href="https://can.starline.ru/" target="_blank">CAN.STARLINE.RU</i>',
+            'path-icon' => "$path/assets/images/products/advantages/iKey.avif",
+          ],
+        ],
+      ],
+      'ХАРАКТЕРИСТИКИ' => [
+        [
+          'title' => 'Функции',
+          'description' => 'Автозапуск, Управление предпусковым подогревом',
+        ],
+        [
+          'title' => 'Категория',
+          'description' => 'Для легкового авто, Для внедорожника',
+        ],
+      ],
+      'ГАРАНТИЯ' => [
+        [
+          'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+        ],
+      ],
+      'СООТВЕТСТВУЮЩИЕ ТОВАРЫ' => [],
+    ],
+  ],
+  [
+    'id' => 'product_keychain_e96-eco',
+    'tabs' => [
+      'ОПИСАНИЕ' => [
+        'items' => [
+          [
+            'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
+            'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+            'path-icon' => "$path/assets/images/products/advantages/temperature-range-white.avif",
+          ],
+          [
+            'title' => 'УМНАЯ АВТОРИЗАЦИЯ',
+            'description' => 'Только владелец получает разрешение на поездку после авторизации по защищенному протоколу через персональную метку или смартфон на iOS и Android с мобильным приложением StarLine.',
+            'path-icon' => "$path/assets/images/products/advantages/smart-authorization.avif",
+          ],
+          [
+            'title' => 'УМНЫЙ ДИАЛОГ',
+            'description' => 'Умный диалоговый код управления c индивидуальными ключами шифрования гарантирует надежную защиту от всех известных кодграбберов',
+            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection-white.avif",
+          ],
+          [
+            'title' => 'ЗАЩИТА ОТ РАДИОПОМЕХ',
+            'description' => 'StarLine уверенно работает в условиях экстремальных городских радиопомех, благодаря уникальному узкополосному трансиверу с малошумящим усилителем',
+            'path-icon' => "$path/assets/images/products/advantages/radio-protection-white.avif",
+          ],
+          [
+            'title' => 'УМНЫЙ 3D КОНТРОЛЬ',
+            'description' => 'Интеллектуальный 3D-контроль с дистанционной настройкой регистрирует удары, поддомкрачивание и эвакуацию автомобиля и оценивает безопасность вождения',
+            'path-icon' => "$path/assets/images/products/advantages/3d-control-white.avif",
+          ],
+          [
+            'title' => 'РЕКОРДНАЯ ЭНЕРГОЭКОНОМИЧНОСТЬ',
+            'description' => 'StarLine гарантирует сохранность достаточного заряда аккумулятора до 60 дней в режиме охраны благодаря использованию запатентованных прогрессивных технологий и программных решений',
+            'path-icon' => "$path/assets/images/products/advantages/energy-eco-white.avif",
+          ],
+          [
+            'title' => 'SUPER SLAVE',
+            'description' => 'Управление охраной автомобиля штатным брелком с надежной дополнительной авторизацией по основному брелку StarLine',
+            'path-icon' => "$path/assets/images/products/advantages/super-slave-white.avif",
+          ],
+          [
+            'title' => 'АВТОРИЗАЦИЯ ПО PIN-КОДУ',
+            'description' => 'Защитите автомобиль от угона даже в случае кражи ключей или меток благодаря умной дополнительной авторизации. Поездка возможна только после ввода индивидуального PIN-кода при помощи штатных кнопок автомобиля',
+            'path-icon' => "$path/assets/images/products/advantages/pin-authorization-white.avif",
+          ],
+          [
+            'title' => 'НЕВИДИМАЯ БЛОКИРОВКА',
+            'description' => 'iCAN гарантирует надежную защиту благодаря уникальной запатентованной технологии скрытой блокировки двигателя по штатным цифровым шинам автомобиля',
+            'path-icon' => "$path/assets/images/products/advantages/invisible-blocking-white.avif",
+          ],
+        ],
+        'items-service' => [
+          [
+            'title' => 'УМНЫЙ КЛИМАТ-КОНТРОЛЬ',
+            'description' => 'Интеллектуальный автозапуск позволяет осуществлять дистанционный и автоматический запуск двигателя по температуре, в заданное время, по просадке АКБ или дням недели. Комфорт гарантирован',
+            'path-icon' => "$path/assets/images/products/advantages/autostart.avif",
+          ],
+          [
+            'title' => '60 ГИБКИХ НАСТРОЕК И СЦЕНАРИЕВ',
+            'description' => 'Программируемые параметры управления аварийной световой сигнализацией, складыванием зеркал при постановке на охрану и многое другое для комфорта автовладельца',
+            'path-icon' => "$path/assets/images/products/advantages/smart-authorization.avif",
+          ],
+          [
+            'title' => 'УМНАЯ ЦИФРОВАЯ ИНТЕГРАЦИЯ',
+            'description' => '2CAN+4LIN интерфейс обеспечивает быструю, удобную и безопасную установку охранного оборудования StarLine на современные автомобили, оснащенные шинами CAN или LIN',
+            'path-icon' => "$path/assets/images/products/advantages/2can-4lin.avif",
+          ],
+          [
+            'title' => 'УМНЫЙ БЕСКЛЮЧЕВОЙ ОБХОД',
+            'description' => 'Экономьте на покупке дополнительного обходчика или дубликате ключа, необходимых для реализации функции автозапуска двигателя. StarLine iKey позволяет реализовать бесключевой обход штатного иммобилайзера и запуск двигателя по цифровым шинам CAN или LIN*<br><i>*Список автомобилей, поддерживающих данную функцию, смотрите на <a href="https://can.starline.ru/" target="_blank">CAN.STARLINE.RU</i>',
+            'path-icon' => "$path/assets/images/products/advantages/iKey.avif",
+          ],
+        ],
+      ],
+      'ХАРАКТЕРИСТИКИ' => [],
+      'ГАРАНТИЯ' => [],
+      'СОПУТСТВУЮЩИЕ ТОВАРЫ' => [],
+    ],
+  ],
+  [
+    'id' => 's96-2can-2lin-gsm',
+    'tabs' => [
+      'ОПИСАНИЕ' => [
+        'items' => [
+          [
+            'title' => 'ДИАЛОГОВАЯ ЗАЩИТА',
+            'description' => 'Диалоговый код управления StarLine c индивидуальными ключами шифрования 128 бит гарантирует надежную защиту от всех известных кодграбберов',
             'path-icon' => "$path/assets/images/products/advantages/dialogue-protection.avif",
           ],
           [
@@ -44,7 +235,7 @@ $tabs = [
           ],
           [
             'title' => 'АВТОРИЗАЦИЯ ПО PIN-КОДУ (ОПЦИЯ)',
-            'description' => 'Защитите автомобиль от угона даже в случае кражи ключей или меток благодаря умной дополнительной авторизации. Поездка возможна только после ввода индивидуального PIN-кода при помощи штатных кнопок автомобиля. <br> Опция доступна при интеграции 2CAN+2LIN интерфейса.',
+            'description' => 'Защитите автомобиль от угона даже в случае кражи ключей или меток благодаря умной дополнительной авторизации. Поездка возможна только после ввода индивидуального PIN-кода при помощи штатных кнопок автомобиля. <br><i>Опция доступна при интеграции 2CAN+2LIN интерфейса.</i>',
             'path-icon' => "$path/assets/images/products/advantages/pin-authorization.avif",
           ],
           [
@@ -104,7 +295,7 @@ $tabs = [
       'ХАРАКТЕРИСТИКИ' => [
         [
           'title' => 'Функции',
-          'description' => 'Автозапуск, Управление предпусковым подогревом',
+          'description' => 'Автозапуск, Управление с телефона, Умная авторизация по Bluetooth Smart , Управление предпусковым подогревом , Блокировка двигателя по CAN, Умная автодиагностика, Данные о пробеге и уровне топлива',
         ],
         [
           'title' => 'Категория',
@@ -113,93 +304,14 @@ $tabs = [
       ],
       'ГАРАНТИЯ' => [
         [
-          'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
+          'description' => 'Гарантия 5 лет при условии установки нашим специалистом и соответствующей регистрацией на my.starline.ru',
         ],
       ],
-      'СООТВЕТСТВУЮЩИЕ ТОВАРЫ' => [],
-    ],
-  ],
-  [
-    'id' => 'product_keychain_e96-eco',
-    'tabs' => [
-      'ОПИСАНИЕ' => [
-        'items' => [
-          [
-            'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
-            'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 40 до плюс 85 °С благодаря высококачественным комплектующим',
-            'path-icon' => "$path/assets/images/products/advantages/temperature-range.avif",
-          ],
-          [
-            'title' => 'УМНАЯ АВТОРИЗАЦИЯ',
-            'description' => 'Только владелец получает разрешение на поездку после авторизации по защищенному протоколу через персональную метку или смартфон на iOS и Android с мобильным приложением StarLine.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
-          ],
-          [
-            'title' => 'УМНЫЙ ДИАЛОГ',
-            'description' => 'Умный диалоговый код управления c индивидуальными ключами шифрования гарантирует надежную защиту от всех известных кодграбберов',
-            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection.avif",
-          ],
-          [
-            'title' => 'ЗАЩИТА ОТ РАДИОПОМЕХ',
-            'description' => 'StarLine уверенно работает в условиях экстремальных городских радиопомех, благодаря уникальному узкополосному трансиверу с малошумящим усилителем',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
-          ],
-          [
-            'title' => 'УМНЫЙ 3D КОНТРОЛЬ',
-            'description' => 'Интеллектуальный 3D-контроль с дистанционной настройкой регистрирует удары, поддомкрачивание и эвакуацию автомобиля и оценивает безопасность вождения',
-            'path-icon' => "$path/assets/images/products/advantages/3d-control.avif",
-          ],
-          [
-            'title' => 'РЕКОРДНАЯ ЭНЕРГОЭКОНОМИЧНОСТЬ',
-            'description' => 'StarLine гарантирует сохранность достаточного заряда аккумулятора до 60 дней в режиме охраны благодаря использованию запатентованных прогрессивных технологий и программных решений',
-            'path-icon' => "$path/assets/images/products/advantages/energy-eco.avif",
-          ],
-          [
-            'title' => 'SUPER SLAVE',
-            'description' => 'Управление охраной автомобиля штатным брелком с надежной дополнительной авторизацией по основному брелку StarLine',
-            'path-icon' => "$path/assets/images/products/advantages/super-slave.avif",
-          ],
-          [
-            'title' => 'АВТОРИЗАЦИЯ ПО PIN-КОДУ',
-            'description' => 'Защитите автомобиль от угона даже в случае кражи ключей или меток благодаря умной дополнительной авторизации. Поездка возможна только после ввода индивидуального PIN-кода при помощи штатных кнопок автомобиля',
-            'path-icon' => "$path/assets/images/products/advantages/pin-authorization.avif",
-          ],
-          [
-            'title' => 'НЕВИДИМАЯ БЛОКИРОВКА',
-            'description' => 'iCAN гарантирует надежную защиту благодаря уникальной запатентованной технологии скрытой блокировки двигателя по штатным цифровым шинам автомобиля',
-            'path-icon' => "$path/assets/images/products/advantages/invisible-blocking.avif",
-          ],
-        ],
-        'items-service' => [
-          [
-            'title' => 'УМНЫЙ КЛИМАТ-КОНТРОЛЬ',
-            'description' => 'Интеллектуальный автозапуск позволяет осуществлять дистанционный и автоматический запуск двигателя по температуре, в заданное время, по просадке АКБ или дням недели. Комфорт гарантирован',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
-          ],
-          [
-            'title' => '60 ГИБКИХ НАСТРОЕК И СЦЕНАРИЕВ',
-            'description' => 'Программируемые параметры управления аварийной световой сигнализацией, складыванием зеркал при постановке на охрану и многое другое для комфорта автовладельца',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
-          ],
-          [
-            'title' => 'УМНАЯ ЦИФРОВАЯ ИНТЕГРАЦИЯ',
-            'description' => '2CAN+4LIN интерфейс обеспечивает быструю, удобную и безопасную установку охранного оборудования StarLine на современные автомобили, оснащенные шинами CAN или LIN',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
-          ],
-          [
-            'title' => 'УМНЫЙ БЕСКЛЮЧЕВОЙ ОБХОД',
-            'description' => 'Экономьте на покупке дополнительного обходчика или дубликате ключа, необходимых для реализации функции автозапуска двигателя. StarLine iKey позволяет реализовать бесключевой обход штатного иммобилайзера и запуск двигателя по цифровым шинам CAN или LIN*<br><i>*Список автомобилей, поддерживающих данную функцию, смотрите на <a href="https://can.starline.ru/" target="_blank">CAN.STARLINE.RU</i>',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
-          ],
-        ],
-      ],
-      'ХАРАКТЕРИСТИКИ' => [],
-      'ГАРАНТИЯ' => [],
       'СОПУТСТВУЮЩИЕ ТОВАРЫ' => [],
     ],
   ],
   [
-    'id' => 's96-2can-2lin-gsm',
+    'id' => 'product_keychain_s96-2can-2lin-gsm',
     'tabs' => [
       'ОПИСАНИЕ' => [
         'items' => [
@@ -365,42 +477,42 @@ $tabs = [
           [
             'title' => 'ТЕЛЕМАТИКА (ОПЦИЯ)',
             'description' => 'Интеграция опциональных <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/?ncc=1" target="_blank">GSM</a>,<a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> телематических интерфейсов позволяет дистанционно управлять охраной вашего автомобиля и осуществлять мониторинг.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/telematics.avif",
           ],
           [
             'title' => 'УПРАВЛЕНИЕ С ТЕЛЕФОНА (ОПЦИЯ)',
             'description' => 'Интеграция опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/" target="_blank"> GSM-ИНТЕРФЕЙСА</a> позволяет управлять охранными и сервисными функциями, получать оповещения о статусе охраны на ваш мобильный телефон.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/gsm-control.avif",
           ],
           [
             'title' => 'БЕСПЛАТНЫЙ МОНИТОРИНГ (ОПЦИЯ)',
             'description' => 'С помощью простого и удобного мониторинга <a href="https://www.starline-online.ru/" target="_blank">STARLINE.ONLINE</a> вы сможете с точностью до нескольких метров узнать местонахождение своего транспортного средства. Опция доступна при подключении <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> и наличии опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/" target="_blank"> GSM-ИНТЕРФЕЙСА</a>.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/gps-glonass.avif",
           ],
           [
             'title' => 'АВТОЗАПУСК',
             'description' => 'Интеллектуальный автозапуск позволяет осуществлять дистанционный и автоматический запуск двигателя по температуре, в заданное время или периодически.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/autostart.avif",
           ],
           [
             'title' => '2CAN+2LIN (ОПЦИЯ)',
             'description' => 'Интеграция опционального 2CAN+2LIN интерфейса обеспечивает быструю, удобную и безопасную установку охранного оборудования StarLine на современные автомобили, оснащенные шинами CAN или LIN.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/2can2lin.avif",
           ],
           [
             'title' => 'ГИБКИЕ СЕРВИСНЫЕ КАНАЛЫ',
             'description' => 'Программируемые параметры управления аварийной световой сигнализацией, складыванием зеркал, настройкой сидений под владельца и многое другое.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/flex-channel.avif",
           ],
           [
             'title' => 'УДАРОПРОЧНЫЙ БРЕЛОК',
             'description' => 'Брелок StarLine имеет инновационную, ударопрочную конструкцию, эргономичный дизайн и внутреннюю защищенную антенну.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/shockproff-keychain.avif",
           ],
           [
             'title' => 'УМНЫЙ БЕСКЛЮЧЕВОЙ ОБХОД (ОПЦИЯ)',
             'description' => 'StarLine iKey позволяет реализовать бесключевой обход штатного иммобилайзера в автомобилях, оборудованных охранными комплексами StarLine. Опция доступна при подключении 2CAN+2LIN интерфейса*.<br><i>*Список автомобилей, поддерживающих данную функцию, смотрите на <a href="https://can.starline.ru/" target="_blank">CAN.STARLINE.RU</i>',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/iKey.avif",
           ],
         ],
       ],
