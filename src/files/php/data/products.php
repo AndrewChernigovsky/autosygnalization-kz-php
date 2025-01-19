@@ -844,8 +844,8 @@ $products = [
         "popular" => false,
         "id" => 'product_park-systems_cj-188',
         "gallery" => [
-          "$path/assets/images/products/park-systems/camera-rear-view-cj-178/camera-rear-view-cj-178-1.avif",
-          "$path/assets/images/products/park-systems/camera-rear-view-cj-178/rear-view-camera-cj-178-2.avif",
+          "$path/assets/images/products/park-systems/camera-rear-view-cj-188/full_camera-rear-view-CJ-188-1.avif",
+          "$path/assets/images/products/park-systems/camera-rear-view-cj-188/full_camera-rear-view-CJ-188-2.avif",
         ],
         'title' => 'Камера заднего вида CJ-188',
         "description" => "Видеокамера заднего обзора универсальная с инфракрасной подсветкой CJ-188 хорошо впишется в пространство рядом с фонарем подсветки номера. Особенность модели в том, что она самая маленькая среди своих собратьев имеющих инфракрасную подсветку, камера незаметна при монтаже. Благодаря инфракрасной подсветке парковка ночью будет безопасной и приятной, так как подсветка помогает камере видеть ночью до 5 метров в черно-белом изображении, а днем показывает цветным.",
@@ -860,9 +860,8 @@ $products = [
         "popular" => false,
         "id" => 'product_park-systems_camera-prado150',
         "gallery" => [
-          "$path/assets/images/products/starline_a93/product-1.avif",
-          "$path/assets/images/products/starline_a93/product-2.avif",
-          "$path/assets/images/products/starline_a93/product-3.avif",
+          "$path/assets/images/products/park-systems/camera-rear-view-toyota-prado-150/camera-rear-view-toyota-prado-150-1.avif",
+          "$path/assets/images/products/park-systems/camera-rear-view-toyota-prado-150/camera-rear-view-toyota-prado-150-2.avif"
         ],
         'title' => 'Камера заднего вида на Toyota Prado 150',
         "description" => "Инфракрасная камера заднего вида для Toyota Prado 150, оборудованная 4 красными светодиодами для ночного виденья, прекрасно поможет Вам запарковаться в любое время суток! Камера выполнена в черном пластиковом водонепроницаемом корпусе. Данная модель может подойти и на другие автомобили, имеющие небольшое квадратное отверстие на крышке багажника для крепления камеры.",
@@ -872,10 +871,10 @@ $products = [
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-prado150",
       ],
       [
-        "model" => "backup-camera",
+        "model" => "number-plate-with-camera",
         "cart" => false,
         "popular" => false,
-        "id" => 'product_park-systems_backup-camera',
+        "id" => 'product_park-systems_number-plate-with-camera',
         "gallery" => [
           "$path/assets/images/products/starline_a93/product-1.avif",
           "$path/assets/images/products/starline_a93/product-2.avif",
@@ -886,7 +885,7 @@ $products = [
         "price" => 15000,
         "currency" => "₸",
         "quantity" => 1,
-        "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_backup-camera",
+        "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=number-plate-with-camera",
       ],
       [
         "model" => "camera-c1100",
