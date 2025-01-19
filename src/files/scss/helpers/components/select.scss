@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .custom-select-block {
   position: relative;
@@ -29,6 +29,11 @@
   letter-spacing: 0.25px;
   text-transform: none;
   color: var.$white;
+
+  @media screen and (max-width: var.$tablet) {
+    min-width: 147px;
+    justify-self: right;
+  }
 
   @media screen and (min-width: var.$tablet) {
     min-width: 265px;
@@ -111,7 +116,7 @@
   z-index: 101;
   border-radius: 0 0 20px 20px;
 
-  @media screen and (min-width: var.$desktop-min)  {
+  @media screen and (min-width: var.$desktop-min) {
     left: 0;
     right: auto;
   }

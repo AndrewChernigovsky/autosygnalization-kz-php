@@ -6,7 +6,6 @@ if (!file_exists($path_to_include)) {
 }
 include $path_to_include;
 
-
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
