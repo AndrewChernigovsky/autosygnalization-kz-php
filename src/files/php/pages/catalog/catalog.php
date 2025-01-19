@@ -43,22 +43,15 @@ echo $head->setHead();
     <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
     <div class="catalog">
       <div class="catalog__wrapper">
-        <?= $filters->renderFilters() ?>
-        <?= $select->createComponent($selectData->getSelectData()) ?>
+        <aside class="aside">
+          <?= $filters->renderFilters() ?>
+        </aside>
         <div class="catalog__products">
+          <?= $select->createComponent($selectData->getSelectData()) ?>
           <?= getProductCardWModel($products) ?>
         </div>
-        <div class="container">
-          <aside class="aside">          
-            <div class="aside__offers">
-              <?php foreach ($articleData->getArticleData() as $data): ?>
-                <?= $article->createComponent($data); ?>
-              <?php endforeach; ?>
-            </div>
-          </aside> 
-        </div>  
-      </div>                    
-    </div>      
+      </div>
+    </div>
     <?= getShop('setup'); ?>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
