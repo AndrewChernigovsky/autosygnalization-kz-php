@@ -46,15 +46,21 @@ echo $head->setHead();
         <aside class="aside">
           <?= $filters->renderFilters() ?>
           <div class="aside__offers">
+            <button type="button" class="aside__button" id="aside-button" style="background-image: url(<?= ($path . '/assets/images/vectors/close.svg'); ?>);">
+              <span class="visually-hidden">Закрыть окно</span>
+            </button>
             <?php foreach ($articleData->getArticleData() as $data): ?>
               <?= $article->createComponent($data); ?>
             <?php endforeach; ?>
           </div>
         </aside>
         <div class="catalog__products">
-          <?= getProductCardWModel($products) ?>
           <?= $select->createComponent($selectData->getSelectData()) ?>
+          <?= getProductCardWModel($products) ?>
         </div>
+        <button type="button" class="aside__button aside__button--open" id="aside-open" style="background-image: url(<?= ($path . '/assets/images/vectors/link-icon.svg'); ?>);">
+          <span class="visually-hidden">Открыть окно</span>
+        </button>
       </div>
     </div>
     <?= getShop('setup'); ?>

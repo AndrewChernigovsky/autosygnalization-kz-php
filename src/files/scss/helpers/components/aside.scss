@@ -2,15 +2,69 @@
 
 .aside {
   &__offers {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 320px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    background-color: var.$gray_2B2B2B;
+    z-index: 1;
+
     @media screen and (min-width: var.$tablet) {
       width: 748px;
       margin: 0 auto;
-      display: flex;
+      flex-direction: row-reverse;
     }
 
     @media screen and (min-width: var.$desktop-min) {
       width: 320px;
       flex-direction: column;
+      position: relative;
+      transform: none;
+      bottom: auto;
+      left: auto;
+      background-color: transparent;
+    }
+  }
+
+  &__button {
+    width: 25px;
+    height: 25px;
+    margin-top: 10px;
+    margin-right: 10px;
+    border-radius: 5px;
+    border: 2px solid var.$white;
+    background-color: var.$white;
+    background-repeat: no-repeat;
+    background-size: 15px 15px;
+    background-position: center;
+    cursor: pointer;
+
+    @media screen and (min-width: var.$tablet) {
+      align-self: flex-start;
+      margin-left: 10px;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: none;
+    }
+
+    &:hover,
+    &:focus {
+      border: 2px solid var.$red-B40036;
+      background-color: var.$red-B40036;
+    }
+
+    &--open {
+      border: 2px solid var.$gray_413E3E;
+      background-color: var.$gray_413E3E;
+
+      @media screen and (min-width: var.$tablet) {
+        margin-left: 0;
+      }
     }
   }
 }

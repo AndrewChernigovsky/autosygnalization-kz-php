@@ -1,6 +1,8 @@
 @use "variables" as var;
 
 .filter-button {
+  position: absolute;
+  top: 0;
   padding: 0;
   padding-right: 21px;
   min-height: 36px;
@@ -47,7 +49,6 @@
       position: relative;
       width: 320px;
       padding-top: 10px;
-      margin-left: 20px;
       top: auto;
       left: auto;
       right: auto;
