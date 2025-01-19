@@ -128,6 +128,7 @@
       }
     }
   }
+
   & aside {
     @media screen and (min-width: var.$desktop-min) {
       width: 320px;
@@ -135,9 +136,12 @@
       flex-direction: column;
       gap: 20px;
     }
-.catalog .container {
-  @media screen and (min-width: var.$desktop-min) {
-    width: 320px;
-    grid-row: 9;
+
+    .catalog .container {
+      @media screen and (min-width: var.$desktop-min) {
+        width: 320px;
+        grid-row: 9;
+      }
+    }
   }
 }
