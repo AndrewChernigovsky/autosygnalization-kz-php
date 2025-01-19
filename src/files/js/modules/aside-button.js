@@ -2,7 +2,7 @@ const buttonClose = document.getElementById('aside-button');
 const buttonOpen = document.getElementById('aside-open');
 const asideOffers = document.querySelector('.aside__offers');
 
-document.addEventListener('DOMContentLoaded', function() {
+export  function asideButtons() {
     buttonClose.addEventListener('click', function() {
         asideOffers.style.display = 'none';
     });
@@ -10,4 +10,4 @@ document.addEventListener('DOMContentLoaded', function() {
     buttonOpen.addEventListener('click', function () {
       asideOffers.style.display = 'flex';
     });
-});
+};

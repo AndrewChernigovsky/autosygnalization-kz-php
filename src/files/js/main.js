@@ -1,13 +1,8 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
-import DoubleRangeSlider from './modules/filter-cost.js';
+import { renderCardsOffers } from './modules/dynamic-offers-card.js';
+renderCardsOffers();
 
-const rangeSlider = new DoubleRangeSlider('.filter-cost', {
-  minValue: 100,
-  maxValue: 1000,
-  step: 10,
-  gap: 100,
-});
 const {
   feedbackForm,
   footer,
@@ -28,6 +23,7 @@ const {
   selected,
   buyBtnFast,
   checkoutForm,
+  filterCost
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -48,9 +44,21 @@ const {
   productsContainerCart: document.querySelector('.cart-section__products'),
   buyBtnFast: document.getElementById('buy-fast-order'),
   checkoutForm: document.querySelector('.checkout-form__body'),
+  filterCost: document.querySelector('.filter-cost')
 };
 
 async function loadModules() {
+  if (filterCost != null) {
+    const module = await import('./modules/filter-cost.js');
+    const newRangeSlider = module.default;
+    new newRangeSlider('.filter-cost', {
+      minValue: 100,
+      maxValue: 1000,
+      step: 10,
+      gap: 100,
+    });
+  }
+
   if (menuButton != null) {
     const { toToggleMenu } = await import('./modules/menu-burger.js');
     toToggleMenu();
@@ -149,17 +157,3 @@ async function loadModules() {
 }
 
 document.addEventListener('DOMContentLoaded', loadModules);
-
-const buttonClose = document.getElementById('aside-button');
-const buttonOpen = document.getElementById('aside-open');
-const asideOffers = document.querySelector('.aside__offers');
-
-document.addEventListener('DOMContentLoaded', function () {
-  buttonClose.addEventListener('click', function () {
-    asideOffers.style.display = 'none';
-  });
-
-  buttonOpen.addEventListener('click', function () {
-    asideOffers.style.display = 'flex';
-  });
-});
