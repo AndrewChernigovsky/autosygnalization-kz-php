@@ -1,9 +1,9 @@
 @use 'variables'as var;
 
 .cart-section {
-  max-width: 1000px;
+  // max-width: 1000px;
   margin: 0 auto;
-  
+
   &__head {
     display: flex;
     justify-content: space-between;
@@ -20,6 +20,12 @@
 
     button {
       font-size: 24px;
+
+      @media screen and (max-width: var.$tablet) {
+        font-size: 12px;
+        margin-left: 5px;
+        min-width: auto;
+      }
     }
   }
 
@@ -27,10 +33,25 @@
     display: grid;
     gap: 5px;
 
+    @media screen and (max-width: var.$tablet) {
+      max-width: min-content;
+      justify-self: center;
+    }
+
+    @media screen and (max-width: var.$desktop-min) {
+      max-width: min-content;
+    }
+
     @media screen and (min-width: var.$desktop-min) {
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+  }
+
+  &__result {
+    @media screen and (max-width: var.$tablet) {
+      text-align: center;
     }
   }
 
@@ -56,6 +77,10 @@
     height: 100%;
     counter-reset: item;
 
+    @media screen and (max-width: var.$tablet) {
+      justify-content: center;
+    }
+
     &.checkout {
       display: grid;
       gap: 10px;
@@ -75,6 +100,7 @@
       }
     }
   }
+
   &__total {
     margin: 0;
     margin-bottom: 10px;
