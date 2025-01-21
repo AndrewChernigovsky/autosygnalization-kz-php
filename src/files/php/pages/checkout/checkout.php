@@ -38,16 +38,14 @@ echo $head->setHead();
         <p class="cart-section__total">
           <span>Итого: </span>
           <span class="cost-total">
-            <?php
-            $total = 0;
-            echo $total;
-            ?>
+            <?= 0; ?>
           </span>
         </p>
         <form action="" method="post" class="checkout-form">
           <div class="checkout-form__body"></div>
           <div class="checkout-form__footer">
-            <a href="" class="link button y-button-third">Продолжить покупки</a>
+            <a href="<?= $path . '/files/php/pages/catalog/catalog.php'; ?>"
+              class="link button y-button-third">Продолжить покупки</a>
             <p>
               <span>Итого: </span>
               <span class="quantity-total"></span>

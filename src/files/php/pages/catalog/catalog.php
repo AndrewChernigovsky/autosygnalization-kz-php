@@ -48,24 +48,12 @@ echo $head->setHead();
     <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
     <div class="catalog">
       <div class="catalog__wrapper">
-        <?= $filters->renderFilters() ?>
-        <?= $select->createComponent($selectData->getSelectData()) ?>
+        <aside class="aside">
+          <?= $filters->renderFilters() ?>
+        </aside>
         <div class="catalog__products">
-          <script type="module">
-            import Catalog from "<?= "$docROOT$path/files/js/components/Catalog/Catalog.jsx"; ?>";
-            const catalogElement = document.querySelector('.catalog__products');
-            render(html`<${Catalog} />`, catalogElement);
-          </script>
-          <!-- <?= getProductCardWModel($products) ?> -->
-        </div>
-        <div class="container">
-          <aside class="aside">
-            <div class="aside__offers">
-              <?php foreach ($articleData->getArticleData() as $data): ?>
-                <?= $article->createComponent($data); ?>
-              <?php endforeach; ?>
-            </div>
-          </aside>
+          <?= $select->createComponent($selectData->getSelectData()) ?>
+          <?= getProductCardWModel($products) ?>
         </div>
       </div>
     </div>

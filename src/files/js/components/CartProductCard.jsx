@@ -64,10 +64,11 @@ export class CartProductCard extends Component {
               <span>${this.props.quantity} </span>
             </div>
             <div>
-              <p>Сумма: 
+              <p>
+                Цена:
                 <span>${price} </span>
                 <span>${currency} </span>
-              </p>              
+              </p>
             </div>
           </li>
         `

@@ -24,7 +24,6 @@ class Select
                 <div class="<?= $option['class']?>" data-value="<?= $option['value']?>"><?= $option["name"]?></div>
                 <?php endforeach;?>
               </div>
-            </div>
         </div>
 
 

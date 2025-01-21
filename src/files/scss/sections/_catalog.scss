@@ -5,15 +5,8 @@
   gap: 20px;
 
   @media screen and (min-width: var.$desktop-min) {
-    min-height: 1650px;
-    grid-template-columns: repeat(8, 128px);
-    grid-template-rows: 36px repeat(10, 100px);
     gap: 0;
     justify-content: center;
-  }
-
-  @media screen and (min-width: var.$desktop) {
-    grid-template-columns: repeat(11, 130px);
   }
 
   &__wrapper {
@@ -24,7 +17,7 @@
     margin: 0 auto;
     margin-bottom: 10px;
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: space-between;
 
     @media screen and (min-width: var.$tablet) {
@@ -37,9 +30,13 @@
       position: relative;
       width: 1024px;
       padding: 0;
-      display: grid;
-      grid-template-columns: repeat(8, 128px);
-      grid-template-rows: 36px;
+      justify-content: space-around;
+      align-items: flex-start;
+      flex-direction: row;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      width: 1440px;
     }
   }
 
@@ -56,18 +53,13 @@
     }
 
     @media screen and (min-width: var.$desktop-min) {
-      padding-top: 20px;
-      padding-right: 20px;
-      grid-column: 3/9;
-      grid-row: 2;
+      padding-left: 14px;
       grid-template-columns: 300px 300px;
-      justify-content: flex-end;
+      justify-content: stretch;
     }
 
     @media screen and (min-width: var.$desktop) {
-      padding-top: 30px;
       padding-right: 0;
-      grid-column: 4/12;
       grid-template-columns: repeat(3, 335px);
       justify-content: flex-start;
     }
@@ -79,20 +71,17 @@
 
     .product-card .product-card__bg {
       clip-path: polygon(0 0%, 100% 0, 100% 90%, 0% 100%);
-
-      img {
-        min-height: 250px;
-      }
     }
 
     h3 {
       max-width: 280px;
       font-size: 26px;
       line-height: 34px;
-      word-wrap: break-word 
+      word-wrap: break-word;
+      text-align: center;
     }
 
-    p {
+    p:not(.article__quantity) {
       margin: 0;
       margin-bottom: 20px;
       font-size: 48px;
@@ -113,7 +102,9 @@
     }
 
     .product-card__buttons {
-      a, button {
+
+      a,
+      button {
         font-family: var.$secondary-font;
         font-size: 20px;
         line-height: 28px;
@@ -133,11 +124,20 @@
       }
     }
   }
-}
 
-.catalog .container {
-  @media screen and (min-width: var.$desktop-min) {
+  & aside {
+    @media screen and (min-width: var.$desktop-min) {
       width: 320px;
-      grid-row: 9;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
+
+    .catalog .container {
+      @media screen and (min-width: var.$desktop-min) {
+        width: 320px;
+        grid-row: 9;
+      }
+    }
+  }
 }

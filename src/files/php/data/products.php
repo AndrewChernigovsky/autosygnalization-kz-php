@@ -13,7 +13,7 @@ $products = [
       [
         "model" => "a93-eco",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_a93-eco',
         "gallery" => [
           "$path/assets/images/products/starline_a93/keychain-Starline-A93-ECO-V2.avif",
@@ -43,13 +43,13 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
         "model" => "e96-eco",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_e96-eco',
         "gallery" => [
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN.avif",
@@ -78,13 +78,13 @@ $products = [
         ],
         "autosygnals" => [
           "auto",
-          "starline" ,
+          "starline",
         ],
       ],
       [
         "model" => "s96-2can-2lin-gsm",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_s96-2can-2lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_s96/StarLine-S96-V2-BT-2CAN-2LIN-GSM.avif",
@@ -113,7 +113,7 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -148,7 +148,7 @@ $products = [
         ],
         "autosygnals" => [
           "auto",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -184,7 +184,7 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -219,7 +219,7 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -254,13 +254,13 @@ $products = [
         ],
         "autosygnals" => [
           "auto",
-          "starline" ,
+          "starline",
         ],
       ],
       [
         "model" => "e96-2can-4lin-gsm",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_e96-2can-4lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN.avif",
@@ -288,7 +288,7 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -323,7 +323,7 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -358,7 +358,7 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -394,7 +394,7 @@ $products = [
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [

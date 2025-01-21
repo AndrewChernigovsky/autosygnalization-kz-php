@@ -38,9 +38,9 @@ class Filters
     <button class="filter-button-close" type="button" id="filter-btn-close"><span class="visually-hidden">скрыть
         фильтры</span></button>
     <form class="filter-form open" id="filter-catalog" action="" method="get">
-      <?= $this->filterBasic->renderFilters() ?>
-      <?= $this->filterCost->renderFilters() ?>
-      <?= $this->filterFunctions->renderFilters() ?>
+      <?php echo $this->filterBasic->renderFilters(); ?>
+      <?php echo $this->filterCost->renderFilters(); ?>
+      <?php echo $this->filterFunctions->renderFilters(); ?>
       <div class="filters__buttons">
         <button type="submit" class="button y-button-primary">Применить</button>
         <button type="reset" class="button y-button-secondary">Сбросить</button>

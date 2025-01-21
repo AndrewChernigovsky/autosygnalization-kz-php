@@ -27,7 +27,7 @@
         padding: 0;
 
         .swiper-pagination {
-          bottom: 0px;
+          bottom: 0;
           display: flex;
           flex-wrap: nowrap;
           justify-content: center;
@@ -44,16 +44,62 @@
           background-color: var.$gray_959090;
         }
       }
-
     }
 
     @media screen and (min-width: var.$tablet) {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: 1fr 1fr;
       gap: 20px;
       align-items: end;
-      grid-template-columns: 1fr 1fr;
     }
+
+    &--component {
+      @media screen and (min-width: 768px) {
+        height: auto;
+      }
+
+
+      .service__item .service-card {
+        min-height: inherit;
+      }
+
+      .service__item .service-card__buttons {
+        bottom: 10px;
+      }
+
+      @media screen and (min-width: 768px) {
+
+        .service__item .service-card__buttons a,
+        .service__item .service-card__buttons button {
+          min-width: 135px;
+          width: auto;
+        }
+
+        .service__item .service-card {
+          min-height: 100%;
+        }
+      }
+
+      @media screen and (min-width: 1024px) {
+        .service__item .service-card__buttons {
+          max-width: 100%;
+        }
+
+        .service__item .service-card__buttons a,
+        .service__item .service-card__buttons button {
+          font-size: 36px;
+        }
+      }
+
+      &.component {
+        @media screen and (max-width: 768px) {
+          li:has(.swiper-pagination) .swiper-pagination.swiper-service__pagination {
+            bottom: 60px;
+          }
+        }
+      }
+    }
+
   }
 
   &__item {
