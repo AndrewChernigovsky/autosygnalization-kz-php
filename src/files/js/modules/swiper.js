@@ -1,4 +1,5 @@
 export function initSwiper() {
+  alert(3);
   const swiperAutosygnals = document.querySelector('.swiper-autosygnals');
   const swiperService = document.querySelector('.swiper-service');
   const swiperSertificates = document.querySelector('.swiper-sertificates');
@@ -9,6 +10,7 @@ export function initSwiper() {
   const swiperIntro = document.querySelector('.swiper-intro');
   const swiperTechPhoto = document.querySelector('.swiper-tech-photo');
   const swiperReviews = document.querySelector('.swiper-reviews');
+  const swiperArticle = document.querySelector('#swiper-article');
 
   async function loadModule() {
     if (swiperIntro != null) {
@@ -44,6 +46,11 @@ export function initSwiper() {
     if (swiperReviews != null) {
       const { initSwiperReviews } = await import('./swipers/swiper-reviews.js');
       initSwiperReviews();
+    }
+    if (swiperArticle != null) {
+      alert(2);
+      const { initSwiperArticle } = await import('./swipers/swiper-article.js');
+      initSwiperArticle();
     }
   }
   loadModule();

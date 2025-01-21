@@ -44,7 +44,7 @@ echo $head->setHead();
 <body>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
-    <div class="container">
+    <section class="card-more">
       <div class="product-card__wrapper">
         <div class="product-card__container">
           <p class="product-card__text">Доставка:</p>
@@ -53,14 +53,14 @@ echo $head->setHead();
         <a class="product-card__link" href="#">Наличие товара уточняйте у продавца.</a>
       </div>
       <?= $content; ?>
-      <p>Цена за материал указана без установки.</p>
-      <p>
+      <p class="card-more__text">Цена за материал указана без установки.</p>
+      <p class="card-more__text">
         <span>Итоговая стоимость</span>
         <span class="cost-total"></span>
       </p>
       <button type="button" class="button y-button-primary cart-button"
-        data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В корзину</button>
-    </div>    
+        data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В корзину</button>   
+    </section>    
     <?= include_once __DIR__ . '/../../sections/card-tabs.php'; ?>
   </main>
   <?php include $base_path . '/footer.php'; ?>

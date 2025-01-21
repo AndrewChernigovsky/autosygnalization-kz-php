@@ -1,0 +1,124 @@
+@use "variables"as var;
+
+.card-more {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background-color: var.$gray_2B2B2B;
+  border-radius: 20px;
+
+  .product-card {
+    gap: 10px;
+    background-color: inherit;
+
+    @media screen and (min-width: var.$tablet) {
+      max-width: 748px;
+      flex-direction: row;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      max-width: 1024px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      max-width: 1440px;
+    }
+
+    &:hover {
+      transform: none;
+    }
+
+    &__wrapper {
+      @media screen and (min-width: var.$tablet) {
+        align-self: flex-start;
+      }      
+    }
+  }
+
+  .product-card__description {
+    margin: 0;
+    margin-bottom: 10px;
+    padding: 10px;
+    font-family: var.$primary-font;
+    font-size: 18px;
+    line-height: 22px;
+    border-radius: 20px;
+    background-color: var.$gray_424242;
+  }
+
+  h3 {
+    margin: 0;
+    margin-bottom: 10px;
+    font-family: var.$secondary-font;
+    font-size: 24px;
+    line-height: 34px;
+    text-align: center;
+  }
+
+  &__text {
+    margin: 0;
+    font-family: var.$primary-font;
+    font-size: 18px;
+    line-height: 22px;
+    text-transform: uppercase;
+  }
+
+  .slider {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .swiper-wrapper {
+    width: 300px;
+    flex-wrap: wrap;
+    gap: 10px;
+
+    @media screen and (min-width: var.$desktop-min)  {
+      width: 510px;
+    }
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    background-color: var.$white;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+
+  .big-slide {
+    padding: 10px;
+    width: 300px;
+    height: 300px;
+
+    @media screen and (min-width: var.$desktop-min)  {
+      width: 400px;
+      height: 400px;
+    }
+  }
+
+  .small-slide {    
+    padding: 5px;
+    border-radius: 5px;
+    width: 80px;
+    height: 80px;
+
+    @media screen and (min-width: var.$desktop-min)  {
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  .small-slide:nth-child(1) {
+    margin-left: 5px;
+  }
+
+  .small-slide:last-child {
+    margin-right: 5px;
+  }
+}
