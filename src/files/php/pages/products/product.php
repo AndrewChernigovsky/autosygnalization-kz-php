@@ -14,14 +14,15 @@ function getAutoContent($products, $category, $id)
     case 'keychain':
     case 'remote-controls':
     case 'park-systems':
-      $result .= getProductCardMore($products, $id);
+      $result .= getProductCardImage($products, $id);
       return $result;
     default:
       return 'Контент не найден.';
   }
 }
 
-$content = getAutoContent($products, $category, $id);
+$contentImage = getAutoContent($products, $category, $id);
+$contentDescription = getProductCardDescription($products, $id);
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
@@ -47,6 +48,8 @@ echo $head->setHead();
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
     <section class="card-more">
+      <?= $contentImage; ?>
+      <?= $contentDescription; ?>
       <div class="product-card__wrapper">
         <div class="product-card__container">
           <p class="product-card__text">Доставка:</p>
@@ -54,14 +57,16 @@ echo $head->setHead();
         </div>      
         <a class="product-card__link" href="#">Наличие товара уточняйте у продавца.</a>
       </div>
-      <?= $content; ?>
-      <p class="card-more__text">Цена за материал указана без установки.</p>
       <p class="card-more__text">
         <span>Итоговая стоимость</span>
         <span class="cost-total"></span>
       </p>
+      <div class="card-more__wrapper">
+        <p>Количество</p>
+      </div>
       <button type="button" class="button y-button-primary cart-button"
         data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В корзину</button>   
+      <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
     </section>    
     <?= include_once __DIR__ . '/../../sections/card-tabs.php'; ?>
   </main>

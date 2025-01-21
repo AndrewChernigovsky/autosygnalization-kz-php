@@ -86,7 +86,7 @@ function getProductCardWModel(array $products, bool $cart = false)
   }
   return ob_get_clean();
 }
-function getProductCardMore($products, $id)
+function getProductCardImage($products, $id)
 {
   if (!is_array($products)) {
     return '';
@@ -100,19 +100,21 @@ function getProductCardMore($products, $id)
         ?>
           <article class='product-card'>
             <div class="slider" id="swiper-article">
-              <div class="swiper-container big-slider">
+              <div class="swiper big-slider">
                 <div class="swiper-wrapper">
-                  <?php if (!empty($product['gallery'][0])): ?>
-                  <div class="swiper-slide big-slide">
-                    <img class="product-card__image" src="<?php echo htmlspecialchars($product['gallery'][0]); ?>"
-                      alt="<?php echo htmlspecialchars($product['description']); ?>" width="300" height="250">
-                  </div>
-                  <?php endif; ?>
+                  <?php for ($i = 0; $i < count($product['gallery']); $i++): ?>
+                    <?php if (isset($product['gallery'][$i])): ?>
+                      <div class="swiper-slide big-slide">
+                        <img src="<?php echo htmlspecialchars($product['gallery'][$i]); ?>"
+                          alt="<?php echo htmlspecialchars($product['description']); ?>" width="300" height="250">
+                      </div>
+                    <?php endif; ?>
+                  <?php endfor; ?>
                 </div>
               </div>            
-              <div class="swiper-container thumbs">
+              <div class="swiper thumbs">
                 <div class="swiper-wrapper">
-                  <?php for ($i = 1; $i < count($product['gallery']); $i++): ?>
+                  <?php for ($i = 0; $i < count($product['gallery']); $i++): ?>
                     <?php if (isset($product['gallery'][$i])): ?>
                       <div class="swiper-slide small-slide">
                         <img src="<?php echo htmlspecialchars($product['gallery'][$i]); ?>"
@@ -123,20 +125,40 @@ function getProductCardMore($products, $id)
                 </div>
               </div>
             </div>
-            <div>
-              <h3 class="product-card__title"><?php echo htmlspecialchars($product['title']); ?></h3>
-              <?php if (isset($product['description'])): ?>
-              <p class="product-card__description"><?php echo htmlspecialchars($product['description']); ?></p>
-              <?php endif; ?>
-              <?php if (isset($product['price'])): ?>
-              <p class="product-card__price"><span>Цена: </span><?php echo htmlspecialchars($product['price']); ?>
-                <?php echo htmlspecialchars($product['currency']); ?>
-              </p>
-              <?php endif; ?>
-            </div>
           </article>
+          <h3 class="product-card__title"><?php echo htmlspecialchars($product['title']); ?></h3>
         <?php
         return ob_get_clean();
+      }
+    }
+  }
+  return '';
+}
+
+function getProductCardDescription($products, $id)
+{
+  if (!is_array($products)) {
+    return '';
+  }
+
+  ob_start();
+
+  foreach ($products['category'] as $category) {
+    foreach ($category as $product) {
+      if ($product['id'] === $id) {
+        ?>
+                  <div class='product-card__content'>
+                      <?php if (isset($product['description'])): ?>
+                        <p class="product-card__description"><?php echo htmlspecialchars($product['description']); ?></p>
+                      <?php endif; ?>
+                      <?php if (isset($product['price'])): ?>
+                        <p class="product-card__price"><span>Цена: </span><?php echo htmlspecialchars($product['price']); ?>
+                          <?php echo htmlspecialchars($product['currency']); ?>
+                        </p>
+                      <?php endif; ?>
+                  </div>
+                <?php
+                return ob_get_clean();
       }
     }
   }

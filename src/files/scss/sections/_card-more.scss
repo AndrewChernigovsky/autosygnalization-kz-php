@@ -1,23 +1,39 @@
 @use "variables"as var;
 
 .card-more {
+  position: relative;
   max-width: 1440px;
-  margin: 0 auto;
   padding: 10px;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 300px;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   background-color: var.$gray_2B2B2B;
   border-radius: 20px;
 
+  @media screen and (min-width: var.$tablet) {
+    grid-template-columns: min-content 1fr 1fr;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    width: 1024px;
+    margin: 0 auto;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    width: 1440px;
+  }
+
   .product-card {
     gap: 10px;
     background-color: inherit;
+    padding: 0;
 
     @media screen and (min-width: var.$tablet) {
-      max-width: 748px;
-      flex-direction: row;
+      grid-column: 1 / 2;
+      grid-row: 2 / 6;
+      align-self: flex-start;
     }
 
     @media screen and (min-width: var.$desktop-min) {
@@ -28,26 +44,51 @@
       max-width: 1440px;
     }
 
+    img {
+      height: auto;
+    }
+
     &:hover {
       transform: none;
     }
 
     &__wrapper {
+      grid-row: 3/4;
+
       @media screen and (min-width: var.$tablet) {
         align-self: flex-start;
+        grid-column: 1/4;
+        grid-row: 1/2;
       }      
     }
-  }
 
-  .product-card__description {
-    margin: 0;
-    margin-bottom: 10px;
-    padding: 10px;
-    font-family: var.$primary-font;
-    font-size: 18px;
-    line-height: 22px;
-    border-radius: 20px;
-    background-color: var.$gray_424242;
+    &__content {
+      grid-row: 8/9;
+
+      @media screen and (min-width: var.$tablet) {
+        grid-column: 2 / 4;
+        grid-row: 3 / 6;
+        align-self: flex-start;
+      }
+    }
+
+    &__description {      
+      margin: 0;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-family: var.$primary-font;
+      font-size: 18px;
+      line-height: 22px;
+      border-radius: 20px;
+      background-color: var.$gray_424242;
+    }
+
+    &__price {
+      margin: 0;
+      font-family: var.$primary-font;
+      font-size: 20px;
+      text-transform: uppercase;
+    }
   }
 
   h3 {
@@ -57,6 +98,14 @@
     font-size: 24px;
     line-height: 34px;
     text-align: center;
+    grid-row: 2/3;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 2 / 4;
+      grid-row: 2 / 3;
+      align-self: flex-start;
+    }
+    
   }
 
   &__text {
@@ -65,6 +114,31 @@
     font-size: 18px;
     line-height: 22px;
     text-transform: uppercase;
+    grid-row: 4/5;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 2/4;
+      grid-row: 7/8;
+    }
+  }
+
+  &__text--info {
+    grid-row: 7/8;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 2/4;
+      grid-row: 6/7;
+      justify-self: flex-end;
+    }
+  }
+
+  &__wrapper {
+    grid-row: 5/6;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 1/2;
+      grid-row: 7/9;
+    }
   }
 
   .slider {
@@ -75,12 +149,14 @@
 
   .swiper-wrapper {
     width: 300px;
-    flex-wrap: wrap;
-    gap: 10px;
 
     @media screen and (min-width: var.$desktop-min)  {
       width: 510px;
     }
+  }
+
+  .thumbs {
+    padding: 0 5px;
   }
 
   .swiper-slide {
@@ -105,7 +181,7 @@
   .small-slide {    
     padding: 5px;
     border-radius: 5px;
-    width: 80px;
+    min-width: 80px;
     height: 80px;
 
     @media screen and (min-width: var.$desktop-min)  {
@@ -114,11 +190,14 @@
     }
   }
 
-  .small-slide:nth-child(1) {
-    margin-left: 5px;
-  }
+  button {
+    font-family: var.$secondary-font;
+    grid-row: 6/7;
+    justify-self: center;
 
-  .small-slide:last-child {
-    margin-right: 5px;
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 3/4;
+      grid-row: 8/9;
+    }
   }
 }

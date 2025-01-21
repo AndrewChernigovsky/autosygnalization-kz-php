@@ -1,5 +1,4 @@
 export function initSwiper() {
-  alert(3);
   const swiperAutosygnals = document.querySelector('.swiper-autosygnals');
   const swiperService = document.querySelector('.swiper-service');
   const swiperSertificates = document.querySelector('.swiper-sertificates');
@@ -48,7 +47,6 @@ export function initSwiper() {
       initSwiperReviews();
     }
     if (swiperArticle != null) {
-      alert(2);
       const { initSwiperArticle } = await import('./swipers/swiper-article.js');
       initSwiperArticle();
     }
