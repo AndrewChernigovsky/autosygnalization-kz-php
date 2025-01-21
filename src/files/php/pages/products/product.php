@@ -12,6 +12,8 @@ function getAutoContent($products, $category, $id)
   $result = "";
   switch ($category) {
     case 'keychain':
+    case 'remote-controls':
+    case 'park-systems':
       $result .= getProductCardMore($products, $id);
       return $result;
     default:

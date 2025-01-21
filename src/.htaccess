@@ -14,12 +14,12 @@ AddType application/font-woff2 .woff2
 AddType application/vnd.ms-fontobject .eot
 AddType font/ttf .ttf
 AddType font/otf .otf
+AddType text/plain .txt
 
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
   Header set Access-Control-Allow-Origin "*"
   Allow from all
 </FilesMatch>
-
 
 RewriteEngine On
 

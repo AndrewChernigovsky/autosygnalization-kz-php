@@ -1,6 +1,9 @@
 @use 'variables'as var;
 
 .cart-section {
+  // max-width: 1000px;
+  margin: 0 auto;
+
   &__head {
     display: flex;
     justify-content: space-between;
@@ -10,8 +13,19 @@
       font-weight: 700;
     }
 
+    &.checkout p {
+      margin: 0;
+      text-transform: uppercase;
+    }
+
     button {
       font-size: 24px;
+
+      @media screen and (max-width: var.$tablet) {
+        font-size: 12px;
+        margin-left: 5px;
+        min-width: auto;
+      }
     }
   }
 
@@ -19,10 +33,25 @@
     display: grid;
     gap: 5px;
 
+    @media screen and (max-width: var.$tablet) {
+      max-width: min-content;
+      justify-self: center;
+    }
+
+    @media screen and (max-width: var.$desktop-min) {
+      max-width: min-content;
+    }
+
     @media screen and (min-width: var.$desktop-min) {
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+  }
+
+  &__result {
+    @media screen and (max-width: var.$tablet) {
+      text-align: center;
     }
   }
 
@@ -46,16 +75,42 @@
     flex-wrap: wrap;
     min-height: 350px;
     height: 100%;
+    counter-reset: item;
+
+    @media screen and (max-width: var.$tablet) {
+      justify-content: center;
+    }
 
     &.checkout {
       display: grid;
       gap: 10px;
       align-content: flex-start;
       min-height: auto;
+      margin-bottom: 10px;
+      padding: 10px;
+      background-color: var.$gray_413E3E;
+      border-radius: 20px;
+
+      @media screen and (min-width: var.$tablet) {
+        grid-template-columns: 1fr;
+      }
 
       p {
         margin: 0;
       }
+    }
+  }
+
+  &__total {
+    margin: 0;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+
+    & span:nth-child(1) {
+      text-transform: uppercase;
+      font-weight: 700;
     }
   }
 

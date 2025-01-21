@@ -21,10 +21,9 @@ class Select
             <div class="select-selected">Выберите опцию</div>
               <div class="select-items select-hide">
                 <?php foreach($data as $option):?>
-                <div data-value="<?= $option['value']?>"><?= $option["name"]?></div>
+                <div class="<?= $option['class']?>" data-value="<?= $option['value']?>"><?= $option["name"]?></div>
                 <?php endforeach;?>
               </div>
-            </div>
         </div>
 
 

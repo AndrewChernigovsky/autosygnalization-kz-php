@@ -2,8 +2,12 @@ $tablet: 768px;
 $desktop-min: 1024px;
 $desktop: 1440px;
 
-$primary-font: 'DINPRO', Arial, sans-serif;
-$secondary-font: 'OSWALD', Arial, sans-serif;
+$primary-font: 'DINPRO',
+Arial,
+sans-serif;
+$secondary-font: 'OSWALD',
+Arial,
+sans-serif;
 
 $white: white;
 $black: black;
@@ -32,4 +36,5 @@ $gray_2B2B2B: #2b2b2b;
 $gray_C4C4C4: #c4c4c4;
 $black_0006: rgba(0, 0, 0, 0.6);
 
+// $DEV_PATH: '/';
 $DEV_PATH: '/dist/';

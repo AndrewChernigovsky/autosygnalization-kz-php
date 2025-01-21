@@ -18,24 +18,29 @@ class SelectData
 
     $data = [
       [
-        "name" => 'название',
+        "name" => 'Название',
         "value" => 'name',
+        "class" => 'select-item',
       ],
       [
-        "name" => 'цена',
+        "name" => 'Цена',
         "value" => 'price',
+        "class" => 'select-item',
       ],
       [
-        "name" => 'дата',
+        "name" => 'Дата',
         "value" => 'date',
+        "class" => 'select-item',
       ],
       [
-        "name" => 'популярность',
+        "name" => 'Популярность',
         "value" => 'popularity',
+        "class" => 'select-item',
       ],
       [
-        "name" => 'предустановленная',
+        "name" => 'Предустановленная',
         "value" => 'preset',
+        "class" => 'select-item default',
       ],
     ];
 
