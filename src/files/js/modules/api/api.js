@@ -80,6 +80,7 @@ export class API {
     }
   }
   async addProduct(id) {
+    console.log(id, 'ID');
     const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=add&id=${id}`;
 
     try {
