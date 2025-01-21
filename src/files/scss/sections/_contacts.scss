@@ -1,0 +1,165 @@
+@use 'variables' as var;
+
+.contacts-section {
+  &__title {
+    position: relative;
+    padding-top: 10px;
+    margin-bottom: 80px;
+    text-align: center;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 0;
+      width: 95%;
+      height: 90%;
+      background-color: var.$red;
+      filter: blur(20px);
+      opacity: 0.7;
+      z-index: -1;
+    }
+  }
+
+  &__contacts {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+.contacts-section__contact p {
+  font-family: var.$primary-font;
+  font-size: 18px;
+  margin: 0;
+}
+
+.contacts-section__contact {
+  width: 100%;
+  background-color: rgba(47, 47, 47, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 0 20px 0;
+
+  &--title {
+    font-weight: 600;
+    padding-left: 45px;
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: '';
+      width: 25px;
+      height: 25px;
+      background-image: url('#{var.$DEV_PATH}assets/images/vectors/phone-no-border.svg');
+      background-repeat: no-repeat;
+      background-size: 25px 25px;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &--whatsapp {
+    font-weight: 600;
+    padding-left: 45px;
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: '';
+      width: 28px;
+      height: 28px;
+      background-image: url('#{var.$DEV_PATH}assets/images/vectors/whatsapp.svg');
+      background-repeat: no-repeat;
+      background-size: 28px 28px;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &--phone {
+    text-align: right;
+  }
+
+  &--phone a {
+    color: var.$white;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  &--email {
+    font-weight: 600;
+    padding-left: 40px;
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: '';
+      width: 20px;
+      height: 20px;
+      background-image: url('#{var.$DEV_PATH}assets/images/vectors/message-icon.svg');
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &--address {
+    font-weight: 600;
+    padding-left: 40px;
+    margin-bottom: 20px;
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: '';
+      width: 25px;
+      height: 25px;
+      mask-image: url('#{var.$DEV_PATH}assets/images/vectors/geo.svg');
+      mask-repeat: no-repeat;
+      mask-size: 25px 25px;
+      background-color: var.$red;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &--schedule {
+    font-weight: 600;
+    padding-left: 45px;
+    margin-bottom: 20px;
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: '';
+      width: 25px;
+      height: 25px;
+      mask-image: url('#{var.$DEV_PATH}assets/images/vectors/clock.svg');
+      mask-repeat: no-repeat;
+      mask-size: 25px 25px;
+      background-color: var.$red;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  &--work-time {
+    text-align: center;
+  }
+
+  &--work-time p:last-child {
+    color: var.$red;
+  }
+}

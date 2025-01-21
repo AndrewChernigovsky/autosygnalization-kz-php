@@ -27,33 +27,41 @@ echo $head->setHead();
   <main class="main">
     <section class="contacts-section">
       <div class="container">
-        <h2>Контакты</h2>
+        <h2 class="contacts-section__title">Контакты</h2>
         <div class="contacts-section__contacts">
           <div class="contacts-section__contact">
-            <p>Beeline:</p>
-            <p>+77077478212</p>
+            <p class="contacts-section__contact--title">Beeline:</p>
+            <p class="contacts-section__contact--phone">
+              <a href="tel:+77077478212">+77077478212</a>
+            </p>
           </div>
           <div class="contacts-section__contact">
-            <p>Kcell:</p>
-            <p>+77017478212</p>
+            <p class="contacts-section__contact--title">Kcell:</p>
+            <p class="contacts-section__contact--phone">
+              <a href="tel:+77077478212">+77077478212</a>
+            </p>
           </div>
           <div class="contacts-section__contact">
-            <p>Whatsapp:</p>
-            <p>+77077478212</p>
+            <p class="contacts-section__contact--whatsapp">Whatsapp:</p>
+            <p class="contacts-section__contact--phone">
+              <a href="https://wa.me/77077478212" target="_blank">+77077478212</a>
+            </p>
           </div>
           <div class="contacts-section__contact">
-            <p>Почта:</p>
+            <p class="contacts-section__contact--email">Почта:</p>
             <p>autosecurity.kz@mail.ru</p>
           </div>
           <div class="contacts-section__contact">
-            <p>Адрес:</p>
-            <p>Казахстан, г.Алматы, Абая 145/г, бокс №15</p>
+            <p class="contacts-section__contact--address">Адрес:</p>
+            <p>Казахстан, г.Алматы, <br> Абая 145/г, бокс №15</p>
           </div>
           <div class="contacts-section__contact">
-            <p>График работы:</p>
-            <p>Вс. - Чт.: 10:00 - 18:00</p>
-            <p>Пт.: 10:00-15:00</p>
-            <p>Сб.: Выходной</p>
+              <p class="contacts-section__contact--schedule">График работы:</p>
+              <div class="contacts-section__contact--work-time">
+                <p>Вс. - Чт.: 10:00 - 18:00</p>
+                <p>Пт.: 10:00-15:00</p>
+                <p>Сб.: Выходной</p>
+            </div>
           </div>
           <div class="contacts-section__contact">
             <p>Соцсети:</p>
@@ -62,12 +70,12 @@ echo $head->setHead();
             <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
           </div>
         </div>
-        <div class="map">
+      </div>
+      <div class="map">
           <iframe
             src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru"
             width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"></iframe>
-        </div>
       </div>
       <section class="contacts-section-info">
         <div class="container">
