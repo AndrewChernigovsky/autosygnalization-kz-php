@@ -1,39 +1,38 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../data/navigation-links.php';
+include_once __DIR__ . '/../../helpers/components/service.php';
+include_once __DIR__ . '/../../data/services.php';
+include_once __DIR__ . '/../../helpers/classes/services.php';
 
 $variables = new SetVariables();
 $variables->setVar();
+$docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
+$service_data = new Services($services_data);
+$services = array_values($service_data->getServices());
 $navigationLinks = new NavigationLinks();
-$autosygnals = $navigationLinks->getCategoriesAutoSygnals();
+$card = new ServiceCard();
 ?>
 
-<section class="autosygnals" id="autosygnals">
+<section class="service" id="service">
   <div class="container">
-    <h2 class="autosygnals__title">Автосигнализации</h2>
-    <div class="autosygnals__wrapper swiper swiper-autosygnals">
-      <ul class="autosygnals__list list-style-none swiper-wrapper">
-        <?php foreach ($autosygnals as $slide): ?>
-          <li class="autosygnals__item swiper-slide">
-            <div class="autosygnals__item-card">
-              <h3 class="autosygnals__item-title"><?php echo $slide['name'] ?></h3>
-              <img class="autosygnals__item-image" src="<?php echo $slide['src'] ?>"
-                alt="Картинка на которой изображена услуга Auto Security Автосигнализации с автозапуском" width="640"
-                height="554">
-              <div class="autosygnals__item-block">
-                <p class="autosygnals__item-count">
-                  <span class="autosygnals__item-counter"><?php echo $slide['count'] ?></span> товаров
-                </p>
-                <a class="autosygnals__item-link link y-button-primary" href="<?php echo $slide['link'] ?>">В РАЗДЕЛ</a>
-              </div>
-            </div>
+    <h2 class="service__title secondary-title">наши услуги</h2>
+    <div class="swiper swiper-service">
+      <ul class="service__list service__list--component list-style-none swiper-wrapper component">
+        <?php foreach ($services as $index => $service): ?>
+          <li class="service__item swiper-slide">
+            <?php
+            error_log(print_r($service, true) . ' 222');
+            echo $card->initCard($service);
+            ?>
           </li>
         <?php endforeach; ?>
+        <li>
+          <ul class="swiper-pagination swiper-service__pagination"></ul>
+        </li>
       </ul>
-      <ul class="autosygnals__pagination swiper-pagination"></ul>
     </div>
-  </div>
   </div>
 </section>
 <?php
