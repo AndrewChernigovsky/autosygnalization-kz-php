@@ -76,7 +76,7 @@ echo $head->setHead();
             <div class="tech-photo__swiper-pagination swiper-pagination"></div>
           </div>
           <div class="tech-photo__block">
-            <h3 class="tech-photo__block-title"><span>Обращайтесь в</span> <span>Auto Security</span></h3>
+            <h3 class="tech-photo__block-title">Обращайтесь в Auto Security</h3>
             <p class="tech-photo__text">Вам будет оказана квалифицированная помощь по установке дополнительного электронного оборудования на Ваш автомобиль!</p>
             <p class="tech-photo__text">Мы продиагностируем Ваш авто, отремонтируем, установим, настроим Ваше оборудование! Доверяйте профессионалам!</p>
           </div>

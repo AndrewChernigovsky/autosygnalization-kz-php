@@ -2,14 +2,15 @@
 
 .about-us {
   .present {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-
     &__block {
-      border-bottom: 1px solid red;
-      padding: 10px 0 40px 0;
+      border-bottom: 1px solid var.$red;
+      padding: 20px 0 30px 0;
       
+      @media screen and (min-width: var.$tablet) {
+        width: 650px;
+        margin: 0 auto;
+        padding-bottom: 60px;
+      }
     }
 
     &__main-title {
@@ -32,24 +33,44 @@
         opacity: 0.7;
         z-index: -1;
       }
+
+      @media screen and (min-width: var.$tablet) {
+        margin-bottom: 80px;
+      }
     }
 
     &__main-slogan {
       font-size: 20px;
       text-align: center;
-      margin: 0 0 5px 0;
+      margin: 0 auto 5px;
+
+      @media screen and (min-width: var.$tablet) {
+        width: 600px;
+        font-size: 30px;
+        margin-bottom: 10px;
+      }
     }
 
     &__main-text {
-      padding-top: 30px;
+      padding-top: 60px;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 20px;
+        width: 650px;
+        margin: 0 auto;
+        text-transform: none;
+      }
     }
 
     &__main-text p{
       font-family: var.$primary-font;
       font-size: 16px;
-      letter-spacing: 1px;
       text-align: center;
       margin: 0 0 15px 0;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 20px;
+      }
     }
 
     &__text:first-of-type {
@@ -61,16 +82,14 @@
 
     &__list-title {
       text-align: center;
-      font-size: 20px;
+      font-size: 18px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 0;
-    }
+      margin: 0 auto 30px;
 
-    &__list-item {
-      font-size: 14px;
-      padding-left: 20px;
-      border-left: 4px solid var.$red;
+      @media screen and (min-width: var.$tablet) {
+        width: 500px;
+        font-size: 20px;
+      }
     }
 
     &__list {
@@ -80,6 +99,22 @@
       font-size: 12px;
       letter-spacing: 0.5px;
       margin-bottom: 45px;
+
+      @media screen and (min-width: var.$tablet) {
+        gap: 15px;
+        margin-bottom: 70px;
+      }
+    }
+
+    &__list-item {
+      font-size: 14px;
+      padding-left: 20px;
+      border-left: 4px solid var.$red;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 18px;
+        text-transform: none;
+      }
     }
 
     &__list-comment {
@@ -88,40 +123,50 @@
       align-items: center;
       flex-direction: column;
       gap: 15px;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 16px;
+        gap: 20px;
+      }
     }
 
     &__comment-text {
-      margin: 0;
+      margin: 0 auto;
       font-size: 20px;
       text-align: center;
       letter-spacing: 1px;
     }
   }
+}
 
   .tech-photo {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    border-bottom: 1px solid var.$red;
+    /* border-bottom: 1px solid var.$red; */
 
     &__title {
-      margin: 0;
-      padding-top: 20px;
-      font-size: 20px;
+      margin: 0 auto;
+      padding: 20px 0;
+      font-size: 18px;
       text-align: center;
       text-transform: uppercase;
-      text-decoration: underline;
-      text-decoration-thickness: 2px;
+      /* text-decoration: underline; */
+      /* text-decoration-thickness: 2px;
       text-underline-offset: 23px;
-      text-decoration-color: var.$red;
+      text-decoration-color: var.$red; */
       z-index: 2;
+
+      @media screen and (min-width: var.$tablet) {
+        width: 500px;
+        font-size: 20px;
+        padding-bottom: 20px;
+      }
     }
 
     &__swiper {
       border-top: 1px solid var.$white;
       border-bottom: 1px solid var.$white;
-      padding-top: 20px;
-      padding-bottom: 50px;
+      padding: 20px 0 40px 0;
       max-width: 100%;
     }
 
@@ -151,36 +196,46 @@
     }
 
     &__block {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 20px;
+      /* gap: 20px; */
       padding-bottom: 40px;
+      border-bottom: 2px solid var.$red;
+
+      @media screen and (min-width: var.$tablet) {
+        width: 650px;
+        margin: 0 auto;
+        font-size: 20px;
+        padding: 45px 0 60px 0;
+      }
     }
 
     &__block-title {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      gap: 5px;
-      font-size: 20px;
+      /* gap: 5px; */
+      font-size: 18px;
       text-transform: uppercase;
       text-align: center;
-      letter-spacing: 1px;
-      margin: 0;
+      margin: 0 0 20px 0;
+      padding-top: 20px;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 20px;
+        margin-bottom: 30px;
+      }
     }
 
     &__text {
       font-family: var.$primary-font;
       font-size: 16px;
-      letter-spacing: 0.5px;
       padding-left: 5px;
       line-height: 25px;
       text-transform: none;
       text-align: center;
-      margin: 0;
+      margin: 0 0 15px 0;
+
+      @media screen and (min-width: var.$tablet) {
+        width: 650px;
+        font-size: 20px;
+        margin: 0 auto 15px;
+      }
     }
   }
 
@@ -192,15 +247,21 @@
     &__title {
       margin: 0;
       padding-top: 1em;
-      font-size: 20px;
-      /* font-weight: 600; */
+      font-size: 18px;
       text-transform: uppercase;
       text-align: center;
+      border-bottom: 2px solid var.$red;
       text-decoration: underline;
       text-decoration-thickness: 2px;
       text-underline-offset: 23px;
       text-decoration-color: var.$red;
       z-index: 2;
+
+      @media screen and (min-width: var.$tablet) {
+        width: 500px;
+        margin: 0 auto;
+        font-size: 20px;
+      }
     }
 
     &__swiper {
@@ -308,12 +369,15 @@
       }
 
       &__comment-text {
-        letter-spacing: 1px;
+        font-family: var.$primary-font;
         text-transform: none;
+
+        @media screen and (min-width: var.$tablet) {
+          font-size: 18px;
+        }
       }
     }
   }
-}
 
 @media screen and (min-width: var.$tablet) {
   .about-us {
@@ -328,14 +392,14 @@
       }
       &__list-item {
         position: relative;
-        padding-left: 25px;
+        padding-left: 35px;
         line-height: 21px;
         border-left: none;
 
         &::after {
           content: '';
           position: absolute;
-          top: 0;
+          top: 3px;
           left: 0;
           width: 16px;
           height: 16px;
@@ -343,10 +407,6 @@
           background-size: cover;
           z-index: -1;
         }
-      }
-
-      &__block:last-of-type {
-        padding-bottom: 20px;
       }
     }
 
@@ -356,22 +416,6 @@
           display: none;
         }
       }
-
-      &__block-title {
-        flex-direction: row;
-        gap: 7px;
-        font-size: 30px;
-      }
-
-      &__text {
-        font-size: 20px;
-        letter-spacing: 1px;
-        padding-left: 0;
-        line-height: 28px;
-      }
     }
-  }
-
-  .reviews {
   }
 }
