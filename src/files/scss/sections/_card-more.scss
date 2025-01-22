@@ -242,6 +242,7 @@
     justify-content: center;
     background-color: var.$white;
     border-radius: 20px;
+    border: 3px solid var.$white;
     cursor: pointer;
   }
 
@@ -254,6 +255,10 @@
       width: 520px;
       height: 520px;
       margin: 0;
+    }
+
+    &:hover {
+      border: 3px solid var.$green;
     }
   }
 
