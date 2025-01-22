@@ -12,13 +12,16 @@ $basePath = $variables->getBasePath();
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 $base_path = $docROOT . $path . '/files/php/layout';
+$phone = $basePath . '/files/php/helpers/components/phone.php';
 $social = $basePath . '/files/php/helpers/components/social.php';
 $contacts_data = $basePath . '/files/php/data/contacts.php';
 
 include_once $head_path;
 include_once $sections_path;
-include_once $contacts_data;
+include_once $phone;
 include_once $social;
+include_once $contacts_data;
+
 
 $title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
 $head = new Head($title, [], []);
@@ -52,7 +55,7 @@ echo $head->setHead();
           <div class="contacts-section__contact">
             <p class="contacts-section__contact--title">Kcell:</p>
             <p class="contacts-section__contact--phone">
-              <a href="tel:+77077478212">+77077478212</a>
+              <a href="tel:+77017478212">+77017478212</a>
             </p>
           </div>
           <div class="contacts-section__contact">
@@ -100,15 +103,17 @@ echo $head->setHead();
       </div>
       <section class="contacts-section-info">
         <div class="container">
-          <h2>КАК К НАМ ДОБРАТЬСЯ</h2>
-          <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, перед речкой поворот направо, заезжаем на
-            территорию СТО. Наш бокс №15.</p>
-          <p>
-            По всем вопросам звоните:
-            <a href="tel:+77077478212">+7 707 747-82-12</a>
-            <a href="tel:+77017478212">+7 707 701-82-12</a>
-          </p>
-          <p>БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
+          <h2 class="contacts-section-info__title">КАК К НАМ ДОБРАТЬСЯ</h2>
+          <p class="contacts-section-info__text">Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
+            территорию СТО. <br> Наш бокс №15.</p>
+          <div class="contacts-section-info__phone">
+            <p>По всем вопросам звоните:</p>
+            <div class="contacts-section-info__box">
+              <a href="tel:+77077478212">+7 707 747-82-12</a>
+              <a href="tel:+77017478212">+7 707 701-82-12</a>
+            </div>
+          </div>
+          <p class="contacts-section-info__slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
         </div>
       </section>
     </section>
