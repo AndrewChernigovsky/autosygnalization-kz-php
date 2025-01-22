@@ -12,18 +12,16 @@ $basePath = $variables->getBasePath();
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 $base_path = $docROOT . $path . '/files/php/layout';
-$phone = $basePath . '/files/php/helpers/components/phone.php';
 $social = $basePath . '/files/php/helpers/components/social.php';
 $contacts_data = $basePath . '/files/php/data/contacts.php';
 
 include_once $head_path;
 include_once $sections_path;
-include_once $phone;
 include_once $social;
 include_once $contacts_data;
 
 
-$title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
+$title = 'Контакты | Auto Security';
 $head = new Head($title, [], []);
 
 
@@ -90,7 +88,7 @@ echo $head->setHead();
               ?>
             </div>
           </div>
-          <div class="contacts-section__contact">
+          <div class="contacts-section__contact contacts-section__contact--btn">
             <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
           </div>
         </div>
@@ -109,8 +107,15 @@ echo $head->setHead();
           <div class="contacts-section-info__phone">
             <p>По всем вопросам звоните:</p>
             <div class="contacts-section-info__box">
-              <a href="tel:+77077478212">+7 707 747-82-12</a>
-              <a href="tel:+77017478212">+7 707 701-82-12</a>
+              <?php
+                $phones = $contacts->getPhones();
+              ?>
+              <?php foreach($phones as $phone): ?>
+                <a href="tel:<?php echo $phone['phone']?>"><?php echo $phone['phone']?></a>
+              <?php endforeach; ?>
+
+              <!-- <a href="tel:+77077478212">+7 707 747-82-12</a>
+              <a href="tel:+77017478212">+7 707 701-82-12</a> -->
             </div>
           </div>
           <p class="contacts-section-info__slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
