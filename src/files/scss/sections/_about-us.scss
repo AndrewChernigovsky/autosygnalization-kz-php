@@ -50,6 +50,10 @@
       @media screen and (min-width: var.$desktop-min) {
         margin-bottom: 80px;
       }
+
+      @media screen and (min-width: var.$desktop) {
+        margin-bottom: 100px;
+      }
     }
 
     &__main-slogan {
@@ -74,12 +78,13 @@
     }
 
     &__main-text {
-      padding-top: 60px;
+      padding-top: 40px;
 
       @media screen and (min-width: var.$tablet) {
         font-size: 20px;
         width: 650px;
         margin: 0 auto;
+        padding-top: 60px;
         text-transform: none;
       }
 
@@ -174,7 +179,7 @@
       padding-left: 20px;
       border-left: 4px solid var.$red;
       position: relative;
-      padding-left: 35px;
+      padding-left: 25px;
       border-left: none;
 
       &::after {
@@ -198,6 +203,7 @@
       @media screen and (min-width: var.$tablet) {
         font-size: 18px;
         text-transform: none;
+        padding-left: 35px;
       }
 
       @media screen and (min-width: var.$desktop-min) {
@@ -241,9 +247,13 @@
       text-align: center;
       letter-spacing: 1px;
 
+      @media screen and (min-width: var.$tablet) {
+        font-size: 24px;
+      }
+
       @media screen and (min-width: var.$desktop) {
         width: 1000px;
-        font-size: 28px;
+        font-size: 30px;
       }
     }
   }
@@ -254,7 +264,6 @@
     flex-direction: column;
 
     &__title {
-      margin: 0 auto;
       padding: 20px 0;
       font-size: 18px;
       text-align: center;
@@ -264,6 +273,7 @@
       text-underline-offset: 23px;
       text-decoration-color: var.$red;
       z-index: 2;
+      margin: 0 auto;
 
       @media screen and (min-width: var.$tablet) {
         width: 500px;
@@ -314,7 +324,7 @@
     }
 
     &__block {
-      padding-bottom: 40px;
+      padding: 40px 0 40px 0;
       border-bottom: 2px solid var.$red;
       text-align: center;
 
@@ -341,7 +351,6 @@
       text-transform: uppercase;
       text-align: center;
       margin: 0 0 20px 0;
-      padding-top: 20px;
 
       @media screen and (min-width: var.$tablet) {
         font-size: 20px;
