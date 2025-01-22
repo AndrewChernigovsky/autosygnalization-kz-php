@@ -33,10 +33,12 @@ echo $head->setHead();
         <div class="about-us__present present">
           <div class="present__block">
             <h2 class="present__main-title">О нас</h2>
-            <p class="present__text">“Auto Security” – установочный центр автоэлектроники. Мы предлагаем лучшее!</p>
-            <p class="present__text">Наша компания была основана в 2004 году, в самый расцвет автосервисов. Миссия нашей
-              компании – предлагать
-              качественные услуги в сфере установки и ремонта автоэлектроники.</p>
+            <p class="present__main-slogan">“Auto Security” – установочный центр автоэлектроники.</p>
+            <p class="present__main-slogan">Мы предлагаем лучшее!</p>
+            <div class="present__main-text">
+              <p>Наша компания была основана в 2004 году, в самый расцвет автосервисов.</p>
+              <p>Миссия нашей компании – предлагать качественные услуги в сфере установки и ремонта автоэлектроники.</p>
+            </div>
           </div>
           <div class="present__block">
             <h3 class="present__list-title">Наши преимущества</h3>
@@ -60,7 +62,7 @@ echo $head->setHead();
           </div>
         </div>
         <div class="about-us__tech-photo tech-photo">
-          <h3 class="tech-photo__title">ФОТОГРАФИИ ТЕХ ЦЕНТРА</h3>
+          <h3 class="tech-photo__title">Фотографии тех центра</h3>
           <div class="tech-photo__swiper swiper swiper-tech-photo">
             <div class="tech-photo__swiper-wrapper swiper-wrapper">
               <?php
@@ -75,11 +77,8 @@ echo $head->setHead();
           </div>
           <div class="tech-photo__block">
             <h3 class="tech-photo__block-title"><span>Обращайтесь в</span> <span>Auto Security</span></h3>
-                      <p class="tech-photo__text">Вам будет оказана квалифицированная помощь по
-                        установке дополнительного
-                        электронного оборудования на Ваш автомобиль! Мы продиагностируем Ваш авто, отремонтируем, установим,
-                        настроим
-                        Ваше оборудование! Доверяйте профессионалам!</p>
+            <p class="tech-photo__text">Вам будет оказана квалифицированная помощь по установке дополнительного электронного оборудования на Ваш автомобиль!</p>
+            <p class="tech-photo__text">Мы продиагностируем Ваш авто, отремонтируем, установим, настроим Ваше оборудование! Доверяйте профессионалам!</p>
           </div>
 
         </div>
