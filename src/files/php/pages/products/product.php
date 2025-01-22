@@ -55,7 +55,7 @@ echo $head->setHead();
           <p class="product-card__text">Доставка:</p>
           <a class="product-card__link" href="#" style="background-image: url(<?= $path . '/assets/images/vectors/link-icon.svg'; ?>);">о доставке и оплате</a>
         </div>      
-        <a class="product-card__link" href="#">Наличие товара уточняйте у продавца.</a>
+        <a class="product-card__link product-card__link--mod" href="#">Наличие товара уточняйте у продавца.</a>
       </div>
       <p class="card-more__text">
         <span>Итоговая стоимость</span>

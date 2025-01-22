@@ -111,7 +111,12 @@
     font-size: 12px;
     line-height: 16px;
 
-    @media (min-width: var.$desktop-min) {
+    @media screen and (min-width: var.$desktop-min) {
+      font-size: 18px;
+      line-height: 22px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
       font-size: 24px;
       line-height: 30px;
     }
@@ -127,12 +132,21 @@
     font-size: 12px;
     line-height: 16px;
 
-    @media (min-width: var.$desktop-min) {
+    @media screen and (min-width: var.$desktop-min) {
+      font-size: 18px;
+      line-height: 22px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
       padding-right: 40px;
       background-size: 30px 30px;
       font-size: 24px;
       line-height: 30px;
     }
+  }
+
+  &__link--mod {
+    padding-right: 0;
   }
 
   img {
