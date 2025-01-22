@@ -65,8 +65,8 @@ echo $head->setHead();
             </p>
           </div>
           <div class="contacts-section__contact">
-            <p class="contacts-section__contact--email">Почта:</p>
-            <p><?php echo $email ?></p>
+            <p class="contacts-section__contact--email-title">Почта:</p>
+            <p class="contacts-section__contact--email-text"><?php echo $email ?></p>
           </div>
           <div class="contacts-section__contact">
             <p class="contacts-section__contact--address-title">Адрес:</p>
