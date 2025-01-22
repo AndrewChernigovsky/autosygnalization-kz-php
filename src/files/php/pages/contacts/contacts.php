@@ -1,19 +1,33 @@
 <?php
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+
+
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
+$basePath = $variables->getBasePath();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
+$base_path = $docROOT . $path . '/files/php/layout';
+$social = $basePath . '/files/php/helpers/components/social.php';
+$contacts_data = $basePath . '/files/php/data/contacts.php';
+
 include_once $head_path;
 include_once $sections_path;
-$base_path = $docROOT . $path . '/files/php/layout';
+include_once $contacts_data;
+include_once $social;
 
 $title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
 $head = new Head($title, [], []);
+
+
+$contacts = new Contacts(); /* Создаем экземпляр Contacts */
+$socialIcons = $contacts->getSocialIcons();
+$email = $contacts->getEmail(true);
+$address = $contacts->getAddress();
 ?>
 
 <!DOCTYPE html>
@@ -49,11 +63,11 @@ echo $head->setHead();
           </div>
           <div class="contacts-section__contact">
             <p class="contacts-section__contact--email">Почта:</p>
-            <p>autosecurity.kz@mail.ru</p>
+            <p><?php echo $email ?></p>
           </div>
           <div class="contacts-section__contact">
-            <p class="contacts-section__contact--address">Адрес:</p>
-            <p>Казахстан, г.Алматы, <br> Абая 145/г, бокс №15</p>
+            <p class="contacts-section__contact--address-title">Адрес:</p>
+            <p class="contacts-section__contact--address-text"><?php echo $address ?></p>
           </div>
           <div class="contacts-section__contact">
               <p class="contacts-section__contact--schedule">График работы:</p>
@@ -64,7 +78,14 @@ echo $head->setHead();
             </div>
           </div>
           <div class="contacts-section__contact">
-            <p>Соцсети:</p>
+            <p class="contacts-section__contact--social">Соцсети:</p>
+            <div class="contacts-section__contact--social-icons">
+              <?php
+              foreach ($socialIcons as $social) {
+                echo $contacts->setSocial($social);
+              }
+              ?>
+            </div>
           </div>
           <div class="contacts-section__contact">
             <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>

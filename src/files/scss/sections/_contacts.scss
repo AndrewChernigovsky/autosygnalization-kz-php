@@ -113,7 +113,7 @@
     }
   }
 
-  &--address {
+  &--address-title {
     font-weight: 600;
     padding-left: 40px;
     margin-bottom: 20px;
@@ -132,6 +132,10 @@
       top: 50%;
       transform: translateY(-50%);
     }
+  }
+
+  &--address-text {
+    width: 195px;
   }
 
   &--schedule {
@@ -161,5 +165,14 @@
 
   &--work-time p:last-child {
     color: var.$red;
+  }
+
+  &--social {
+    font-weight: 600;
+  }
+
+  &--social-icons svg{
+    width: 30px;
+    height: 30px;
   }
 }
