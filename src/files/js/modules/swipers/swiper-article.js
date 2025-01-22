@@ -6,6 +6,12 @@ export function initSwiperArticle() {
     spaceBetween: 10,
     slidesPerView: 4,
     loop: true,
+    touchReleaseOnEdges: true,
+    breakpoints: {
+      1024: {
+        direction: 'vertical',
+      }
+    }
   }); 
 
   const bigSlider = new Swiper('.big-slider', {

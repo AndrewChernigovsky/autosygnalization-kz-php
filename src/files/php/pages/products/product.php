@@ -63,8 +63,9 @@ echo $head->setHead();
       </p>
       <div class="card-more__wrapper">
         <p>Количество</p>
+        <div class="card-more__button-cost"></div>
       </div>
-      <button type="button" class="button y-button-primary cart-button"
+      <button type="button" class="button y-button-primary card-more__button-cart"
         data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В корзину</button>   
       <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
     </section>    
