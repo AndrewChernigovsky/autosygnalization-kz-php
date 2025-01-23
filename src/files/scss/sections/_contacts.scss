@@ -84,7 +84,7 @@
 
   &--title {
     font-weight: 600;
-    padding-left: 45px;
+    /* padding-left: 45px; */
     position: relative;
 
     &::after {
@@ -95,7 +95,7 @@
       background-image: url('#{var.$DEV_PATH}assets/images/vectors/phone-no-border.svg');
       background-repeat: no-repeat;
       background-size: 25px 25px;
-      left: 10px;
+      left: -34px;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -103,7 +103,6 @@
 
   &--whatsapp {
     font-weight: 600;
-    padding-left: 45px;
     position: relative;
 
     &::after {
@@ -114,7 +113,7 @@
       background-image: url('#{var.$DEV_PATH}assets/images/vectors/whatsapp.svg');
       background-repeat: no-repeat;
       background-size: 28px 28px;
-      left: 10px;
+      left: -34px;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -132,7 +131,6 @@
 
   &--email-title {
     font-weight: 600;
-    padding-left: 40px;
     position: relative;
 
     &::after {
@@ -143,7 +141,7 @@
       background-image: url('#{var.$DEV_PATH}assets/images/vectors/message-icon.svg');
       background-repeat: no-repeat;
       background-size: 20px 20px;
-      left: 10px;
+      left: -34px;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -155,7 +153,6 @@
 
   &--address-title {
     font-weight: 600;
-    padding-left: 40px;
     margin-bottom: 20px;
     position: relative;
 
@@ -168,7 +165,7 @@
       mask-repeat: no-repeat;
       mask-size: 25px 25px;
       background-color: var.$red;
-      left: 10px;
+      left: -34px;
       top: 50%;
       transform: translateY(-50%);
     }
@@ -180,7 +177,7 @@
 
     @media screen and (min-width: var.$tablet) {
       width: 220px;
-
+      text-transform: none;
     }
   }
 
@@ -207,6 +204,10 @@
 
   &--work-time {
     text-align: center;
+
+    @media screen and (min-width: var.$tablet) {
+      text-transform: none;
+    }
   }
 
   &--work-time p:last-child {
@@ -225,6 +226,15 @@
 
 .contacts-section__contact--btn {
   background-color: transparent;
+
+  @media screen and (min-width: var.$desktop-min) {
+    text-transform: none;
+    margin-left: 30px;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    margin-left: 0;
+  }
 }
 
 .map iframe{
@@ -239,10 +249,15 @@
   }
 
   &__title {
-    margin: 0 0 30px 0;
+    margin: 0 auto 30px;
 
     @media screen and (min-width: var.$tablet) {
+      width: 600px;
       margin-bottom: 40px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      width: 1000px;
     }
   }
 
@@ -252,14 +267,15 @@
     text-align: center;
 
     @media screen and (min-width: var.$tablet) {
-      width: 600px;
+      width: 630px;
       margin: 0 auto;
       margin-bottom: 50px;
       font-size: 20px;
+      text-transform: none;
     }
 
     @media screen and (min-width: var.$desktop-min) {
-      width: 1000px;
+      width: 800px;
       text-align: center;
       text-transform: none;
     }
@@ -275,21 +291,22 @@
     text-align: center;
     font-size: 18px;
     font-weight: 600;
-    margin: 0 0 20px 0;
+    margin: 0 0 65px 0;
     text-align: center;
   }
 
   &__phone p {
-    margin: 0 0 15px 0;
+    margin: 0 auto 15px;
 
-    @media screen and (min-width: var.$desktop-min) {
+    @media screen and (min-width: var.$tablet) {
       font-size: 24px;
+      width: 600px;
     }
   }
 
   &__box {
     width: 180px;
-    margin: 0 auto 45px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -302,10 +319,11 @@
   }
 
   &__slogan {
-    margin: 0;
+    margin: 0 auto;
     text-align: center;
 
-    @media screen and (min-width: var.$desktop-min) {
+    @media screen and (min-width: var.$tablet) {
+      width: 600px;
       font-size: 24px;
     }
   }
