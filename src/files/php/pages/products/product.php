@@ -59,7 +59,7 @@ echo $head->setHead();
       </div>
       <p class="card-more__text">
         <span>Итоговая стоимость</span>
-        <span class="cost-total"></span>
+        <span class="cost-total" id="cost-total"></span>
       </p>
       <div class="card-more__wrapper">
         <p>Количество</p>
