@@ -275,6 +275,7 @@
 
         &:first-of-type {
           letter-spacing: 1px;
+          flex-shrink: 0;
         }
 
         &:last-of-type {

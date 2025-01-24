@@ -1,6 +1,7 @@
 <?php
 
 $path_to_include = __DIR__ . '/files/php/helpers/classes/setVariables.php';
+error_log($path_to_include . ' путь к setVar');
 if (!file_exists($path_to_include)) {
   die("Файл не найден: $path_to_include");
 } else {
