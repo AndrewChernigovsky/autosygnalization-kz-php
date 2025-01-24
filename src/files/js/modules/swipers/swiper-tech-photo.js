@@ -18,11 +18,6 @@ export function initSwiperTechPhoto() {
           clickable: true,
         },
         slidesPerView: 1,
-        // breakpoints: {
-        //   768: {
-        //     slidesPerView: 2,
-        //   },
-        // },
       });
     }
   }
