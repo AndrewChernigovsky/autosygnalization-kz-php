@@ -96,11 +96,22 @@
       padding-top: 1em;
       font-weight: 600;
       text-align: center;
-      text-decoration: underline;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 23px;
-      text-decoration-color: var.$red;
+      position: relative;
       z-index: 2;
+
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        min-width: 180px;
+        width: 25%;
+        height: 2px;
+        background-color: var.$red;
+        bottom: -21px;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
     }
 
     &__swiper {
@@ -175,16 +186,27 @@
     gap: 20px;
 
     &__title {
+      position: relative;
       margin: 0;
       padding-top: 1em;
       font-weight: 600;
       text-transform: uppercase;
       text-align: center;
-      text-decoration: underline;
-      text-decoration-thickness: 2px;
-      text-underline-offset: 23px;
-      text-decoration-color: var.$red;
       z-index: 2;
+
+      &::after {
+        content: '';
+        display: block;
+        position: absolute;
+        min-width: 180px;
+        width: 25%;
+        height: 2px;
+        background-color: var.$red;
+        bottom: -21px;
+        left: 0;
+        right: 0;
+        margin: auto;
+      }
     }
 
     &__swiper {
