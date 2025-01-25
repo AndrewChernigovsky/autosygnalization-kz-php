@@ -24,7 +24,8 @@ const {
   checkoutForm,
   filterCost,
   aside,
-  catalog
+  catalog,
+  cardMoreButton
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -48,6 +49,7 @@ const {
   filterCost: document.querySelector('.filter-cost'),
   aside: document.querySelector('.aside'),
   catalog: document.querySelector('.catalog__products'),
+  cardMoreButton: document.querySelector('.card-more__button-cost'),
   buttonDownload: document.getElementById('downloads-btn')
 };
 
@@ -166,6 +168,11 @@ async function loadModules() {
       './components/Checkout/CheckoutForm.jsx'
     );
     render(html`<${CheckoutForm} />`, checkoutForm);
+  }
+
+  if (cardMoreButton != null) {
+    const { renderCardButton } = await import('./modules/card-cart.js');
+    renderCardButton();
   }
 }
 

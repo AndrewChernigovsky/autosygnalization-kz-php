@@ -1,0 +1,403 @@
+@use "variables"as var;
+
+.card-more {
+  position: relative;
+  max-width: 1440px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 300px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: var.$gray_2B2B2B;
+  border-radius: 20px;
+
+  @media screen and (min-width: var.$tablet) {
+    grid-template-columns: min-content 1fr 1fr;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    width: 1024px;
+    margin: 0 auto;
+    grid-template-columns: repeat(2, 195px) repeat(2, 1fr);
+  }
+  
+  @media screen and (min-width: var.$desktop) {
+    width: 1440px;
+    padding-right: 30px;
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .product-card {
+    gap: 10px;
+    background-color: inherit;
+    padding: 0;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 1 / 2;
+      grid-row: 2 / 6;
+      align-self: flex-start;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      grid-column: 1/3;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      max-width: 1440px;
+    }
+
+    img {
+      height: auto;
+      width: 100%;
+    }
+
+    &:hover {
+      transform: none;
+    }
+
+    &__wrapper {
+      grid-row: 3/4;
+
+      @media screen and (min-width: var.$tablet) {
+        align-self: flex-start;
+        grid-column: 1/4;
+        grid-row: 1/2;
+      }  
+      
+      @media screen and (min-width: var.$desktop-min) {
+        grid-column: 1/3;
+      }
+    }
+
+    &__content {
+      grid-row: 8/9;
+
+      @media screen and (min-width: var.$tablet) {
+        grid-column: 2 / 4;
+        grid-row: 2 / 5;
+        align-self: flex-start;
+      }
+
+      @media screen and (min-width: var.$desktop-min) {
+        grid-column: 3/5;
+      }
+    }
+
+    &__description {      
+      margin: 0;
+      margin-bottom: 10px;
+      padding: 10px;
+      font-family: var.$primary-font;
+      font-size: 18px;
+      line-height: 22px;
+      border-radius: 20px;
+      background-color: var.$gray_424242;
+      text-transform: none;
+
+      @media screen and (min-width: var.$desktop) {
+        font-size: 24px;
+        line-height: 30px;
+      }
+    }
+
+    &__price {
+      margin: 0;
+      font-family: var.$primary-font;
+      font-size: 20px;
+      text-transform: uppercase;
+
+      @media screen and (min-width: var.$desktop)  {
+        font-size: 24px;
+      }
+    }
+  }
+
+  h3 {
+    margin: 0;
+    margin-bottom: 10px;
+    font-family: var.$secondary-font;
+    font-size: 24px;
+    line-height: 34px;
+    text-align: center;
+    grid-row: 2/3;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 2 / 4;
+      grid-row: 1 / 2;
+      align-self: flex-start;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      grid-column: 3/5;
+    }
+    
+    @media screen and (min-width: var.$desktop) {
+      font-size: 34px;
+      line-height: 40px;
+      align-self: flex-end;
+    } 
+  }
+
+  &__text {
+    margin: 0;
+    font-family: var.$primary-font;
+    font-size: 18px;
+    line-height: 22px;
+    text-transform: uppercase;
+    grid-row: 4/5;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 2/4;
+      grid-row: 6/8;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      grid-column: 3 / 5;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 24px;
+      line-height: 30px;
+    }
+
+    span {
+      @media screen and (min-width: var.$desktop) {
+        font-size: 36px;
+        line-height: 46px;
+      }
+    }
+  }
+
+  &__text--info {
+    grid-row: 7/8;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 2/4;
+      grid-row: 5/6;
+      justify-self: flex-end;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      grid-column: 3/5;
+    }
+  }
+
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    grid-row: 5/6;
+
+    @media screen and (min-width: var.$tablet) {
+      justify-self: flex-start;
+      align-items: flex-start;
+      grid-column: 1/2;
+      grid-row: 7/9;
+    }
+
+    p {
+      margin: 0;
+      font-family: var.$primary-font;
+      font-size: 22px;
+      line-height: 28px;
+      text-transform: uppercase;
+
+      @media screen and (min-width: var.$desktop) {
+        font-size: 36px;
+        line-height: 46px;
+      }
+    }
+  }
+
+  .slider {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+
+    @media screen and (min-width: var.$desktop-min) {
+      width: 390px;
+      flex-direction: row;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      width: 685px;
+    }
+  }
+
+  .swiper {
+    @media screen and (min-width: var.$desktop-min) {
+      margin: 0;
+    }    
+  }
+
+  .swiper-wrapper {
+    width: 300px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      height: 300px;
+    } 
+
+    @media screen and (min-width: var.$desktop)  {
+      width: 520px;
+      height: 520px;
+    }
+  }
+
+  .thumbs {
+    padding: 0 5px;
+
+    .swiper-wrapper {
+      @media screen and (min-width: var.$desktop-min) {
+        width: 80px;
+        padding: 0;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      @media screen and (min-width: var.$desktop) {
+        width: 150px;
+      }
+    }
+  }
+
+  .swiper-slide {
+    display: flex;
+    justify-content: center;
+    background-color: var.$white;
+    border-radius: 20px;
+    border: 3px solid var.$white;
+    cursor: pointer;
+  }
+
+  .big-slide {
+    padding: 10px;
+    width: 300px;
+    height: 300px;
+
+    @media screen and (min-width: var.$desktop)  {
+      width: 520px;
+      height: 520px;
+      margin: 0;
+    }
+
+    &:hover {
+      border: 3px solid var.$green;
+    }
+  }
+
+  .small-slide {    
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 80px;
+    height: 80px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      flex-direction: column;
+    }
+
+    @media screen and (min-width: var.$desktop)  {
+      min-width: 150px;
+      height: 150px;
+      align-items: center;
+    }
+
+    img {
+      @media screen and (min-width: var.$desktop) {
+        width: auto;
+        height: auto;
+      }
+    }
+
+    &:hover {
+      opacity: 0.5;
+    }
+  }
+
+  &__button-cart {
+    font-family: var.$secondary-font;
+    grid-row: 6/7;
+    justify-self: center;
+
+    @media screen and (min-width: var.$tablet) {
+      grid-column: 3/4;
+      grid-row: 8/9;
+      justify-self: flex-end;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      grid-column: 4/5;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      min-width: 560px;
+      font-size: 64px;
+      line-height: 86px;
+      grid-column: 3/5;
+    }
+  }
+
+  &__button-cost {
+    width: 200px;
+    height: 50px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: var.$gray_424040;
+    border-radius: 25px;
+
+    @media screen and (min-width: var.$desktop) {
+      width: 400px;
+      height: 100px;
+      border-radius: 50px;
+    }
+  }
+
+  &__button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: none;
+    background-repeat: no-repeat;
+    background-size: 40px 40px;
+    background-position: center;
+    background-color: inherit;
+
+    @media screen and (min-width: var.$desktop) {
+      width: 80px;
+      height: 80px;
+      background-size: 80px 80px;
+    }
+  }
+  
+  &__button--min {
+    background-image: url('#{var.$DEV_PATH}assets/images/vectors/minus-icon.svg');    
+  }
+
+  &__button--max {
+    background-image: url('#{var.$DEV_PATH}assets/images/vectors/plus-icon.svg');    
+  }
+
+  &__quantity {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+
+    @media screen and (min-width: var.$desktop-min) {
+      min-width: 50px;
+      max-height: 50px;
+      min-height: 50px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      min-width: 100px;
+      min-height: 100px;
+      max-height: 100px;
+      font-size: 64px;
+      line-height: 86px;
+    }
+  }  
+}
