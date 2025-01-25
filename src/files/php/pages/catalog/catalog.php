@@ -11,6 +11,9 @@ include_once __DIR__ . '/../../helpers/components/article.php';
 include_once __DIR__ . '/../../helpers/components/select.php';
 include_once __DIR__ . '/../../helpers/components/pagination.php';
 
+$PAGE = $_GET['PAGE'] ?? 1;
+$OPTIONS = $_GET ?? '';
+error_log(print_r($OPTIONS, true) . ' : OPTIONS');
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
@@ -30,11 +33,35 @@ $article = new Article();
 $articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
-$pagination = new Pagination($products);
-$perPage = 10;
-$page = 1;
-$offset = ($page - 1) * $perPage;
-$productsLimited = array_slice($products['category'], $offset, $perPage);
+
+$filteredProducts = $OPTIONS != '' ? [] : $products;
+
+if (!empty($OPTIONS)) {
+  foreach ($products as $product) {
+      $isMatch = true;
+      foreach ($OPTIONS as $option => $value) {
+          // Проверяем, существует ли ключ 'options' и является ли он массивом
+          if (!isset($product['options']) || !is_array($product['options'])) {
+              error_log("Product has invalid 'options' value.");
+              $isMatch = false;
+              break;
+          }
+          if ($value === 'on' && !in_array($option, $product['options'])) {
+              $isMatch = false;
+              break;
+          }
+      }
+      if ($isMatch) {
+          $filteredProducts[] = $product;
+          if (isset($product['id'])) {
+              error_log("Product ID " . $product['id'] . " added to filtered products.");
+          } else {
+              error_log("Product added to filtered products.");
+          }
+      }
+  }
+}
+$pagination = new Pagination($filteredProducts);
 ?>
 
 <!DOCTYPE html>
@@ -50,18 +77,16 @@ echo $head->setHead();
     <div class="catalog">
       <div class="catalog__wrapper">
         <aside class="aside">
-          <?= $filters->renderFilters() ?>
+          <?= $filters->renderFilters(); ?>
         </aside>
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
-          <?= getProductCardWModel($products) ?>
-          <!-- <div class="catalog__products-wrapper-1">
-          </div> -->
-          <?php if ($productsLimited): ?>
-            <?= $pagination->render(); ?>
-          <?php endif; ?>
+          <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
         </div>
       </div>
+      <?php if ($filteredProducts): ?>
+        <?= $pagination->render(); ?>
+      <?php endif; ?>
     </div>
     <?= getShop('setup'); ?>
   </main>
