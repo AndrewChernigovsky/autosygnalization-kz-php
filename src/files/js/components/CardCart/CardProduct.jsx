@@ -1,5 +1,6 @@
 import { html, Component } from 'htm/preact';
 import { CardCartButtonCounter } from './CardCartButtonCounter.jsx';
+import { ProductAPI } from './../../modules/api/getProduct.js';
 
 export class CardProduct extends Component {
   constructor(props) {
@@ -7,8 +8,9 @@ export class CardProduct extends Component {
     this.state = {
       quantity: props.quantity || 0,
       isRemoveButtonDisabled: false,
-      price: 0,
+      price: props.cost || 0,
     };
+    this.cartCounter = document.querySelector('.cart .counter');
   }
 
   componentDidMount() {
@@ -28,11 +30,70 @@ export class CardProduct extends Component {
     }
   }
 
-  removeToCart = () => {
+  sendSessionCart(btn, action) {
+    let products = JSON.parse(sessionStorage.getItem('cart')) || [];
+
+    if (this.cartCounter) {
+      const currentCount = products.reduce(
+        (total, product) => total + product.quantity,
+        0
+      );
+      this.cartCounter.textContent = currentCount;
+
+      const productApi = new ProductAPI();
+      productApi.createProducts();
+
+      const productId = btn.parentElement.dataset.id;
+      const productPrice = btn.parentElement.dataset.cost;
+      const existingProduct = products.find(
+        (product) => product.id === productId
+      );
+
+      if (action === 'add') {
+        if (existingProduct) {
+          existingProduct.quantity += 1;
+        } else {
+          products.push({
+            id: productId,
+            quantity: 1,
+            price: productPrice,
+          });
+        }
+      } else if (action === 'remove') {
+        if (existingProduct) {
+          existingProduct.quantity -= 1;
+          if (existingProduct.quantity <= 0) {
+            products = [];
+          }
+        }
+      }
+
+      sessionStorage.setItem('cart', JSON.stringify(products));
+      productApi.addProduct(productId);
+
+      const newCount = products.reduce((total, product) => {
+        return total + product.quantity;
+      }, 0);
+
+      this.cartCounter.textContent = newCount;
+
+      productApi
+        .sendCart(products)
+        .then((responseData) => {
+          console.log('Данные успешно отправлены:', responseData);
+        })
+        .catch((error) => {
+          console.error('Ошибка при отправке данных:', error);
+        });
+    }
+  }
+
+  removeToCart = (e) => {
+    const btn = e.target;
     this.setState(
       (prevState) => {
         const newQuantity = Math.max(prevState.quantity - 1, 0);
-        this.updateSessionStorage(this.props.id, newQuantity);
+        this.updateSessionStorage(this.props.id, newQuantity, btn, 'remove');
 
         if (newQuantity === 0) {
           this.setState({ isRemoveButtonDisabled: true });
@@ -51,11 +112,12 @@ export class CardProduct extends Component {
     );
   };
 
-  addToCart = () => {
+  addToCart = (e) => {
+    const btn = e.target;
     this.setState(
       (prevState) => {
         const newQuantity = prevState.quantity + 1;
-        this.updateSessionStorage(this.props.id, newQuantity);
+        this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
 
         if (newQuantity > 0) {
           this.setState({ isRemoveButtonDisabled: false });
@@ -80,12 +142,14 @@ export class CardProduct extends Component {
 
     const totalCost = quantity * price;
     const costTotalElement = document.querySelector('#cost-total');
+
     if (costTotalElement) {
       costTotalElement.textContent = totalCost.toFixed(2) + ' ₸';
     }
   }
 
-  updateSessionStorage(id, quantity) {
+  updateSessionStorage(id, quantity, btn, action) {
+    this.sendSessionCart(btn, action);
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
     const index = localProducts.findIndex((product) => product.id === id);
 
@@ -95,34 +159,15 @@ export class CardProduct extends Component {
     }
   }
 
-  render({ title, id, currency, checkout }) {
+  render() {
     return html`
-      ${checkout
-        ? html`
-            <li class="checkout-info">
-              <span>${title} </span>
-              <div>
-                <span>Количество:</span>
-                <span>${this.state.quantity} </span>
-              </div>
-              <div>
-                <p>
-                  Цена:
-                  <span>${this.state.price} </span>
-                  <span>${currency} </span>
-                </p>
-              </div>
-            </li>
-          `
-        : html`
-            <${CardCartButtonCounter}
-              id=${id}
-              onRemove=${this.removeToCart}
-              onAdd=${this.addToCart}
-              quantity=${this.state.quantity}
-              isRemoveButtonDisabled=${this.state.isRemoveButtonDisabled}
-            />
-          `}
+      <${CardCartButtonCounter}
+        id=${this.id}
+        onRemove=${this.removeToCart}
+        onAdd=${this.addToCart}
+        quantity=${this.state.quantity}
+        isRemoveButtonDisabled=${this.state.isRemoveButtonDisabled}
+      />
     `;
   }
 }
