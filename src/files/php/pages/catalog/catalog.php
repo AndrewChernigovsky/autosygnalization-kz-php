@@ -13,6 +13,8 @@ include_once __DIR__ . '/../../helpers/components/pagination.php';
 
 $PAGE = $_GET['PAGE'] ?? 1;
 $OPTIONS = $_GET ?? [];
+$minCost = $_GET['min-value-cost'] ?? 0;
+$maxCost = $_GET['max-value-cost'] ?? PHP_FLOAT_MAX;
 $SELECT = $_GET['SELECT'] ?? '';
 
 $variables = new SetVariables();
@@ -45,6 +47,14 @@ if (empty($OPTIONS)) {
     foreach ($allProducts['category'] as $category => $items) {
         foreach ($items as $product) {
             $isMatch = true;
+            $productCost = $product['price'] ?? 0;
+
+
+            if ($productCost < $minCost || $productCost > $maxCost) {
+                $isMatch = false;
+                continue;
+            }
+
             foreach ($OPTIONS as $option => $value) {
                 $productFilters = $product['options-filters'] ?? [];
                 if ($value === 'on') {
@@ -54,20 +64,45 @@ if (empty($OPTIONS)) {
                     }
                 }
             }
+
             if ($isMatch) {
                 $filteredProducts[] = $product;
             }
         }
     }
 }
+error_log(print_r($OPTIONS, true) . ' : OPTIONS');
 
-if (!empty($SELECT) && $SELECT === 'name') {
+if (!empty($SELECT)) {
+  if($SELECT === 'name') {
     error_log(print_r($filteredProducts, true) . ' : FILTERS');
     usort($filteredProducts, function ($a, $b) {
         $nameA = $a['title'] ?? '';
         $nameB = $b['title'] ?? '';
         return strcmp(mb_strtolower($nameA), mb_strtolower($nameB));
     });
+  }
+  if($SELECT === 'price') {
+    if ($SELECT === 'price') {
+      usort($filteredProducts, function ($a, $b) {
+          $priceA = $a['price'] ?? 0;
+          $priceB = $b['price'] ?? 0;
+          return $priceB <=> $priceA; // Сортировка по убыванию
+      });
+
+      // Логирование для отладки
+      error_log("Sorted by Price (Descending): " . print_r($filteredProducts, true));
+  }
+  }
+  if($SELECT === 'price') {
+    
+  }
+  if($SELECT === 'price') {
+    
+  }
+  if($SELECT === 'price') {
+    
+  }
 }
 ?>
 
