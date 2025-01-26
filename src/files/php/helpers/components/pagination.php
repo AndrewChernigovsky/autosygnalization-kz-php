@@ -33,15 +33,23 @@ class Pagination
         $startPage = max(1, min($this->page - floor($maxPaginationItems / 2), $totalPages - $maxPaginationItems + 1));
         $endPage = min($startPage + $maxPaginationItems - 1, $totalPages);
 
+        // Получаем текущие GET-параметры, исключая параметр PAGE
+        $queryParams = $_GET;
+        unset($queryParams['PAGE']); // Удаляем PAGE, так как он будет изменяться
+
         // Генерация ссылок на страницы
         for ($i = $startPage; $i <= $endPage; $i++) {
-            $href = $this->variables->getPathFileURL() . '/files/php/pages/catalog/catalog.php?PAGE=' . $i;
+            // Добавляем текущие GET-параметры к ссылке
+            $queryParams['PAGE'] = $i; // Устанавливаем новый номер страницы
+            $href = $this->variables->getPathFileURL() . '/files/php/pages/catalog/catalog.php?' . http_build_query($queryParams);
             $html .= '<li class="pagination__item"><a class="y-button-primary button link' . ($this->page == $i ? " active" : '') . '" href="' . $href . '">' . htmlspecialchars($i) . '</a></li>';
         }
 
         // Кнопка "Показать еще" (если есть больше страниц)
         if ($totalPages > $endPage) {
-            $html .= '<li class="pagination__item"><a class="y-button-primary button link" href="' . $this->variables->getPathFileURL() . '/files/php/pages/catalog/catalog.php?PAGE=' . ($endPage + 1) . '">Показать еще</a></li>';
+            $queryParams['PAGE'] = $endPage + 1; // Устанавливаем следующий номер страницы
+            $href = $this->variables->getPathFileURL() . '/files/php/pages/catalog/catalog.php?' . http_build_query($queryParams);
+            $html .= '<li class="pagination__item"><a class="y-button-primary button link" href="' . $href . '">Показать еще</a></li>';
         }
 
         $html .= '</ol>';
