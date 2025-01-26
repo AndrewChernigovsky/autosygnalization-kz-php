@@ -38,10 +38,21 @@ function getProductCardWModel(array $products, bool $cart = false, $page = 1)
     }
     $groupedProducts = [];
 
-    error_log(print_r($products, true) . ' : PRODUCTS');
-
-    foreach ($products['category'] as $category) {
-        foreach ($category as $product) {
+    if(isset($products['category']) && is_array($products['category'])) {
+        foreach ($products['category'] as $category) {
+            foreach ($category as $product) {
+                if (isset($product['id'])) {
+                    if (!isset($groupedProducts[$product['id']])) {
+                        $groupedProducts[$product['id']] = $product;
+                        $groupedProducts[$product['id']]['quantity'] = 1;
+                    } else {
+                        $groupedProducts[$product['id']]['quantity'] += 1;
+                    }
+                }
+            }
+        }
+    } else {
+        foreach ($products as $product) {
             if (isset($product['id'])) {
                 if (!isset($groupedProducts[$product['id']])) {
                     $groupedProducts[$product['id']] = $product;

@@ -12,8 +12,9 @@ include_once __DIR__ . '/../../helpers/components/select.php';
 include_once __DIR__ . '/../../helpers/components/pagination.php';
 
 $PAGE = $_GET['PAGE'] ?? 1;
-$OPTIONS = $_GET ?? '';
-error_log(print_r($OPTIONS, true) . ' : OPTIONS');
+$OPTIONS = $_GET ?? [];
+$SELECT = $_GET['SELECT'] ?? '';
+
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
@@ -34,34 +35,40 @@ $articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
 
-$filteredProducts = $OPTIONS != '' ? [] : $products;
+$allProducts = $products;
 
-if (!empty($OPTIONS)) {
-  foreach ($products as $product) {
-      $isMatch = true;
-      foreach ($OPTIONS as $option => $value) {
-          // Проверяем, существует ли ключ 'options' и является ли он массивом
-          if (!isset($product['options']) || !is_array($product['options'])) {
-              error_log("Product has invalid 'options' value.");
-              $isMatch = false;
-              break;
-          }
-          if ($value === 'on' && !in_array($option, $product['options'])) {
-              $isMatch = false;
-              break;
-          }
-      }
-      if ($isMatch) {
-          $filteredProducts[] = $product;
-          if (isset($product['id'])) {
-              error_log("Product ID " . $product['id'] . " added to filtered products.");
-          } else {
-              error_log("Product added to filtered products.");
-          }
-      }
-  }
+// Фильтрация по OPTIONS
+if (empty($OPTIONS)) {
+    $filteredProducts = $allProducts;
+} else {
+    $filteredProducts = [];
+    foreach ($allProducts['category'] as $category => $items) {
+        foreach ($items as $product) {
+            $isMatch = true;
+            foreach ($OPTIONS as $option => $value) {
+                $productFilters = $product['options-filters'] ?? [];
+                if ($value === 'on') {
+                    if (!is_array($productFilters) || !in_array($option, $productFilters)) {
+                        $isMatch = false;
+                        break;
+                    }
+                }
+            }
+            if ($isMatch) {
+                $filteredProducts[] = $product;
+            }
+        }
+    }
 }
-$pagination = new Pagination($filteredProducts);
+
+if (!empty($SELECT) && $SELECT === 'name') {
+    error_log(print_r($filteredProducts, true) . ' : FILTERS');
+    usort($filteredProducts, function ($a, $b) {
+        $nameA = $a['title'] ?? '';
+        $nameB = $b['title'] ?? '';
+        return strcmp(mb_strtolower($nameA), mb_strtolower($nameB));
+    });
+}
 ?>
 
 <!DOCTYPE html>
@@ -81,10 +88,17 @@ echo $head->setHead();
         </aside>
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
-          <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
+          <?php if (!empty($filteredProducts)): ?>
+              <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
+          <?php else: ?>
+              <p>Нет товаров, соответствующих выбранным фильтрам.</p>
+          <?php endif; ?>
         </div>
       </div>
       <?php if ($filteredProducts): ?>
+        <?php
+          $pagination = new Pagination($filteredProducts);
+          ?>
         <?= $pagination->render(); ?>
       <?php endif; ?>
     </div>
