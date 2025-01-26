@@ -13,7 +13,7 @@ class ServiceCard
   public function initCard($card)
   {
     $path = $this->variables->getPathFileURL();
-    error_log(print_r($card, true) . ' 111');
+    // error_log(print_r($card, true) . ' 111');
     ob_start();
     ?>
     <div class="service-card">
