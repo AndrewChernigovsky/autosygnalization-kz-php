@@ -82,8 +82,7 @@ const phpTask = (cb) => {
 
 const watchTask = () => {
   browserSync.init({
-    proxy: "localhost/dist",
-    // proxy: "localhost:80/dist",
+    proxy: "http://autosygnalization-kz-php/dist",
     notify: false,
   });
   if (!PRODUCTION) {
