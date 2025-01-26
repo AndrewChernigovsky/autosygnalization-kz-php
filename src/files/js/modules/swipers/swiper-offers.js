@@ -1,5 +1,5 @@
 import Swiper from "swiper";
-import { Autoplay, Pagination, EffectFade } from "swiper/modules";
+import { Autoplay, Pagination, EffectFade, Navigation } from "swiper/modules";
 
 export function initSwiperOffers() {
   const swiperOffers = document.querySelector('.swiper-offers');
@@ -7,16 +7,19 @@ export function initSwiperOffers() {
     if (swiperOffers) {
       new Swiper(swiperOffers, {
         loop: true,
-        modules: [Autoplay, Pagination, EffectFade],
+        modules: [Autoplay, Pagination, EffectFade, Navigation],
         effect: 'fade',
+        fadeEffect: {
+          crossFade: true
+        },
         speed: 1000,
         pagination: {
           el: '.swiper-pagination',
           clickable: true,
         },
         navigation: {
-          prev: '.swiper-button-prev',
-          next: '.swiper-button-next'
+          prevEl: '.swiper-button-prev',  // исправлено
+          nextEl: '.swiper-button-next'   // исправлено
         },
         slidesPerView: 1,
       });
@@ -25,3 +28,6 @@ export function initSwiperOffers() {
 
   createServiceSwiper();
 }
+console.log(document.querySelector('.swiper-button-prev'));
+console.log(document.querySelector('.swiper-button-next'));
+
