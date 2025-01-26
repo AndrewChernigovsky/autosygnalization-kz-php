@@ -82,12 +82,12 @@ async function loadModules() {
   if (selected != null) {
     const select = await import('./modules/select.js');
     const CustomSelect = select.default;
-    const newCustomSelect = new CustomSelect({
+    const path = window.location.href.includes('parking-systems') ? 'files/php/pages/parking-systems/parking-systems.php' : 'files/php/pages/catalog/catalog.php';
+    new CustomSelect({
       selected: '.select-selected',
       item: '.select-items',
       options: '.select-item',
-    });
-    console.log(newCustomSelect.getValue());
+    }, path);
   }
   if (cartCounter != null) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');

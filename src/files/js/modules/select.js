@@ -1,5 +1,7 @@
 export default class CustomSelect {
-  constructor(block) {
+  path;
+
+  constructor(block, path = 'files/php/pages/catalog/catalog.php') {
     const mainSelector = document.querySelector(block.selected);
     if (!mainSelector) return;
     this.selected = document.querySelector(block.selected);
@@ -8,6 +10,7 @@ export default class CustomSelect {
     this.value = null;
     this.init();
     this.PRODUCTION = window.location.href.includes('/dist/');
+    this.path = path;
   }
 
   init() {
@@ -64,7 +67,7 @@ export default class CustomSelect {
       this.selected.classList.remove('open');
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
-      const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/pages/catalog/catalog.php`;
+      const url = `${this.PRODUCTION ? '/dist/' : '/'}` + this.path;
       document.location.href = url + '?SELECT=' + this.value;
 
     }
