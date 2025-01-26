@@ -63,7 +63,7 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php echo htmlspecialchars($content); ?>
+  <?php echo htmlspecialchars($content ?? 'Услуги пока не определены'); ?>
 </body>
 
 </html>

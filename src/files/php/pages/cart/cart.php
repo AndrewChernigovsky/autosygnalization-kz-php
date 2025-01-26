@@ -35,7 +35,7 @@ echo $head->setHead();
         </div>
         <div class="cart-section__products">
         </div>
-        <p>
+        <p class="cart-section__result">
           <span>Итого: </span>
           <span class="cost-total"></span>
         </p>

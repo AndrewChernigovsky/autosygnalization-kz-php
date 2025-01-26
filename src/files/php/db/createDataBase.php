@@ -10,6 +10,7 @@ class CreateDatabase
   private $host = 'localhost';
   private $username = 'root';
   private $password = '';
+
   private $pdo;
 
   public function __construct()

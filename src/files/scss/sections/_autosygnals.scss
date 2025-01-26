@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .autosygnals {
   &__title {
@@ -11,12 +11,13 @@
     display: grid;
     gap: 20px;
     align-items: end;
+    height: auto;
     grid-template-columns: 1fr 1fr;
   }
 
   &__item-card {
     position: relative;
-    min-height: 100%;
+    // min-height: 100%;
     display: grid;
   }
 

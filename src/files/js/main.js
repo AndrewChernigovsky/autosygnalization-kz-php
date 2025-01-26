@@ -1,13 +1,6 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
-import DoubleRangeSlider from './modules/filter-cost.js';
 
-new DoubleRangeSlider('.filter-cost', {
-  minValue: 100,
-  maxValue: 1000,
-  step: 10,
-  gap: 100,
-});
 const {
   feedbackForm,
   footer,
@@ -28,6 +21,10 @@ const {
   selected,
   buyBtnFast,
   checkoutForm,
+  filterCost,
+  aside,
+  catalog,
+  cardMoreButton
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -48,9 +45,28 @@ const {
   productsContainerCart: document.querySelector('.cart-section__products'),
   buyBtnFast: document.getElementById('buy-fast-order'),
   checkoutForm: document.querySelector('.checkout-form__body'),
+  filterCost: document.querySelector('.filter-cost'),
+  aside: document.querySelector('.aside'),
+  catalog: document.querySelector('.catalog__products'),
+  cardMoreButton: document.querySelector('.card-more__button-cost')
 };
 
 async function loadModules() {
+  if (filterCost != null) {
+    const module = await import('./modules/filter-cost.js');
+    const newRangeSlider = module.default;
+    new newRangeSlider('.filter-cost', {
+      minValue: 100,
+      maxValue: 1000,
+      step: 10,
+      gap: 100,
+    });
+  }
+
+  if (aside != null && catalog != null) {
+    const { renderCardsOffers } = await import('./modules/dynamic-offers-card.js');
+    renderCardsOffers();
+  }
   if (menuButton != null) {
     const { toToggleMenu } = await import('./modules/menu-burger.js');
     toToggleMenu();
@@ -145,6 +161,11 @@ async function loadModules() {
       './components/Checkout/CheckoutForm.jsx'
     );
     render(html`<${CheckoutForm} />`, checkoutForm);
+  }
+
+  if (cardMoreButton != null) {
+    const { renderCardButton } = await import('./modules/card-cart.js');
+    renderCardButton();
   }
 }
 

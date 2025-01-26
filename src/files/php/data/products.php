@@ -13,7 +13,7 @@ $products = [
       [
         "model" => "a93-eco",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_a93-eco',
         "gallery" => [
           "$path/assets/images/products/starline_a93/keychain-Starline-A93-ECO-V2.avif",
@@ -39,18 +39,25 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
-        ]
+        ],
+        'options-filters' => ['vnedorojnik', 'legkoe-avto', 'autosetup'],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
+        ],
       ],
       [
         "model" => "e96-eco",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_e96-eco',
         "gallery" => [
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN.avif",
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN-1.avif",
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN-2.avif",
         ],
+        'options-filters' => ['vnedorojnik', 'legkoe-avto'],
         'title' => 'StarLine E96 V2 BT ECO 2CAN+4LIN',
         "description" => "Надежный автомобильный охранно-телематический комплекс с интеллектуальным автозапуском, несканируемым диалоговым кодом управления, возможностью авторизации по защищенному протоколу через персональную метку или смартфон на iOS и Android с мобильным приложением StarLine, интегрированным 2CAN+4LIN интерфейсом, ударопрочным брелком управления, помехозащищенным трансивером с малошумящим усилителем",
         "price" => 99800,
@@ -71,17 +78,21 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "starline",
+        ],
       ],
       [
         "model" => "s96-2can-2lin-gsm",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_s96-2can-2lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_s96/StarLine-S96-V2-BT-2CAN-2LIN-GSM.avif",
           "$path/assets/images/products/starline_s96/StarLine-S96-V2-BT-2CAN-2LIN-GSM-2.avif",
         ],
-        'title' => 'StarLine S96 V2 BT 2CAN 2LIN GSM',
+        'title' => 'StarLine S96 V2 BT 2CAN2LIN GSM',
         "description" => "Надежный автомобильный охранно-телематический комплекс с интеллектуальным автозапуском с вашего смартфона, несканируемым диалоговым кодом управления, возможностью авторизации по технологии Bluetooth Smart, интегрированными 2CAN+2LIN и GSM интерфейсами.",
         "price" => 113600,
         "currency" => "₸",
@@ -100,6 +111,11 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
         ],
       ],
       [
@@ -132,6 +148,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "starline",
+        ],
       ],
       [
         "model" => "e96-gsm",
@@ -163,6 +183,11 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
+        ],
       ],
       [
         "model" => "s96-lte",
@@ -192,6 +217,11 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
         ],
       ],
       [
@@ -224,11 +254,15 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "starline",
+        ],
       ],
       [
         "model" => "e96-2can-4lin-gsm",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_e96-2can-4lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN.avif",
@@ -252,6 +286,11 @@ $products = [
         ],
         "options" => [
           "Для легкового авто"
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
         ],
       ],
       [
@@ -283,6 +322,11 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
+        ],
       ],
       [
         "model" => "a93-v2-gsm",
@@ -312,6 +356,11 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
         ],
       ],
       [
@@ -344,6 +393,11 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
+        ],
       ],
       [
         "model" => "a60",
@@ -374,6 +428,10 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "without-auto",
+          "starline",
         ],
       ],
       [
@@ -406,6 +464,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "without-auto",
+          "starline",
+        ],
       ],
       [
         "model" => "a63",
@@ -436,6 +498,10 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "without-auto",
+          "starline",
         ],
       ],
       [
@@ -468,6 +534,10 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "autosygnals" => [
+          "gsm",
+          "starline",
+        ],
       ],
       [
         "model" => "a90",
@@ -498,6 +568,9 @@ $products = [
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
+        ],
+        "autosygnals" => [
+          "starline",
         ],
       ],
     ],
@@ -885,13 +958,10 @@ $products = [
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (isset($data['data'])) {
-  if ($data['data'] === 'true') {
-    header('Content-Type: application/json');
-    echo json_encode($products);
-  } else {
-    echo json_encode(['message' => 'Данные не получены']);
-  }
+    if ($data['data'] === 'true') {
+        header('Content-Type: application/json');
+        echo json_encode($products);
+    } else {
+        echo json_encode(['message' => 'Данные не получены']);
+    }
 }
-
-
-?>
