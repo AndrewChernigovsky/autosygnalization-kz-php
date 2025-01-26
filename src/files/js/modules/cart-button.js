@@ -13,7 +13,6 @@ export function cartButtonHandler() {
 
     if (cartButtons.length > 0) {
       const productApi = new ProductAPI();
-      productApi.createProducts();
 
       cartButtons.forEach(btn => btn.addEventListener('click', (e) => {
         const productId = btn.dataset.id;
@@ -27,7 +26,6 @@ export function cartButtonHandler() {
         }
 
         sessionStorage.setItem('cart', JSON.stringify(products));
-        productApi.addProduct(productId);
 
         const newCount = products.reduce((total, product) => {
           return total + product.quantity;

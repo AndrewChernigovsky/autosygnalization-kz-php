@@ -7,6 +7,7 @@ export default class CustomSelect {
     this.options = this.item.querySelectorAll(block.options);
     this.value = null;
     this.init();
+    this.PRODUCTION = window.location.href.includes('/dist/');
   }
 
   init() {
@@ -44,6 +45,7 @@ export default class CustomSelect {
     this.options.forEach(
       (option) => (option.style.width = `${currentWidth}px`)
     );
+
     document.addEventListener('click', this.handleClickOutside.bind(this));
   }
 
@@ -62,7 +64,9 @@ export default class CustomSelect {
       this.selected.classList.remove('open');
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
-      this.getValue();
+      const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/pages/catalog/catalog.php`;
+      document.location.href = url + '?SELECT=' + this.value;
+
     }
   }
 
