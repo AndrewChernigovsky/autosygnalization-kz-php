@@ -22,6 +22,7 @@ export default class CustomSelect {
           this.selected.innerHTML = element.innerHTML;
           this.value = element.dataset.value;
           this.selected.dataset.value = this.value;
+          this.getValue();
           break;
         }
       }
