@@ -32,6 +32,10 @@
           display: none;
         }
       }
+
+      @media screen and (min-width: 1025px) {
+        grid-column: 9/13;
+      }
     }
   }
 
