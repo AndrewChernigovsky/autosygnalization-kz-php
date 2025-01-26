@@ -24,7 +24,7 @@ const {
   filterCost,
   aside,
   catalog,
-  cardMoreButton
+  cardMoreButton,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -48,7 +48,7 @@ const {
   filterCost: document.querySelector('.filter-cost'),
   aside: document.querySelector('.aside'),
   catalog: document.querySelector('.catalog__products'),
-  cardMoreButton: document.querySelector('.card-more__button-cost')
+  cardMoreButton: document.querySelector('.card-more__button-cost'),
 };
 
 async function loadModules() {
@@ -64,7 +64,9 @@ async function loadModules() {
   }
 
   if (aside != null && catalog != null) {
-    const { renderCardsOffers } = await import('./modules/dynamic-offers-card.js');
+    const { renderCardsOffers } = await import(
+      './modules/dynamic-offers-card.js'
+    );
     renderCardsOffers();
   }
   if (menuButton != null) {
@@ -82,12 +84,17 @@ async function loadModules() {
   if (selected != null) {
     const select = await import('./modules/select.js');
     const CustomSelect = select.default;
-    const path = window.location.href.includes('parking-systems') ? 'files/php/pages/parking-systems/parking-systems.php' : 'files/php/pages/catalog/catalog.php';
-    new CustomSelect({
-      selected: '.select-selected',
-      item: '.select-items',
-      options: '.select-item',
-    }, path);
+    const path = window.location.href.includes('parking-systems')
+      ? 'files/php/pages/parking-systems/parking-systems.php'
+      : 'files/php/pages/catalog/catalog.php';
+    new CustomSelect(
+      {
+        selected: '.select-selected',
+        item: '.select-items',
+        options: '.select-item',
+      },
+      path
+    );
   }
   if (cartCounter != null) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');
@@ -105,7 +112,9 @@ async function loadModules() {
   }
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
+    const { saveChecbox } = await import('./modules/filter.js');
     filterToggleMenu();
+    saveChecbox();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');
