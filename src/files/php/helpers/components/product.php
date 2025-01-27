@@ -171,7 +171,8 @@ function getProductCardDescription($products, $id)
                         <p class="product-card__description"><?php echo htmlspecialchars($product['description']); ?></p>
                       <?php endif; ?>
                       <?php if (isset($product['price'])): ?>
-                        <p class="product-card__price"><span>Цена: </span><?php echo htmlspecialchars($product['price']); ?>
+                        <p class="product-card__price" data-price="<?php echo htmlspecialchars($product['price']); ?>"><span>Цена: </span>
+                          <?php echo htmlspecialchars($product['price']); ?>
                           <?php echo htmlspecialchars($product['currency']); ?>
                         </p>
                       <?php endif; ?>
