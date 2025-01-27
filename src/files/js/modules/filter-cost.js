@@ -77,6 +77,20 @@ export default class DoubleRangeSlider {
         this.#updateRangeBar(evt.target);
       });
     });
+
+    // Обработчик сброса формы
+    const form = this.minNumberInput.closest('.filter-form'); // Находим форму
+    console.log(form);
+    form.addEventListener('reset', () => {
+      setTimeout(() => {
+        this.minNumberInput.value = this.minValue;
+        this.maxNumberInput.value = this.maxValue;
+        this.minRangeInput.value = this.minValue;
+        this.maxRangeInput.value = this.maxValue;
+
+        this.#updateProgress();
+      }, 0);
+    });
   }
 
   #updateRangeBar(input) {
@@ -130,6 +144,8 @@ export default class DoubleRangeSlider {
 
     const min = parseInt(this.minRangeInput.value);
     const max = parseInt(this.maxRangeInput.value);
+
+    console.log('Обновление прогресс-бара:', { min, max });
 
     const percentMin =
       ((min - parseInt(this.minRangeInput.min)) /
