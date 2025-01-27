@@ -1,0 +1,20 @@
+.pagination {
+  margin-left: auto;
+  display: flex;
+  list-style-type: none;
+
+  &__item {
+    padding: 5px;
+    min-width: 50px;
+
+    a {
+      width: auto;
+      min-width: 65px;
+      opacity: 0.6;
+
+      &.active {
+        opacity: 1;
+      }
+    }
+  }
+}

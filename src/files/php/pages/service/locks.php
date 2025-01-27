@@ -37,11 +37,11 @@ $share = new Share();
       </li>
     <?php endforeach; ?>
   </ul>
-  <p class="service-setup__text">Стоимость услуг необходимо уточнять у мастера.</p>
-  <p class="service-setup__text">Насладитесь комфортом с прекрасно установленным и настроенным нами оборудованием!</p>
-  <?= $share->getShare(); ?>
-  <p class="service-setup__price">цена: <span><?= $service['cost'] ?></span><span><?= $service['currency']; ?></span></p>
-  <button type="button" class="button y-button-primary" id="buy-btn">заказать</button>
+    <p class="service-setup__text">Стоимость услуг необходимо уточнять у мастера.</p>
+    <p class="service-setup__text">Насладитесь комфортом с прекрасно установленным и настроенным нами оборудованием!</p>
+    <?= $share->getShare(); ?>
+    <p class="service-setup__price">цена: <span><?= $service['cost'] ?></span><span><?= $service['currency']; ?></span></p>
+    <button type="button" class="button y-button-primary" id="buy-btn">заказать</button>
 </section>
 
 <?php

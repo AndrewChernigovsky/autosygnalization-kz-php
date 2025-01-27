@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use "variables"as var;
 
 .logo {
   display: flex;
@@ -7,7 +7,7 @@
   text-decoration: none;
   grid-column: 1 / 12;
 
-  @media screen and (min-width: 1030px) {
+  @media screen and (min-width: var.$desktop-min) {
     grid-row: 1/ 2;
     grid-column: 1/ 3;
   }

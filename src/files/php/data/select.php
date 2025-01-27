@@ -20,27 +20,12 @@ class SelectData
       [
         "name" => 'Название',
         "value" => 'name',
-        "class" => 'select-item',
+        "class" => 'select-item default',
       ],
       [
         "name" => 'Цена',
         "value" => 'price',
         "class" => 'select-item',
-      ],
-      [
-        "name" => 'Дата',
-        "value" => 'date',
-        "class" => 'select-item',
-      ],
-      [
-        "name" => 'Популярность',
-        "value" => 'popularity',
-        "class" => 'select-item',
-      ],
-      [
-        "name" => 'Предустановленная',
-        "value" => 'preset',
-        "class" => 'select-item default',
       ],
     ];
 

@@ -76,9 +76,10 @@ export class API {
       return data
     }
     catch (err) {
-      console.error('Не удалось обновить количество товаров: ', err);
+      console.error('Не удалось создать товары: ', err);
     }
   }
+
   async addProduct(id) {
     console.log(id, 'ID');
     const url = `${this.PRODUCTION ? '/dist/' : '/'}files/php/api/products/products.php?data=add&id=${id}`;

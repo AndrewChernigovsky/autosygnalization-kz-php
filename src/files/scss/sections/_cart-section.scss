@@ -126,4 +126,11 @@
     display: grid;
     align-items: center;
   }
+
+  .product-card__head a {
+    margin: 10px auto 0;
+    min-width: 240px;
+    max-width: 240px;
+    font-size: 24px;
+  }
 }
