@@ -112,9 +112,9 @@ async function loadModules() {
   }
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
-    const { saveChecbox } = await import('./modules/filter.js');
+    const { saveCheckbox } = await import('./modules/filter.js');
     filterToggleMenu();
-    saveChecbox();
+    saveCheckbox();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');
