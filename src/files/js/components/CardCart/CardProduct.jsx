@@ -60,7 +60,7 @@ export class CardProduct extends Component {
     this.setState(
       (prevState) => {
         const newQuantity = prevState.quantity;
-        this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
+        this.updateSessionStorage(this.props.id, newQuantity, btn, 'add', true);
         return { quantity: newQuantity };
       },
       () => {
@@ -69,7 +69,7 @@ export class CardProduct extends Component {
     );
   };
 
-  sendSessionCart(btn, action) {
+  sendSessionCart(btn, action, cart) {
     let products = JSON.parse(sessionStorage.getItem('cart')) || [];
 
     if (this.cartCounter) {
@@ -77,13 +77,20 @@ export class CardProduct extends Component {
         (total, product) => total + product.quantity,
         0
       );
-      this.cartCounter.textContent = currentCount;
+
+      if (!cart) {
+        this.cartCounter.textContent = currentCount;
+      }
+      
 
       const productApi = new ProductAPI();
       productApi.createProducts();
 
-      const productId = btn.dataset.id;
-      const productPrice = btn.dataset.cost;
+      
+      const productId = cart ? btn.dataset.id : btn.parentElement.dataset.id;
+      const productPrice = cart
+        ? btn.dataset.cost
+        : btn.parentElement.dataset.cost;
       const existingProduct = products.find(
         (product) => product.id === productId
       );
@@ -111,8 +118,11 @@ export class CardProduct extends Component {
       productApi.addProduct(productId);
 
       const newCount = products.reduce((total, product) => {
+
         return total + product.quantity;
       }, 0);
+
+      console.log(newCount, 'число');
 
       this.cartCounter.textContent = newCount;
 
@@ -128,7 +138,7 @@ export class CardProduct extends Component {
   }
 
   removeToCart = (e) => {
-    const btn = e.target;
+    const btn = e.currentTarget;
     this.setState(
       (prevState) => {
         const newQuantity = Math.max(prevState.quantity - 1, 0);
@@ -156,7 +166,7 @@ export class CardProduct extends Component {
     this.setState(
       (prevState) => {
         const newQuantity = prevState.quantity + 1;
-        this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
+        // this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
 
         return { quantity: newQuantity };
       },
@@ -183,8 +193,8 @@ export class CardProduct extends Component {
     }
   }
 
-  updateSessionStorage(id, quantity, btn, action) {
-    this.sendSessionCart(btn, action);
+  updateSessionStorage(id, quantity, btn, action, cart = false) {
+    this.sendSessionCart(btn, action, cart);
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
     const index = localProducts.findIndex((product) => product.id === id);
 
