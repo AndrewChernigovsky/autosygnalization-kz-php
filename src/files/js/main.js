@@ -66,7 +66,9 @@ async function loadModules() {
   }
 
   if (aside != null && catalog != null) {
-    const { renderCardsOffers } = await import('./modules/dynamic-offers-card.js');
+    const { renderCardsOffers } = await import(
+      './modules/dynamic-offers-card.js'
+    );
     renderCardsOffers();
   }
   if (menuButton != null) {
@@ -84,12 +86,17 @@ async function loadModules() {
   if (selected != null) {
     const select = await import('./modules/select.js');
     const CustomSelect = select.default;
-    const newCustomSelect = new CustomSelect({
-      selected: '.select-selected',
-      item: '.select-items',
-      options: '.select-item',
-    });
-    console.log(newCustomSelect.getValue());
+    const path = window.location.href.includes('parking-systems')
+      ? 'files/php/pages/parking-systems/parking-systems.php'
+      : 'files/php/pages/catalog/catalog.php';
+    new CustomSelect(
+      {
+        selected: '.select-selected',
+        item: '.select-items',
+        options: '.select-item',
+      },
+      path
+    );
   }
   if (cartCounter != null || cartButtons.length > 0) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');
@@ -107,7 +114,9 @@ async function loadModules() {
   }
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
+    const { saveCheckbox } = await import('./modules/filter.js');
     filterToggleMenu();
+    saveCheckbox();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');

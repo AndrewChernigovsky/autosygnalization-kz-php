@@ -7,6 +7,7 @@ const data = { data: 'true' };
 const cartCounter = document.querySelector('.cart .counter');
 const costTotal = document.querySelectorAll('.cost-total');
 const quantityTotal = document.querySelectorAll('.quantity-total');
+
 export class Cart extends Component {
   constructor(props) {
     super(props);
@@ -44,43 +45,40 @@ export class Cart extends Component {
       });
   }
 
+  handleRemoveProduct = (id) => {
+    const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
+    const updatedProducts = localProducts.filter(
+      (product) => product.id !== id
+    );
+    sessionStorage.setItem('cart', JSON.stringify(updatedProducts));
+    this.updateTotalQuantity(updatedProducts);
+    this.renderProducts(this.state.products);
+  };
+
+  handleUpdateQuantity = (id, newQuantity) => {
+    const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
+    const updatedProducts = localProducts
+      .map((product) => {
+        if (product.id === id) {
+          return { ...product, quantity: newQuantity };
+        }
+        return product;
+      })
+      .filter((product) => product.quantity > 0);
+
+    sessionStorage.setItem('cart', JSON.stringify(updatedProducts));
+    this.updateTotalQuantity(updatedProducts);
+    this.renderProducts(this.state.products);
+  };
+
   renderProducts(products) {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
     const productsContainerCart = document.querySelectorAll(
       '.cart-section__products'
     );
-
     const cardComponents = [];
 
-    const handleRemoveProduct = (id) => {
-      const index = localProducts.findIndex(
-        (localProduct) => localProduct.id === id
-      );
-      console.log(index, 'index Cart.jsx');
-      if (index !== -1) {
-        localProducts.splice(index, 1);
-        sessionStorage.setItem('cart', JSON.stringify(localProducts));
-        this.updateTotalQuantity();
-        this.renderProducts(localProducts);
-      }
-    };
-
-    const handleUpdateQuantity = (id, newQuantity) => {
-      const updatedProducts = localProducts
-        .map((localProduct) => {
-          if (localProduct.id === id) {
-            return { ...localProduct, quantity: newQuantity };
-          }
-          return localProduct;
-        })
-        .filter((product) => product.quantity > 0);
-
-      sessionStorage.setItem('cart', JSON.stringify(updatedProducts));
-      this.updateTotalQuantity(updatedProducts);
-      this.renderProducts(products);
-    };
-
-    Object.values(products.category).forEach((productList) => {
+    Object.values(products.category || {}).forEach((productList) => {
       productList.forEach((product, index) => {
         const matchingProduct = localProducts.find(
           (localProduct) => localProduct.id === product.id
@@ -105,14 +103,12 @@ export class Cart extends Component {
             currency=${product.currency}
             link=${product.link}
             quantity=${product.quantity}
-            onRemove=${handleRemoveProduct}
-            onUpdateQuantity=${handleUpdateQuantity}
+            onRemove=${this.handleRemoveProduct}
+            onUpdateQuantity=${this.handleUpdateQuantity}
             checkout=${checkout}
             index=${index}
           />`;
           cardComponents.push(cardElement);
-        } else {
-          product.quantity = 0;
         }
       });
     });
@@ -122,7 +118,7 @@ export class Cart extends Component {
         (acc, el) => acc + el.quantity,
         0
       );
-      this.setState({ totalQuantity: totalQuantity }, () => {
+      this.setState({ totalQuantity }, () => {
         if (this.state.totalQuantity <= 0) {
           productsContainerCart.forEach((container) => {
             render(
@@ -135,10 +131,6 @@ export class Cart extends Component {
         } else {
           productsContainerCart.forEach((container) => {
             render(html`${cardComponents}`, container);
-
-            if (container.classList.contains('checkout')) {
-              render(html`${cardComponents}`, container);
-            }
           });
         }
       });
@@ -147,8 +139,9 @@ export class Cart extends Component {
     this.updateTotalQuantity();
   }
 
-  updateTotalQuantity() {
-    const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
+  updateTotalQuantity(products) {
+    const localProducts =
+      products || JSON.parse(sessionStorage.getItem('cart')) || [];
     const totalQuantity = localProducts.reduce(
       (acc, product) => acc + product.quantity,
       0
@@ -157,6 +150,7 @@ export class Cart extends Component {
       (acc, product) => acc + Number(product.price) * product.quantity,
       0
     );
+
     cartCounter.textContent = totalQuantity;
     this.setState({ totalQuantity, totalCost }, () => {
       if (costTotal.length > 0) {

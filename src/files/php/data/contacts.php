@@ -49,7 +49,7 @@ class Contacts
       $output .= "<a class='link' style='background-image: url(\"$path\")' href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
       return $output;
     } else {
-      return htmlspecialchars($this->web_site);
+      return htmlspecialchars($this->email);
     }
   }
   public function getPhones()
