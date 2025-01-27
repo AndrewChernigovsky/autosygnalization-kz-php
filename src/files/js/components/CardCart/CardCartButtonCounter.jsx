@@ -4,7 +4,7 @@ export class CardCartButtonCounter extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: props.quantity || 0,
+      quantity: 1,
     };
   }
 

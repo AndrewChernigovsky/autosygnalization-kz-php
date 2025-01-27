@@ -6,7 +6,7 @@ export class CardProduct extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: props.quantity || 0,
+      quantity: 1,
       isRemoveButtonDisabled: false,
       price: props.cost || 0,
     };
@@ -28,7 +28,46 @@ export class CardProduct extends Component {
     } else {
       console.error('Price element not found');
     }
+
+    this.updateQuantityFromCart();
+
+    const addToCartButton = document.querySelector('.card-more__button-cart');
+    if (addToCartButton) {
+      addToCartButton.addEventListener('click', this.handleAddToCart);
+    }
   }
+
+  componentWillUnmount() {
+    const addToCartButton = document.querySelector('.card-more__button-cart');
+    if (addToCartButton) {
+      addToCartButton.removeEventListener('click', this.handleAddToCart);
+    }
+  }
+
+  updateQuantityFromCart() {
+    const products = JSON.parse(sessionStorage.getItem('cart')) || [];
+    const existingProduct = products.find(
+      (product) => product.id === this.props.id
+    );
+
+    if (existingProduct) {
+      this.setState({ quantity: existingProduct.quantity });
+    }
+  }
+
+  handleAddToCart = (e) => {
+    const btn = e.currentTarget;
+    this.setState(
+      (prevState) => {
+        const newQuantity = prevState.quantity;
+        this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
+        return { quantity: newQuantity };
+      },
+      () => {
+        this.calculateTotalCost();
+      }
+    );
+  };
 
   sendSessionCart(btn, action) {
     let products = JSON.parse(sessionStorage.getItem('cart')) || [];
@@ -43,8 +82,8 @@ export class CardProduct extends Component {
       const productApi = new ProductAPI();
       productApi.createProducts();
 
-      const productId = btn.parentElement.dataset.id;
-      const productPrice = btn.parentElement.dataset.cost;
+      const productId = btn.dataset.id;
+      const productPrice = btn.dataset.cost;
       const existingProduct = products.find(
         (product) => product.id === productId
       );
@@ -63,7 +102,7 @@ export class CardProduct extends Component {
         if (existingProduct) {
           existingProduct.quantity -= 1;
           if (existingProduct.quantity <= 0) {
-            products = [];
+            products = products.filter((product) => product.id !== productId);
           }
         }
       }
@@ -113,15 +152,11 @@ export class CardProduct extends Component {
   };
 
   addToCart = (e) => {
-    const btn = e.target;
+    const btn = e.currentTarget;
     this.setState(
       (prevState) => {
         const newQuantity = prevState.quantity + 1;
         this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
-
-        if (newQuantity > 0) {
-          this.setState({ isRemoveButtonDisabled: false });
-        }
 
         return { quantity: newQuantity };
       },

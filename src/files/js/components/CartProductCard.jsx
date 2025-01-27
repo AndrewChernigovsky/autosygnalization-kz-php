@@ -83,6 +83,7 @@ export class CartProductCard extends Component {
                 <span>Цена: </span>
                 <span>${price} ${currency}</span>
               </div>
+              <a class="button y-button-secondary" href=${this.props.link}>Подробнее</a>
             </div>
             <div class="product-card__buttons cart-btn">
               <${CartButtonCounter}
