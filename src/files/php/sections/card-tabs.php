@@ -9,7 +9,7 @@ $path = $variables->getPathFileURL();
 
 // ID текущего товара
 /* $current_product_id = 'product_keychain_a93-eco'; */
-$current_product_id = 'product_keychain_a93-eco';
+$current_product_id = $_GET['id'];
 
 // Найти вкладки для текущего товара
 $product_tabs = [];
@@ -83,6 +83,7 @@ function isActiveClassTabContent($index)
                     <!-- Для других вкладок -->
                     <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
                         <?php foreach ($tab_content as $item): ?>
+                            <p>1111</p>
                             <li class="tab__item">
                                 <?php if (!empty($item['title'])): ?>
                                     <h3 class="tab__title"><?= htmlspecialchars($item['title']); ?></h3>
