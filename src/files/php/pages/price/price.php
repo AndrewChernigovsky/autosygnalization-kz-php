@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
+include_once __DIR__ . '/../../data/prices.php';
 
 $variables = new SetVariables();
 $variables->setVar();
@@ -23,26 +24,28 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
-    <div class="container">
-      <h2>Наш прайс-лист</h2>
-      <ul>
-        <li>
-          Услуга 1 <span>15000Тг.</span>
-        </li>
-        <li>
-          Услуга 2 <span>45000Тг.</span>
-        </li>
-        <li>
-          Услуга 3 <span>500Тг.</span>
-        </li>
-        <li>
-          Услуга 4 <span>5500Тг.</span>
-        </li>
-      </ul>
-      <div class="price__button">
-        <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+    <section class="price">
+      <div class="container">
+        <div class="price__wrapper">
+          <h1 class="price__title">Прайс</h1>
+          <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку: <span>*</span></h2>
+          <ul class="price__list list-style-none">
+            <?php
+            foreach ($prices as $price): ?>
+              <li class="price__item">
+                  <h3 class="price__item-title"><?php echo htmlspecialchars($price['title']) . ' - ' . htmlspecialchars($price['productPrice']) . ' ' . htmlspecialchars($price['currency']);?></h3>
+                  <p class="price__item-description"></p><?php echo htmlspecialchars($price['description']); ?></p>
+                  <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']) . ' *' ?></p>
+              </li>
+          <?php endforeach; ?>
+          </ul>
+
+          <div class="price__button">
+            <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
 </body>

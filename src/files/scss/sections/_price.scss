@@ -1,0 +1,149 @@
+@use 'variables'as var;
+
+.price {
+
+    &__wrapper {
+        padding: 20px 0 30px 0;
+        
+        @media screen and (min-width: var.$tablet) {
+          width: 650px;
+          // width: 740px
+          margin: 0 auto;
+          padding-bottom: 60px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          width: 800px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          width: 1200px;
+          padding-bottom: 100px;
+        }
+      }
+
+      &__title {
+        font-family: var.$primary-font;
+        position: relative;
+        margin: 0;
+        padding-top: 10px;
+        margin-bottom: 50px;
+        text-align: center;
+  
+        &::after {
+          content: '';
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          right: 0;
+          width: 95%;
+          height: 90%;
+          background-color: var.$red;
+          filter: blur(20px);
+          opacity: 0.7;
+          z-index: -1;
+        }
+  
+        @media screen and (min-width: var.$tablet) {
+          margin-bottom: 80px;
+          font-size: 50px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          margin-bottom: 80px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          margin-bottom: 100px;
+        }
+      }
+
+    &__subtitle {
+        font-family: var.$primary-font;
+        font-size: 20px;
+        text-align: left;
+
+        span {
+            color: var.$red;
+        }
+
+        @media screen and (min-width: var.$tablet) {
+            font-size: 30px;
+          }
+
+         @media screen and (min-width: var.$desktop) {
+            font-size: 35px;
+        }
+    }
+
+    &__list {
+        border-bottom: 1px solid var.$red;
+        padding-bottom: 20px;
+    }
+
+    &__item-description {
+        font-family: var.$primary-font;
+        font-size: 16px;
+        text-align: center;
+        margin: 0 0 15px 0;
+  
+        @media screen and (min-width: var.$tablet) {
+          font-size: 20px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          font-size: 22px;
+          margin-bottom: 25px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          font-size: 28px;
+        }
+    }
+
+
+    &__item {
+        font-size: 14px;
+        line-height: 21px;
+        padding-left: 20px;
+        border-left: 4px solid var.$red;
+        position: relative;
+        padding-left: 30px;
+        border-left: none;
+  
+        &::after {
+          content: '';
+          position: absolute;
+          top: 5px;
+          left: 0;
+          width: 18px;
+          height: 13px;
+          background-image: url('#{var.$DEV_PATH}assets/images/vectors/arrow.svg');
+          background-size: cover;
+          z-index: -1;
+  
+          @media screen and (min-width: var.$desktop) {
+            left: -15;
+            width: 36px;
+            height: 20px;
+            top: 4px;
+          }
+        }
+  
+        @media screen and (min-width: var.$tablet) {
+          font-size: 18px;
+          text-transform: none;
+          padding-left: 35px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          font-size: 20px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          font-size: 26px;
+          line-height: 28px;
+          padding-left: 45px;
+        }
+      }
+}
