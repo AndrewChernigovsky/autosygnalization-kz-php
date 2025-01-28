@@ -66,7 +66,7 @@ function isActiveClassTabContent($index)
 
                     <!-- Список items-service -->
                     <?php if (isset($tab_content['items-service'])): ?>
-                        <p>Удобный сервис</p>
+                        <p class="tab__text">Удобный сервис</p>
                         <ul class="tab__list tab__list--service <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
                             <?php foreach ($tab_content['items-service'] as $item): ?>
                                 <li class="tab__item"
@@ -83,7 +83,6 @@ function isActiveClassTabContent($index)
                     <!-- Для других вкладок -->
                     <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
                         <?php foreach ($tab_content as $item): ?>
-                            <p>1111</p>
                             <li class="tab__item">
                                 <?php if (!empty($item['title'])): ?>
                                     <h3 class="tab__title"><?= htmlspecialchars($item['title']); ?></h3>
