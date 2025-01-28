@@ -54,11 +54,10 @@ export function initSwiper() {
     if (swiperOffers != null) {
       const { initSwiperOffers } = await import('./swipers/swiper-offers.js');
       initSwiperOffers();
-
+    }
     if (swiperArticle != null) {
       const { initSwiperArticle } = await import('./swipers/swiper-article.js');
       initSwiperArticle();
-
     }
   }
   loadModule();

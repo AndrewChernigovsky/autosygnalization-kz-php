@@ -10,7 +10,7 @@ export function initSwiperOffers() {
         modules: [Autoplay, Pagination, EffectFade, Navigation],
         effect: 'fade',
         fadeEffect: {
-          crossFade: true
+          crossFade: true,
         },
         speed: 1000,
         pagination: {
@@ -18,8 +18,8 @@ export function initSwiperOffers() {
           clickable: true,
         },
         navigation: {
-          prevEl: '.swiper-button-prev',  // исправлено
-          nextEl: '.swiper-button-next'   // исправлено
+          prevEl: '.swiper-button-prev-offers',
+          nextEl: '.swiper-button-next-offers',
         },
         slidesPerView: 1,
       });
