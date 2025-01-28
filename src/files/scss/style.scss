@@ -17,6 +17,7 @@
 @use './blocks/product-card'as *;
 @use './blocks/checkout-info'as *;
 @use './blocks/checkout-form'as *;
+@use './blocks/pagination'as *;
 
 @use './helpers/components/article.scss'as *;
 @use './helpers/components/aside.scss'as *;

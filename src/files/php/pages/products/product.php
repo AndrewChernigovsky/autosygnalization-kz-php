@@ -9,16 +9,16 @@ $id = isset($_GET['id']) ? $_GET['id'] : null;
 
 function getAutoContent($products, $category, $id)
 {
-  $result = "";
-  switch ($category) {
-    case 'keychain':
-    case 'remote-controls':
-    case 'park-systems':
-      $result .= getProductCardImage($products, $id);
-      return $result;
-    default:
-      return 'Контент не найден.';
-  }
+    $result = "";
+    switch ($category) {
+        case 'keychain':
+        case 'remote-controls':
+        case 'park-systems':
+            $result .= getProductCardImage($products, $id);
+            return $result;
+        default:
+            return 'Контент не найден.';
+    }
 }
 
 $contentImage = getAutoContent($products, $category, $id);
@@ -59,14 +59,28 @@ echo $head->setHead();
       </div>
       <p class="card-more__text">
         <span>Итоговая стоимость</span>
-        <span class="cost-total"></span>
+        <span class="cost-total" id="cost-total"></span>
       </p>
-      <div class="card-more__wrapper">
-        <p>Количество</p>
-        <div class="card-more__button-cost"></div>
-      </div>
-      <button type="button" class="button y-button-primary card-more__button-cart"
-        data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В корзину</button>   
+      <?php if (isset($products) && !empty($products)): ?>
+      <?php
+        $product = null;
+          foreach ($products['category'] as $category) {
+              foreach ($category as $item) {
+                  if ($item['id'] === $id) {
+                      $product = $item;
+                      break 2;
+                  }
+              }
+          }
+          if ($product !== null): ?>
+          <div class="card-more__wrapper">
+            <p>Количество</p>
+            <div class="card-more__button-cost" data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>"></div>
+          </div>
+          <button type="button" class="button y-button-primary card-more__button-cart"
+            data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В корзину</button>
+        <?php endif; ?>
+    <?php endif; ?>
       <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
     </section>    
     <?= include_once __DIR__ . '/../../sections/card-tabs.php'; ?>

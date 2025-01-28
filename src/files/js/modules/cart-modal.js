@@ -1,4 +1,8 @@
 import FormatNumber from "../helpers/classes/FormatNumber";
+
+let modalInterval = null;
+let currentPopup = null; // Глобальная переменная для хранения текущего модального окна
+
 export function setModalCart() {
   const template = document.getElementById('cart-popup');
 
@@ -17,21 +21,38 @@ export function setModalCart() {
     allQuantity += item.quantity;
     allCost += item.price * item.quantity;
   });
+
   const format = new FormatNumber();
   countItem.textContent = `Товаров в корзине: ${allQuantity}`;
   cost.textContent = `Сумма: ${format.customFormatNumber(allCost)} ₸`;
 
-
   let timer = 5;
   timerElement.textContent = `Скрытие через ${timer} секунд`;
 
-  const interval = setInterval(() => {
+  // Очищаем предыдущий интервал, если он существует
+  if (modalInterval) {
+    clearInterval(modalInterval);
+    modalInterval = null;
+  }
+
+  // Удаляем предыдущее модальное окно, если оно существует
+  if (currentPopup) {
+    currentPopup.remove();
+    currentPopup = null;
+  }
+
+  // Создаем новый интервал
+  modalInterval = setInterval(() => {
     timer--;
     timerElement.textContent = `Скрытие через ${timer} секунд`;
 
     if (timer <= 0) {
-      clearInterval(interval);
-      // popup.remove();
+      clearInterval(modalInterval);
+      modalInterval = null; // Сбрасываем интервал
+      if (currentPopup) {
+        currentPopup.remove();
+        currentPopup = null;
+      }
     }
   }, 1000);
 
@@ -40,13 +61,19 @@ export function setModalCart() {
   popup.appendChild(clone);
   document.body.appendChild(popup);
 
+  currentPopup = popup; // Сохраняем текущее модальное окно
+
   console.log(popup, 'popup');
 
-  if (popup) {
-    const btnClosePopup = document.getElementById('close-cart-popup');
+  const btnClosePopup = popup.querySelector('#close-cart-popup');
+  if (btnClosePopup) {
     btnClosePopup.addEventListener('click', () => {
-      clearInterval(interval);
-      popup.remove();
+      clearInterval(modalInterval); // Очищаем интервал
+      modalInterval = null; // Сбрасываем интервал
+      if (currentPopup) {
+        currentPopup.remove(); // Удаляем модальное окно
+        currentPopup = null;
+      }
     });
   }
 }

@@ -18,8 +18,8 @@ $path_href = $path . '/files/php/pages/catalog/catalog.php';
         <ul class="popular__list swiper-wrapper list-style-none">
           <?php
           foreach ($products['category'] as $category):
-            foreach ($category as $product):
-              if ($product['popular'] === true): ?>
+              foreach ($category as $product):
+                  if ($product['popular'] === true): ?>
                 <li class="popular__item swiper-slide">
                   <div class="popular__item-bg">
                     <div class="swiper swiper-popular-gallery">
@@ -39,9 +39,9 @@ $path_href = $path . '/files/php/pages/catalog/catalog.php';
                   </div>
                   <div class="popular__item-buttons">
                     <a class="popular__item-link link y-button-secondary"
-                      href="<?= htmlspecialchars($product['link']); ?>">Подробнее</a>
-                    <a class="popular__item-link link y-button-primary"
-                      href="<?= htmlspecialchars($product['link']); ?>">Купить</a>
+                      href="<?= htmlspecialchars($product['link']); ?>" >Подробнее</a>
+                    <a class="popular__item-link link y-button-primary  cart-button"
+                      href="<?= $path . '/files/php/pages/cart/cart.php' ;?>" data-cost="<?= htmlspecialchars($product['price'])?>" data-id="<?= htmlspecialchars($product['id'])?>">Купить</a>
                   </div>
                 </li>
               <?php endif; ?>
