@@ -7,8 +7,7 @@
     "images": "cross-env PRODUCTION=true node sharp.js",
     "images:new": "cross-env PRODUCTION=true node sharp_new_images.js",
     "sprite": "cross-env PRODUCTION=true gulp sprite",
-    "libs": "node esbuild-libs.js",
-    "copy:pdf": "cross-env PRODUCTION=true gulp copyPdfFiles"
+    "libs": "node esbuild-libs.js"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

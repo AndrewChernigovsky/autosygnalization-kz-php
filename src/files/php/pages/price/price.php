@@ -40,7 +40,7 @@ echo $head->setHead();
         </li>
       </ul>
       <div class="price__button">
-        <a class="button y-button-primary" href="<?php echo $path . '/assets/pdf/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+        <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
       </div>
     </div>
   </main>

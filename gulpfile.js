@@ -221,14 +221,9 @@ const fonts = (cb) => {
     .on("end", cb);
 };
 
-const copyPdfFiles = () => {
-  return src("./src/assets/pdf/**/*.{pdf}", { encoding: false }) // Берем все PDF из src/assets/pdf
-    .pipe(dest("./dist/assets/pdf")); // Копируем их в dist/assets/pdf
-};
-
 const statics = parallel(() => cleanDist(['dist']), copyStatics, fonts, images, videos, sprite, sassTaskLibs, esbuildTask);
-const dev = series(() => cleanDist(['dist/files']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, esbuildTask, copyPdfFiles, watchTask);
-const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, esbuildTask, copyPdfFiles);
+const dev = series(() => cleanDist(['dist/files']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, esbuildTask, watchTask);
+const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, esbuildTask);
 
-export { images, sassTask, sassTaskLibs, esbuildTask, phpTask, copyPdfFiles, watchTask, build, statics, docs, sprite, fonts, videos };
+export { images, sassTask, sassTaskLibs, esbuildTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
 export default dev;
