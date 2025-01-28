@@ -8,7 +8,6 @@ const {
   searchExist,
   phoneButton,
   buttonPrint,
-  buttonDownload,
   buyBtn,
   minValue,
   filterBtn,
@@ -50,7 +49,6 @@ const {
   aside: document.querySelector('.aside'),
   catalog: document.querySelector('.catalog__products'),
   cardMoreButton: document.querySelector('.card-more__button-cost'),
-  buttonDownload: document.getElementById('downloads-btn')
 };
 
 async function loadModules() {
@@ -134,11 +132,6 @@ async function loadModules() {
     const module = await import('./modules/print-contacts.js');
     const PrintDocument = module.default;
     new PrintDocument(buttonPrint);
-  }
-  if (buttonDownload) {
-    const module = await import('./modules/download-price.js');
-    const DownloadDocument = module.default;
-    new DownloadDocument(buttonDownload);
   }
   if (resetCartButton) {
     const module = await import('./modules/reset-cart.js');
