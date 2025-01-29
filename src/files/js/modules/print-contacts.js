@@ -53,8 +53,8 @@ export default class PrintDocument {
     if (screenWidth <= 767) {
       width = 400;
       height = 600;
-    } else if (screenWidth > 768 && screenWidth <= 1024) {
-      width = 800;
+    } else if (screenWidth >= 768 && screenWidth <= 1024) {
+      width = 700;
       height = 600;
     } else {
       width = 1024;
