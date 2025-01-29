@@ -32,17 +32,23 @@ echo $head->setHead();
           <ul class="price__list list-style-none">
             <?php
             foreach ($prices as $price): ?>
-                <li class="price__item">
-                  <details>
-                      <summary class="price__item-title">
+              <li class="price__item">
+                <div>
+                    <details class="price__details" name="faq">
+                      <summary class="price__summary">
+                        <span class="price__item-title" role="term" aria-details="faq-1">
                           <?php echo htmlspecialchars($price['title']) . ' - ' . htmlspecialchars($price['productPrice']) . ' ' . htmlspecialchars($price['currency']); ?>
+                        </span>
                       </summary>
-                      <div class="price__item-content">
-                          <p class="price__item-description"><?php echo htmlspecialchars($price['description']); ?></p>
-                          <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']); ?></p>
+                    </details>
+                    <div class="price__content" id="faq-1" role="definition">
+                      <div class="price__content-body">
+                        <p class="price__item-description"><?php echo htmlspecialchars($price['description']); ?></p>
+                        <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']); ?></p>                  
                       </div>
-                  </details>
-                </li>
+                    </div>
+                </div>
+              </li>
           <?php endforeach; ?>
           </ul>
           <div class="price__button">

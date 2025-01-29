@@ -177,6 +177,6 @@ async function loadModules() {
     const { renderCardButton } = await import('./modules/card-cart.js');
     renderCardButton();
   }
-}
+ }
 
 document.addEventListener('DOMContentLoaded', loadModules);

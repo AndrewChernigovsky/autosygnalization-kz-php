@@ -108,6 +108,7 @@
         font-size: 20px;
         line-height: 21px;
         margin: 0 0 15px 0;
+        cursor: pointer;
 
         @media screen and (min-width: var.$tablet) {
           font-size: 25px;
@@ -116,6 +117,20 @@
         @media screen and (min-width: var.$desktop-min) {
           font-size: 30px;
         }
+      }
+
+      &__content {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition-duration: 0.3s;
+      }
+      
+      &__content-body {
+        overflow: hidden;
+      }
+      
+      &__details[open] + &__content {
+        grid-template-rows: 1fr;
       }
 
       &__item-description {
