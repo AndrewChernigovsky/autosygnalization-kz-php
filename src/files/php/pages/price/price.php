@@ -28,15 +28,21 @@ echo $head->setHead();
       <div class="container">
         <div class="price__wrapper">
           <h1 class="price__title">Прайс</h1>
-          <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку: <span>*</span></h2>
+          <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку:</h2>
           <ul class="price__list list-style-none">
             <?php
             foreach ($prices as $price): ?>
-              <li class="price__item">
-                  <h3 class="price__item-title"><?php echo htmlspecialchars($price['title']) . ' - ' . htmlspecialchars($price['productPrice']) . ' ' . htmlspecialchars($price['currency']);?></h3>
-                  <p class="price__item-description"><?php echo htmlspecialchars($price['description']); ?></p>
-                  <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']) . ' *' ?></p>
-              </li>
+                <li class="price__item">
+                  <details>
+                      <summary class="price__item-title">
+                          <?php echo htmlspecialchars($price['title']) . ' - ' . htmlspecialchars($price['productPrice']) . ' ' . htmlspecialchars($price['currency']); ?>
+                      </summary>
+                      <div class="price__item-content">
+                          <p class="price__item-description"><?php echo htmlspecialchars($price['description']); ?></p>
+                          <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']); ?></p>
+                      </div>
+                  </details>
+                </li>
           <?php endforeach; ?>
           </ul>
           <div class="price__button">

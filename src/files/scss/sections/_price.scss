@@ -91,57 +91,36 @@
     }
 
     &__item {
-        font-size: 14px;
-        line-height: 21px;
         padding-left: 20px;
-        border-left: 4px solid var.$red;
-        position: relative;
-        padding-left: 30px;
-        border-left: none;
-  
-        &::after {
-          content: '';
-          position: absolute;
-          top: 8px;
-          left: 0;
-          width: 18px;
-          height: 10px;
-          background-image: url('#{var.$DEV_PATH}assets/images/vectors/arrow.svg');
-          background-size: cover;
-          z-index: -1;
-  
-          @media screen and (min-width: var.$desktop) {
-            left: -15px;
-            width: 36px;
-            height: 20px;
-            top: 4px;
-          }
-        }
-  
+
         @media screen and (min-width: var.$tablet) {
-          font-size: 18px;
           text-transform: none;
           padding-left: 35px;
         }
   
-        @media screen and (min-width: var.$desktop-min) {
-          font-size: 20px;
-        }
-  
         @media screen and (min-width: var.$desktop) {
-          font-size: 26px;
           line-height: 28px;
           padding-left: 45px;
         }
       }
 
       &__item-title {
+        font-size: 20px;
+        line-height: 21px;
         margin: 0 0 15px 0;
+
+        @media screen and (min-width: var.$tablet) {
+          font-size: 25px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          font-size: 30px;
+        }
       }
 
       &__item-description {
         font-family: var.$primary-font;
-        font-size: 16px;
+        font-size: 18px;
         text-align: start;
         margin: 0 0 15px 0;
   
@@ -160,5 +139,21 @@
 
     &__item-price {
       margin: 0 0 15px 0;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 20px;
+      }
+
+      @media screen and (min-width: var.$desktop-min) {
+        font-size: 22px;
+      }
+
+      @media screen and (min-width: var.$desktop) {
+        font-size: 28px;
+      }
     } 
+
+    &__button {
+      justify-self: center;
+    }
 }
