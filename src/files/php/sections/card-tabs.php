@@ -9,7 +9,7 @@ $path = $variables->getPathFileURL();
 
 // ID текущего товара
 /* $current_product_id = 'product_keychain_a93-eco'; */
-$current_product_id = 'product_keychain_a93-eco';
+$current_product_id = $_GET['id'];
 
 // Найти вкладки для текущего товара
 $product_tabs = [];
@@ -38,6 +38,10 @@ function isActiveClassTabContent($index)
         <div class="tab__buttons">
             <?php $index = 0; ?>
             <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
+                <?php if (empty($tab_content)) { 
+                    error_log(print_r($index, true)); 
+                continue;
+             } ?>
                 <button type="button" class="tab__button <?= isActiveClassTab($index) ?> y-button-secondary"
                         data-tab="<?= $tab_title; ?>"><?= $tab_title; ?></button>
                 <?php $index++; ?>
@@ -63,10 +67,9 @@ function isActiveClassTabContent($index)
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
-
                     <!-- Список items-service -->
                     <?php if (isset($tab_content['items-service'])): ?>
-                        <p>Удобный сервис</p>
+                        <p class="tab__text">Удобный сервис</p>
                         <ul class="tab__list tab__list--service <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
                             <?php foreach ($tab_content['items-service'] as $item): ?>
                                 <li class="tab__item"
@@ -91,7 +94,7 @@ function isActiveClassTabContent($index)
                             </li>
                         <?php endforeach; ?>
                     </ul>
-                <?php endif; ?>
+                <?php endif; ?>  
                 <?php $index++; ?>
             <?php endforeach; ?>
         </div>
