@@ -34,12 +34,11 @@ echo $head->setHead();
             foreach ($prices as $price): ?>
               <li class="price__item">
                   <h3 class="price__item-title"><?php echo htmlspecialchars($price['title']) . ' - ' . htmlspecialchars($price['productPrice']) . ' ' . htmlspecialchars($price['currency']);?></h3>
-                  <p class="price__item-description"></p><?php echo htmlspecialchars($price['description']); ?></p>
+                  <p class="price__item-description"><?php echo htmlspecialchars($price['description']); ?></p>
                   <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']) . ' *' ?></p>
               </li>
           <?php endforeach; ?>
           </ul>
-
           <div class="price__button">
             <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
           </div>

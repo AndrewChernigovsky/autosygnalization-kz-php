@@ -7,7 +7,6 @@
         
         @media screen and (min-width: var.$tablet) {
           width: 650px;
-          // width: 740px
           margin: 0 auto;
           padding-bottom: 60px;
         }
@@ -61,7 +60,7 @@
     &__subtitle {
         font-family: var.$primary-font;
         font-size: 20px;
-        text-align: left;
+        text-align: center;
 
         span {
             color: var.$red;
@@ -77,30 +76,19 @@
     }
 
     &__list {
-        border-bottom: 1px solid var.$red;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
         padding-bottom: 20px;
-    }
 
-    &__item-description {
-        font-family: var.$primary-font;
-        font-size: 16px;
-        text-align: center;
-        margin: 0 0 15px 0;
-  
-        @media screen and (min-width: var.$tablet) {
-          font-size: 20px;
-        }
-  
         @media screen and (min-width: var.$desktop-min) {
-          font-size: 22px;
-          margin-bottom: 25px;
+          gap: 25px;
         }
-  
+
         @media screen and (min-width: var.$desktop) {
-          font-size: 28px;
+          gap: 35px;
         }
     }
-
 
     &__item {
         font-size: 14px;
@@ -114,16 +102,16 @@
         &::after {
           content: '';
           position: absolute;
-          top: 5px;
+          top: 8px;
           left: 0;
           width: 18px;
-          height: 13px;
+          height: 10px;
           background-image: url('#{var.$DEV_PATH}assets/images/vectors/arrow.svg');
           background-size: cover;
           z-index: -1;
   
           @media screen and (min-width: var.$desktop) {
-            left: -15;
+            left: -15px;
             width: 36px;
             height: 20px;
             top: 4px;
@@ -146,4 +134,31 @@
           padding-left: 45px;
         }
       }
+
+      &__item-title {
+        margin: 0 0 15px 0;
+      }
+
+      &__item-description {
+        font-family: var.$primary-font;
+        font-size: 16px;
+        text-align: start;
+        margin: 0 0 15px 0;
+  
+        @media screen and (min-width: var.$tablet) {
+          font-size: 20px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          font-size: 22px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          font-size: 28px;
+        }
+    }
+
+    &__item-price {
+      margin: 0 0 15px 0;
+    } 
 }
