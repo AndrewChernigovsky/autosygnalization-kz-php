@@ -34,17 +34,26 @@ echo $head->setHead();
             foreach ($prices as $price): ?>
               <li class="price__item">
                 <div>
-                    <details class="price__details" name="faq">
+                    <details class="price__details product-cart">
                       <summary class="price__summary">
-                        <span class="price__item-title" role="term" aria-details="faq-1">
-                          <?php echo htmlspecialchars($price['title']) . ' - ' . htmlspecialchars($price['productPrice']) . ' ' . htmlspecialchars($price['currency']); ?>
-                        </span>
+                        <p class="price__item-title" role="term" aria-details="faq-1">
+                          <?php echo htmlspecialchars($price['title']); ?>
+                        </p>
+                        <div class="price__item-box">
+                          <span class="price__item-product"><?php echo htmlspecialchars($price['productPrice']); ?></span>
+                          <span class="price__item-currency"><?php echo htmlspecialchars($price['currency']); ?></span>
+                        </div>
+                        <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']); ?></p>
                       </summary>
                     </details>
                     <div class="price__content" id="faq-1" role="definition">
                       <div class="price__content-body">
-                        <p class="price__item-description"><?php echo htmlspecialchars($price['description']); ?></p>
-                        <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']); ?></p>                  
+                        <ul class="price__item-description">
+                          <?php foreach ($price['description'] as $descItem): ?>
+                            <li class="price__item-text"><?php echo htmlspecialchars($descItem); ?></li>
+                          <?php endforeach; ?>
+                        </ul>
+                        
                       </div>
                     </div>
                 </div>

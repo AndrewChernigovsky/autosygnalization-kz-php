@@ -17,6 +17,7 @@
   
         @media screen and (min-width: var.$desktop) {
           width: 1200px;
+          padding-top: 20px;
           padding-bottom: 100px;
         }
       }
@@ -25,7 +26,6 @@
         font-family: var.$primary-font;
         position: relative;
         margin: 0;
-        padding-top: 10px;
         margin-bottom: 50px;
         text-align: center;
   
@@ -72,51 +72,128 @@
 
          @media screen and (min-width: var.$desktop) {
             font-size: 35px;
+            margin-bottom: 100px;
         }
     }
 
     &__list {
-        display: flex;
-        flex-direction: column;
+        display: grid;
         gap: 15px;
         padding-bottom: 20px;
 
         @media screen and (min-width: var.$desktop-min) {
+          /* width: 800px; */
           gap: 25px;
         }
 
         @media screen and (min-width: var.$desktop) {
           gap: 35px;
+          /* width: 1200px; */
+          /* grid-template-columns: repeat(2, 500px);
+          justify-content: center; */
+          gap: 50px;
         }
     }
 
     &__item {
-        padding-left: 20px;
+        background-color: var.$gray;
+        border-radius: 15px;
+        transition: 0.3s ease-in-out;
+        padding-bottom: 20px;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
         @media screen and (min-width: var.$tablet) {
+          max-width: 650px;
           text-transform: none;
           padding-left: 35px;
         }
   
+        @media screen and (min-width: var.$desktop-min) {
+          max-width: 800px;
+          line-height: 28px;
+          padding-left: 45px;
+        }
+
         @media screen and (min-width: var.$desktop) {
+          max-width: 1200px;
           line-height: 28px;
           padding-left: 45px;
         }
       }
 
+      &__details summary {
+        list-style: none; /* Убирает треугольник */
+        appearance: none; /* Для совместимости с разными браузерами */
+        position: relative;
+        cursor: pointer;
+        
+      }
+
+      &__details summary::before {
+        content: ''; 
+        position: absolute;
+        top: 50%; 
+        left: 0; 
+        transform: translateY(-50%); 
+        border-style: solid;
+        border-width: 18px 15px 0 14px; 
+        border-color: white transparent transparent transparent;
+        width: 20px;
+        height: 40px;
+        transition: transform 0.6s ease;
+      }
+
+      &__details[open] summary::before {
+        transform: translateY(-50%) rotate(-90deg); /* Поворот треугольника */
+      }
+
       &__item-title {
-        font-size: 20px;
-        line-height: 21px;
-        margin: 0 0 15px 0;
+        max-width: 280px;
+        font-family: var.$primary-font;
+        font-size: 26px;
+        line-height: 34px;
+        font-weight: 700;
+        word-wrap: break-word;
+        text-align: center;
+        margin: 0 auto 20px;
         cursor: pointer;
 
         @media screen and (min-width: var.$tablet) {
           font-size: 25px;
+          max-width: 600px;
+          text-align: center;
+          padding-top: 20px;
         }
   
         @media screen and (min-width: var.$desktop-min) {
           font-size: 30px;
         }
+      }
+
+      &__item-box {
+        width: 250px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+
+      &__item-product {
+        font-size: 35px;
+        font-weight: 700;
+        text-align: center;
+        /* margin-bottom: 20px; */
+      }
+
+      &__item-currency {
+        font-size: 42px;
+        font-weight: 400;
+        color: var.$red-B40036;
       }
 
       &__content {
@@ -136,23 +213,36 @@
       &__item-description {
         font-family: var.$primary-font;
         font-size: 18px;
+        line-height: 24px;
         text-align: start;
-        margin: 0 0 15px 0;
+        width: 280px;
+        margin: 0 auto 15px;
   
         @media screen and (min-width: var.$tablet) {
           font-size: 20px;
+          width: 550px;
         }
   
         @media screen and (min-width: var.$desktop-min) {
           font-size: 22px;
+          width: 750px;
         }
   
         @media screen and (min-width: var.$desktop) {
           font-size: 28px;
+          width: 1000px;
+          
         }
     }
 
+    &__item-text {
+      margin-bottom: 10px;
+    }
+
     &__item-price {
+      font-size: 30px;
+      color: var.$red-B40036;
+      text-align: center;
       margin: 0 0 15px 0;
 
       @media screen and (min-width: var.$tablet) {
@@ -165,6 +255,7 @@
 
       @media screen and (min-width: var.$desktop) {
         font-size: 28px;
+        margin-bottom: 30px;
       }
     } 
 
