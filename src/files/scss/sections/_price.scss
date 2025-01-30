@@ -1,0 +1,174 @@
+@use 'variables'as var;
+
+.price {
+
+    &__wrapper {
+        padding: 20px 0 30px 0;
+        
+        @media screen and (min-width: var.$tablet) {
+          width: 650px;
+          margin: 0 auto;
+          padding-bottom: 60px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          width: 800px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          width: 1200px;
+          padding-bottom: 100px;
+        }
+      }
+
+      &__title {
+        font-family: var.$primary-font;
+        position: relative;
+        margin: 0;
+        padding-top: 10px;
+        margin-bottom: 50px;
+        text-align: center;
+  
+        &::after {
+          content: '';
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          right: 0;
+          width: 95%;
+          height: 90%;
+          background-color: var.$red;
+          filter: blur(20px);
+          opacity: 0.7;
+          z-index: -1;
+        }
+  
+        @media screen and (min-width: var.$tablet) {
+          margin-bottom: 80px;
+          font-size: 50px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          margin-bottom: 80px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          margin-bottom: 100px;
+        }
+      }
+
+    &__subtitle {
+        font-family: var.$primary-font;
+        font-size: 20px;
+        text-align: center;
+
+        span {
+            color: var.$red;
+        }
+
+        @media screen and (min-width: var.$tablet) {
+            font-size: 30px;
+          }
+
+         @media screen and (min-width: var.$desktop) {
+            font-size: 35px;
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        padding-bottom: 20px;
+
+        @media screen and (min-width: var.$desktop-min) {
+          gap: 25px;
+        }
+
+        @media screen and (min-width: var.$desktop) {
+          gap: 35px;
+        }
+    }
+
+    &__item {
+        padding-left: 20px;
+
+        @media screen and (min-width: var.$tablet) {
+          text-transform: none;
+          padding-left: 35px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          line-height: 28px;
+          padding-left: 45px;
+        }
+      }
+
+      &__item-title {
+        font-size: 20px;
+        line-height: 21px;
+        margin: 0 0 15px 0;
+        cursor: pointer;
+
+        @media screen and (min-width: var.$tablet) {
+          font-size: 25px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          font-size: 30px;
+        }
+      }
+
+      &__content {
+        display: grid;
+        grid-template-rows: 0fr;
+        transition-duration: 0.3s;
+      }
+      
+      &__content-body {
+        overflow: hidden;
+      }
+      
+      &__details[open] + &__content {
+        grid-template-rows: 1fr;
+      }
+
+      &__item-description {
+        font-family: var.$primary-font;
+        font-size: 18px;
+        text-align: start;
+        margin: 0 0 15px 0;
+  
+        @media screen and (min-width: var.$tablet) {
+          font-size: 20px;
+        }
+  
+        @media screen and (min-width: var.$desktop-min) {
+          font-size: 22px;
+        }
+  
+        @media screen and (min-width: var.$desktop) {
+          font-size: 28px;
+        }
+    }
+
+    &__item-price {
+      margin: 0 0 15px 0;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 20px;
+      }
+
+      @media screen and (min-width: var.$desktop-min) {
+        font-size: 22px;
+      }
+
+      @media screen and (min-width: var.$desktop) {
+        font-size: 28px;
+      }
+    } 
+
+    &__button {
+      justify-self: center;
+    }
+}
