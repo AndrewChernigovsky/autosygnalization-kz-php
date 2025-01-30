@@ -4,7 +4,7 @@
   position: relative;
   width: 320px;
   margin: 0 auto;
-  padding: 20px 0;
+  padding: 20px 10px;
   background-color: var.$gray_424242;
   border-radius: 25px;
   text-align: center;
@@ -25,14 +25,22 @@
   &__heading {
     margin: 0;
     margin-bottom: 10px;
+    padding: 0 10px;
     font-family: var.$primary-font;
     font-size: 36px;
     line-height: 42px;
     font-weight: 700;
     text-transform: uppercase;
-    
+    word-wrap: break-word;
+
     @media screen and (min-width: var.$desktop) {
-      font-size: 20px;
+      margin-bottom: 20px;
+    }
+  }
+
+  &__list {
+    @media screen and (min-width: var.$desktop) {
+      padding-bottom: 40px;
     }
   }
 
@@ -87,6 +95,7 @@
 
   &__title {
     margin: 0;
+    padding: 0 10px;
     font-family: var.$primary-font;
     text-transform: uppercase;
     font-weight: 700;
@@ -102,7 +111,9 @@
     }
     
     @media screen and (min-width: var.$desktop-min) {
+      margin-top: 10px;
       font-size: 20px;
+      line-height: 26px;
     }
   }
 
@@ -120,15 +131,24 @@
       grid-column: 1 / 3;
       grid-row: 2 / 3;
     }
+
+    @media screen and (min-width: var.$desktop) {
+      grid-column: 1 / 2;
+    }
   }
   
   &__price{
+    max-width: 240px;
     font-style: italic;
     font-weight: 700;
+    word-wrap: break-word;
 
     @media screen and (min-width: var.$desktop-min) {
       max-width: 400px;
-      word-wrap: break-word;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      max-width: 200px;
     }
   }
   
@@ -144,6 +164,7 @@
     font-size: 20px;
     line-height: 28px;
     text-align: center;
+    word-break: break-word;
 
     @media screen and (min-width: var.$tablet) {
       grid-column: 1 / 3;
@@ -156,6 +177,10 @@
       padding: 10px;
       min-height: 30px;
     }
+    
+    @media screen and (min-width: var.$desktop) {
+      grid-row: 2 / 3;
+    }
   }
 
   &__container {
@@ -166,18 +191,27 @@
       justify-content: space-between;
       flex-wrap: wrap;
     }
+
+    @media screen and (min-width: var.$desktop) {
+      position: absolute;
+      min-width: 510px;
+      justify-content: flex-start;
+      bottom: 20px;
+      z-index: 1;
+    }
   }
 
   &__link-all {
     margin-bottom: 10px;
     display: block;
     font-size: 20px;
-    line-height: 42px;
+    line-height: 30px;
     font-weight: 700;
     text-transform: none;
     text-decoration: none;
     color: var.$white;
     cursor: pointer;
+    word-break: break-word;
 
     @media screen and (min-width: var.$tablet) {
       padding-right: 20px;
@@ -203,6 +237,10 @@
     @media screen and (min-width: var.$tablet) {
       justify-content: flex-end;
       gap: 50px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      justify-content: flex-start;
     }
   }
     
