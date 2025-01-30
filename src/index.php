@@ -32,7 +32,6 @@ echo $head->setHead();
 ?>
 
 <body>
-  <a href="/dist/files/php/pages/test.php">Для Денчика</a>
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
     <?php
