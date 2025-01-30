@@ -15,7 +15,7 @@ $tabs = [
           [
             'title' => 'ДИАЛОГОВАЯ ЗАЩИТА',
             'description' => 'Диалоговый код управления StarLine c индивидуальными ключами шифрования 128 бит гарантирует надежную защиту от всех известных кодграбберов.',
-            'path-icon' => "$path/assets/images/products/starline_a60/package_Starline-A60-Eco.avif",
+            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection-white.avif",
           ],
           [
             'title' => 'ЗАЩИТА ОТ РАДИОПОМЕХ',
