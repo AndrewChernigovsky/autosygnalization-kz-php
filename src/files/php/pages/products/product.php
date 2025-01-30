@@ -33,8 +33,9 @@ $sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
 include_once $head_path;
 include_once $sections_path;
 $base_path = $docROOT . $path . '/files/php/layout';
+$product_section = __DIR__ . '/../../sections/card-tabs.php';
 
-$title = 'Создание и продвижение сайтов | Академия Андрея Андреевича Изосимова';
+$title = "$id | Auto Security";
 $head = new Head($title, [], []);
 ?>
 
@@ -83,7 +84,7 @@ echo $head->setHead();
     <?php endif; ?>
       <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
     </section>    
-    <?= include_once __DIR__ . '/../../sections/card-tabs.php'; ?>
+    <?php include $product_section;?>
   </main>
   <?php include $base_path . '/footer.php'; ?>
 </body>

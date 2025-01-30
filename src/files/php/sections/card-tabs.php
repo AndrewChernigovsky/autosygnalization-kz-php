@@ -7,18 +7,21 @@ $variables->setVar();
 
 $path = $variables->getPathFileURL();
 
-// ID текущего товара
-/* $current_product_id = 'product_keychain_a93-eco'; */
-$current_product_id = 'product_keychain_a93-eco';
+$current_product_id = isset($_GET['id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['id']) ? $_GET['id'] : '';
 
-// Найти вкладки для текущего товара
+error_log(print_r($current_product_id, true) . " Это id продукта");
+
 $product_tabs = [];
-foreach ($tabs as $product) {
-    if ($product['id'] === $current_product_id && isset($product['tabs'])) {
-        $product_tabs = $product['tabs'];
-        break;
+if (!empty($tabs)) {
+    foreach ($tabs as $product) {
+        if ($product['id'] === $current_product_id && isset($product['tabs'])) {
+            $product_tabs = $product['tabs'];
+            break;
+        }
     }
 }
+
+
 
 function isActiveClassTab($index)
 {
@@ -38,6 +41,9 @@ function isActiveClassTabContent($index)
         <div class="tab__buttons">
             <?php $index = 0; ?>
             <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
+                <?php if (empty($tab_content)) {
+                continue;
+             } ?>
                 <button type="button" class="tab__button <?= isActiveClassTab($index) ?> y-button-secondary"
                         data-tab="<?= $tab_title; ?>"><?= $tab_title; ?></button>
                 <?php $index++; ?>
@@ -63,10 +69,9 @@ function isActiveClassTabContent($index)
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
-
                     <!-- Список items-service -->
                     <?php if (isset($tab_content['items-service'])): ?>
-                        <p>Удобный сервис</p>
+                        <p class="tab__text">Удобный сервис</p>
                         <ul class="tab__list tab__list--service <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
                             <?php foreach ($tab_content['items-service'] as $item): ?>
                                 <li class="tab__item"
@@ -91,7 +96,7 @@ function isActiveClassTabContent($index)
                             </li>
                         <?php endforeach; ?>
                     </ul>
-                <?php endif; ?>
+                <?php endif; ?>  
                 <?php $index++; ?>
             <?php endforeach; ?>
         </div>
