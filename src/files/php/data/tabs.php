@@ -15,64 +15,64 @@ $tabs = [
           [
             'title' => 'ДИАЛОГОВАЯ ЗАЩИТА',
             'description' => 'Диалоговый код управления StarLine c индивидуальными ключами шифрования 128 бит гарантирует надежную защиту от всех известных кодграбберов.',
-            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection.avif",
+            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection-white.avif",
           ],
           [
             'title' => 'ЗАЩИТА ОТ РАДИОПОМЕХ',
             'description' => 'StarLine уверенно работает в условиях экстремальных городских радиопомех, благодаря уникальному 128-канальному трансиверу.',
-            'path-icon' => "$path/assets/images/products/advantages/radio-protection.avif",
+            'path-icon' => "$path/assets/images/products/advantages/radio-protection-white.avif",
           ],
           [
             'title' => 'SUPER SLAVE (ОПЦИЯ)',
             'description' => 'Управление охраной автомобиля штатным брелком с надежной дополнительной диалоговой авторизацией брелком StarLine. Опция доступна при интеграции 2CAN+2LIN интерфейса.',
-            'path-icon' => "$path/assets/images/products/advantages/super-slave.avif",
+            'path-icon' => "$path/assets/images/products/advantages/super-slave-white.avif",
           ],
           [
             'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
             'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 50 до плюс 85 °С благодаря высококачественным комплектующим.',
-            'path-icon' => "$path/assets/images/products/advantages/temperature-range.avif",
+            'path-icon' => "$path/assets/images/products/advantages/temperature-range-white.avif",
           ],
           [
             'title' => 'РЕКОРДНАЯ ЭНЕРГОЭКОНОМИЧНОСТЬ',
             'description' => 'StarLine гарантирует сохранность достаточного заряда аккумулятора до 60 дней в режиме охраны благодаря использованию запатентованных технологий и программных решений.',
-            'path-icon' => "$path/assets/images/products/advantages/energy-eco.avif",
+            'path-icon' => "$path/assets/images/products/advantages/energy-eco-white.avif",
           ],
           [
             'title' => 'КОНТРОЛЬ КАНАЛА СВЯЗИ',
             'description' => 'Автоматический контроль канала связи обеспечивает прoверку нахождения брелка в зоне действия приемопередатчика охранного оборудования.',
-            'path-icon' => "$path/assets/images/products/advantages/control-channel.avif",
+            'path-icon' => "$path/assets/images/products/advantages/control-channel-white.avif",
           ],
           [
             'title' => 'АВТОРИЗАЦИЯ ПО PIN-КОДУ (ОПЦИЯ)',
             'description' => 'Защитите автомобиль от угона даже в случае кражи ключей или меток благодаря умной дополнительной авторизации. Поездка возможна только после ввода индивидуального PIN-кода при помощи штатных кнопок автомобиля. <br> Опция доступна при интеграции 2CAN+2LIN интерфейса.',
-            'path-icon' => "$path/assets/images/products/advantages/pin-authorization.avif",
+            'path-icon' => "$path/assets/images/products/advantages/pin-authorization-white.avif",
           ],
           [
             'title' => '3D ДАТЧИК УДАРА И НАКЛОНА',
             'description' => 'Интегрированный цифровой датчик удара и наклона с дистанционной настройкой регистрирует поддомкрачивание и эвакуацию транспортного средства.',
-            'path-icon' => "$path/assets/images/products/advantages/3d-control.avif",
+            'path-icon' => "$path/assets/images/products/advantages/3d-control-white.avif",
           ],
           [
             'title' => 'НЕВИДИМАЯ БЛОКИРОВКА (ОПЦИЯ)',
             'description' => 'iCAN гарантирует надежную защиту благодаря уникальной запатентованной технологии скрытой блокировки двигателя по штатным цифровым шинам автомобиля. Опция доступна при интеграции 2CAN+2LIN интерфейса.',
-            'path-icon' => "$path/assets/images/products/advantages/invisible-blocking.avif",
+            'path-icon' => "$path/assets/images/products/advantages/invisible-blocking-white.avif",
           ],
         ],
         'items-service' => [
           [
             'title' => 'ТЕЛЕМАТИКА (ОПЦИЯ)',
             'description' => 'Интеграция опциональных <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/?ncc=1" target="_blank">GSM</a>,<a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> телематических интерфейсов позволяет дистанционно управлять охраной вашего автомобиля и осуществлять мониторинг.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/telematics.avif",
           ],
           [
             'title' => 'УПРАВЛЕНИЕ С ТЕЛЕФОНА (ОПЦИЯ)',
             'description' => 'Интеграция опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/" target="_blank"> GSM-ИНТЕРФЕЙСА</a> позволяет управлять охранными и сервисными функциями, получать оповещения о статусе охраны на ваш мобильный телефон.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/gsm-control.avif",
           ],
           [
             'title' => 'БЕСПЛАТНЫЙ МОНИТОРИНГ (ОПЦИЯ)',
             'description' => 'С помощью простого и удобного мониторинга <a href="https://www.starline-online.ru/" target="_blank">STARLINE.ONLINE</a> вы сможете с точностью до нескольких метров узнать местонахождение своего транспортного средства. Опция доступна при подключении <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> и наличии опционального <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/" target="_blank"> GSM-ИНТЕРФЕЙСА</a>.',
-            'path-icon' => "$path/assets/images/vectors/thermometer.svg",
+            'path-icon' => "$path/assets/images/products/advantages/gsm-control.avif",
           ],
           [
             'title' => 'АВТОЗАПУСК',
