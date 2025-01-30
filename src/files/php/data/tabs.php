@@ -61,7 +61,7 @@ $tabs = [
         'items-service' => [
           [
             'title' => 'ТЕЛЕМАТИКА (ОПЦИЯ)',
-            'description' => 'Интеграция опциональных <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/?ncc=1" target="_blank">GSM</a>,<a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> телематических интерфейсов позволяет дистанционно управлять охраной вашего автомобиля и осуществлять мониторинг.',
+            'description' => 'Интеграция опциональных <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gsm_master/?ncc=1" target="_blank">GSM</a>, <a href="https://store.starline.ru/catalog/dopolnitelnoe_oborudovanie/starline_gps_glonass_master/" target="_blank">GPS-ГЛОНАСС</a> телематических интерфейсов позволяет дистанционно управлять охраной вашего автомобиля и осуществлять мониторинг.',
             'path-icon' => "$path/assets/images/vectors/thermometer.svg",
           ],
           [
