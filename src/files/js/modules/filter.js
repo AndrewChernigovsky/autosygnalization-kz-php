@@ -142,15 +142,20 @@ export function saveCheckbox() {
   }
 
   form.addEventListener('reset', function (event) {
+    for (let key in filtersState) {
+      filtersState[key] = false;
+    }
     if (rangeMinInput && rangeMaxInput) {
       filtersState['min-value-range'] = 100;
-      filtersState['max-value-range'] = 300;
+      filtersState['max-value-range'] = 300000;
     }
 
     if (minCostInput && maxCostInput) {
       filtersState['min-value-cost'] = 100;
-      filtersState['max-value-cost'] = 300;
+      filtersState['max-value-cost'] = 300000;
     }
+    sessionStorage.setItem('filtersState', JSON.stringify(filtersState));
+    window.location.href = window.location.href.split('?')[0];
   });
 
   if (minCostInput && maxCostInput) {
