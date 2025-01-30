@@ -4,15 +4,14 @@
   &__wrapper {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 10px;
+    padding: 25px 10px 10px 10px;
 
     @media (min-width: var.$tablet) {
-      padding: 20px;
+      padding: 40px 20px 20px 20px;
     }
 
     @media (min-width: var.$desktop) {
-      padding-left: 0;
-      padding-right: 0;
+      padding: 50px 0 0 0;
     }
   }
 
