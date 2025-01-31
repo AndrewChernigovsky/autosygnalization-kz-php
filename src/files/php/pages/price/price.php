@@ -28,12 +28,11 @@ echo $head->setHead();
       <div class="container">
         <div class="price__wrapper">
           <h1 class="price__title">Прайс</h1>
-          <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку:</h2>
+          <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку:*</h2>
           <ul class="price__list list-style-none">
             <?php
             foreach ($prices as $price): ?>
               <li class="price__item">
-                <div>
                     <details class="price__details product-cart">
                       <summary class="price__summary">
                         <p class="price__item-title" role="term" aria-details="faq-1">
@@ -43,7 +42,7 @@ echo $head->setHead();
                           <span class="price__item-product"><?php echo htmlspecialchars($price['productPrice']); ?></span>
                           <span class="price__item-currency"><?php echo htmlspecialchars($price['currency']); ?></span>
                         </div>
-                        <p class="price__item-price">Установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']); ?></p>
+                        <p class="price__item-price">установка от <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']) . '*'; ?></p>
                       </summary>
                     </details>
                     <div class="price__content" id="faq-1" role="definition">
@@ -53,12 +52,19 @@ echo $head->setHead();
                             <li class="price__item-text"><?php echo htmlspecialchars($descItem); ?></li>
                           <?php endforeach; ?>
                         </ul>
-                        
                       </div>
                     </div>
-                </div>
               </li>
-          <?php endforeach; ?>
+            <?php endforeach; ?>
+          </ul>
+          <h3>Прайс на дополнительные услуги: *</h3>
+          <ul>
+            <?php 
+              foreach ($pricesServices as $service): ?>
+                <li>
+                  <а><?php echo htmlspecialchars($service['title']); ?></а>
+                </li>
+              <?php endforeach; ?>
           </ul>
           <div class="price__button">
             <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
