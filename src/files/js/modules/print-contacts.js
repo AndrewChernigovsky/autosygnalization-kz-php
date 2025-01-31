@@ -2,7 +2,6 @@ export default class PrintDocument {
   constructor(element) {
     this.element = element;
     this.container = document.createElement('div');
-    document.body.appendChild(this.container);
     this.init();
   }
 
