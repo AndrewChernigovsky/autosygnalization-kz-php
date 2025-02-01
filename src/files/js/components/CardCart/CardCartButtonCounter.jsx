@@ -17,7 +17,7 @@ export class CardCartButtonCounter extends Component {
     return true;
   };
 
-  render({ id, onAdd, onRemove, quantity, isRemoveButtonDisabled }) {
+  render({ id, onAdd, onRemove, quantity }) {
     const isDisabled = this.btnDisabledState(quantity);
     return html`
       <button
