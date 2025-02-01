@@ -7,7 +7,7 @@
         @media screen and (min-width: var.$tablet) {
           width: 650px;
           margin: 0 auto;
-          padding-bottom: 60px;
+          padding-bottom: 40px;
         }
   
         @media screen and (min-width: var.$desktop-min) {
@@ -62,7 +62,7 @@
         margin: 0 19px 40px 19px;
 
         span {
-            color: var.$red;
+            color: var.$red-B40036;
         }
 
         @media screen and (min-width: var.$tablet) {
@@ -83,15 +83,12 @@
         margin: 0 10px 0 10px;
 
         @media screen and (min-width: var.$desktop-min) {
-          /* width: 800px; */
           gap: 25px;
         }
 
         @media screen and (min-width: var.$desktop) {
           gap: 35px;
-          /* width: 1200px; */
-          /* grid-template-columns: repeat(2, 500px);
-          justify-content: center; */
+          justify-content: center;
           gap: 30px;
         }
     }
@@ -100,8 +97,6 @@
         background-color: var.$gray;
         border-radius: 15px;
         transition: 0.3s ease-in-out;
-        /* padding-bottom: 20px; */
-        /* max-width: 300px; */
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -144,10 +139,6 @@
       }
     }
 
-    &__box-card {
-      border: 2px solid red;
-    }
-
     &__details summary {
       list-style: none; /* Убирает треугольник */
       appearance: none; /* Для совместимости с разными браузерами */
@@ -155,7 +146,6 @@
     }
 
       &__item-title {
-        /* max-width: 230px; */
         font-family: var.$primary-font;
         font-size: 18px;
         line-height: 28px;
@@ -184,7 +174,7 @@
 
         @media screen and (min-width: var.$desktop) {
           font-size: 30px;
-          margin: 0 125px 0 125px;
+          margin: 0 100px 0 100px;
           width: 590px;
         }
       }
@@ -194,10 +184,9 @@
         position: absolute;
         top: 30%; 
         left: -16px; 
-        /* transform: translateY(-50%); */ 
         border-style: solid;
         border-width: 10px 9px 0 9px; 
-        border-color: white transparent transparent transparent;
+        border-color: var.$white transparent transparent transparent;
         width: 12px;
         transition: transform 0.6s ease;
 
@@ -268,7 +257,7 @@
           grid-column: 2;
           grid-row: 2 / 3;
           margin: 0;
-          width: 162px;
+          width: 170px;
         }
   
         @media screen and (min-width: var.$desktop-min) {
@@ -279,9 +268,7 @@
   
         @media screen and (min-width: var.$desktop) {
           font-size: 28px;
-          width: 265px;
-          
-          /* margin-bottom: 30px; */
+          width: 270px;
         }
       }
 
@@ -321,7 +308,6 @@
         @media screen and (min-width: var.$desktop) {
           font-size: 28px;
           width: 1000px;
-          
         }
     }
 
@@ -341,10 +327,19 @@
         margin-bottom: 10px;
       }
     }
+}
 
-    &__item
+.price-button {
+  width: 260px;
+  margin: 0 auto 20px auto;
+  text-align: center;
 
-    &__button {
-      justify-self: center;
-    }
+  @media screen and (min-width: var.$desktop-min) {
+    width: 300px;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    width: 350px;
+    margin-bottom: 50px;
+  }
 }

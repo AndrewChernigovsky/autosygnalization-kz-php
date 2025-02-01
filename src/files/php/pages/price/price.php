@@ -28,7 +28,7 @@ echo $head->setHead();
       <div class="container">
         <div class="price__wrapper">
           <h1 class="price__title">Прайс</h1>
-          <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку:*</h2>
+          <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку:<span>*</span></h2>
           <ul class="price__list list-style-none">
             <?php
             foreach ($prices as $price): ?>
@@ -57,21 +57,34 @@ echo $head->setHead();
               </li>
             <?php endforeach; ?>
           </ul>
-          <h3>Прайс на дополнительные услуги: *</h3>
-          <ul>
-            <?php 
-              foreach ($pricesServices as $service): ?>
-                <li>
-                  <а><?php echo htmlspecialchars($service['title']); ?></а>
-                </li>
-              <?php endforeach; ?>
-          </ul>
-          <div class="price__button">
-            <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
-          </div>
         </div>
       </div>
     </section>
+    <section class="price-services">
+      <div class="container">
+        <h2 class="price-services__title">Прайс на дополнительные услуги:<span>*</span></h2>
+          <ul class="price-services__list list-style-none">
+            <?php foreach ($pricesServices as $service): ?>
+                <li>
+                  <div class="price-services__box">
+                    <?php if (!empty($service['link'])): ?>
+                      <a href="<?php echo htmlspecialchars($service['link']); ?>">
+                        <?php echo ($service['title']); ?>
+                      </a>
+                    <?php else: ?>
+                      <p><?php echo ($service['title']); ?></p>
+                    <?php endif; ?>
+                    <div class="price-services__price"><?php echo htmlspecialchars($service['productServicesPrice']) . ' ' . htmlspecialchars($service['currency']); ?></div>
+                  </div>
+                </li>
+            <?php endforeach; ?>
+          </ul>
+          <p class="price-services__warning">* Цена услуг зависит от автомобиля и сложности работ.<br><br> Обязательно нужно уточнять у мастера совместимость оборудования и необходимый набор функций.<br><br> Все нюансы оговариваются при осмотре автомашины.</p>
+      </div>
+    </section>
+    <div class="price-button">
+      <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+    </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
 </body>

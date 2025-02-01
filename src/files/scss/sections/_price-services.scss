@@ -1,0 +1,156 @@
+@use 'variables'as var;
+
+.price-services {
+  margin-bottom: 30px;
+
+  &__title {
+    font-size: 18px;
+    width: 230px;
+    margin: 0 auto 30px auto;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 550px;
+      font-size: 24px;
+      margin-bottom: 50px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      width: 850px;
+      font-size: 28px;
+      margin-bottom: 60px;
+    }
+
+    span {
+      color: var.$red-B40036;
+    }
+  }
+
+  &__list {
+    list-style: none;
+    margin-bottom: 40px;
+    width: 300px;
+    margin: 0 auto 20px auto;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 600px;
+      margin-bottom: 50px;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      width: 600px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      width: 900px;
+      font-size: 28px;
+      margin-bottom: 60px;
+    }
+  }
+
+  &__list li {
+    margin-bottom: 10px;
+
+    @media screen and (min-width: var.$tablet) {
+      margin-bottom: 15px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      margin-bottom: 20px;
+    }
+  }
+
+  &__box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__box a {
+    font-family: var.$primary-font;
+    font-size: 14px;
+    color: var.$white;
+    width: 195px;
+    text-decoration: underline;
+    text-decoration-color: var.$red-B40036;
+    text-decoration-thickness: 2px;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 550px;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 24px;
+    }
+  }
+
+  &__box a:hover {
+    color: var.$red-B40036;
+    text-decoration: none;
+  }
+
+  &__box a:active {
+    color: var.$red-B40036;
+    text-decoration: none;
+    opacity: 0.4;
+  }
+
+  &__box p {
+    font-family: var.$primary-font;
+    font-size: 15px;
+    width: 195px;
+    margin: 0;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 550px;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 24px;
+    }
+  }
+
+  &__price {
+    width: 90px;
+    margin: 0;
+    font-size: 14px;
+    text-align: center;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 180px;
+      font-size: 16px;
+      text-transform: uppercase;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 24px;
+      width: 250px;
+    }
+  }
+
+  &__warning {
+    font-family: var.$primary-font;
+    font-size: 16px;
+    border: 2px solid var.$red-B40036;
+    padding: 10px;
+    width: 295px;
+    margin: 0 auto;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 500px;
+      font-size: 18px;
+      text-transform: none;
+      padding: 20px;
+      margin-bottom: 50px;
+    }
+
+    @media screen and (min-width: var.$desktop) {
+      font-size: 22px;
+      width: 660px;
+      padding: 40px;
+    }
+  }
+}
