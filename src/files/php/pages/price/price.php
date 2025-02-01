@@ -83,7 +83,7 @@ echo $head->setHead();
       </div>
     </section>
     <div class="price-button">
-      <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto-Security-price-2025.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+      <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto_Security_price.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
     </div>
   </main>
   <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
