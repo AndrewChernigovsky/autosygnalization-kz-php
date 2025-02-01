@@ -1,11 +1,10 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .tab {
   &__wrapper {
     max-width: 1400px;
     margin: 0 auto;
     padding: 10px;
-
 
     @media (min-width: var.$tablet) {
       padding: 20px;
@@ -37,8 +36,8 @@
     }
 
     @media (min-width: var.$desktop-min) {
-      width: 904px;      
-      column-gap: 176px;      
+      width: 904px;
+      column-gap: 176px;
     }
 
     @media (min-width: var.$desktop) {
@@ -130,6 +129,10 @@
     display: none;
   }
 
+  &__text {
+    display: none;
+  }
+
   &__list--show {
     display: flex;
     flex-direction: column;
@@ -144,7 +147,7 @@
 
       &::after {
         position: absolute;
-        content: "";
+        content: '';
         width: 4px;
         height: 105%;
         top: -10px;
@@ -156,6 +159,10 @@
 
     @media (min-width: var.$desktop) {
       column-gap: 23px;
+    }
+
+    & + .tab__text {
+      display: block;
     }
   }
 

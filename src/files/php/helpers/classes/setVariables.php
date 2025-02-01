@@ -13,7 +13,6 @@ class SetVariables
   public function __construct()
   {
     self::$docRoot = $_SERVER['DOCUMENT_ROOT'];
-    error_log(self::$docRoot  . ' docRoot');
   }
 
   public function setVar()
