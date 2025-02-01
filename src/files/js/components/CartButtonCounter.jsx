@@ -8,24 +8,14 @@ export class CartButtonCounter extends Component {
     };
   }
 
-  btnDisabledState = (quantity) => {
-    if (quantity >= 1) {
-      console.log('Кнопка активна');
-      return false;
-    }
-    console.log('Кнопка заблокирована');
-    return true;
-  };
-
   render({ id, onAdd, onRemove, quantity }) {
-    const isDisabled = this.btnDisabledState(quantity);
     return html`
       <div class="product-card__buttons-count">
         <button
           type="button"
           class="button y-button-primary cart-button"
           data-id=${id}
-          onClick=${isDisabled}
+          onClick=${onRemove}
           aria-label="Убрать товар"
         >
           -
