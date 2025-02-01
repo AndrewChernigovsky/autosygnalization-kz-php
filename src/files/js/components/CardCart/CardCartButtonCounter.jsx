@@ -8,14 +8,24 @@ export class CardCartButtonCounter extends Component {
     };
   }
 
+  btnDisabledState = (quantity) => {
+    if (quantity >= 1) {
+      console.log('Кнопка активна');
+      return false;
+    }
+    console.log('Кнопка заблокирована');
+    return true;
+  };
+
   render({ id, onAdd, onRemove, quantity, isRemoveButtonDisabled }) {
+    const isDisabled = this.btnDisabledState(quantity);
     return html`
       <button
         type="button"
         class="button card-more__button card-more__button--min"
         data-id=${id}
         onClick=${onRemove}
-        disabled=${isRemoveButtonDisabled}
+        disabled=${isDisabled}
         aria-label="Убрать товар"
       >
         −
