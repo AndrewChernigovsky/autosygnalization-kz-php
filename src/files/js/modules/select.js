@@ -1,6 +1,5 @@
 export default class CustomSelect {
   path;
-  // PRODUCTION;
 
   constructor(block, path = 'files/php/pages/catalog/catalog.php') {
     const mainSelector = document.querySelector(block.selected);
@@ -15,10 +14,13 @@ export default class CustomSelect {
   }
 
   init() {
-    if (!sessionStorage.getItem('customSelectInitialized')) {
+    if (!sessionStorage.getItem('defaultSettings')) {
       this.setDefaultSelect();
-      sessionStorage.setItem('customSelectInitialized', 'true');
+      sessionStorage.setItem('defaultSettings', 'true');
     }
+
+    this.loadSelectedState();
+
     this.addEventListeners();
     console.log(this.PRODUCTION);
     console.log(this.path);
@@ -36,6 +38,37 @@ export default class CustomSelect {
         }
       }
     }
+  }
+
+  saveSelectedState() {
+    const selectedValue = this.selected.dataset.value;
+    const selectState = {
+      value: selectedValue,
+      text: this.selected.innerHTML,
+    };
+
+    sessionStorage.setItem('selectState', JSON.stringify(selectState));
+  }
+
+  loadSelectedState() {
+    const storedState = sessionStorage.getItem('selectState');
+    if (storedState) {
+      const selectState = JSON.parse(storedState);
+      this.selected.innerHTML = selectState.text;
+      this.selected.dataset.value = selectState.value;
+      this.value = selectState.value;
+    } else {
+      this.setDefaultSelect();
+    }
+  }
+
+  addSelectToUrl() {
+    const currentUrl = window.location.href.split('?')[0];
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.set('SELECT', this.value);
+    const newUrl = `${currentUrl}?${currentParams.toString()}`;
+
+    document.location.href = newUrl;
   }
 
   addEventListeners() {
@@ -73,8 +106,8 @@ export default class CustomSelect {
       this.selected.classList.remove('open');
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
-      const url = `${this.PRODUCTION ? '/dist/' : '/'}` + this.path;
-      document.location.href = url + '?SELECT=' + this.value;
+      this.saveSelectedState();
+      this.addSelectToUrl();
     }
   }
 

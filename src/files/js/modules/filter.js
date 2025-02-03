@@ -1,3 +1,4 @@
+import CustomSelect from './select';
 export function filterToggleMenu() {
   const filterBtn = document.getElementById('filter-btn');
   const filterCatalog = document.getElementById('filter-catalog');
@@ -141,7 +142,19 @@ export function saveCheckbox() {
     });
   }
 
+  form.addEventListener('submit', function (event) {
+    const currentUrl = window.location.href.split('?')[0];
+    const selectSelected =
+      document.querySelector('.select-selected').dataset.value;
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.set('SELECT', selectSelected);
+    const newUrl = `${currentUrl}?${currentParams.toString()}`;
+    alert(newUrl);
+    window.location.href = newUrl;
+  });
+
   form.addEventListener('reset', function (event) {
+    // Сбрасываем состояние чекбоксов
     for (let key in filtersState) {
       filtersState[key] = false;
     }
@@ -155,7 +168,16 @@ export function saveCheckbox() {
       filtersState['max-value-cost'] = 300000;
     }
     sessionStorage.setItem('filtersState', JSON.stringify(filtersState));
-    window.location.href = window.location.href.split('?')[0];
+
+    // Сбрасываем selectState до дефолтных значений
+    const defaultSelectState = {
+      value: 'name', // Здесь укажи дефолтное value
+      text: 'Название', // Здесь укажи дефолтный текст
+    };
+    sessionStorage.setItem('selectState', JSON.stringify(defaultSelectState));
+
+    // Перезагружаем страницу, чтобы селект восстановил значения
+    window.location.reload();
   });
 
   if (minCostInput && maxCostInput) {
