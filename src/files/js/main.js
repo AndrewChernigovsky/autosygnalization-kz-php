@@ -26,7 +26,7 @@ const {
   catalog,
   cardMoreButton,
   cartButtons,
-  addToCartButtons
+  addToCartButton
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -52,7 +52,7 @@ const {
   catalog: document.querySelector('.catalog__products'),
   cardMoreButton: document.querySelector('.card-more__button-cost'),
   cartButtons: document.querySelectorAll('.cart-button'), 
-  addToCartButtons: document.querySelectorAll('.card-more__button-cart')
+  addToCartButton: document.querySelector('.card-more__button-cart')
 };
 
 async function loadModules() {
@@ -164,9 +164,9 @@ async function loadModules() {
     const { setModalCart } = await import('./modules/cart-modal.js');
     cartButtons.forEach((btn) => btn.addEventListener('click', setModalCart));
   }
-  if (modalCart != null && addToCartButtons.length > 0) {
+  if (modalCart != null && addToCartButton != null) {
     const { setModalCart } = await import('./modules/cart-modal.js');
-    addToCartButtons.forEach((btn) => btn.addEventListener('click', setModalCart));
+    addToCartButton.addEventListener('click', setModalCart);
   }
   if (productsContainerCart != null) {
     const { Cart } = await import('./components/Cart.jsx');
