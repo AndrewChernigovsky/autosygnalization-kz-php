@@ -13,6 +13,10 @@ export function setModalCart() {
   const countItem = clone.querySelector('.cart-popup__count');
   const timerElement = clone.querySelector('.cart-popup__timer');
   const cost = clone.querySelector('.cart-popup__summary');
+  const allCount = clone.querySelector('.cart-popup__all-count');
+  const allCountElem = cartItems.reduce((total, product) => {
+    return total + product.quantity;
+  }, 0);
 
   let allQuantity = 0;
   let allCost = 0;
@@ -25,6 +29,7 @@ export function setModalCart() {
   const format = new FormatNumber();
   countItem.textContent = `Товаров в корзине: ${allQuantity}`;
   cost.textContent = `Сумма: ${format.customFormatNumber(allCost)} ₸`;
+  allCount.textContent = `Всего товаров: ${allCountElem}`;
 
   let timer = 5;
   timerElement.textContent = `Скрытие через ${timer} секунд`;

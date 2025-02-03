@@ -11,6 +11,7 @@ $path = $variables->getPathFileURL();
       <span class="visually-hidden">Закрыть модальное окно</span>
     </button>
     <p class="cart-popup__count"></p>
+    <p class="cart-popup__all-count"></p>
     <p class="cart-popup__summary"></p>
     <a class="cart-popup__link link button y-button-primary"
       href="<?= $path . '/files/php/pages/cart/cart.php'; ?>">Перейти в

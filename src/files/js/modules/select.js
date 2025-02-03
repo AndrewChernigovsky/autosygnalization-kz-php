@@ -1,5 +1,6 @@
 export default class CustomSelect {
   path;
+  // PRODUCTION;
 
   constructor(block, path = 'files/php/pages/catalog/catalog.php') {
     const mainSelector = document.querySelector(block.selected);
@@ -8,14 +9,19 @@ export default class CustomSelect {
     this.item = document.querySelector(block.item);
     this.options = this.item.querySelectorAll(block.options);
     this.value = null;
-    this.init();
-    this.PRODUCTION = window.location.href.includes('/dist/');
+    this.PRODUCTION = window.location.href.includes('/dist/') ? '/dist/' : '/';
     this.path = path;
+    this.init();
   }
 
   init() {
-    this.setDefaultSelect();
+    if (!sessionStorage.getItem('customSelectInitialized')) {
+      this.setDefaultSelect();
+      sessionStorage.setItem('customSelectInitialized', 'true');
+    }
     this.addEventListeners();
+    console.log(this.PRODUCTION);
+    console.log(this.path);
   }
 
   setDefaultSelect() {
@@ -69,7 +75,6 @@ export default class CustomSelect {
       this.selected.dataset.value = this.value;
       const url = `${this.PRODUCTION ? '/dist/' : '/'}` + this.path;
       document.location.href = url + '?SELECT=' + this.value;
-
     }
   }
 
