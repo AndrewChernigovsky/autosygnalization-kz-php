@@ -13,7 +13,7 @@ $products = [
       [
         "model" => "a93-eco",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_a93-eco',
         "gallery" => [
           "$path/assets/images/products/starline_a93/starline-A93-ECO-V2-main.avif",
@@ -29,28 +29,34 @@ $products = [
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a93-eco",
         "functions" => [
           "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
-          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
           "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
         ],
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-before-start',   
+        ],
+        "special" => true,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
+        ],
+        "autosygnals" => [
+          "auto",
+          "gsm",
+          "starline",
         ],
       ],
       [
         "model" => "e96-eco",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_e96-eco',
         "gallery" => [
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN.avif",
@@ -64,29 +70,19 @@ $products = [
         "currency" => "₸",
         "quantity" => 1,
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_e96-eco",
-        "functions" => [
-          "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
-          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
-          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
-        ],
-        "options" => [
-          "Для легкового авто",
-          "Для внедорожника",
-        ],
+        "functions" => [],
+        "options" => [],
+        "options-filters" => [],
+        "special" => true,
         "autosygnals" => [
           "auto",
-          "starline" ,
+          "starline",
         ],
       ],
       [
         "model" => "s96-2can-2lin-gsm",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_s96-2can-2lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_s96/StarLine-S96-V2-BT-2CAN-2LIN-GSM.avif",
@@ -101,7 +97,6 @@ $products = [
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
           "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
           "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
           "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
@@ -112,10 +107,22 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'bluetooth-smart', 
+          'block-engine-can', 
+          'control-before-start', 
+          'smart-diagnostic', 
+          'data-level-bensin',  
+        ],
+        "special" => true,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -137,21 +144,22 @@ $products = [
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a93-v2",
         "functions" => [
           "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
-          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
           "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
         ],
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-before-start', 
+        ],
+        "special" => false,
         "autosygnals" => [
           "auto",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -185,10 +193,23 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'free-monitoring', 
+          'bluetooth-smart', 
+          'block-engine-can', 
+          'control-before-start', 
+          'smart-diagnostic', 
+          'data-level-bensin',  
+        ],
+        "special" => true,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -221,10 +242,23 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'free-monitoring', 
+          'bluetooth-smart', 
+          'block-engine-can', 
+          'control-before-start', 
+          'smart-diagnostic', 
+          'data-level-bensin',  
+        ],
+        "special" => false,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -246,27 +280,30 @@ $products = [
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a93-2can-2lin",
         "functions" => [
           "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
           "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
           "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
         ],
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'block-engine-can', 
+          'control-before-start', 
+        ],
+        "special" => false,
         "autosygnals" => [
           "auto",
-          "starline" ,
+          "starline",
         ],
       ],
       [
         "model" => "e96-2can-4lin-gsm",
         "cart" => false,
-        "popular" => false,
+        "popular" => true,
         "id" => 'product_keychain_e96-2can-4lin-gsm',
         "gallery" => [
           "$path/assets/images/products/starline_e96/starline-E96-V2-BT-ECO-2CAN-4LIN.avif",
@@ -292,10 +329,22 @@ $products = [
         "options" => [
           "Для легкового авто"
         ],
+        "options-filters" => [
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'free-monitoring', 
+          'bluetooth-smart', 
+          'block-engine-can', 
+          'control-before-start', 
+          'smart-diagnostic', 
+          'data-level-bensin',  
+        ],
+        "special" => false,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -328,10 +377,23 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'free-monitoring', 
+          'bluetooth-smart', 
+          'block-engine-can', 
+          'control-before-start', 
+          'smart-diagnostic', 
+          'data-level-bensin',  
+        ],
+        "special" => false,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -352,21 +414,24 @@ $products = [
         "functions" => [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
-          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
           "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
         ],
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'control-before-start',  
+        ],
+        "special" => false,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -390,20 +455,27 @@ $products = [
           "Автозапуск",
           "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
           "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
           "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
           "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
         ],
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'free-monitoring', 
+          'block-engine-can', 
+          'control-before-start', 
+        ],
+        "special" => false,
         "autosygnals" => [
           "auto",
           "gsm",
-          "starline" ,
+          "starline",
         ],
       ],
       [
@@ -423,20 +495,16 @@ $products = [
         "currency" => "₸",
         "quantity" => 1,
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a60",
-        "functions" => [
-          "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
-          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
-          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
-        ],
+        "functions" => [],
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto',
+        ],
+        "special" => false,
         "autosygnals" => [
           "without-auto",
           "starline",
@@ -458,19 +526,13 @@ $products = [
         "quantity" => 1,
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a63-eco-v2",
         "functions" => [
-          "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
           "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
-          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
         ],
-        "options" => [
-          "Для легкового авто",
-          "Для внедорожника",
+        "options" => [],
+        "options-filters" => [
+          'block-engine-can', 
         ],
+        "special" => false,
         "autosygnals" => [
           "without-auto",
           "starline",
@@ -494,20 +556,10 @@ $products = [
         "currency" => "₸",
         "quantity" => 1,
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a63",
-        "functions" => [
-          "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
-          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
-          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
-        ],
-        "options" => [
-          "Для легкового авто",
-          "Для внедорожника",
-        ],
+        "functions" => [],
+        "options" => [],
+        "options-filters" => [],
+        "special" => false,
         "autosygnals" => [
           "without-auto",
           "starline",
@@ -546,6 +598,19 @@ $products = [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+          'control-phone', 
+          'free-monitoring', 
+          'bluetooth-smart', 
+          'block-engine-can', 
+          'control-before-start', 
+          'smart-diagnostic', 
+          'data-level-bensin',  
+        ],
+        "special" => false,
         "autosygnals" => [
           "gsm",
           "starline",
@@ -570,18 +635,17 @@ $products = [
         "link" => "$path/files/php/pages/products/product.php?category=keychain&id=product_keychain_a90",
         "functions" => [
           "Автозапуск",
-          "УПРАВЛЕНИЕ С ТЕЛЕФОНА",
-          "БЕСПЛАТНЫЙ МОНИТОРИНГ",
-          "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART",
-          "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN",
-          "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ",
-          "УМНАЯ АВТОДИАГНОСТИКА",
-          "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА",
         ],
         "options" => [
           "Для легкового авто",
           "Для внедорожника",
         ],
+        "options-filters" => [
+          'vnedorojnik', 
+          'legkoe-avto', 
+          'autosetup', 
+        ],
+        "special" => false,
         "autosygnals" => [
           "starline",
         ],
@@ -941,13 +1005,10 @@ $products = [
 $data = json_decode(file_get_contents('php://input'), true);
 
 if (isset($data['data'])) {
-  if ($data['data'] === 'true') {
-    header('Content-Type: application/json');
-    echo json_encode($products);
-  } else {
-    echo json_encode(['message' => 'Данные не получены']);
-  }
+    if ($data['data'] === 'true') {
+        header('Content-Type: application/json');
+        echo json_encode($products);
+    } else {
+        echo json_encode(['message' => 'Данные не получены']);
+    }
 }
-
-
-?>

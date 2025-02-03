@@ -10,6 +10,11 @@ export function initSwiper() {
   const swiperTechPhoto = document.querySelector('.swiper-tech-photo');
   const swiperReviews = document.querySelector('.swiper-reviews');
 
+  const swiperOffers = document.querySelector('.swiper-offers');
+
+  const swiperArticle = document.querySelector('#swiper-article');
+
+
   async function loadModule() {
     if (swiperIntro != null) {
       const { initSwiperIntro } = await import('./swipers/swiper-intro.js');
@@ -44,6 +49,15 @@ export function initSwiper() {
     if (swiperReviews != null) {
       const { initSwiperReviews } = await import('./swipers/swiper-reviews.js');
       initSwiperReviews();
+    }
+
+    if (swiperOffers != null) {
+      const { initSwiperOffers } = await import('./swipers/swiper-offers.js');
+      initSwiperOffers();
+    }
+    if (swiperArticle != null) {
+      const { initSwiperArticle } = await import('./swipers/swiper-article.js');
+      initSwiperArticle();
     }
   }
   loadModule();

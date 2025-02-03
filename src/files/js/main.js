@@ -1,13 +1,6 @@
 import { render } from 'preact';
 import { html } from 'htm/preact';
-import DoubleRangeSlider from './modules/filter-cost.js';
 
-const rangeSlider = new DoubleRangeSlider('.filter-cost', {
-  minValue: 100,
-  maxValue: 1000,
-  step: 10,
-  gap: 100,
-});
 const {
   feedbackForm,
   footer,
@@ -28,6 +21,11 @@ const {
   selected,
   buyBtnFast,
   checkoutForm,
+  filterCost,
+  aside,
+  catalog,
+  cardMoreButton,
+  cartButtons
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -48,9 +46,31 @@ const {
   productsContainerCart: document.querySelector('.cart-section__products'),
   buyBtnFast: document.getElementById('buy-fast-order'),
   checkoutForm: document.querySelector('.checkout-form__body'),
+  filterCost: document.querySelector('.filter-cost'),
+  aside: document.querySelector('.aside'),
+  catalog: document.querySelector('.catalog__products'),
+  cardMoreButton: document.querySelector('.card-more__button-cost'),
+  cartButtons: document.querySelectorAll('.cart-button')
 };
 
 async function loadModules() {
+  if (filterCost != null) {
+    const module = await import('./modules/filter-cost.js');
+    const newRangeSlider = module.default;
+    new newRangeSlider('.filter-cost', {
+      minValue: 100,
+      maxValue: 1000,
+      step: 10,
+      gap: 100,
+    });
+  }
+
+  if (aside != null && catalog != null) {
+    const { renderCardsOffers } = await import(
+      './modules/dynamic-offers-card.js'
+    );
+    renderCardsOffers();
+  }
   if (menuButton != null) {
     const { toToggleMenu } = await import('./modules/menu-burger.js');
     toToggleMenu();
@@ -66,14 +86,19 @@ async function loadModules() {
   if (selected != null) {
     const select = await import('./modules/select.js');
     const CustomSelect = select.default;
-    const newCustomSelect = new CustomSelect({
-      selected: '.select-selected',
-      item: '.select-items',
-      options: '.select-item',
-    });
-    console.log(newCustomSelect.getValue());
+    const path = window.location.href.includes('parking-systems')
+      ? 'files/php/pages/parking-systems/parking-systems.php'
+      : 'files/php/pages/catalog/catalog.php';
+    new CustomSelect(
+      {
+        selected: '.select-selected',
+        item: '.select-items',
+        options: '.select-item',
+      },
+      path
+    );
   }
-  if (cartCounter != null) {
+  if (cartCounter != null || cartButtons.length > 0) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');
     cartButtonHandler();
   }
@@ -89,7 +114,9 @@ async function loadModules() {
   }
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
+    const { saveCheckbox } = await import('./modules/filter.js');
     filterToggleMenu();
+    saveCheckbox();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');
@@ -131,9 +158,8 @@ async function loadModules() {
     const { showTabs } = await import('./modules/tabs.js');
     showTabs();
   }
-  if (modalCart != null) {
+  if (modalCart != null && cartButtons.length > 0) {
     const { setModalCart } = await import('./modules/cart-modal.js');
-    const cartButtons = document.querySelectorAll('.cart-button');
     cartButtons.forEach((btn) => btn.addEventListener('click', setModalCart));
   }
   if (productsContainerCart != null) {
@@ -146,6 +172,11 @@ async function loadModules() {
     );
     render(html`<${CheckoutForm} />`, checkoutForm);
   }
-}
+
+  if (cardMoreButton != null) {
+    const { renderCardButton } = await import('./modules/card-cart.js');
+    renderCardButton();
+  }
+ }
 
 document.addEventListener('DOMContentLoaded', loadModules);

@@ -59,10 +59,7 @@ class Head
       $headContent .= "<link rel='stylesheet' href='$style?v=1.0.0'>";
     }
 
-
-
     // $headContent .= $this->setYandexMetrika();
-
     return $headContent;
   }
 

@@ -10,7 +10,7 @@ $phones = $contacts->getPhones();
 ?>
 <section class="bank">
   <div class="container">
-    <h2>Есть возможность взять: <span style="color: red">в рассрочку </span>/ <span style="color: orangered">в
+    <h2>Возможно оформление <span style="color: red">в рассрочку </span>/ <span style="color: orangered">
         кредит</span> через Каспи Банк</h2>
     <div class="bank__image">
       <p>Звоните:</p>

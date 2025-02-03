@@ -1,44 +1,39 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .tab {
   &__wrapper {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 10px;
-
+    padding: 25px 10px 10px 10px;
 
     @media (min-width: var.$tablet) {
-      padding: 20px;
+      padding: 40px 20px 20px 20px;
     }
 
     @media (min-width: var.$desktop) {
-      padding-left: 0;
-      padding-right: 0;
+      padding: 50px 0 0 0;
     }
   }
 
   &__buttons {
-    padding-bottom: 10px;
+    padding-bottom: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
     align-items: center;
 
     @media (min-width: var.$tablet) {
-      width: 660px;
       margin: 0 auto;
       padding-bottom: 20px;
-      margin-bottom: 10px;
+      margin-bottom: 25px;
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: flex-start;
-      column-gap: 100px;
       border-bottom: 4px solid var.$white;
     }
 
     @media (min-width: var.$desktop-min) {
-      width: 904px;      
-      column-gap: 176px;      
+      width: 996px;
     }
 
     @media (min-width: var.$desktop) {
@@ -48,7 +43,7 @@
   }
 
   &__button {
-    min-width: 280px;
+    min-width: 210px;
     padding: 10px;
     font-family: var.$secondary-font;
     line-height: 28px;
@@ -57,6 +52,7 @@
 
     @media (min-width: var.$desktop-min) {
       font-size: 20px;
+      width: auto;
     }
 
     @media (min-width: var.$desktop) {
@@ -76,11 +72,11 @@
     justify-content: center;
 
     @media (min-width: var.$tablet) {
-      grid-template-columns: 660px;
+      grid-template-columns: 730px;
     }
 
     @media (min-width: var.$desktop-min) {
-      grid-template-columns: 904px;
+      grid-template-columns: 996px;
     }
 
     @media (min-width: var.$desktop) {
@@ -90,6 +86,8 @@
 
   &__title {
     max-width: 240px;
+    float: left;
+
     margin: 0;
     margin-bottom: 10px;
     font-size: 16px;
@@ -108,21 +106,30 @@
   }
 
   &__description {
-    max-width: 240px;
+   // max-width: 240px;
+   float: left;
+
     margin: 0;
     font-family: var.$primary-font;
     font-size: 12px;
-    line-height: 16px;
+    line-height: 20px;
 
     @media (min-width: var.$desktop-min) {
-      max-width: 300px;
+      // max-width: 300px;
     }
 
     @media (min-width: var.$desktop) {
-      max-width: 495px;
+      // max-width: 495px;
       font-size: 24px;
       line-height: 30px;
       text-transform: none;
+    }
+
+    & a {
+      text-decoration: underline;
+      font-style: normal;
+      cursor: pointer;
+      color: var.$white;
     }
   }
 
@@ -130,10 +137,14 @@
     display: none;
   }
 
+  &__text {
+    display: none;
+  }
+
   &__list--show {
     display: flex;
     flex-direction: column;
-    gap: 13px;
+    gap: 17px;
 
     @media (min-width: var.$tablet) {
       position: relative;
@@ -142,33 +153,79 @@
       column-gap: 50px;
       row-gap: 20px;
 
+    @media (min-width: var.$desktop) {
+      row-gap: 30px;
+      column-gap: 70px;
+    }
+
       &::after {
         position: absolute;
-        content: "";
-        width: 4px;
-        height: 105%;
+        content: '';
+        width: 4px;    
+        min-height: 105%;   
+        height: -webkit-fill-available;
         top: -10px;
         left: 50%;
         transform: translateX(-50%);
         background-color: var.$white;
+        
+        @media (min-width: var.$tablet) {
+          top: -25px;
+        }
+
       }
     }
 
     @media (min-width: var.$desktop) {
       column-gap: 23px;
     }
+
+    & + .tab__text {
+      display: block;
+      font-size: 20px;
+      text-align: left;
+      text-transform: uppercase;
+
+      @media (min-width: var.$tablet) {
+        margin-bottom: 35px;
+        padding-left: 10px;
+      }
+
+      @media (min-width: var.$desktop) {
+        margin-top: 40px;
+        font-size: 30px;
+      }
+    }
+
+    &.garanty {
+      display: flex;
+
+      &::after {
+        display: none;
+      }
+    }
   }
 
   &__item {
-    padding-left: 60px;
+    background-position: right top;
     background-repeat: no-repeat;
-    background-position: left top;
-    background-size: 40px 40px;
+    background-size: 50px 50px;
+
+    @media (min-width: var.$tablet) {
+      background-size: 70px 70px;
+      background-position: left top;
+      padding-left: 75px;
+    }
+
+    @media (min-width: var.$desktop-min) {
+      background-size: 80px 80px;
+      padding-left: 90px;
+    }
 
     @media (min-width: var.$desktop) {
       width: 665px;
       margin-left: 0;
-      padding-left: 170px;
+      padding-left: 140px;
       background-size: 110px 110px;
     }
   }
@@ -179,13 +236,64 @@
       flex-direction: column;
       align-items: flex-end;
       padding-left: 0;
-      padding-right: 60px;
+      padding-right: 75px;
       text-align: right;
       background-position: right top;
     }
 
-    @media (min-width: var.$desktop) {
-      padding-right: 170px;
+    @media (min-width: var.$desktop-min) {
+      padding-right: 90px;
     }
+
+    @media (min-width: var.$desktop) {
+      padding-right: 140px;
+    }
+  }
+
+  &__item--text {
+    padding-left: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
+    @media (min-width: var.$tablet) {
+      padding-left: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    & > h3 {
+      // align-self: center;
+
+      @media (min-width: var.$tablet) {
+        align-self: flex-start;
+      }
+     }
+  }
+
+  &__item--text:nth-child(even) {
+    padding-right: 10px;
+
+    @media (min-width: var.$tablet) {
+      padding-right: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    & > h3 {
+      // align-self: center;
+
+      @media (min-width: var.$tablet) {
+        align-self: flex-end;
+      }
+     }
+  }
+}
+
+.garanty > .tab__item.tab__item--text { 
+  @media (min-width: var.$desktop) {
+    width: auto;
   }
 }

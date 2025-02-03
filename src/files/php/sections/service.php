@@ -10,18 +10,16 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 $service_data = new Services($services_data);
 $services = array_values($service_data->getServices());
+$card = new ServiceCard();
 ?>
 <section class="service" id="service">
   <div class="container">
     <h2 class="service__title secondary-title">наши услуги</h2>
     <div class="swiper swiper-service">
-      <ul class="service__list list-style-none swiper-wrapper">
+      <ul class="service__list service__list--component  list-style-none swiper-wrapper">
         <?php foreach ($services as $index => $service): ?>
           <li class="service__item swiper-slide">
-            <?php
-            $card = new ServiceCard();
-            echo $card->initCard($service, $index);
-            ?>
+            <?php echo $card->initCard($service); ?>
           </li>
         <?php endforeach; ?>
         <li>
