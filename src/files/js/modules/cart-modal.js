@@ -1,4 +1,4 @@
-import FormatNumber from "../helpers/classes/FormatNumber";
+import FormatNumber from '../helpers/classes/FormatNumber';
 
 let modalInterval = null;
 let currentPopup = null; // Глобальная переменная для хранения текущего модального окна
@@ -17,8 +17,8 @@ export function setModalCart() {
   let allQuantity = 0;
   let allCost = 0;
 
-  cartItems.forEach(item => {
-    allQuantity += item.quantity;
+  cartItems.forEach((item) => {
+    allQuantity += 1;
     allCost += item.price * item.quantity;
   });
 

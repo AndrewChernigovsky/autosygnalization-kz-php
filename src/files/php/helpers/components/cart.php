@@ -51,16 +51,27 @@ class Cart
   }
   public function getTotalQuantity()
   {
-    if (isset($_SESSION['cart'])) {
-      $products = $_SESSION['cart'];
-      foreach ($products as $product) {
-        $this->totalQuantity += $product['quantity'];
+      if (isset($_SESSION['cart'])) {
+        $count = count($_SESSION['cart']);
+        error_log(print_r($count, true));
+        error_log("cart"); // Просто записываем "cart" в лог
+        return count($_SESSION['cart']);
+      } else {
+          return 0;
       }
-      return $this->totalQuantity;
-    } else {
-      return 0;
-    }
   }
+  // public function getTotalQuantity()
+  // {
+  //   if (isset($_SESSION['cart'])) {
+  //     $products = $_SESSION['cart'];
+  //     foreach ($products as $product) {
+  //       $this->totalQuantity += $product['quantity'];
+  //     }
+  //     return $this->totalQuantity;
+  //   } else {
+  //     return 0;
+  //   }
+  // }
 }
 
 ?>

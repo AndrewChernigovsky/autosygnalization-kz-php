@@ -151,7 +151,9 @@ export class Cart extends Component {
       0
     );
 
-    cartCounter.textContent = totalQuantity;
+    let numberUniqueId = localProducts.map((product) => product.id).length;
+
+    cartCounter.textContent = numberUniqueId; // это на корзина
     this.setState({ totalQuantity, totalCost }, () => {
       if (costTotal.length > 0) {
         costTotal.forEach((cost) => {
