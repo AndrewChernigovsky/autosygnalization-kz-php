@@ -43,56 +43,56 @@ echo $head->setHead();
   <main class="main">
     <section class="contacts-section">
       <div class="container">
-        <h2 class="contacts-section__title">Контакты</h2>
-        <div class="contacts-section__contacts">
-          <div class="contacts-section__contact">
-            <p class="contacts-section__contact--title">Beeline:</p>
-            <p class="contacts-section__contact--phone">
-              <a href="tel:+77077478212">+77077478212</a>
-            </p>
-          </div>
-          <div class="contacts-section__contact">
-            <p class="contacts-section__contact--title">Kcell:</p>
-            <p class="contacts-section__contact--phone">
-              <a href="tel:+77017478212">+77017478212</a>
-            </p>
-          </div>
-          <div class="contacts-section__contact">
-            <p class="contacts-section__contact--whatsapp">Whatsapp:</p>
-            <p class="contacts-section__contact--phone">
-              <a href="https://wa.me/77077478212" target="_blank">+77077478212</a>
-            </p>
-          </div>
-          <div class="contacts-section__contact">
-            <p class="contacts-section__contact--email-title">Почта:</p>
-            <p class="contacts-section__contact--email-text"><?php echo $email ?></p>
-          </div>
-          <div class="contacts-section__contact">
-            <p class="contacts-section__contact--address-title">Адрес:</p>
-            <p class="contacts-section__contact--address-text"><?php echo $address ?></p>
-          </div>
-          <div class="contacts-section__contact">
-              <p class="contacts-section__contact--schedule">График работы:</p>
-              <div class="contacts-section__contact--work-time">
+        <h2>Контакты</h2>
+        <ul class="contacts-section__list">
+          <li class="contacts-section__item">
+            <a href="tel:+77077478212">
+              <h3>Beeline:</h3>
+              <p>+77077478212</p>
+            </a>
+          </li>
+          <li class="contacts-section__item">
+            <a href="tel:+77017478212">
+              <h3>Kcell:</h3>
+              <p>+77017478212</p>
+            </a>
+          </li>
+          <li class=" contacts-section__item contacts-section__item--whatsap">
+            <a href="https://wa.me/77077478212" target="_blank">
+              <h3>Whatsapp:</h3>
+              <p>+77017478212</p>
+            </a>
+          </li>
+          <li class="contacts-section__item contacts-section__item--email">
+            <h3>Почта:</h3>
+            <p><?php echo $email ?></p>
+          </li>
+          <li class="contacts-section__item contacts-section__item--address">
+            <h3>Адрес:</h3>
+            <p><?php echo $address ?></p>
+          </li>
+          <li class="contacts-section__item contacts-section__item--schedule">
+              <h3>График работы:</h3>
                 <p>Вс. - Чт.: 10:00 - 18:00</p>
                 <p>Пт.: 10:00-15:00</p>
                 <p>Сб.: Выходной</p>
-            </div>
-          </div>
-          <div class="contacts-section__contact">
-            <p class="contacts-section__contact--social">Соцсети:</p>
-            <div class="contacts-section__contact--social-icons">
+          </li>
+          <li class="contacts-section__item--social">
+            <h3>Соцсети:</h3>
+            <ul class="contacts-section__item--social-icons">
               <?php
               foreach ($socialIcons as $social) {
-                echo $contacts->setSocial($social);
+                echo '<li>';
+                  echo $contacts->setSocial($social);
+                echo '</li>';
               }
               ?>
-            </div>
-          </div>
-          <div class="contacts-section__contact contacts-section__contact--btn">
+            </ul>
+          </li>
+          <div class="contacts-section__item contacts-section__contact--btn">
             <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
           </div>
-        </div>
+        </ul>
       </div>
       <div class="map">
           <iframe
@@ -100,10 +100,11 @@ echo $head->setHead();
             width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
-      <section class="contacts-section-info">
+    </section>
+    <section class="contacts-section-info">
         <div class="container">
-          <h2 class="contacts-section-info__title">КАК К НАМ ДОБРАТЬСЯ</h2>
-          <p class="contacts-section-info__text">Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
+          <h2>КАК К НАМ ДОБРАТЬСЯ</h2>
+          <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
             территорию СТО. <br> Наш бокс №15.</p>
           <div class="contacts-section-info__phone">
             <p>По всем вопросам звоните:</p>
@@ -118,7 +119,6 @@ echo $head->setHead();
           <p class="contacts-section-info__slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
         </div>
       </section>
-    </section>
   </main>
   <?php include $base_path . '/footer.php'; ?>
 </body>

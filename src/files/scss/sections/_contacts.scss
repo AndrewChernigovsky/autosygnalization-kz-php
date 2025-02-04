@@ -7,7 +7,7 @@
     padding-top: 20px;
   }
 
-  &__title {
+  & h2 {
     position: relative;
     padding-top: 10px;
     margin: 0 0 80px 0;
@@ -38,13 +38,15 @@
     }
   }
 
-  &__contacts {
+  &__list {
+    list-style-type: none;
     display: flex;
     flex-wrap: wrap;
     flex-direction: column;
     align-items: center;
+    margin: 0;
     gap: 20px;
-    padding-bottom: 40px;
+    padding: 0 0 40px 0;
 
     @media screen and (min-width: var.$tablet) {
       flex-direction: row;
@@ -59,32 +61,51 @@
       gap: 50px;
     }
   }
-}
 
-.contacts-section__contact p {
-  font-family: var.$primary-font;
-  font-size: 18px;
-  margin: 0;
-}
+  &__item {
+    width: 250px;
+    background-color: rgba(47, 47, 47, 0.3);
+    border: 2px solid orange;
 
-.contacts-section__contact {
-  width: 100%;
-  background-color: rgba(47, 47, 47, 0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px 0 20px 0;
-
-  @media screen and (min-width: var.$tablet) {
-    width: 300px;
-    padding: 30px 0 30px 0;
+    @media screen and (min-width: var.$tablet) {
+      width: 300px;
+    }
   }
 
-  &--title {
+  &__item::after {
+    position: absolute;
+    content: '';
+    width: 28px;
+    height: 28px;
+    background-image: url('#{var.$DEV_PATH}assets/images/vectors/whatsapp.svg');
+    background-repeat: no-repeat;
+    background-size: 28px 28px;
+    left: -34px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  &__item a {
+    display: block;
+    font-family: var.$primary-font;
+    font-size: 18px;
+    margin: 0;
+    text-decoration: none;
+    color: var.$white;
+    padding: 45px 35px;
+    cursor: pointer;
+    text-align: center;
+    border: 2px solid red;
+  }
+
+  &__item a:hover {
+    opacity: 0.4;
+  }
+
+  &__item h3 {
+    /* width: 200px; */
+    margin: 0 0 20px 0;
     font-weight: 600;
-    /* padding-left: 45px; */
     position: relative;
 
     &::after {
@@ -101,11 +122,17 @@
     }
   }
 
-  &--whatsapp {
+  &__item p {
+    font-family: var.$primary-font;
+    font-size: 18px;
+    margin: 0;
+  }
+
+  &__item--whatsap h3{
     font-weight: 600;
     position: relative;
 
-    &::after {
+    &::after{
       position: absolute;
       content: '';
       width: 28px;
@@ -119,124 +146,178 @@
     }
   }
 
-  &--phone {
-    text-align: right;
+  &__item--email,
+  &__item--address,
+  &__item--schedule,
+  &__item--social {
+    padding: 45px 0;
+    /* width: 250px; */
+    text-align: center;
   }
 
-  &--phone a {
-    color: var.$white;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-  &--email-title {
+  &__item--email h3{
+    width: 200px;
+    margin: 0 auto 20px auto;
     font-weight: 600;
     position: relative;
 
-    &::after {
-      position: absolute;
-      content: '';
-      width: 20px;
-      height: 20px;
-      background-image: url('#{var.$DEV_PATH}assets/images/vectors/message-icon.svg');
-      background-repeat: no-repeat;
-      background-size: 20px 20px;
-      left: -34px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+      &::after {
+        position: absolute;
+        content: '';
+        width: 20px;
+        height: 20px;
+        background-image: url('#{var.$DEV_PATH}assets/images/vectors/message-icon.svg');
+        background-repeat: no-repeat;
+        background-size: 20px 20px;
+        left: -34px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
   }
 
-  &--email-text {
-    text-transform: lowercase;
-  }
-
-  &--address-title {
-    font-weight: 600;
-    margin-bottom: 20px;
-    position: relative;
-
-    &::after {
-      position: absolute;
-      content: '';
-      width: 25px;
-      height: 25px;
-      mask-image: url('#{var.$DEV_PATH}assets/images/vectors/geo.svg');
-      mask-repeat: no-repeat;
-      mask-size: 25px 25px;
-      background-color: var.$red;
-      left: -34px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
-
-  &--address-text {
-    width: 195px;
+  &__item--email p {
+    width: 220px;
     margin: 0 auto;
 
     @media screen and (min-width: var.$tablet) {
-      width: 220px;
+      width: 250px;
       text-transform: none;
     }
   }
 
-  &--schedule {
-    font-weight: 600;
-    padding-left: 45px;
-    margin-bottom: 20px;
-    position: relative;
+  &__item--address h3{
+      font-weight: 600;
+      width: 200px;
+      margin: 0 auto 20px auto;
+      position: relative;
 
-    &::after {
-      position: absolute;
-      content: '';
-      width: 25px;
-      height: 25px;
-      mask-image: url('#{var.$DEV_PATH}assets/images/vectors/clock.svg');
-      mask-repeat: no-repeat;
-      mask-size: 25px 25px;
-      background-color: var.$red;
-      left: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-    }
+      &::after {
+        position: absolute;
+        content: '';
+        width: 25px;
+        height: 25px;
+        mask-image: url('#{var.$DEV_PATH}assets/images/vectors/geo.svg');
+        mask-repeat: no-repeat;
+        mask-size: 25px 25px;
+        background-color: var.$red;
+        left: -34px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
   }
 
-  &--work-time {
-    text-align: center;
+  &__item--address p {
+    width: 220px;
+    margin: 0 auto;
 
     @media screen and (min-width: var.$tablet) {
+      width: 250px;
       text-transform: none;
     }
   }
 
-  &--work-time p:last-child {
-    color: var.$red;
+  &__item--schedule{
+    text-align: center;
   }
 
-  &--social {
-    font-weight: 600;
+  &__item--schedule h3{
+      font-weight: 600;
+      width: 200px;
+      margin: 0 auto 20px auto;
+      position: relative;
+
+      &::after {
+        position: absolute;
+        content: '';
+        width: 25px;
+        height: 25px;
+        mask-image: url('#{var.$DEV_PATH}assets/images/vectors/clock.svg');
+        mask-repeat: no-repeat;
+        mask-size: 25px 25px;
+        background-color: var.$red;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+      }
   }
 
-  &--social-icons svg{
-    width: 30px;
-    height: 30px;
+  &__item--schedule p {
+      width: 220px;
+      margin: 0 auto;
+      text-align: center;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 250px;
+      text-transform: none;
+    }
+  }
+
+  &__item--schedule p:last-child {
+      color: var.$red;
+  }
+
+  &__item--social {
+    border: 2px solid red;
+
+    &::after {
+      background-image: none;
+    }
+  }
+
+  &__item--social h3{
+      font-weight: 600;
+      width: 200px;
+      margin: 0 auto 20px auto;
+
+
+      &::after {
+        background-image: none;
+      }
+  }
+
+  &__item--social a {
+    display: block;
+    padding: 10px;
+    width: 50px;
+    height: 50px;
+    margin: 0 auto;
+    text-align: center;
+    border: none;
+  }
+
+  &__item--social-icons {
+    width: 200px;
+    margin: 0 auto;
+    /* min-height: 30px; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* margin: 0 auto; */
+    padding: 0;
+    list-style-type: none;
+    width: 40px;
+    height: 40px;
+  }
+
+  &__item--social-icons svg{
+      width: 30px;
+      height: 30px;
+      
+  }
+
+  &__item--btn {
+    background-color: transparent;
+  
+    @media screen and (min-width: var.$desktop-min) {
+      text-transform: none;
+      margin-left: 30px;
+    }
+  
+    @media screen and (min-width: var.$desktop) {
+      margin-left: 0;
+    }
   }
 }
-
-.contacts-section__contact--btn {
-  background-color: transparent;
-
-  @media screen and (min-width: var.$desktop-min) {
-    text-transform: none;
-    margin-left: 30px;
-  }
-
-  @media screen and (min-width: var.$desktop) {
-    margin-left: 0;
-  }
-}
-
 .map iframe{
   width: 100%;
 }
@@ -248,7 +329,7 @@
     padding: 50px 0 50px 0;
   }
 
-  &__title {
+  & h2 {
     margin: 0 auto 30px;
 
     @media screen and (min-width: var.$tablet) {
@@ -261,7 +342,7 @@
     }
   }
 
-  &__text {
+  & p {
     font-family: var.$primary-font;
     margin: 0 0 45px 0;
     text-align: center;
