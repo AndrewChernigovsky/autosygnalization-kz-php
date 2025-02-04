@@ -33,9 +33,9 @@ function isActiveClassTabContent($index)
     return $index === 0 ? 'tab__list--show' : '';
 }
 
-function isGarantyTab($title)
+function isTextTab($title)
 {
-    return $title === 'ГАРАНТИЯ' ? 'garanty' : '';
+    return $title === 'ГАРАНТИЯ' ? 'tab__list--no-column' : '';
 }
 
 ?>
@@ -90,9 +90,17 @@ function isGarantyTab($title)
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
+                    <!-- Description -->
+                    <?php if (isset($tab_content['description'])): ?>
+                        <ul class="tab__list tab__list--no-column <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                            <li class="tab__item tab__item--text">
+                                <p class="tab__description"><?= htmlspecialchars($tab_content['description']); ?></p>
+                            </li>
+                        </ul>
+                    <?php endif; ?>
                 <?php else: ?>
                     <!-- Для других вкладок -->
-                    <ul class="tab__list <?= isActiveClassTabContent($index) ?><?= isGarantyTab($tab_title) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                    <ul class="tab__list <?= isActiveClassTabContent($index) ?><?= isTextTab($tab_title) ?> list-style-none" data-content="<?= $tab_title; ?>">
                         <?php foreach ($tab_content as $item): ?>
                             <li class="tab__item tab__item--text">
                                 <?php if (!empty($item['title'])): ?>
