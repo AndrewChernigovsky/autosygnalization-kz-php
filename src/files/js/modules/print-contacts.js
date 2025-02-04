@@ -1,20 +1,17 @@
 export default class PrintDocument {
   constructor(element) {
     this.element = element;
-    this.container = document.createElement('div');
-    document.body.appendChild(this.container);
     this.init();
   }
 
   init() {
     this.element.addEventListener('click', () => {
-      this.populateContainer();
-      this.printDiv(this.container);
+      this.printContent();
     });
   }
 
-  populateContainer() {
-    this.container.innerHTML = `
+  getPrintContent() {
+    return `
       <div>
         <h2>Auto Security - <span>продажа и устaновка автосигнализаций, 
         диагностика и ремонт автоелектрики.</span></h2>
@@ -34,15 +31,10 @@ export default class PrintDocument {
         <p class="print-slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
       </div>
     `;
-  }      
+  }
 
-  printDiv(element) {
-    if (!element) {
-      console.error('Элемент для печати не найден.');
-      return;
-    }
-  
-    const divContent = element.innerHTML;
+  printContent() {
+    const divContent = this.getPrintContent();
     if (!divContent) {
       console.error('Содержимое для печати отсутствует.');
       return;
@@ -50,6 +42,7 @@ export default class PrintDocument {
 
     const screenWidth = window.innerWidth;
     let width, height;
+
     if (screenWidth <= 767) {
       width = 400;
       height = 600;
@@ -61,12 +54,14 @@ export default class PrintDocument {
       height = 800;
     }
 
+    // Создаём новое окно для печати
     const printWin = window.open('', '_blank', `width=${width},height=${height}`);
     if (!printWin) {
       console.error('Не удалось открыть новое окно для печати.');
       return;
     }
 
+    // Записываем содержимое в новое окно
     printWin.document.write(`
       <html>
         <head>
@@ -76,30 +71,24 @@ export default class PrintDocument {
               font-family: Arial, sans-serif;
               margin: 20px;
             }
-
             h2 {
               text-align: center;
               font-size: 24px;
             }
-
             h3,
             .print-slogan {
               text-align: center;
             }
-
             p {
               font-size: 16px;
             }
-
             span {
-            font-size: 16px;
-            font-weight: 400;
+              font-size: 16px;
+              font-weight: 400;
             }
-
             .print-title {
               font-weight: 600;
             }
-
             .print-description {
               font-size: 16px;
               font-weight: 400;
@@ -121,6 +110,6 @@ export default class PrintDocument {
       </html>
     `);
 
-    printWin.document.close();
+    printWin.document.close(); // Завершаем запись в документ
   }
 }

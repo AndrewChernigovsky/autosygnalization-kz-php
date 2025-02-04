@@ -65,7 +65,7 @@ echo $head->setHead();
           </div>
           <div class="contacts-section__contact">
             <p class="contacts-section__contact--email-title">Почта:</p>
-            <p class="contacts-section__contact--email-text"><?php echo $email ?></p>
+            <p class="contacts-section__contact--email-text"><a href="mailto:<?php echo $email ?>"><?php echo $email ?></a> </p>
           </div>
           <div class="contacts-section__contact">
             <p class="contacts-section__contact--address-title">Адрес:</p>
@@ -84,9 +84,9 @@ echo $head->setHead();
             <div class="contacts-section__contact--social-icons">
               <?php
               foreach ($socialIcons as $social) {
-                echo $contacts->setSocial($social);
+                  echo $contacts->setSocial($social);
               }
-              ?>
+?>
             </div>
           </div>
           <div class="contacts-section__contact contacts-section__contact--btn">
@@ -100,24 +100,24 @@ echo $head->setHead();
             width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
-      <section class="contacts-section-info">
-        <div class="container">
-          <h2 class="contacts-section-info__title">КАК К НАМ ДОБРАТЬСЯ</h2>
-          <p class="contacts-section-info__text">Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
-            территорию СТО. <br> Наш бокс №15.</p>
-          <div class="contacts-section-info__phone">
-            <p>По всем вопросам звоните:</p>
-            <div class="contacts-section-info__box">
-              <?php foreach($phones as $phone): ?>
-                <a href="tel:<?php echo str_replace(' ', '', $phone['phone']); ?>">
-                  <?php echo $phone['phone']; ?>
-                </a>
-              <?php endforeach; ?>
-            </div>
+    </section>
+    <section class="contacts-section-info">
+      <div class="container">
+        <h2 class="contacts-section-info__title">КАК К НАМ ДОБРАТЬСЯ</h2>
+        <p class="contacts-section-info__text">Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
+          территорию СТО. <br> Наш бокс №15.</p>
+        <div class="contacts-section-info__phone">
+          <p>По всем вопросам звоните:</p>
+          <div class="contacts-section-info__box">
+            <?php foreach($phones as $phone): ?>
+              <a href="tel:<?php echo str_replace(' ', '', $phone['phone']); ?>">
+                <?php echo $phone['phone']; ?>
+              </a>
+            <?php endforeach; ?>
           </div>
-          <p class="contacts-section-info__slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
         </div>
-      </section>
+        <p class="contacts-section-info__slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
+      </div>
     </section>
   </main>
   <?php include $base_path . '/footer.php'; ?>
