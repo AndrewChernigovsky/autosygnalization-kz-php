@@ -8,14 +8,22 @@ export default class CustomSelect {
     this.item = document.querySelector(block.item);
     this.options = this.item.querySelectorAll(block.options);
     this.value = null;
-    this.init();
-    this.PRODUCTION = window.location.href.includes('/dist/');
+    this.PRODUCTION = window.location.href.includes('/dist/') ? '/dist/' : '/';
     this.path = path;
+    this.init();
   }
 
   init() {
-    this.setDefaultSelect();
+    if (!sessionStorage.getItem('defaultSettings')) {
+      this.setDefaultSelect();
+      sessionStorage.setItem('defaultSettings', 'true');
+    }
+
+    this.loadSelectedState();
+
     this.addEventListeners();
+    console.log(this.PRODUCTION);
+    console.log(this.path);
   }
 
   setDefaultSelect() {
@@ -30,6 +38,37 @@ export default class CustomSelect {
         }
       }
     }
+  }
+
+  saveSelectedState() {
+    const selectedValue = this.selected.dataset.value;
+    const selectState = {
+      value: selectedValue,
+      text: this.selected.innerHTML,
+    };
+
+    sessionStorage.setItem('selectState', JSON.stringify(selectState));
+  }
+
+  loadSelectedState() {
+    const storedState = sessionStorage.getItem('selectState');
+    if (storedState) {
+      const selectState = JSON.parse(storedState);
+      this.selected.innerHTML = selectState.text;
+      this.selected.dataset.value = selectState.value;
+      this.value = selectState.value;
+    } else {
+      this.setDefaultSelect();
+    }
+  }
+
+  addSelectToUrl() {
+    const currentUrl = window.location.href.split('?')[0];
+    const currentParams = new URLSearchParams(window.location.search);
+    currentParams.set('SELECT', this.value);
+    const newUrl = `${currentUrl}?${currentParams.toString()}`;
+
+    document.location.href = newUrl;
   }
 
   addEventListeners() {
@@ -67,9 +106,8 @@ export default class CustomSelect {
       this.selected.classList.remove('open');
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
-      const url = `${this.PRODUCTION ? '/dist/' : '/'}` + this.path;
-      document.location.href = url + '?SELECT=' + this.value;
-
+      this.saveSelectedState();
+      this.addSelectToUrl();
     }
   }
 
