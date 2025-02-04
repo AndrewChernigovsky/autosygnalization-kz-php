@@ -83,7 +83,7 @@ const phpTask = (cb) => {
 const watchTask = () => {
   browserSync.init({
     proxy: "http://autosygnalization-kz-php/dist",
-    // proxy: "localhost:80/dist",
+    //proxy: "localhost:80/dist",
     notify: false,
   });
   if (!PRODUCTION) {
@@ -223,9 +223,7 @@ const fonts = (cb) => {
 };
 
 const statics = parallel(() => cleanDist(['dist']), copyStatics, fonts, images, videos, sprite, sassTaskLibs, esbuildTask);
-
 const dev = series(() => cleanDist(['dist/files']), copyStatics, docs, images, sprite, videos, phpTask, sassTask, sassTaskLibs, esbuildTask, watchTask);
-
 const build = series(() => cleanDist(['dist/files']), copyStatics, docs, images, videos, phpTask, sassTask, sassTaskLibs, esbuildTask);
 
 export { images, sassTask, sassTaskLibs, esbuildTask, phpTask, watchTask, build, statics, docs, sprite, fonts, videos };
