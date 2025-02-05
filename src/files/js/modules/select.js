@@ -14,16 +14,32 @@ export default class CustomSelect {
   }
 
   init() {
-    if (!sessionStorage.getItem('selectState')) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentState = urlParams.get('SELECT');
+    const selectState = JSON.parse(sessionStorage.getItem('selectState'));
+
+    if (selectState && selectState.value) {
+      this.value = selectState.value;
+      this.selected.innerHTML = selectState.text;
+      this.selected.dataset.value = this.value;
+      if (this.value !== currentState) {
+        this.sendStateToPHP(this.value);
+        this.updateUrl(this.value);
+        this.reloadPage();
+      }
+    } else {
       if (this.options.length) {
         const firstOption = this.options[0];
         this.selected.innerHTML = firstOption.innerHTML;
         this.value = firstOption.dataset.value;
         this.selected.dataset.value = this.value;
         this.saveSelectedState();
+        this.sendStateToPHP(this.value);
+        if (this.value !== currentState) {
+          this.updateUrl(this.value);
+          this.reloadPage();
+        }
       }
-    } else {
-      this.loadSelectedState();
     }
 
     this.addEventListeners();
@@ -39,23 +55,22 @@ export default class CustomSelect {
     sessionStorage.setItem('selectState', JSON.stringify(selectState));
   }
 
-  loadSelectedState() {
-    const storedState = sessionStorage.getItem('selectState');
-    if (storedState) {
-      const selectState = JSON.parse(storedState);
-      this.selected.innerHTML = selectState.text;
-      this.selected.dataset.value = selectState.value;
-      this.value = selectState.value;
-    }
+  sendStateToPHP(value) {
+    fetch('/files/php/helpers/set_state.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ state: value }),
+    });
   }
 
-  addSelectToUrl() {
-    const currentUrl = window.location.href.split('?')[0];
-    const currentParams = new URLSearchParams(window.location.search);
-    currentParams.set('SELECT', this.value);
-    const newUrl = `${currentUrl}?${currentParams.toString()}`;
+  updateUrl(value) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('SELECT', value);
+    window.history.pushState({}, '', currentUrl);
+  }
 
-    document.location.href = newUrl;
+  reloadPage() {
+    location.reload();
   }
 
   addEventListeners() {
@@ -94,7 +109,13 @@ export default class CustomSelect {
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
       this.saveSelectedState();
-      this.addSelectToUrl();
+      if (
+        this.value !== new URLSearchParams(window.location.search).get('SELECT')
+      ) {
+        this.sendStateToPHP(this.value);
+        this.updateUrl(this.value);
+        this.reloadPage();
+      }
     }
   }
 

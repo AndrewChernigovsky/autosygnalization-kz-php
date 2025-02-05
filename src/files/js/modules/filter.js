@@ -1,4 +1,3 @@
-import CustomSelect from './select';
 export function filterToggleMenu() {
   const filterBtn = document.getElementById('filter-btn');
   const filterCatalog = document.getElementById('filter-catalog');
@@ -180,8 +179,8 @@ export function saveCheckbox() {
       text: 'Название',
     };
     sessionStorage.setItem('selectState', JSON.stringify(defaultSelectState));
-
-    window.location.href = defaultUrl;
+    const storedSelectState = JSON.parse(sessionStorage.getItem('selectState'));
+    window.location.href = `${defaultUrl}?SELECT=${storedSelectState.value}`;
   });
 
   if (minCostInput && maxCostInput) {
