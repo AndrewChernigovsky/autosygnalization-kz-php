@@ -1311,7 +1311,7 @@ $tabs = [
           [
             'title' => 'УМНАЯ АВТОРИЗАЦИЯ ПО СМАРТФОНУ',
             'description' => 'Только владелец получает разрешение на поездку после авторизации по смартфону на платформе iOS или Android с мобильным приложением StarLine по защищенной технологии Bluetooth Smart',
-            'path-icon' => "$path/assets/images/products/advantages/smart-authorization-white.avif",
+            'path-icon' => "$path/assets/images/products/advantages/smart-authorization.avif",
           ],
           [
             'title' => 'ЗАЩИТА ОТ РЕТРАНСЛЯЦИИ',

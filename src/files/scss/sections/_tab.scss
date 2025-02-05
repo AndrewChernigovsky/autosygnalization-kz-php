@@ -1,6 +1,7 @@
 @use 'variables' as var;
 
 .tab {
+
   &__wrapper {
     max-width: 1400px;
     margin: 0 auto;
@@ -11,7 +12,7 @@
     }
 
     @media (min-width: var.$desktop) {
-      padding: 50px 0 0 0;
+      padding: 50px 0 30px 0;
     }
   }
 
@@ -106,7 +107,6 @@
   }
 
   &__description {
-   // max-width: 240px;
    float: left;
 
     margin: 0;
@@ -114,12 +114,7 @@
     font-size: 12px;
     line-height: 20px;
 
-    @media (min-width: var.$desktop-min) {
-      // max-width: 300px;
-    }
-
     @media (min-width: var.$desktop) {
-      // max-width: 495px;
       font-size: 24px;
       line-height: 30px;
       text-transform: none;
@@ -264,7 +259,6 @@
     }
 
     & > h3 {
-      // align-self: center;
 
       @media (min-width: var.$tablet) {
         align-self: flex-start;
@@ -283,7 +277,6 @@
     }
 
     & > h3 {
-      // align-self: center;
 
       @media (min-width: var.$tablet) {
         align-self: flex-end;
@@ -292,7 +285,7 @@
   }
 }
 
-.garanty > .tab__item.tab__item--text { 
+.tab__list--no-column > .tab__item.tab__item--text { 
   @media (min-width: var.$desktop) {
     width: auto;
   }

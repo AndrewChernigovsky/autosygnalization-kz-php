@@ -33,9 +33,17 @@ function isActiveClassTabContent($index)
     return $index === 0 ? 'tab__list--show' : '';
 }
 
+function DescriptionTabIsEmpty($tabs, $title)
+{
+    if (isset($tabs[0]['tabs']['ОПИСАНИЕ'])) {
+        return empty($tabs[0]['tabs']['ОПИСАНИЕ']) && $title !== 'ОПИСАНИЕ' ? 'tab__list--show ' : '';
+    }
+    return ''; 
+}
+
 function isTextTab($title)
 {
-    return $title === 'ГАРАНТИЯ' ? 'tab__list--no-column' : '';
+    return $title === 'ГАРАНТИЯ' ? 'tab__list--no-column ' : '';
 }
 
 ?>
@@ -98,9 +106,10 @@ function isTextTab($title)
                             </li>
                         </ul>
                     <?php endif; ?>
+
                 <?php else: ?>
                     <!-- Для других вкладок -->
-                    <ul class="tab__list <?= isActiveClassTabContent($index) ?><?= isTextTab($tab_title) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                    <ul class="tab__list <?= isActiveClassTabContent($index) ?> <?= isTextTab($tab_title) ?> <?= DescriptionTabIsEmpty($tabs, $tab_title) ?> <?= count($tab_content) === 1 ? 'tab__list--no-column ' : '' ?> list-style-none" data-content="<?= $tab_title; ?>">
                         <?php foreach ($tab_content as $item): ?>
                             <li class="tab__item tab__item--text">
                                 <?php if (!empty($item['title'])): ?>
