@@ -14,30 +14,19 @@ export default class CustomSelect {
   }
 
   init() {
-    if (!sessionStorage.getItem('defaultSettings')) {
-      this.setDefaultSelect();
-      sessionStorage.setItem('defaultSettings', 'true');
+    if (!sessionStorage.getItem('selectState')) {
+      if (this.options.length) {
+        const firstOption = this.options[0];
+        this.selected.innerHTML = firstOption.innerHTML;
+        this.value = firstOption.dataset.value;
+        this.selected.dataset.value = this.value;
+        this.saveSelectedState();
+      }
+    } else {
+      this.loadSelectedState();
     }
-
-    this.loadSelectedState();
 
     this.addEventListeners();
-    console.log(this.PRODUCTION);
-    console.log(this.path);
-  }
-
-  setDefaultSelect() {
-    if (this.options && this.options.length) {
-      for (let element of this.options) {
-        if (element.classList.contains('default')) {
-          this.selected.innerHTML = element.innerHTML;
-          this.value = element.dataset.value;
-          this.selected.dataset.value = this.value;
-          this.getValue();
-          break;
-        }
-      }
-    }
   }
 
   saveSelectedState() {
@@ -57,8 +46,6 @@ export default class CustomSelect {
       this.selected.innerHTML = selectState.text;
       this.selected.dataset.value = selectState.value;
       this.value = selectState.value;
-    } else {
-      this.setDefaultSelect();
     }
   }
 
