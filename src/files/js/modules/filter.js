@@ -187,4 +187,60 @@ export function saveCheckbox() {
     minCostInput.addEventListener('input', saveState);
     maxCostInput.addEventListener('input', saveState);
   }
+
+  function updateUrlFromFilterState() {
+    const filterState = JSON.parse(sessionStorage.getItem('filtersState'));
+
+    if (filterState) {
+      const currentUrl = new URL(window.location.href);
+      let isUpdated = false;
+
+      Object.keys(filterState).forEach((key) => {
+        if (filterState[key] === true) {
+          if (currentUrl.searchParams.get(key) !== 'on') {
+            currentUrl.searchParams.set(key, 'on');
+            isUpdated = true;
+          }
+        } else {
+          if (currentUrl.searchParams.has(key)) {
+            currentUrl.searchParams.delete(key);
+            isUpdated = true;
+          }
+        }
+      });
+
+      if (
+        filterState['min-value-cost'] &&
+        !currentUrl.searchParams.has('min-value-cost')
+      ) {
+        currentUrl.searchParams.set(
+          'min-value-cost',
+          filterState['min-value-cost']
+        );
+        isUpdated = true;
+      }
+      if (
+        filterState['max-value-cost'] &&
+        !currentUrl.searchParams.has('max-value-cost')
+      ) {
+        currentUrl.searchParams.set(
+          'max-value-cost',
+          filterState['max-value-cost']
+        );
+        isUpdated = true;
+      }
+
+      const currentSearchParams = currentUrl.searchParams.toString();
+      const originalSearchParams = new URL(
+        window.location.href
+      ).searchParams.toString();
+
+      if (isUpdated && currentSearchParams !== originalSearchParams) {
+        window.history.pushState({}, '', currentUrl);
+        location.reload();
+      }
+    }
+  }
+
+  updateUrlFromFilterState();
 }
