@@ -102,15 +102,15 @@ echo $head->setHead();
           referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </section>
-    <section class="contacts-section-info">
+    <section class="contacts-location">
       <div class="container">
         <h2>КАК К НАМ ДОБРАТЬСЯ</h2>
         <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
           территорию СТО. <br> Наш бокс №15.
         </p>
-        <div class="contacts-section-info__phone">
+        <div class="contacts-location__phone">
           <p>По всем вопросам звоните:</p>
-          <div class="contacts-section-info__box">
+          <div class="contacts-location__box">
             <?php foreach($phones as $phone): ?>
               <a href="tel:<?php echo str_replace(' ', '', $phone['phone']); ?>">
                 <?php echo $phone['phone']; ?>
@@ -118,7 +118,7 @@ echo $head->setHead();
             <?php endforeach; ?>
           </div>
         </div>
-        <p class="contacts-section-info__slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
+        <p class="contacts-location__slogan">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
       </div>
     </section>
   </main>

@@ -263,7 +263,7 @@
   width: 100%;
 }
 
-.contacts-section-info {
+.contacts-location {
   padding: 30px 0 50px 0;
 
   @media screen and (min-width: var.$tablet) {
@@ -315,15 +315,15 @@
     font-weight: 600;
     margin: 0 0 65px 0;
     text-align: center;
-  }
 
-  &__phone p {
-    margin: 0 auto 15px;
-
-    @media screen and (min-width: var.$tablet) {
-      font-size: 24px;
-      width: 600px;
-      margin: 0 auto 25px;
+    & p {
+      margin: 0 auto 15px;
+  
+      @media screen and (min-width: var.$tablet) {
+        font-size: 24px;
+        width: 600px;
+        margin: 0 auto 25px;
+      }
     }
   }
 
@@ -340,6 +340,10 @@
     color: var.$white;
     text-decoration: none;
     padding: 10px 20px;
+  }
+
+  &__box a:hover {
+    opacity: 0.3;
   }
 
   &__slogan {
