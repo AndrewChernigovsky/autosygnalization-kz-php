@@ -1,75 +1,102 @@
 export default class CustomSelect {
-  path;
-
   constructor(block, path = 'files/php/pages/catalog/catalog.php') {
     const mainSelector = document.querySelector(block.selected);
     if (!mainSelector) return;
+    this.path = path;
     this.selected = document.querySelector(block.selected);
     this.item = document.querySelector(block.item);
     this.options = this.item.querySelectorAll(block.options);
     this.value = null;
-    this.PRODUCTION = window.location.href.includes('/dist/') ? '/dist/' : '/';
-    this.path = path;
+    this.currentParams = new URLSearchParams(window.location.search);
     this.init();
   }
 
   init() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const currentState = urlParams.get('SELECT');
-    const selectState = JSON.parse(sessionStorage.getItem('selectState'));
+    this.createSessionStorageObject();
+    this.checkForFirstStartParamPresence();
+    this.overwriteExistingParams();
+    this.addEventListeners();
+  }
 
-    if (selectState && selectState.value) {
-      this.value = selectState.value;
-      this.selected.innerHTML = selectState.text;
-      this.selected.dataset.value = this.value;
-      if (this.value !== currentState) {
-        this.sendStateToPHP(this.value);
-        this.updateUrl(this.value);
-        this.reloadPage();
+  createSessionStorageObject() {
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat')) || {};
+    if (!slectStat[this.path]) {
+      slectStat[this.path] = {};
+    }
+    this.options.forEach((key) => {
+      const optionValue = key.dataset.value;
+      if (!slectStat[this.path][optionValue]) {
+        slectStat[this.path][optionValue] = {
+          checked: false,
+          value: optionValue,
+          text: key.innerHTML,
+        };
       }
-    } else {
-      if (this.options.length) {
-        const firstOption = this.options[0];
-        this.selected.innerHTML = firstOption.innerHTML;
-        this.value = firstOption.dataset.value;
+    });
+    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
+  }
+
+  checkForFirstStartParamPresence() {
+    if (this.currentParams.has('SELECT')) return;
+
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat')) || {};
+    const keys = slectStat[this.path];
+
+    if (!keys) return;
+
+    const hasChecked = Object.values(keys).some((item) => item.checked);
+
+    if (!hasChecked) {
+      const firstKey = Object.keys(keys)[0];
+
+      if (firstKey) {
+        this.value = keys[firstKey].value;
+        this.selected.innerHTML = keys[firstKey].text;
         this.selected.dataset.value = this.value;
-        this.saveSelectedState();
-        this.sendStateToPHP(this.value);
-        if (this.value !== currentState) {
-          this.updateUrl(this.value);
-          this.reloadPage();
-        }
+        keys[firstKey].checked = true;
+
+        this.updateUrl(this.value);
       }
     }
 
-    this.addEventListeners();
+    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
+  }
+
+  overwriteExistingParams() {
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat'));
+    const paramState = this.currentParams.get('SELECT');
+    const keys = slectStat[this.path];
+    for (let key in keys) {
+      if (keys[key].checked === true) {
+        this.value = keys[key].value;
+        this.selected.innerHTML = keys[key].text;
+        this.selected.dataset.value = this.value;
+        if (this.value !== paramState) {
+          this.updateUrl(this.value);
+        }
+      }
+    }
   }
 
   saveSelectedState() {
     const selectedValue = this.selected.dataset.value;
-    const selectState = {
-      value: selectedValue,
-      text: this.selected.innerHTML,
-    };
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat'));
+    const keys = slectStat[this.path];
+    for (let key in keys) {
+      if (keys[key].value === selectedValue) {
+        keys[key].checked = true;
+      } else {
+        keys[key].checked = false;
+      }
+    }
 
-    sessionStorage.setItem('selectState', JSON.stringify(selectState));
-  }
-
-  sendStateToPHP(value) {
-    fetch('/files/php/helpers/set_state.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ state: value }),
-    });
+    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
   }
 
   updateUrl(value) {
     const currentUrl = new URL(window.location.href);
     currentUrl.searchParams.set('SELECT', value);
     window.history.pushState({}, '', currentUrl);
-  }
-
-  reloadPage() {
     location.reload();
   }
 
@@ -109,12 +136,8 @@ export default class CustomSelect {
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
       this.saveSelectedState();
-      if (
-        this.value !== new URLSearchParams(window.location.search).get('SELECT')
-      ) {
-        this.sendStateToPHP(this.value);
+      if (this.value !== this.currentParams.get('SELECT')) {
         this.updateUrl(this.value);
-        this.reloadPage();
       }
     }
   }

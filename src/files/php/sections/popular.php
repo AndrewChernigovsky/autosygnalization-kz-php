@@ -1,8 +1,4 @@
 <?php
-session_start();
-
-$state = isset($_SESSION['state']) ? $_SESSION['state'] : 'name';
-
 include __DIR__ . '/../data/products.php';
 include_once __DIR__ . '/../helpers/components/popular-card.php';
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
@@ -53,7 +49,7 @@ $path_href = $path . '/files/php/pages/catalog/catalog.php';
           <?php endforeach; ?>
         </ul>
         <div class="swiper-pagination"></div>
-        <a href="<?= htmlspecialchars($path_href) . '?SELECT=' . $state; ?>" class="link button y-button-primary popular__all-products">Все товары</a>
+        <a href="<?= htmlspecialchars($path_href) ?>" class="link button y-button-primary popular__all-products">Все товары</a>
       </div>
     <?php else: ?>
       <p style="color: black; margin: 0 auto; text-align: center;">Нет доступных популярных товаров.</p>
