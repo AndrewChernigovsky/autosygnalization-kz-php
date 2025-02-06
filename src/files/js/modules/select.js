@@ -1,40 +1,78 @@
 export default class CustomSelect {
-  path;
-
   constructor(block, path = 'files/php/pages/catalog/catalog.php') {
     const mainSelector = document.querySelector(block.selected);
     if (!mainSelector) return;
+    this.path = path;
     this.selected = document.querySelector(block.selected);
     this.item = document.querySelector(block.item);
     this.options = this.item.querySelectorAll(block.options);
     this.value = null;
-    this.PRODUCTION = window.location.href.includes('/dist/') ? '/dist/' : '/';
-    this.path = path;
+    this.currentParams = new URLSearchParams(window.location.search);
     this.init();
   }
 
   init() {
-    if (!sessionStorage.getItem('defaultSettings')) {
-      this.setDefaultSelect();
-      sessionStorage.setItem('defaultSettings', 'true');
-    }
-
-    this.loadSelectedState();
-
+    this.createSessionStorageObject();
+    this.checkForFirstStartParamPresence();
+    this.overwriteExistingParams();
     this.addEventListeners();
-    console.log(this.PRODUCTION);
-    console.log(this.path);
   }
 
-  setDefaultSelect() {
-    if (this.options && this.options.length) {
-      for (let element of this.options) {
-        if (element.classList.contains('default')) {
-          this.selected.innerHTML = element.innerHTML;
-          this.value = element.dataset.value;
-          this.selected.dataset.value = this.value;
-          this.getValue();
-          break;
+  createSessionStorageObject() {
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat')) || {};
+    if (!slectStat[this.path]) {
+      slectStat[this.path] = {};
+    }
+    this.options.forEach((key) => {
+      const optionValue = key.dataset.value;
+      if (!slectStat[this.path][optionValue]) {
+        slectStat[this.path][optionValue] = {
+          checked: false,
+          value: optionValue,
+          text: key.innerHTML,
+        };
+      }
+    });
+    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
+  }
+
+  checkForFirstStartParamPresence() {
+    if (this.currentParams.has('SELECT')) return;
+
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat')) || {};
+    const keys = slectStat[this.path];
+
+    if (!keys) return;
+
+    const hasChecked = Object.values(keys).some((item) => item.checked);
+
+    if (!hasChecked) {
+      const firstKey = Object.keys(keys)[0];
+
+      if (firstKey) {
+        this.value = keys[firstKey].value;
+        this.selected.innerHTML = keys[firstKey].text;
+        this.selected.dataset.value = this.value;
+        keys[firstKey].checked = true;
+
+        this.updateUrl(this.value);
+      }
+    }
+
+    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
+  }
+
+  overwriteExistingParams() {
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat'));
+    const paramState = this.currentParams.get('SELECT');
+    const keys = slectStat[this.path];
+    for (let key in keys) {
+      if (keys[key].checked === true) {
+        this.value = keys[key].value;
+        this.selected.innerHTML = keys[key].text;
+        this.selected.dataset.value = this.value;
+        if (this.value !== paramState) {
+          this.updateUrl(this.value);
         }
       }
     }
@@ -42,33 +80,24 @@ export default class CustomSelect {
 
   saveSelectedState() {
     const selectedValue = this.selected.dataset.value;
-    const selectState = {
-      value: selectedValue,
-      text: this.selected.innerHTML,
-    };
-
-    sessionStorage.setItem('selectState', JSON.stringify(selectState));
-  }
-
-  loadSelectedState() {
-    const storedState = sessionStorage.getItem('selectState');
-    if (storedState) {
-      const selectState = JSON.parse(storedState);
-      this.selected.innerHTML = selectState.text;
-      this.selected.dataset.value = selectState.value;
-      this.value = selectState.value;
-    } else {
-      this.setDefaultSelect();
+    const slectStat = JSON.parse(sessionStorage.getItem('slectStat'));
+    const keys = slectStat[this.path];
+    for (let key in keys) {
+      if (keys[key].value === selectedValue) {
+        keys[key].checked = true;
+      } else {
+        keys[key].checked = false;
+      }
     }
+
+    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
   }
 
-  addSelectToUrl() {
-    const currentUrl = window.location.href.split('?')[0];
-    const currentParams = new URLSearchParams(window.location.search);
-    currentParams.set('SELECT', this.value);
-    const newUrl = `${currentUrl}?${currentParams.toString()}`;
-
-    document.location.href = newUrl;
+  updateUrl(value) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('SELECT', value);
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
   }
 
   addEventListeners() {
@@ -107,7 +136,9 @@ export default class CustomSelect {
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
       this.saveSelectedState();
-      this.addSelectToUrl();
+      if (this.value !== this.currentParams.get('SELECT')) {
+        this.updateUrl(this.value);
+      }
     }
   }
 

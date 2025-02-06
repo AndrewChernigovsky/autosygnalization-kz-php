@@ -80,7 +80,6 @@ export default class DoubleRangeSlider {
 
     // Обработчик сброса формы
     const form = this.minNumberInput.closest('.filter-form'); // Находим форму
-    console.log(form);
     form.addEventListener('reset', () => {
       setTimeout(() => {
         this.minNumberInput.value = this.minValue;

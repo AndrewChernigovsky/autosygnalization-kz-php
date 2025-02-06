@@ -1,4 +1,3 @@
-import CustomSelect from './select';
 export function filterToggleMenu() {
   const filterBtn = document.getElementById('filter-btn');
   const filterCatalog = document.getElementById('filter-catalog');
@@ -46,22 +45,18 @@ export function saveCheckbox() {
   const maxCostInput = document.querySelector('.number-input.input-max');
   const rangeMinInput = document.querySelector('.range-input.range-min');
   const rangeMaxInput = document.querySelector('.range-input.range-max');
-
   const rangeProgress = document.querySelector('.filter-cost .range-progress');
 
-  // Восстановление состояния из sessionStorage
   const storedFiltersState = sessionStorage.getItem('filtersState');
   const filtersState = storedFiltersState ? JSON.parse(storedFiltersState) : {};
 
   const restoreState = () => {
-    // Восстанавливаем состояния чекбоксов
     checkboxList.forEach((checkbox) => {
       if (filtersState[checkbox.name] !== undefined) {
         checkbox.checked = filtersState[checkbox.name];
       }
     });
 
-    // Восстанавливаем состояния диапазонов
     if (rangeMinInput && rangeMaxInput) {
       if (filtersState['min-value-range'] !== undefined) {
         rangeMinInput.value = filtersState['min-value-range'];
@@ -71,7 +66,6 @@ export function saveCheckbox() {
       }
     }
 
-    // Восстанавливаем значения минимальной и максимальной стоимости
     if (minCostInput && maxCostInput) {
       if (filtersState['min-value-cost'] !== undefined) {
         minCostInput.value = filtersState['min-value-cost'];
@@ -80,30 +74,23 @@ export function saveCheckbox() {
         maxCostInput.value = filtersState['max-value-cost'];
       }
     }
-
-    // Обновляем прогресс диапазона
-    updateRangeProgress();
   };
 
   const saveState = () => {
-    // Сохраняем состояния чекбоксов
     checkboxList.forEach((checkbox) => {
       filtersState[checkbox.name] = checkbox.checked;
     });
 
-    // Сохраняем значения диапазонов
     if (rangeMinInput && rangeMaxInput) {
       filtersState['min-value-range'] = rangeMinInput.value;
       filtersState['max-value-range'] = rangeMaxInput.value;
     }
 
-    // Сохраняем значения минимальной и максимальной стоимости
     if (minCostInput && maxCostInput) {
       filtersState['min-value-cost'] = minCostInput.value;
       filtersState['max-value-cost'] = maxCostInput.value;
     }
 
-    // Сохраняем в sessionStorage
     sessionStorage.setItem('filtersState', JSON.stringify(filtersState));
   };
 
@@ -122,10 +109,8 @@ export function saveCheckbox() {
     }
   };
 
-  // Восстанавливаем состояния при загрузке
   restoreState();
 
-  // Добавляем обработчики событий
   checkboxList.forEach((checkbox) => {
     checkbox.addEventListener('change', saveState);
   });
@@ -143,18 +128,38 @@ export function saveCheckbox() {
   }
 
   form.addEventListener('submit', function (event) {
-    const currentUrl = window.location.href.split('?')[0];
-    const selectSelected =
-      document.querySelector('.select-selected').dataset.value;
-    const currentParams = new URLSearchParams(window.location.search);
-    currentParams.set('SELECT', selectSelected);
-    const newUrl = `${currentUrl}?${currentParams.toString()}`;
-    alert(newUrl);
-    window.location.href = newUrl;
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const filtersState = JSON.parse(sessionStorage.getItem('filtersState'));
+    const selectState = JSON.parse(sessionStorage.getItem('selectState'));
+
+    const params = new URLSearchParams(formData);
+
+    Object.entries(filtersState).forEach(([key, value]) => {
+      if (value === true) {
+        if (!params.has(key)) {
+          params.append(key, 'on');
+        }
+      }
+    });
+
+    if (filtersState['min-value-cost'] && !params.has('min-value-cost')) {
+      params.append('min-value-cost', filtersState['min-value-cost']);
+    }
+    if (filtersState['max-value-cost'] && !params.has('max-value-cost')) {
+      params.append('max-value-cost', filtersState['max-value-cost']);
+    }
+
+    if (selectState?.value && !params.has('SELECT')) {
+      params.append('SELECT', selectState.value);
+    }
+
+    window.location.href = this.action + '?' + params.toString();
   });
 
   form.addEventListener('reset', function (event) {
-    // Сбрасываем состояние чекбоксов
+    const defaultUrl = window.location.href.split('?')[0];
     for (let key in filtersState) {
       filtersState[key] = false;
     }
@@ -169,19 +174,73 @@ export function saveCheckbox() {
     }
     sessionStorage.setItem('filtersState', JSON.stringify(filtersState));
 
-    // Сбрасываем selectState до дефолтных значений
     const defaultSelectState = {
-      value: 'name', // Здесь укажи дефолтное value
-      text: 'Название', // Здесь укажи дефолтный текст
+      value: 'name',
+      text: 'Название',
     };
     sessionStorage.setItem('selectState', JSON.stringify(defaultSelectState));
-
-    // Перезагружаем страницу, чтобы селект восстановил значения
-    window.location.reload();
+    const storedSelectState = JSON.parse(sessionStorage.getItem('selectState'));
+    window.location.href = `${defaultUrl}?SELECT=${storedSelectState.value}`;
   });
 
   if (minCostInput && maxCostInput) {
     minCostInput.addEventListener('input', saveState);
     maxCostInput.addEventListener('input', saveState);
   }
+
+  function updateUrlFromFilterState() {
+    const filterState = JSON.parse(sessionStorage.getItem('filtersState'));
+
+    if (filterState) {
+      const currentUrl = new URL(window.location.href);
+      let isUpdated = false;
+
+      Object.keys(filterState).forEach((key) => {
+        if (filterState[key] === true) {
+          if (currentUrl.searchParams.get(key) !== 'on') {
+            currentUrl.searchParams.set(key, 'on');
+            isUpdated = true;
+          }
+        } else {
+          if (currentUrl.searchParams.has(key)) {
+            currentUrl.searchParams.delete(key);
+            isUpdated = true;
+          }
+        }
+      });
+
+      if (
+        filterState['min-value-cost'] &&
+        !currentUrl.searchParams.has('min-value-cost')
+      ) {
+        currentUrl.searchParams.set(
+          'min-value-cost',
+          filterState['min-value-cost']
+        );
+        isUpdated = true;
+      }
+      if (
+        filterState['max-value-cost'] &&
+        !currentUrl.searchParams.has('max-value-cost')
+      ) {
+        currentUrl.searchParams.set(
+          'max-value-cost',
+          filterState['max-value-cost']
+        );
+        isUpdated = true;
+      }
+
+      const currentSearchParams = currentUrl.searchParams.toString();
+      const originalSearchParams = new URL(
+        window.location.href
+      ).searchParams.toString();
+
+      if (isUpdated && currentSearchParams !== originalSearchParams) {
+        window.history.pushState({}, '', currentUrl);
+        location.reload();
+      }
+    }
+  }
+
+  updateUrlFromFilterState();
 }
