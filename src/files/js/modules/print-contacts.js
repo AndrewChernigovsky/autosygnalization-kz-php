@@ -38,6 +38,12 @@ export default class PrintDocument {
     document.body.appendChild(iframe);
   
     const iframeDoc = iframe.contentWindow || iframe.contentDocument; //получаем возможность записывать HTML-код и стили в документ iframe
+    
+    if (!iframe.contentWindow && !iframe.contentDocument) {
+      console.error('Не удалось получить доступ к содержимому iframe.');
+    return;
+    }
+
     iframeDoc.document.write(`
       <!DOCTYPE html>
       <html>
@@ -80,7 +86,6 @@ export default class PrintDocument {
         </style>
       </head>
       <body>
-      "Текущая ширина: ${window.innerWidth}px";
       ${this.container.innerHTML}
       </body>
       </html>
