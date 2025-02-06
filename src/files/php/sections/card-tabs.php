@@ -35,10 +35,15 @@ function isActiveClassTabContent($index)
 
 function DescriptionTabIsEmpty($tabs, $title)
 {
-    if (isset($tabs[0]['tabs']['ОПИСАНИЕ'])) {
-        return empty($tabs[0]['tabs']['ОПИСАНИЕ']) && $title !== 'ОПИСАНИЕ' ? 'tab__list--show ' : '';
+    if (isset($tabs['ОПИСАНИЕ'])) {
+        $descriptionArray = $tabs['ОПИСАНИЕ'];
+
+        // Проверяем, является ли массив пустым
+        if (is_array($descriptionArray) && empty($descriptionArray)) {
+            return $title !== 'ОПИСАНИЕ' ? 'tab__list--show ' : '111';
+        }
     }
-    return ''; 
+    return '222';
 }
 
 function isTextTab($title)
@@ -68,7 +73,7 @@ function isTextTab($title)
         <div class="tab__content">
             <?php $index = 0; ?>
             <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
-                <?php if ($tab_title === 'ОПИСАНИЕ'): ?>
+                <?php if ($tab_title === 'ОПИСАНИЕ' && !empty($tab_content) ): ?>
                     <!-- Список items -->
                     <?php if (isset($tab_content['items'])): ?>
                         <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
@@ -109,7 +114,7 @@ function isTextTab($title)
 
                 <?php else: ?>
                     <!-- Для других вкладок -->
-                    <ul class="tab__list <?= isActiveClassTabContent($index) ?> <?= isTextTab($tab_title) ?> <?= DescriptionTabIsEmpty($tabs, $tab_title) ?> <?= count($tab_content) === 1 ? 'tab__list--no-column ' : '' ?> list-style-none" data-content="<?= $tab_title; ?>">
+                    <ul class="tab__list <?= isActiveClassTabContent($index) ?> <?= isTextTab($tab_title) ?> <?= DescriptionTabIsEmpty($product_tabs, $tab_title) ?> <?= count($tab_content) === 1 ? 'tab__list--no-column ' : '' ?> list-style-none" data-content="<?= $tab_title; ?>">
                         <?php foreach ($tab_content as $item): ?>
                             <li class="tab__item tab__item--text">
                                 <?php if (!empty($item['title'])): ?>
