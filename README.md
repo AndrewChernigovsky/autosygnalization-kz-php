@@ -2,8 +2,22 @@
 
 Этот проект находится под лицензией Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0). Это означает, что вы можете копировать и распространять материал только для некоммерческого использования с указанием авторства и без внесения изменений.
 
-Автор: Андрей Андреевич
+## Автор: 
+- Андрей Андреевич
 chernigovsky108@gmail.com
+https://github.com/AndrewChernigovsky
+
+## Соавторы:
+- Денис Марков Сергеевич
+https://github.com/DenisMarcov
+- Бекетова Татьяна Александровна
+https://github.com/tbeketova
+- Мещерякова Мария Сергеевна
+https://github.com/VinMariani
+- Антонина Владимировна Сорокань
+https://github.com/AntoninaSorokan
+- Мамутов Гирей Ренатович
+https://github.com/Girey-m
 
 # Структура проекта
 ### -sections - все секции
