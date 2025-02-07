@@ -27,6 +27,8 @@ const {
   cardMoreButton,
   cartButtons,
   addToCartButton,
+  editLinkPopular,
+  editLinkParking,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -53,6 +55,12 @@ const {
   cardMoreButton: document.querySelector('.card-more__button-cost'),
   cartButtons: document.querySelectorAll('.cart-button'),
   addToCartButton: document.querySelector('.card-more__button-cart'),
+  editLinkPopular: document.querySelector(
+    '.link.button.y-button-primary.popular__all-products'
+  ),
+  editLinkParking: document.getElementById(
+    'link__dist_files_php_pages_parking-systems_parking-systems.php'
+  ),
 };
 
 async function loadModules() {
@@ -80,6 +88,14 @@ async function loadModules() {
   if (swiper != null) {
     const { initSwiper } = await import('./modules/swiper.js');
     initSwiper();
+  }
+  if (editLinkPopular != null) {
+    const { editLinkPopular } = await import('./modules/editLinkPopular.js');
+    editLinkPopular();
+  }
+  if (editLinkParking != null) {
+    const { editLinkParking } = await import('./modules/editLinkParking.js');
+    editLinkParking();
   }
   if (footer != null) {
     const { toggleList } = await import('./modules/footer-menu.js');

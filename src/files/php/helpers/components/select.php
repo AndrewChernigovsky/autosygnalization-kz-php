@@ -18,7 +18,7 @@ class Select
     
 
         <div class="custom-select">
-            <div class="select-selected">Выберите опцию</div>
+            <div class="select-selected" data-value="name">Название</div>
               <div class="select-items select-hide">
                 <?php foreach($data as $option):?>
                 <div class="<?= $option['class']?>" data-value="<?= $option['value']?>"><?= $option["name"]?></div>
