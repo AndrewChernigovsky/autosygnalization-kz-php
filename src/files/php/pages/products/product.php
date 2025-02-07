@@ -87,6 +87,7 @@ echo $head->setHead();
     <?php include $product_section;?>
   </main>
   <?php include $base_path . '/footer.php'; ?>
+  <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
 </body>
 
 </html>

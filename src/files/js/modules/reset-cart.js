@@ -1,4 +1,4 @@
-import { ProductAPI } from "./api/getProduct.js";
+import { ProductAPI } from './api/getProduct.js';
 
 export default class ResetCart {
   constructor(elem) {
@@ -13,6 +13,7 @@ export default class ResetCart {
       counter.textContent = 0;
       const productsWrapper = document.querySelector('.cart-section__products');
       productsWrapper.innerHTML = '';
-    })
+      console.log('я почистил');
+    });
   }
 }

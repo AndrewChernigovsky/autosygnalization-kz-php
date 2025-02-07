@@ -1,35 +1,100 @@
 export default class CustomSelect {
-  path;
-
   constructor(block, path = 'files/php/pages/catalog/catalog.php') {
     const mainSelector = document.querySelector(block.selected);
     if (!mainSelector) return;
+    this.path = path;
     this.selected = document.querySelector(block.selected);
     this.item = document.querySelector(block.item);
     this.options = this.item.querySelectorAll(block.options);
     this.value = null;
+    this.currentParams = new URLSearchParams(window.location.search);
     this.init();
-    this.PRODUCTION = window.location.href.includes('/dist/');
-    this.path = path;
   }
 
   init() {
-    this.setDefaultSelect();
+    this.createSessionStorageObject();
+    this.checkForFirstStartParamPresence();
+    this.overwriteExistingParams();
     this.addEventListeners();
   }
 
-  setDefaultSelect() {
-    if (this.options && this.options.length) {
-      for (let element of this.options) {
-        if (element.classList.contains('default')) {
-          this.selected.innerHTML = element.innerHTML;
-          this.value = element.dataset.value;
-          this.selected.dataset.value = this.value;
-          this.getValue();
-          break;
+  createSessionStorageObject() {
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat')) || {};
+    if (!selectStat[this.path]) {
+      selectStat[this.path] = {};
+    }
+    this.options.forEach((key) => {
+      const optionValue = key.dataset.value;
+      if (!selectStat[this.path][optionValue]) {
+        selectStat[this.path][optionValue] = {
+          checked: false,
+          value: optionValue,
+          text: key.innerHTML,
+        };
+      }
+    });
+    sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
+  }
+
+  checkForFirstStartParamPresence() {
+    if (this.currentParams.has('SELECT')) return;
+
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat')) || {};
+    const keys = selectStat[this.path];
+
+    if (!keys) return;
+
+    const hasChecked = Object.values(keys).some((item) => item.checked);
+    if (!hasChecked) {
+      const firstKey = Object.keys(keys)[0];
+      if (firstKey) {
+        this.value = keys[firstKey].value;
+        this.selected.innerHTML = keys[firstKey].text;
+        this.selected.dataset.value = this.value;
+        keys[firstKey].checked = true;
+        this.updateUrl(this.value);
+      }
+    }
+
+    sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
+  }
+
+  overwriteExistingParams() {
+    const paramState = this.currentParams.get('SELECT');
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat'));
+    const keys = selectStat[this.path];
+    for (let key in keys) {
+      if (keys[key].checked === true) {
+        this.value = keys[key].value;
+        this.selected.innerHTML = keys[key].text;
+        this.selected.dataset.value = this.value;
+        if (this.value !== paramState) {
+          this.updateUrl(this.value);
         }
       }
     }
+  }
+
+  saveSelectedState() {
+    const selectedValue = this.selected.dataset.value;
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat'));
+    const keys = selectStat[this.path];
+    for (let key in keys) {
+      if (keys[key].value === selectedValue) {
+        keys[key].checked = true;
+      } else {
+        keys[key].checked = false;
+      }
+    }
+
+    sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
+  }
+
+  updateUrl(value) {
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('SELECT', value);
+    window.history.pushState({}, '', currentUrl);
+    location.reload();
   }
 
   addEventListeners() {
@@ -67,9 +132,10 @@ export default class CustomSelect {
       this.selected.classList.remove('open');
       this.value = e.target.dataset.value;
       this.selected.dataset.value = this.value;
-      const url = `${this.PRODUCTION ? '/dist/' : '/'}` + this.path;
-      document.location.href = url + '?SELECT=' + this.value;
-
+      this.saveSelectedState();
+      if (this.value !== this.currentParams.get('SELECT')) {
+        this.updateUrl(this.value);
+      }
     }
   }
 

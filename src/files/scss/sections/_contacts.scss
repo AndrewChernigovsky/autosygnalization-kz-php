@@ -149,6 +149,10 @@
 
   &--email-text {
     text-transform: lowercase;
+
+    a {
+      color: white;
+    }
   }
 
   &--address-title {
@@ -218,7 +222,7 @@
     font-weight: 600;
   }
 
-  &--social-icons svg{
+  &--social-icons svg {
     width: 30px;
     height: 30px;
   }
@@ -237,7 +241,7 @@
   }
 }
 
-.map iframe{
+.map iframe {
   width: 100%;
 }
 
