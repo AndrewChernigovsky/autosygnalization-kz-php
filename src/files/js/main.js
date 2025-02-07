@@ -119,8 +119,10 @@ async function loadModules() {
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
     const { saveCheckbox } = await import('./modules/filter.js');
+    const { saveRangeInParking } = await import('./modules/filter.js');
     filterToggleMenu();
     saveCheckbox();
+    saveRangeInParking();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');

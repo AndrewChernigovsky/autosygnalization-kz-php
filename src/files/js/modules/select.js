@@ -19,30 +19,31 @@ export default class CustomSelect {
   }
 
   createSessionStorageObject() {
-    if (!sessionStorage.getItem('selectStat')) {
-      const selectStat = JSON.parse(sessionStorage.getItem('selectStat')) || {};
-      if (!selectStat[this.path]) {
-        selectStat[this.path] = {};
-      }
-      this.options.forEach((key) => {
-        const optionValue = key.dataset.value;
-        if (!selectStat[this.path][optionValue]) {
-          selectStat[this.path][optionValue] = {
-            checked: false,
-            value: optionValue,
-            text: key.innerHTML,
-          };
-        }
-      });
-      sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat')) || {};
+    if (!selectStat[this.path]) {
+      selectStat[this.path] = {};
     }
+    this.options.forEach((key) => {
+      const optionValue = key.dataset.value;
+      if (!selectStat[this.path][optionValue]) {
+        selectStat[this.path][optionValue] = {
+          checked: false,
+          value: optionValue,
+          text: key.innerHTML,
+        };
+      }
+    });
+    sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
   }
 
   checkForFirstStartParamPresence() {
     if (this.currentParams.has('SELECT')) return;
+
     const selectStat = JSON.parse(sessionStorage.getItem('selectStat')) || {};
     const keys = selectStat[this.path];
+
     if (!keys) return;
+
     const hasChecked = Object.values(keys).some((item) => item.checked);
     if (!hasChecked) {
       const firstKey = Object.keys(keys)[0];

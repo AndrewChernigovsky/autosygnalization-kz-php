@@ -110,7 +110,7 @@ echo $head->setHead();
   <main class="main">
     <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
     <div class="catalog">
-      <div class="catalog__wrapper">
+      <div class="catalog__wrapper all-products">
         <aside class="aside">
           <?= $filters->renderFilters(); ?>
         </aside>
