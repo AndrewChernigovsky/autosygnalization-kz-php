@@ -49,8 +49,7 @@ $path_href = $path . '/files/php/pages/catalog/catalog.php';
           <?php endforeach; ?>
         </ul>
         <div class="swiper-pagination"></div>
-        <a href="<?= htmlspecialchars($path_href); ?>" class="link button y-button-primary popular__all-products">Все
-          товары</a>
+        <a href="<?= htmlspecialchars($path_href) ?>" class="link button y-button-primary popular__all-products">Все товары</a>
       </div>
     <?php else: ?>
       <p style="color: black; margin: 0 auto; text-align: center;">Нет доступных популярных товаров.</p>

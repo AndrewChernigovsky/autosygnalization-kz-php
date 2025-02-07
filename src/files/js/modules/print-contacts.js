@@ -32,6 +32,7 @@ export default class PrintDocument {
       </div>
     `;
   }
+  }
 
   printIframe() {
     const iframe = document.createElement('iframe');

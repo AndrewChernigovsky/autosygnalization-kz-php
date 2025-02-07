@@ -1,6 +1,7 @@
 import { html, Component } from 'htm/preact';
 import { CardCartButtonCounter } from './CardCartButtonCounter.jsx';
 import { ProductAPI } from './../../modules/api/getProduct.js';
+import { compileString } from 'sass';
 
 export class CardProduct extends Component {
   constructor(props) {
@@ -77,16 +78,16 @@ export class CardProduct extends Component {
         (total, product) => total + product.quantity,
         0
       );
+      console.log('здесь');
 
       if (!cart) {
         this.cartCounter.textContent = currentCount;
+        console.log('здесь');
       }
-      
 
       const productApi = new ProductAPI();
       productApi.createProducts();
 
-      
       const productId = cart ? btn.dataset.id : btn.parentElement.dataset.id;
       const productPrice = cart
         ? btn.dataset.cost
@@ -117,14 +118,13 @@ export class CardProduct extends Component {
       sessionStorage.setItem('cart', JSON.stringify(products));
       productApi.addProduct(productId);
 
-      const newCount = products.reduce((total, product) => {
+      let numberUniqueId = products.map((product) => product.id).length;
 
+      const newCount = products.reduce((total, product) => {
         return total + product.quantity;
       }, 0);
 
-      console.log(newCount, 'число');
-
-      this.cartCounter.textContent = newCount;
+      this.cartCounter.textContent = numberUniqueId; // здесь на карточки
 
       productApi
         .sendCart(products)
