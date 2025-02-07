@@ -56,7 +56,7 @@ export function editLinkPopular() {
   }
 
   if (link) {
-    const firstKey = Object.keys(selectStat)[0];
+    const firstKey = Object.keys(selectStat)[1];
     const finalObject = selectStat[firstKey];
     let selectParams = '';
     let rangeParams = '';
@@ -69,10 +69,10 @@ export function editLinkPopular() {
     }
 
     if (parkingRangeState['min-value-cost']) {
-      rangeParams += `min-value-cost=${parkingRangeState['min-value-cost']}&`;
+      rangeParams += `min-value-cost=${filtersState['min-value-cost']}&`;
     }
     if (parkingRangeState['max-value-cost']) {
-      rangeParams += `max-value-cost=${parkingRangeState['max-value-cost']}&`;
+      rangeParams += `max-value-cost=${filtersState['max-value-cost']}&`;
     }
 
     Object.entries(filtersState).forEach(([key, value]) => {
@@ -86,6 +86,7 @@ export function editLinkPopular() {
         /&$/,
         ''
       );
+
     link.href = newUrl;
   }
 }
