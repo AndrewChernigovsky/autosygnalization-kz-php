@@ -38,12 +38,11 @@ function DescriptionTabIsEmpty($tabs, $title)
     if (isset($tabs['ОПИСАНИЕ'])) {
         $descriptionArray = $tabs['ОПИСАНИЕ'];
 
-        // Проверяем, является ли массив пустым
         if (is_array($descriptionArray) && empty($descriptionArray)) {
-            return $title !== 'ОПИСАНИЕ' ? 'tab__list--show ' : '111';
+            return $title !== 'ОПИСАНИЕ' ? 'tab__list--show ' : '';
         }
     }
-    return '222';
+    return '';
 }
 
 function isTextTab($title)
