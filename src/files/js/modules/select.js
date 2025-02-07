@@ -19,53 +19,50 @@ export default class CustomSelect {
   }
 
   createSessionStorageObject() {
-    const slectStat = JSON.parse(sessionStorage.getItem('slectStat')) || {};
-    if (!slectStat[this.path]) {
-      slectStat[this.path] = {};
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat')) || {};
+    if (!selectStat[this.path]) {
+      selectStat[this.path] = {};
     }
     this.options.forEach((key) => {
       const optionValue = key.dataset.value;
-      if (!slectStat[this.path][optionValue]) {
-        slectStat[this.path][optionValue] = {
+      if (!selectStat[this.path][optionValue]) {
+        selectStat[this.path][optionValue] = {
           checked: false,
           value: optionValue,
           text: key.innerHTML,
         };
       }
     });
-    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
+    sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
   }
 
   checkForFirstStartParamPresence() {
     if (this.currentParams.has('SELECT')) return;
 
-    const slectStat = JSON.parse(sessionStorage.getItem('slectStat')) || {};
-    const keys = slectStat[this.path];
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat')) || {};
+    const keys = selectStat[this.path];
 
     if (!keys) return;
 
     const hasChecked = Object.values(keys).some((item) => item.checked);
-
     if (!hasChecked) {
       const firstKey = Object.keys(keys)[0];
-
       if (firstKey) {
         this.value = keys[firstKey].value;
         this.selected.innerHTML = keys[firstKey].text;
         this.selected.dataset.value = this.value;
         keys[firstKey].checked = true;
-
         this.updateUrl(this.value);
       }
     }
 
-    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
+    sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
   }
 
   overwriteExistingParams() {
-    const slectStat = JSON.parse(sessionStorage.getItem('slectStat'));
     const paramState = this.currentParams.get('SELECT');
-    const keys = slectStat[this.path];
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat'));
+    const keys = selectStat[this.path];
     for (let key in keys) {
       if (keys[key].checked === true) {
         this.value = keys[key].value;
@@ -80,8 +77,8 @@ export default class CustomSelect {
 
   saveSelectedState() {
     const selectedValue = this.selected.dataset.value;
-    const slectStat = JSON.parse(sessionStorage.getItem('slectStat'));
-    const keys = slectStat[this.path];
+    const selectStat = JSON.parse(sessionStorage.getItem('selectStat'));
+    const keys = selectStat[this.path];
     for (let key in keys) {
       if (keys[key].value === selectedValue) {
         keys[key].checked = true;
@@ -90,7 +87,7 @@ export default class CustomSelect {
       }
     }
 
-    sessionStorage.setItem('slectStat', JSON.stringify(slectStat));
+    sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
   }
 
   updateUrl(value) {
