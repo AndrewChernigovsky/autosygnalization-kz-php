@@ -48,7 +48,7 @@ class NavigationLinks
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=catalog", 'name' => 'Каталог автосигнализаций Starline'],
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=accessories", 'name' => 'Пульты и аксессуары'],
                   ['link' => "$this->path_pages/parking-systems/parking-systems.php", 'name' => 'Парковочные системы'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=price", 'name' => 'Прайс на материал и установку'],
+                  ['link' => "$this->path_pages/price/price.php", 'name' => "Прайс на материал и установку"]
                 ],
               ],
             ],
@@ -97,5 +97,3 @@ class NavigationLinks
         return $categories_autosygnals;
     }
 }
-
-

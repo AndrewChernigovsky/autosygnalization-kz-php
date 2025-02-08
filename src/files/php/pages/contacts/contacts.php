@@ -83,11 +83,11 @@ echo $head->setHead();
             <ul class="contacts-section__item--social-icons">
               <?php
               foreach ($socialIcons as $social) {
-                echo '<li>';
+                  echo '<li>';
                   echo $contacts->setSocial($social);
-                echo '</li>';
+                  echo '</li>';
               }
-              ?>
+?>
             </ul>
           </li>
           <li class="contacts-section__item contacts-section__item--btn">
