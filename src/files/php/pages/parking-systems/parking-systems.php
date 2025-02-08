@@ -129,7 +129,7 @@ echo $head->setHead();
           error_log(print_r($filteredProducts, true) . ' :FILTERS ');
           $pagination = new Pagination($filteredProducts);
           ?>
-        <?= $pagination->render(); ?>
+        <?= $pagination->render('parking'); ?>
       <?php endif; ?>
     </div>
     <?= getShop('setup'); ?>

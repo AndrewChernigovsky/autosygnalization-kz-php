@@ -15,6 +15,7 @@ class NavigationLinks
 
     public function __construct(array $filters_products_count = []) //тут изменил
     {
+        error_log(print_r($filters_products_count, true) . ' : PRODUCTS[]'); 
 
         $this->variables = new SetVariables();
         $this->variables->setVar();

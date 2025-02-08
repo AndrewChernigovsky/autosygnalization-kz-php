@@ -18,9 +18,16 @@ class Pagination
         $this->itemsPerPage = $itemsPerPage;
     }
 
-    public function init()
+    public function init($href_page)
     {
         $html = '<ol class="pagination">';
+
+        if ($href_page === 'catalog') {
+            $href_page = '/files/php/pages/catalog/catalog.php?';
+        }
+        if ($href_page === 'parking') {
+            $href_page = '/files/php/pages/parking-systems/parking-systems.php?';
+        }
 
         // Общее количество товаров
         $totalItems = count($this->items);
@@ -41,14 +48,14 @@ class Pagination
         for ($i = $startPage; $i <= $endPage; $i++) {
             // Добавляем текущие GET-параметры к ссылке
             $queryParams['PAGE'] = $i; // Устанавливаем новый номер страницы
-            $href = $this->variables->getPathFileURL() . '/files/php/pages/catalog/catalog.php?' . http_build_query($queryParams);
+            $href = $this->variables->getPathFileURL() . $href_page . http_build_query($queryParams);
             $html .= '<li class="pagination__item"><a class="y-button-primary button link' . ($this->page == $i ? " active" : '') . '" href="' . $href . '">' . htmlspecialchars($i) . '</a></li>';
         }
 
         // Кнопка "Показать еще" (если есть больше страниц)
         if ($totalPages > $endPage) {
             $queryParams['PAGE'] = $endPage + 1; // Устанавливаем следующий номер страницы
-            $href = $this->variables->getPathFileURL() . '/files/php/pages/catalog/catalog.php?' . http_build_query($queryParams);
+            $href = $this->variables->getPathFileURL() . $href_page . http_build_query($queryParams);
             $html .= '<li class="pagination__item"><a class="y-button-primary button link" href="' . $href . '">Показать еще</a></li>';
         }
 
@@ -56,14 +63,14 @@ class Pagination
         return $html;
     }
 
-    public function render()
+    public function render($href = 'catalog')
     {
-        echo $this->init();
+        echo $this->init($href);
     }
 
-    public function getHtml()
+    public function getHtml($href = 'catalog')
     {
-        return $this->init();
+        return $this->init($href);
     }
 
     // Метод для получения товаров на текущей странице
