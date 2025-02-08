@@ -102,7 +102,7 @@ echo $head->setHead();
           referrerpolicy="no-referrer-when-downgrade"></iframe>
       </div>
     </section>
-    <section class="contacts-location">
+    <section class="contacts-location" id="location">
       <div class="container">
         <h2>КАК К НАМ ДОБРАТЬСЯ</h2>
         <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
