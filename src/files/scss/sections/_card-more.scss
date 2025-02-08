@@ -3,6 +3,8 @@
 .card-more {
   position: relative;
   max-width: 1440px;
+  width: 320px;
+  margin: 0 auto;
   padding: 10px;
   display: grid;
   grid-template-columns: 300px;
@@ -13,12 +15,12 @@
   border-radius: 20px;
 
   @media screen and (min-width: var.$tablet) {
+    width: 768px;
     grid-template-columns: min-content 1fr 1fr;
   }
 
   @media screen and (min-width: var.$desktop-min) {
     width: 1024px;
-    margin: 0 auto;
     grid-template-columns: repeat(2, 195px) repeat(2, 1fr);
   }
   
@@ -255,7 +257,6 @@
         width: 80px;
         padding: 0;
         flex-direction: column;
-        gap: 10px;
       }
 
       @media screen and (min-width: var.$desktop) {
@@ -292,8 +293,8 @@
   .small-slide {    
     padding: 5px;
     border-radius: 5px;
-    min-width: 80px;
-    height: 80px;
+    max-width: 65px;
+    height: 65px;
 
     @media screen and (min-width: var.$desktop-min) {
       flex-direction: column;
