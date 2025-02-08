@@ -83,11 +83,11 @@ echo $head->setHead();
             <ul class="contacts-section__item--social-icons">
               <?php
               foreach ($socialIcons as $social) {
-                echo '<li>';
+                  echo '<li>';
                   echo $contacts->setSocial($social);
-                echo '</li>';
+                  echo '</li>';
               }
-              ?>
+?>
             </ul>
           </li>
           <li class="contacts-section__item contacts-section__item--btn">
@@ -95,7 +95,7 @@ echo $head->setHead();
           </li>
         </ul>
       </div>
-      <div class="map">
+      <div class="map" id="location">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru"
           width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"

@@ -110,7 +110,6 @@ function isTextTab($title)
                             </li>
                         </ul>
                     <?php endif; ?>
-
                 <?php else: ?>
                     <!-- Для других вкладок -->
                     <ul class="tab__list <?= isActiveClassTabContent($index) ?> <?= isTextTab($tab_title) ?> <?= DescriptionTabIsEmpty($product_tabs, $tab_title) ?> <?= count($tab_content) === 1 ? 'tab__list--no-column ' : '' ?> list-style-none" data-content="<?= $tab_title; ?>">
