@@ -148,28 +148,28 @@ export function saveCheckbox() {
         const finalObject = selectStat[firstKey];
         for (const key in finalObject) {
           if (finalObject[key]?.checked === true && !params.has('SELECT')) {
-            alert(finalObject[key].value);
             params.append('SELECT', finalObject[key].value);
           }
         }
       }
-
-      Object.entries(filtersState).forEach(([key, value]) => {
-        if (value === true) {
-          if (!params.has(key)) {
-            params.append(key, 'on');
+      if (filtersState) {
+        Object.entries(filtersState).forEach(([key, value]) => {
+          if (value === true) {
+            if (!params.has(key)) {
+              params.append(key, 'on');
+            }
           }
+        });
+
+        if (filtersState['min-value-cost'] && !params.has('min-value-cost')) {
+          params.append('min-value-cost', filtersState['min-value-cost']);
         }
-      });
+        if (filtersState['max-value-cost'] && !params.has('max-value-cost')) {
+          params.append('max-value-cost', filtersState['max-value-cost']);
+        }
 
-      if (filtersState['min-value-cost'] && !params.has('min-value-cost')) {
-        params.append('min-value-cost', filtersState['min-value-cost']);
+        window.location.href = this.action + '?' + params.toString();
       }
-      if (filtersState['max-value-cost'] && !params.has('max-value-cost')) {
-        params.append('max-value-cost', filtersState['max-value-cost']);
-      }
-
-      window.location.href = this.action + '?' + params.toString();
     });
 
     form.addEventListener('reset', function () {
@@ -383,26 +383,31 @@ export function saveRangeInParking() {
           const finalObject = selectStat[needKey];
           for (const key in finalObject) {
             if (finalObject[key]?.checked === true && !params.has('SELECT')) {
-              alert(finalObject[key].value);
               params.append('SELECT', finalObject[key].value);
             }
           }
         }
-
-        if (
-          parkingRangeState['min-value-cost'] &&
-          !params.has('min-value-cost')
-        ) {
-          params.append('min-value-cost', parkingRangeState['min-value-cost']);
+        if (parkingRangeState) {
+          if (
+            parkingRangeState['min-value-cost'] &&
+            !params.has('min-value-cost')
+          ) {
+            params.append(
+              'min-value-cost',
+              parkingRangeState['min-value-cost']
+            );
+          }
+          if (
+            parkingRangeState['max-value-cost'] &&
+            !params.has('max-value-cost')
+          ) {
+            params.append(
+              'max-value-cost',
+              parkingRangeState['max-value-cost']
+            );
+          }
+          window.location.href = this.action + '?' + params.toString();
         }
-        if (
-          parkingRangeState['max-value-cost'] &&
-          !params.has('max-value-cost')
-        ) {
-          params.append('max-value-cost', parkingRangeState['max-value-cost']);
-        }
-
-        window.location.href = this.action + '?' + params.toString();
       });
     };
 
