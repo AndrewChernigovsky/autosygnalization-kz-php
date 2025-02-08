@@ -17,14 +17,14 @@ export class CardCartButtonCounter extends Component {
     return true;
   };
 
-  render({ id, onAdd, onRemove, quantity }) {
+  render({ id, addCount, removeCount, quantity }) {
     const isDisabled = this.btnDisabledState(quantity);
     return html`
       <button
         type="button"
         class="button card-more__button card-more__button--min"
         data-id=${id}
-        onClick=${onRemove}
+        onClick=${removeCount}
         disabled=${isDisabled}
         aria-label="Убрать товар"
       >
@@ -35,7 +35,7 @@ export class CardCartButtonCounter extends Component {
         type="button"
         class="button card-more__button card-more__button--max"
         data-id=${id}
-        onClick=${onAdd}
+        onClick=${addCount}
         aria-label="Добавить товар"
       >
         +

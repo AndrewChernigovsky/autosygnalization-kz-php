@@ -1,6 +1,5 @@
 import { html, Component } from 'htm/preact';
 import { CardCartButtonCounter } from './CardCartButtonCounter.jsx';
-import { ProductAPI } from './../../modules/api/getProduct.js';
 import { compileString } from 'sass';
 
 export class CardProduct extends Component {
@@ -72,7 +71,6 @@ export class CardProduct extends Component {
 
   sendSessionCart(btn, action, cart) {
     let products = JSON.parse(sessionStorage.getItem('cart')) || [];
-
     if (this.cartCounter) {
       const currentCount = products.reduce(
         (total, product) => total + product.quantity,
@@ -84,9 +82,6 @@ export class CardProduct extends Component {
         this.cartCounter.textContent = currentCount;
         console.log('здесь');
       }
-
-      const productApi = new ProductAPI();
-      productApi.createProducts();
 
       const productId = cart ? btn.dataset.id : btn.parentElement.dataset.id;
       const productPrice = cart
@@ -116,7 +111,6 @@ export class CardProduct extends Component {
       }
 
       sessionStorage.setItem('cart', JSON.stringify(products));
-      productApi.addProduct(productId);
 
       let numberUniqueId = products.map((product) => product.id).length;
 
@@ -125,15 +119,6 @@ export class CardProduct extends Component {
       }, 0);
 
       this.cartCounter.textContent = numberUniqueId; // здесь на карточки
-
-      productApi
-        .sendCart(products)
-        .then((responseData) => {
-          console.log('Данные успешно отправлены:', responseData);
-        })
-        .catch((error) => {
-          console.error('Ошибка при отправке данных:', error);
-        });
     }
   }
 
@@ -146,10 +131,10 @@ export class CardProduct extends Component {
 
         if (newQuantity === 0) {
           this.setState({ isRemoveButtonDisabled: true });
-          if (typeof this.props.onRemove === 'function') {
-            this.props.onRemove(this.props.id);
+          if (typeof this.props.removeCount === 'function') {
+            this.props.removeCount(this.props.id);
           } else {
-            console.warn('onRemove is not a function');
+            console.warn('removeCount is not a function');
           }
         }
 
@@ -208,8 +193,8 @@ export class CardProduct extends Component {
     return html`
       <${CardCartButtonCounter}
         id=${this.id}
-        onRemove=${this.removeToCart}
-        onAdd=${this.addToCart}
+        removeCount=${this.removeToCart}
+        addCount=${this.addToCart}
         quantity=${this.state.quantity}
         isRemoveButtonDisabled=${this.state.isRemoveButtonDisabled}
       />
