@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../data/prices.php';
+include_once __DIR__ . '/../../data/prices-services.php';
 
 $variables = new SetVariables();
 $variables->setVar();

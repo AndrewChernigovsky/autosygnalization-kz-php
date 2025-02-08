@@ -110,7 +110,7 @@ echo $head->setHead();
   <main class="main">
     <h2 class="title__h2">Парковочные системы</h2>
     <div class="catalog">
-      <div class="catalog__wrapper">
+      <div class="catalog__wrapper parking-system">
         <aside class="aside">
           <p>Стоимость</p>
           <?= $filters->renderFilters(false, true, false, '/files/php/pages/parking-systems/parking-systems.php'); ?>
