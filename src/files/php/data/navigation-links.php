@@ -3,20 +3,27 @@
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
 
 
+
 class NavigationLinks
 {
     private $path;
     private $variables;
     private $path_pages;
+    private $filters_products_count = [
+      'vnedorojnik' => 10,
+    ]; // тут добавил
 
-
-    public function __construct()
+    public function __construct(array $filters_products_count = []) //тут изменил
     {
 
         $this->variables = new SetVariables();
         $this->variables->setVar();
         $this->path = $this->variables->getPathFileURL();
         $this->path_pages = $this->variables->getPathFileURL() . "/files/php/pages";
+
+        $this->filters_products_count = !empty($filters_products_count) ? $filters_products_count : [
+          'vnedorojnik' => 10,
+      ]; // тут добавил
     }
 
     public function getNavlinks()
@@ -87,13 +94,41 @@ class NavigationLinks
 
     public function getCategoriesAutoSygnals()
     {
-        $categories_autosygnals = [
-          ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском', "count" => 11, "src" => "$this->path/assets/images/autosygnals/autosygnals-1.avif"],
-          ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM', "count" => 11, "src" => "$this->path/assets/images/autosygnals/autosygnals-2.avif"],
-          ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска', "count" => 11, "src" => "$this->path/assets/images/autosygnals/autosygnals-3.avif"],
-          ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=catalog", 'name' => 'Каталог автосигнализаций Starline', "count" => 11, "src" => "$this->path/assets/images/autosygnals/autosygnals-4.avif"],
-          ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=accessories", 'name' => 'Пульты и аксессуары', "count" => 11, "src" => "$this->path/assets/images/autosygnals/autosygnals-5.avif"],
-        ];
-        return $categories_autosygnals;
+      $categories_autosygnals = [
+        [
+            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'name' => 'Автосигнализации с автозапуском',
+            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+            'src' => "$this->path/assets/images/autosygnals/autosygnals-1.avif"
+        ],
+        [
+            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'name' => 'Автосигнализации с GSM',
+            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+            'src' => "$this->path/assets/images/autosygnals/autosygnals-2.avif"
+        ],
+        [
+            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'name' => 'Автосигнализации без автозапуска',
+            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+            'src' => "$this->path/assets/images/autosygnals/autosygnals-3.avif"
+        ],
+        [
+            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'name' => 'Каталог автосигнализаций Starline',
+            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+            'src' => "$this->path/assets/images/autosygnals/autosygnals-4.avif"
+        ],
+        [
+            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'name' => 'Пульты и аксессуары',
+            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+            'src' => "$this->path/assets/images/autosygnals/autosygnals-5.avif"
+        ],
+    ];
+    return $categories_autosygnals;
     }
 }
+
+
+

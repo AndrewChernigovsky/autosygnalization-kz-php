@@ -53,8 +53,9 @@ $navigationLinks = new NavigationLinks();
           <ul class="nav-list list-type-none">
             <?php
             foreach ($navigationLinks->getNavlinks() as $link) {
+              $uniqueId = 'link_' . preg_replace('/[\/?=&]/', '_', $link['path']);
               echo '<li class="nav-item">
-            <a class="link ' . isActive($link['path'], $currentPath) . '" href="' . htmlspecialchars($link['path']) . '">' . htmlspecialchars($link['name']) . '</a>
+            <a class="link ' . isActive($link['path'], $currentPath) . '" href="' . htmlspecialchars($link['path']) . '" id="' . htmlspecialchars($uniqueId) . '">' . htmlspecialchars($link['name']) . '</a>
           </li>';
             }
             ?>
