@@ -33,9 +33,21 @@ function isActiveClassTabContent($index)
     return $index === 0 ? 'tab__list--show' : '';
 }
 
-function isGarantyTab($title)
+function DescriptionTabIsEmpty($tabs, $title)
 {
-    return $title === 'ГАРАНТИЯ' ? 'garanty' : '';
+    if (isset($tabs['ОПИСАНИЕ'])) {
+        $descriptionArray = $tabs['ОПИСАНИЕ'];
+
+        if (is_array($descriptionArray) && empty($descriptionArray)) {
+            return $title !== 'ОПИСАНИЕ' ? 'tab__list--show ' : '';
+        }
+    }
+    return '';
+}
+
+function isTextTab($title)
+{
+    return $title === 'ГАРАНТИЯ' ? 'tab__list--no-column ' : '';
 }
 
 ?>
@@ -60,7 +72,7 @@ function isGarantyTab($title)
         <div class="tab__content">
             <?php $index = 0; ?>
             <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
-                <?php if ($tab_title === 'ОПИСАНИЕ'): ?>
+                <?php if ($tab_title === 'ОПИСАНИЕ' && !empty($tab_content) ): ?>
                     <!-- Список items -->
                     <?php if (isset($tab_content['items'])): ?>
                         <ul class="tab__list <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
@@ -90,9 +102,18 @@ function isGarantyTab($title)
                             <?php endforeach; ?>
                         </ul>
                     <?php endif; ?>
+                    <!-- Description -->
+                    <?php if (isset($tab_content['description'])): ?>
+                        <ul class="tab__list tab__list--no-column <?= isActiveClassTabContent($index) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                            <li class="tab__item tab__item--text">
+                                <p class="tab__description"><?= htmlspecialchars($tab_content['description']); ?></p>
+                            </li>
+                        </ul>
+                    <?php endif; ?>
+
                 <?php else: ?>
                     <!-- Для других вкладок -->
-                    <ul class="tab__list <?= isActiveClassTabContent($index) ?><?= isGarantyTab($tab_title) ?> list-style-none" data-content="<?= $tab_title; ?>">
+                    <ul class="tab__list <?= isActiveClassTabContent($index) ?> <?= isTextTab($tab_title) ?> <?= DescriptionTabIsEmpty($product_tabs, $tab_title) ?> <?= count($tab_content) === 1 ? 'tab__list--no-column ' : '' ?> list-style-none" data-content="<?= $tab_title; ?>">
                         <?php foreach ($tab_content as $item): ?>
                             <li class="tab__item tab__item--text">
                                 <?php if (!empty($item['title'])): ?>

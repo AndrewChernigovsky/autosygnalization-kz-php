@@ -400,4 +400,18 @@
       line-height: 86px;
     }
   }  
+
+  & + p {
+    text-align: center;
+    max-width: 300px;
+    margin: 20px auto;
+
+    @media screen and (min-width: var.$tablet) {
+        max-width: 768px;
+      }
+
+    @media screen and (min-width: var.$desktop) {
+        max-width: 1440px;
+      }
+  }
 }
