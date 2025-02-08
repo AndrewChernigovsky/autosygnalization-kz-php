@@ -29,6 +29,7 @@ const {
   addToCartButton,
   editLinkPopular,
   editLinkParking,
+  setAutosygnalsLinkPath,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -60,6 +61,9 @@ const {
   ),
   editLinkParking: document.getElementById(
     'link__dist_files_php_pages_parking-systems_parking-systems.php'
+  ),
+  setAutosygnalsLinkPath: document.querySelector(
+    '.autosygnals__list.list-style-none.swiper-wrapper'
   ),
 };
 
@@ -96,6 +100,12 @@ async function loadModules() {
   if (editLinkParking != null) {
     const { editLinkParking } = await import('./modules/editLinkParking.js');
     editLinkParking();
+  }
+  if (setAutosygnalsLinkPath != null) {
+    const { setAutosygnalsLinkPath } = await import(
+      './modules/set-autosygnals-link-path.js'
+    );
+    setAutosygnalsLinkPath();
   }
   if (footer != null) {
     const { toggleList } = await import('./modules/footer-menu.js');
