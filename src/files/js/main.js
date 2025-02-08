@@ -26,7 +26,7 @@ const {
   catalog,
   cardMoreButton,
   cartButtons,
-  addToCartButton
+  addToCartButton,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -51,8 +51,8 @@ const {
   aside: document.querySelector('.aside'),
   catalog: document.querySelector('.catalog__products'),
   cardMoreButton: document.querySelector('.card-more__button-cost'),
-  cartButtons: document.querySelectorAll('.cart-button'), 
-  addToCartButton: document.querySelector('.card-more__button-cart')
+  cartButtons: document.querySelectorAll('.cart-button'),
+  addToCartButton: document.querySelector('.card-more__button-cart'),
 };
 
 async function loadModules() {
@@ -88,16 +88,18 @@ async function loadModules() {
   if (selected != null) {
     const select = await import('./modules/select.js');
     const CustomSelect = select.default;
-    const path = window.location.href.includes('parking-systems')
+
+    const currentPath = window.location.pathname.includes('parking-systems')
       ? 'files/php/pages/parking-systems/parking-systems.php'
       : 'files/php/pages/catalog/catalog.php';
+
     new CustomSelect(
       {
         selected: '.select-selected',
         item: '.select-items',
         options: '.select-item',
       },
-      path
+      currentPath
     );
   }
   if (cartCounter != null || cartButtons.length > 0) {
@@ -117,8 +119,10 @@ async function loadModules() {
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
     const { saveCheckbox } = await import('./modules/filter.js');
+    const { saveRangeInParking } = await import('./modules/filter.js');
     filterToggleMenu();
     saveCheckbox();
+    saveRangeInParking();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');
@@ -183,6 +187,6 @@ async function loadModules() {
     const { renderCardButton } = await import('./modules/card-cart.js');
     renderCardButton();
   }
- }
+}
 
 document.addEventListener('DOMContentLoaded', loadModules);
