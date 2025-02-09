@@ -61,7 +61,7 @@ echo $head->setHead();
         </div>
       </div>
     </section>
-    <section class="price-services">
+    <section class="price-services" id="price-services">
       <div class="container">
         <h2 class="price-services__title">Прайс на дополнительные услуги:<span>*</span></h2>
           <ul class="price-services__list list-style-none">

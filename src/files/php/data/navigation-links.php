@@ -76,7 +76,7 @@ class NavigationLinks
                 'link' => "$this->path_pages/service/service.php?service=setup-videoregistration",
                 'name' => "Установка видеорегистраторов и антирадаров"
               ],
-              ['link' => "$this->path_pages/price/price.php", 'name' => "Прайс на услуги"],
+              ['link' => "$this->path_pages/price/price.php#price-services", 'name' => "Прайс на услуги"],
             ],
           ],
           [
