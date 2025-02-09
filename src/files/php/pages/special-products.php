@@ -1,9 +1,5 @@
 <?php
-$path_to_include = __DIR__ . '/../helpers/classes/setVariables.php';
-if (!file_exists($path_to_include)) {
-  die("Файл не найден: $path_to_include");
-}
-include $path_to_include;
+include_once __DIR__ . '/../helpers/classes/setVariables.php';
 include __DIR__ . '/../data/products.php';
 
 $variables = new SetVariables();
@@ -12,13 +8,6 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 $path_href = $path . '/files/php/pages/catalog/catalog.php?special=special';
 
-$head_path = $docROOT . $path . '/files/php/layout/head.php';
-include $head_path;
-
-$base_path = $docROOT . $path . '/files/php/layout';
-
-$title = 'Для Денчика | Auto Security';
-$head = new Head($title, [], []);
 ?>
 
 <!DOCTYPE html>
@@ -26,17 +15,13 @@ $head = new Head($title, [], []);
 <?php
 echo $head->setHead();
 ?>
-
-<body>
-  <?php include $base_path . '/header.php'; ?>
-  <main class="main">    
     <section class="offers">
       <div class="swiper swiper-offers">
         <h3 class="offers__heading">Специальное предложение</h3>
         <ul class="offers__list list-style-none swiper-wrapper">
           <?php if (!empty($products['category'])): ?>  
             <?php foreach ($products['category']['keychain'] as $product): ?>
-              <?php if ($product['popular']): ?>
+              <?php if ($product['special']): ?>
                 <li class="offers__item swiper-slide">
                   <img class="offers__image" src="<?php echo htmlspecialchars($product['gallery'][0]); ?>" alt="<?php echo htmlspecialchars($product['title']); ?>" height="300" width="200">
                   <h4 class="offers__title"><?= htmlspecialchars($product['title']); ?></h4>
@@ -59,7 +44,3 @@ echo $head->setHead();
         </div>
       </div>
     </section>
-  </main>
-  <?php include $base_path . '/footer.php'; ?>  
-</body>
-</html>
