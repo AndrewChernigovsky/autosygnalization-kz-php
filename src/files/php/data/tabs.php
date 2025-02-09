@@ -974,47 +974,47 @@ $tabs = [
           [
             'title' => 'ДИАЛОГОВАЯ ЗАЩИТА',
             'description' => 'Диалоговый код управления StarLine c индивидуальными ключами шифрования 128 бит гарантирует надежную защиту от всех известных кодграбберов.',
-            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection.avif",
+            'path-icon' => "$path/assets/images/products/advantages/dialogue-protection-white.avif",
           ],
           [
             'title' => 'ЗАЩИТА ОТ РАДИОПОМЕХ',
             'description' => 'StarLine уверенно работает в условиях экстремальных городских радиопомех, благодаря уникальному 128-канальному трансиверу.',
-            'path-icon' => "$path/assets/images/products/advantages/radio-protection.avif",
+            'path-icon' => "$path/assets/images/products/advantages/radio-protection-white.avif",
           ],
           [
             'title' => 'SUPER SLAVE',
             'description' => 'Управление охраной автомобиля штатным брелком с надежной дополнительной авторизацией по брелку StarLine',
-            'path-icon' => "$path/assets/images/products/advantages/super-slave.avif",
+            'path-icon' => "$path/assets/images/products/advantages/super-slave-white.avif",
           ],
           [
             'title' => 'РАСШИРЕННЫЙ ДИАПАЗОН ТЕМПЕРАТУР',
             'description' => 'StarLine уверенно работает в суровых климатических условиях при температуре от минус 50 до плюс 85 °С благодаря высококачественным комплектующим.',
-            'path-icon' => "$path/assets/images/products/advantages/temperature-range.avif",
+            'path-icon' => "$path/assets/images/products/advantages/temperature-range-white.avif",
           ],
           [
             'title' => 'РЕКОРДНАЯ ЭНЕРГОЭКОНОМИЧНОСТЬ',
             'description' => 'StarLine гарантирует сохранность достаточного заряда аккумулятора до 60 дней в режиме охраны благодаря использованию запатентованных технологий и программных решений.',
-            'path-icon' => "$path/assets/images/products/advantages/energy-eco.avif",
+            'path-icon' => "$path/assets/images/products/advantages/energy-eco-white.avif",
           ],
           [
             'title' => 'КОНТРОЛЬ КАНАЛА СВЯЗИ',
             'description' => 'Автоматический контроль канала связи обеспечивает прoверку нахождения брелка в зоне действия приемопередатчика охранного оборудования.',
-            'path-icon' => "$path/assets/images/products/advantages/control-channel.avif",
+            'path-icon' => "$path/assets/images/products/advantages/control-channel-white.avif",
           ],
           [
             'title' => 'АВТОРИЗАЦИЯ ПО PIN-КОДУ',
             'description' => 'Дополнительная авторизация надежно защищает автомобиль от угона, усиливая охранные функции штатной сигнализации. Поездка возможна только после ввода индивидуального PIN-кода при помощи штатных кнопок автомобиля',
-            'path-icon' => "$path/assets/images/products/advantages/pin-authorization.avif",
+            'path-icon' => "$path/assets/images/products/advantages/pin-authorization-white.avif",
           ],
           [
             'title' => '3D ДАТЧИК УДАРА И НАКЛОНА',
             'description' => 'Интегрированный цифровой датчик удара и наклона с дистанционной настройкой регистрирует поддомкрачивание и эвакуацию транспортного средства.',
-            'path-icon' => "$path/assets/images/products/advantages/3d-control.avif",
+            'path-icon' => "$path/assets/images/products/advantages/3d-control-white.avif",
           ],
           [
             'title' => 'НЕВИДИМАЯ БЛОКИРОВКА',
             'description' => 'iCAN гарантирует надежную защиту благодаря уникальной запатентованной технологии скрытой блокировки двигателя по штатным цифровым шинам автомобиля',
-            'path-icon' => "$path/assets/images/products/advantages/invisible-blocking.avif",
+            'path-icon' => "$path/assets/images/products/advantages/invisible-blocking-white.avif",
           ],
         ],
         'items-service' => [
