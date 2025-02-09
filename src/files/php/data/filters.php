@@ -5,7 +5,7 @@ include_once __DIR__ . '/products.php';
 class FilterUpdater
 {
     private array $filters;
-    
+
     private array $products;
     private $filter_correct;
 
@@ -38,7 +38,7 @@ class FilterUpdater
         if ($this->filter_correct !== null) {
             foreach ($this->products['category'] as $items) {
                 foreach ($items as $product) {
-                    if (isset($product['options-filters']) && is_array($product['options-filters']) && in_array($this->filter_correct,$product['autosygnals'])) {
+                    if (isset($product['options-filters']) && is_array($product['options-filters']) && in_array($this->filter_correct, $product['autosygnals'])) {
                         foreach ($product['options-filters'] as $filter) {
                             $count[$filter] = ($count[$filter] ?? 0) + 1;
                         }
@@ -56,14 +56,19 @@ class FilterUpdater
                 }
             }
         }
-            
+
 
         // Обновляем значения count в фильтрах
         foreach ($this->filters as &$category) {
             $filterKey = $category['name'];
             $category['count'] = $count[$filterKey] ?? 0;
         }
-        
+
+        return $this->filters;
+    }
+
+    public function getArrayFilters()
+    {
         return $this->filters;
     }
 }

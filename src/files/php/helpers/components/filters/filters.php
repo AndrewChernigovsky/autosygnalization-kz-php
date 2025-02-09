@@ -11,13 +11,14 @@ include_once $path . '/files/php/helpers/components/filters/filter-cost.php';
 include_once $path . '/files/php/helpers/components/filters/filter-functions.php';
 include_once $path . '/files/php/helpers/components/filters/filter-basic.php';
 
+
 class Filters
 {
     private $filterCost;
     private $filterFunctions;
     private $filterBasic;
     private $filterUpdater;
-    
+
 
     private $path;
     private $filters_products_count;
@@ -35,7 +36,7 @@ class Filters
 
         // Инициализация массива для подсчета товаров
         $this->filters_products_count = [];
-        
+
         $this->filterUpdater->updateFilterCounts();
         error_log("СУУУУУУУУУУУУУУУУУУУУУУУКККККККККККККААААААААААААААААААА" . print_r($data_filters, true));
         if (!empty($products)) {

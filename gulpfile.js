@@ -172,6 +172,13 @@ const copyStatics = (cb) => {
     ]).pipe(dest(paths.dist))
   );
 
+  tasks.push(
+    src([
+      "./src/composer.json",
+      "./src/composer.lock",
+    ]).pipe(dest(paths.dist))
+  );
+
   return Promise.all(tasks)
     .then(() => {
       cb();
