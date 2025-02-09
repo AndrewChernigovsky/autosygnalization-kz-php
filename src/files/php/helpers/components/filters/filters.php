@@ -16,6 +16,8 @@ class Filters
     private $filterCost;
     private $filterFunctions;
     private $filterBasic;
+    private $filterUpdater;
+    
 
     private $path;
     private $filters_products_count;
@@ -25,6 +27,7 @@ class Filters
         $this->filterCost = new FilterCost();
         $this->filterFunctions = new FilterFunctions($data_filters);
         $this->filterBasic = new FilterBasic();
+        $this->filterUpdater = new FilterUpdater($products);
 
         $variables = new SetVariables();
         $variables->setVar();
@@ -32,7 +35,9 @@ class Filters
 
         // Инициализация массива для подсчета товаров
         $this->filters_products_count = [];
-
+        
+        $this->filterUpdater->updateFilterCounts();
+        error_log("СУУУУУУУУУУУУУУУУУУУУУУУКККККККККККККААААААААААААААААААА" . print_r($data_filters, true));
         if (!empty($products)) {
             // Проходим по всем категориям и товарам
             foreach ($products['category'] as $items) {
@@ -45,7 +50,7 @@ class Filters
                             if (isset($this->filters_products_count[$filter])) {
                                 $this->filters_products_count[$filter]++;
                             } else {
-                                $this->filters_products_count[$filter] = 1;
+                                $this->filters_products_count[$filter] = 0;
                             }
                         }
                     }
