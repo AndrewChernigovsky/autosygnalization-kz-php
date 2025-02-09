@@ -82,7 +82,7 @@ class NavigationLinks
           [
             'title' => "Клиенту",
             "list" => [
-              ["link" => $this->path_pages . "/autosygnals/autosygnals.php", "name" => 'Специальные предложения'],
+              ["link" => $this->path_pages . "/special/special.php", "name" => 'Специальные предложения'],
               ["link" => $this->path_pages . "/cart/cart.php", "name" => 'Корзина заказа'],
               ["link" => $this->path_pages . "/client/client.php?client=review", "name" => 'Оставить отзыв'],
               ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Галерея выполненных работ'],
