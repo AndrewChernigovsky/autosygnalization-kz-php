@@ -123,7 +123,7 @@ echo $head->setHead();
               foreach ($filteredProducts as $product):
                 echo getProductCardWModel([$product], false, $PAGE);
                 $productCount++;
-                if ($productCount == 6):
+                if ($productCount === 6 || $productCount === count($filteredProducts)):
                   echo getSpecialOffersSection();
                 endif;
               endforeach;

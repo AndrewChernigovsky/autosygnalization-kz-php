@@ -122,7 +122,7 @@ echo $head->setHead();
                     foreach ($filteredProducts as $product) {
                         echo getProductCardWModel([$product], false, $PAGE); // Вывод товара
                         $count++;
-                        if ($count === 6): // Вставляем "Специальное предложение" после второго товара
+                        if ($count === 6 || $count === count($filteredProducts)): // Вставляем "Специальное предложение" после второго товара
                             echo getSpecialOffersSection(); // Вставляем слайдер
                         endif;
                     }

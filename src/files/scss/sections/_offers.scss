@@ -10,16 +10,12 @@
   text-align: center;
 
   @media screen and (min-width: var.$tablet) {
-    width: 748px;
+    width: 100%;
     padding: 20px;
-  }
-
-  @media screen and (min-width: var.$desktop-min) {
-    width: 984px;
+    grid-column: 1 / 3;
   }
 
   @media screen and (min-width: var.$desktop) {
-    width: 1020px;
     grid-row: 4 / 5;
     grid-column: 1 / 4;
   }
@@ -87,6 +83,7 @@
     @media screen and (min-width: var.$desktop-min) {
       max-width: 480px;
       height: 320px;
+      width: 100%;
     }
 
     @media screen and (min-width: var.$desktop) {
