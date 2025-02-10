@@ -115,9 +115,7 @@ async function loadModules() {
     const select = await import('./modules/select.js');
     const CustomSelect = select.default;
 
-    const currentPath = window.location.pathname.includes('parking-systems')
-      ? 'files/php/pages/parking-systems/parking-systems.php'
-      : 'files/php/pages/catalog/catalog.php';
+    const currentPath = window.location.pathname;
 
     new CustomSelect(
       {

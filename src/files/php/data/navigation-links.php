@@ -96,25 +96,25 @@ class NavigationLinks
     {
       $categories_autosygnals = [
         [
-            'link' => "$this->path_pages/autosygnals/autosygnals-new.php",
+            'link' => "$this->path_pages/autosygnals/autosygnals-auto.php",
             'name' => 'Автосигнализации с автозапуском',
             'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
             'src' => "$this->path/assets/images/autosygnals/autosygnals-1.avif"
         ],
         [
-            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'link' => "$this->path_pages/autosygnals/autosygnals-gsm.php",
             'name' => 'Автосигнализации с GSM',
             'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
             'src' => "$this->path/assets/images/autosygnals/autosygnals-2.avif"
         ],
         [
-            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'link' => "$this->path_pages/autosygnals/autosygnals-without-auto.php",
             'name' => 'Автосигнализации без автозапуска',
             'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
             'src' => "$this->path/assets/images/autosygnals/autosygnals-3.avif"
         ],
         [
-            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'link' => "$this->path_pages/autosygnals/autosygnals-starline.php",
             'name' => 'Каталог автосигнализаций Starline',
             'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
             'src' => "$this->path/assets/images/autosygnals/autosygnals-4.avif"
