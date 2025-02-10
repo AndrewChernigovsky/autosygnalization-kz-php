@@ -31,7 +31,7 @@ include_once $docROOT . $path . '/files/php/data/filters.php';
 include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);
-$filters = new Filters($data_categories_filters, $products);
+$filters = new Filters($products);
 $sorting = new Sorting();
 $article = new Article();
 $articleData = new ArticleData();
@@ -72,11 +72,11 @@ if (empty($OPTIONS)) {
         }
     }
 }
-error_log(print_r($OPTIONS, true) . ' : OPTIONS');
+
 
 if (!empty($SELECT)) {
     if($SELECT === 'name') {
-        error_log(print_r($filteredProducts, true) . ' : FILTERS');
+
         usort($filteredProducts, function ($a, $b) {
             $nameA = $a['title'] ?? '';
             $nameB = $b['title'] ?? '';

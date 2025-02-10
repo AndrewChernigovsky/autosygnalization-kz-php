@@ -3,7 +3,6 @@ include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../data/article.php';
 include_once __DIR__ . '/../../data/select.php';
 include_once __DIR__ . '/../../data/products.php';
-include_once __DIR__ . '/../../data/filters.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/filters/filters.php';
 include_once __DIR__ . '/../../helpers/components/filters/sorting.php';
@@ -32,7 +31,7 @@ include_once $docROOT . $path . '/files/php/data/filters.php';
 include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);
-$filters = new Filters($data_categories_filters, $products);
+$filters = new Filters($products, "gsm");
 $sorting = new Sorting();
 $article = new Article();
 $articleData = new ArticleData();
@@ -41,7 +40,6 @@ $selectData = new SelectData();
 
 $allProducts = $products;
 
-error_log(print_r($data_categories_filters,true) . "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFf");
 // Фильтрация по OPTIONS
 if (empty($OPTIONS)) {
     $filteredProducts = $allProducts;
@@ -78,7 +76,7 @@ if (empty($OPTIONS)) {
 
 if (!empty($SELECT)) {
     if($SELECT === 'name') {
-  
+
         usort($filteredProducts, function ($a, $b) {
             $nameA = $a['title'] ?? '';
             $nameB = $b['title'] ?? '';
@@ -112,7 +110,7 @@ echo $head->setHead();
   <main class="main">
     <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
     <div class="catalog">
-      <div class="catalog__wrapper all-products <?php echo $path; ?>">
+      <div class="catalog__wrapper all-products">
         <aside class="aside">
           <?= $filters->renderFilters(); ?>
         </aside>
@@ -127,6 +125,7 @@ echo $head->setHead();
       </div>
       <?php if ($filteredProducts): ?>
         <?php
+          error_log(print_r($filteredProducts, true) . ' :FILTERS ');
           $pagination = new Pagination($filteredProducts);
           ?>
         <?= $pagination->render(); ?>

@@ -7,6 +7,7 @@ $docROOT = $variables->getDocRoot();
 $path = $docROOT . $variables->getPathFileURL();
 
 include_once $path . '/files/php/data/filters.php';
+include_once $path . '/files/php/data/products.php';
 include_once $path . '/files/php/helpers/components/filters/filter-cost.php';
 include_once $path . '/files/php/helpers/components/filters/filter-functions.php';
 include_once $path . '/files/php/helpers/components/filters/filter-basic.php';
@@ -16,44 +17,55 @@ class Filters
     private $filterCost;
     private $filterFunctions;
     private $filterBasic;
-    private $filterUpdater;
+    private $filter_correct;
     
 
     private $path;
     private $filters_products_count;
 
-    public function __construct($data_filters, $products)
+    public function __construct($products, $filter_correct = null)
     {
+        $this->filter_correct =  $filter_correct;
         $this->filterCost = new FilterCost();
-        $this->filterFunctions = new FilterFunctions($data_filters);
+        $this->filterFunctions = new FilterFunctions($products, $filter_correct);
         $this->filterBasic = new FilterBasic();
-        $this->filterUpdater = new FilterUpdater($products);
 
         $variables = new SetVariables();
         $variables->setVar();
         $this->path = $variables->getPathFileURL();
-
         // Инициализация массива для подсчета товаров
         $this->filters_products_count = [];
-        
-        $this->filterUpdater->updateFilterCounts();
-        error_log("СУУУУУУУУУУУУУУУУУУУУУУУКККККККККККККААААААААААААААААААА" . print_r($data_filters, true));
         if (!empty($products)) {
             // Проходим по всем категориям и товарам
             foreach ($products['category'] as $items) {
                 foreach ($items as $product) {
                     // Проверяем, есть ли у товара поле options-filters
-                    if (isset($product['options-filters']) && is_array($product['options-filters'])) {
-                        // Проходим по каждому значению options-filters
-                        foreach ($product['options-filters'] as $filter) {
-                            // Увеличиваем счетчик для текущего фильтра
-                            if (isset($this->filters_products_count[$filter])) {
-                                $this->filters_products_count[$filter]++;
-                            } else {
-                                $this->filters_products_count[$filter] = 0;
+                    if ($this->filter_correct !== null) {
+                        if (isset($product['options-filters']) && is_array($product['options-filters']) && in_array($this->filter_correct, $product['autosygnals'])) {
+                            // Проходим по каждому значению options-filters
+                            foreach ($product['options-filters'] as $filter) {
+                                // Увеличиваем счетчик для текущего фильтра
+                                if (isset($this->filters_products_count[$filter])) {
+                                    $this->filters_products_count[$filter]++;
+                                } else {
+                                    $this->filters_products_count[$filter] = 0;
+                                }
+                            }
+                        }
+                    } else {
+                        if (isset($product['options-filters']) && is_array($product['options-filters'])) {
+                            // Проходим по каждому значению options-filters
+                            foreach ($product['options-filters'] as $filter) {
+                                // Увеличиваем счетчик для текущего фильтра
+                                if (isset($this->filters_products_count[$filter])) {
+                                    $this->filters_products_count[$filter]++;
+                                } else {
+                                    $this->filters_products_count[$filter] = 0;
+                                }
                             }
                         }
                     }
+
                 }
             }
         }
