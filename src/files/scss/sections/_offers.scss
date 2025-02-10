@@ -19,8 +19,9 @@
   }
 
   @media screen and (min-width: var.$desktop) {
-    /* width: 1090px; */
-    width: 1005px;
+    width: 1020px;
+    grid-row: 4 / 5;
+    grid-column: 1 / 4;
   }
 
   &__heading {
@@ -285,6 +286,14 @@
 
   &__button--next::before {
     background-image: url('#{var.$DEV_PATH}assets/images/vectors/arrow-slider-next.svg');
+  }
+}
+
+.parking-system {
+  .offers {
+    @media screen and (min-width: var.$desktop) {
+      grid-row: 3 / 4;
+    }
   }
 }
   

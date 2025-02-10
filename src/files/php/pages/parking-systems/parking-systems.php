@@ -136,7 +136,6 @@ echo $head->setHead();
             ?>
             <?= $pagination->render(); ?>
             <?php endif; ?>
-            <?php include $docROOT . $path . '/files/php/pages/special-products.php'; ?>
         </div>
         <?= getShop('setup'); ?>
     </main>
