@@ -12,6 +12,7 @@ include_once $path . '/files/php/helpers/components/filters/filter-cost.php';
 include_once $path . '/files/php/helpers/components/filters/filter-functions.php';
 include_once $path . '/files/php/helpers/components/filters/filter-basic.php';
 
+
 class Filters
 {
     private $filterCost;
