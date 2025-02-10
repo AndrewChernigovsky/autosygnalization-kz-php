@@ -3,18 +3,17 @@ include_once __DIR__ . '/../helpers/classes/setVariables.php';
 include __DIR__ . '/../data/products.php';
 
 $variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
-$path_href = $path . '/files/php/pages/catalog/catalog.php?special=special';
+    $variables->setVar();
+    $docROOT = $variables->getDocRoot();
+    $path = $variables->getPathFileURL();
+    $path_href = $path . '/files/php/pages/catalog/catalog.php?special=special';
 
-?>
+function getSpecialOffersSection() {
+  global $path_href;
+  global $products;
 
-<!DOCTYPE html>
-<html lang="ru">
-<?php
-echo $head->setHead();
-?>
+    ob_start(); // Начинаем буферизацию вывода
+    ?>
     <section class="offers">
       <div class="swiper swiper-offers">
         <h3 class="offers__heading">Специальное предложение</h3>
@@ -44,3 +43,7 @@ echo $head->setHead();
         </div>
       </div>
     </section>
+    <?php
+    return ob_get_clean(); // Возвращаем HTML из буфера
+}
+?>

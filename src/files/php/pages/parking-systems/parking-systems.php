@@ -29,6 +29,7 @@ $title = 'Парковочные системы | Auto Security';
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/filters.php';
 include_once $docROOT . $path . '/files/php/data/products.php';
+include_once $docROOT . $path . '/files/php/pages/special-products.php';
 
 $head = new Head($title, [], []);
 $filters = new Filters($data_categories_filters, $products);
@@ -106,37 +107,40 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
-  <main class="main">
-    <h2 class="title__h2">Парковочные системы</h2>
-    <div class="catalog">
-      <div class="catalog__wrapper parking-system">
-        <aside class="aside">
-          <p>Стоимость</p>
-          <?= $filters->renderFilters(false, true, false, '/files/php/pages/parking-systems/parking-systems.php'); ?>
-        </aside>
-        <div class="catalog__products">
-          <?= $select->createComponent($selectData->getSelectData()) ?>
-          <?php if (!empty($filteredProducts)): ?>
-              <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
-          <?php else: ?>
-              <p>Нет товаров, соответствующих выбранным фильтрам.</p>
-          <?php endif; ?>
+    <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
+    <main class="main">
+        <h2 class="title__h2">Парковочные системы</h2>
+        <div class="catalog">
+            <div class="catalog__wrapper parking-system">
+                <aside class="aside">
+                    <p>Стоимость</p>
+                    <?= $filters->renderFilters(false, true, false, '/files/php/pages/parking-systems/parking-systems.php'); ?>
+                </aside>
+                <div class="catalog__products">
+                    <?php
+                    $count = 0;
+                    foreach ($filteredProducts as $product) {
+                        echo getProductCardWModel([$product], false, $PAGE); // Вывод товара
+                        $count++;
+                        if ($count === 6): // Вставляем "Специальное предложение" после второго товара
+                            echo getSpecialOffersSection(); // Вставляем слайдер
+                        endif;
+                    }
+                    ?>
+                </div>
+            </div>
+            <?php if ($filteredProducts): ?>
+            <?php
+                error_log(print_r($filteredProducts, true) . ' :FILTERS ');
+                $pagination = new Pagination($filteredProducts);
+            ?>
+            <?= $pagination->render(); ?>
+            <?php endif; ?>
+            <?php include $docROOT . $path . '/files/php/pages/special-products.php'; ?>
         </div>
-      </div>
-      <?php if ($filteredProducts): ?>
-        <?php
-          error_log(print_r($filteredProducts, true) . ' :FILTERS ');
-          $pagination = new Pagination($filteredProducts);
-          ?>
-        <?= $pagination->render(); ?>
-      <?php endif; ?>
-      <?php include $docROOT . $path . '/files/php/pages/special-products.php'; ?>
-    </div>
-    <?= getShop('setup'); ?>
-  </main>
-  <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
-  <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
+        <?= getShop('setup'); ?>
+    </main>
+    <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
+    <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
 </body>
-
 </html>
