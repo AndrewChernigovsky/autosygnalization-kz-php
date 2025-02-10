@@ -3,7 +3,7 @@ class FilterBasic
 {
     public function renderFilters($count)
     {
-        error_log(print_r($count, true) . ' : COUNTS');
+        error_log(print_r($count, true) . ' : COUNTS111111111');
         ob_start();
         ?>
     <div class="filter-basic">

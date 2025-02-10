@@ -30,7 +30,7 @@ include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);
-$filters = new Filters($products);
+$filters = new Filters($products, "gsm");
 $sorting = new Sorting();
 $article = new Article();
 $articleData = new ArticleData();

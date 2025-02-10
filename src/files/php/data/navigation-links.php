@@ -15,7 +15,6 @@ class NavigationLinks
 
     public function __construct(array $filters_products_count = []) //тут изменил
     {
-        error_log(print_r($filters_products_count, true) . ' : PRODUCTS[]'); 
 
         $this->variables = new SetVariables();
         $this->variables->setVar();
@@ -97,7 +96,7 @@ class NavigationLinks
     {
       $categories_autosygnals = [
         [
-            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'link' => "$this->path_pages/autosygnals/autosygnals-new.php",
             'name' => 'Автосигнализации с автозапуском',
             'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
             'src' => "$this->path/assets/images/autosygnals/autosygnals-1.avif"
