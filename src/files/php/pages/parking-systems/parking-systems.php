@@ -5,6 +5,7 @@ include_once __DIR__ . '/../../data/select.php';
 include_once __DIR__ . '/../../data/products.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/filters/filters.php';
+include_once __DIR__ . '/../../helpers/components/filters/sorting.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/article.php';
@@ -26,10 +27,12 @@ $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $title = 'Парковочные системы | Auto Security';
 
 include_once $head_path;
+include_once $docROOT . $path . '/files/php/data/filters.php';
 include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);
-$filters_render = new FiltersRender($products, "auto");
+$filters = new Filters($data_categories_filters, $products);
+$sorting = new Sorting();
 $article = new Article();
 $articleData = new ArticleData();
 $select = new Select();
@@ -110,7 +113,7 @@ echo $head->setHead();
       <div class="catalog__wrapper parking-system">
         <aside class="aside">
           <p>Стоимость</p>
-          <?= $filters_render->renderFilters(false, true, false, '/files/php/pages/parking-systems/parking-systems.php'); ?>
+          <?= $filters->renderFilters(false, true, false, '/files/php/pages/parking-systems/parking-systems.php'); ?>
         </aside>
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>

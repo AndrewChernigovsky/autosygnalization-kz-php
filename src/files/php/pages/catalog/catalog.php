@@ -5,6 +5,7 @@ include_once __DIR__ . '/../../data/select.php';
 include_once __DIR__ . '/../../data/products.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/filters/filters.php';
+include_once __DIR__ . '/../../helpers/components/filters/sorting.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/article.php';
@@ -29,7 +30,8 @@ include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);
-$filters_render = new FiltersRender($products);
+$filters = new Filters($products);
+$sorting = new Sorting();
 $article = new Article();
 $articleData = new ArticleData();
 $select = new Select();
@@ -109,7 +111,7 @@ echo $head->setHead();
     <div class="catalog">
       <div class="catalog__wrapper all-products">
         <aside class="aside">
-          <?= $filters_render->renderFilters(); ?>
+          <?= $filters->renderFilters(); ?>
         </aside>
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
