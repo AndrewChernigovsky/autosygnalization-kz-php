@@ -28,10 +28,9 @@ $title = 'Каталог | Auto Security';
 
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
-include_once $docROOT . $path . '/files/php/pages/special-products.php';
 
 $head = new Head($title, [], []);
-$filters = new Filters($products);
+$filters = new Filters($products, "gsm");
 $sorting = new Sorting();
 $article = new Article();
 $articleData = new ArticleData();
@@ -117,17 +116,8 @@ echo $head->setHead();
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
           <?php if (!empty($filteredProducts)): ?>
-              <?php
-              $productCount = 0;
-              foreach ($filteredProducts as $product):
-                echo getProductCardWModel([$product], false, $PAGE);
-                $productCount++;
-                if ($productCount === 6 || $productCount === count($filteredProducts)):
-                  echo getSpecialOffersSection();
-                endif;
-              endforeach;
-              ?>
-              <?php else: ?>
+              <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
+          <?php else: ?>
               <p>Нет товаров, соответствующих выбранным фильтрам.</p>
           <?php endif; ?>
         </div>

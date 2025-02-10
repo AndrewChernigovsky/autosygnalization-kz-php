@@ -54,8 +54,8 @@ class NavigationLinks
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска'],
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=catalog", 'name' => 'Каталог автосигнализаций Starline'],
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=accessories", 'name' => 'Пульты и аксессуары'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=parking-systems", 'name' => 'Парковочные системы'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=price", 'name' => 'Прайс на материал и установку'],
+                  ['link' => "$this->path_pages/parking-systems/parking-systems.php", 'name' => 'Парковочные системы'],
+                  ['link' => "$this->path_pages/price/price.php", 'name' => "Прайс на материал и установку"]
                 ],
               ],
             ],
@@ -81,11 +81,11 @@ class NavigationLinks
           [
             'title' => "Клиенту",
             "list" => [
-              ["link" => $this->path_pages . "/client/client.php?client=special", "name" => 'Специальные предложения'],
-              ["link" => $this->path_pages . "/client/client.php?client=cart", "name" => 'Корзина заказа'],
+              ["link" => $this->path_pages . "/special/special.php", "name" => 'Специальные предложения'],
+              ["link" => $this->path_pages . "/cart/cart.php", "name" => 'Корзина заказа'],
               ["link" => $this->path_pages . "/client/client.php?client=review", "name" => 'Оставить отзыв'],
-              ["link" => $this->path_pages . "/client/client.php?client=gallery", "name" => 'Галерея выполненных работ'],
-              ["link" => $this->path_pages . "/client/client.php?client=map", "name" => 'Как к нам добраться'],
+              ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Галерея выполненных работ'],
+              ["link" => $this->path_pages . "/contacts/contacts.php#location", "name" => 'Как к нам добраться'],
             ]
           ]
         ];
@@ -96,7 +96,7 @@ class NavigationLinks
     {
       $categories_autosygnals = [
         [
-            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'link' => "$this->path_pages/autosygnals/autosygnals-new.php",
             'name' => 'Автосигнализации с автозапуском',
             'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
             'src' => "$this->path/assets/images/autosygnals/autosygnals-1.avif"

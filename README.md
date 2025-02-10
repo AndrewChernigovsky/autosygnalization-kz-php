@@ -32,6 +32,8 @@ https://github.com/Girey-m
 ### -assets - статичные файлы
 
 ## Сборка
+### для поднятия сервера бэка нужен XAMPP либо OpenServer, Apache v2.4,PHP v.8.0, MySQL v8.0;
+### для работы с клиентом использовать сборку на gulp and esbuild. Node.js v20+ 
 ### pnpm i -установить зависимости
 ### pnpm run dev - запустить режим разработчика
 ### pnpm run build - собрать продакшен

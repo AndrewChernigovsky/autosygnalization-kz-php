@@ -27,11 +27,11 @@ $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $title = 'Каталог | Auto Security';
 
 include_once $head_path;
+include_once $docROOT . $path . '/files/php/data/filters.php';
 include_once $docROOT . $path . '/files/php/data/products.php';
-include_once $docROOT . $path . '/files/php/pages/special-products.php';
 
 $head = new Head($title, [], []);
-$filters = new Filters($products);
+$filters = new Filters($data_categories_filters, $products);
 $sorting = new Sorting();
 $article = new Article();
 $articleData = new ArticleData();
@@ -40,16 +40,20 @@ $selectData = new SelectData();
 
 $allProducts = $products;
 
-// Фильтрация по OPTIONS
 if (empty($OPTIONS)) {
-    $filteredProducts = $allProducts;
+    $filteredProducts = array_filter($allProducts, function($product) {
+        return isset($product['special']) && $product['special'] === true;
+    });
 } else {
     $filteredProducts = [];
     foreach ($allProducts['category'] as $category => $items) {
         foreach ($items as $product) {
+            if (!isset($product['special']) || $product['special'] !== true) {
+                continue; 
+            }
+
             $isMatch = true;
             $productCost = $product['price'] ?? 0;
-
 
             if ($productCost < $minCost || $productCost > $maxCost) {
                 $isMatch = false;
@@ -73,10 +77,11 @@ if (empty($OPTIONS)) {
     }
 }
 
+error_log(print_r($OPTIONS, true) . ' : OPTIONS');
 
 if (!empty($SELECT)) {
     if($SELECT === 'name') {
-
+        error_log(print_r($filteredProducts, true) . ' : FILTERS');
         usort($filteredProducts, function ($a, $b) {
             $nameA = $a['title'] ?? '';
             $nameB = $b['title'] ?? '';
@@ -108,7 +113,7 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
-    <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
+    <h2 class="title__h2">Специальные предложения</h2>
     <div class="catalog">
       <div class="catalog__wrapper all-products">
         <aside class="aside">
@@ -117,28 +122,19 @@ echo $head->setHead();
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
           <?php if (!empty($filteredProducts)): ?>
-              <?php
-              $productCount = 0;
-              foreach ($filteredProducts as $product):
-                echo getProductCardWModel([$product], false, $PAGE);
-                $productCount++;
-                if ($productCount === 6 || $productCount === count($filteredProducts)):
-                  echo getSpecialOffersSection();
-                endif;
-              endforeach;
-              ?>
-              <?php else: ?>
+              <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
+          <?php else: ?>
               <p>Нет товаров, соответствующих выбранным фильтрам.</p>
           <?php endif; ?>
         </div>
       </div>
-      <?php if ($filteredProducts): ?>
+      <!-- <?php if ($filteredProducts): ?>
         <?php
           error_log(print_r($filteredProducts, true) . ' :FILTERS ');
           $pagination = new Pagination($filteredProducts);
           ?>
-        <?= $pagination->render(); ?>
-      <?php endif; ?>
+        <?= $pagination->render(); ?> 
+      <?php endif; ?> -->
     </div>
     <?= getShop('setup'); ?>
   </main>
