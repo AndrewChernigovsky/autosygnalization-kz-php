@@ -168,7 +168,9 @@ export function saveCheckbox() {
           params.append('max-value-cost', filtersState['max-value-cost']);
         }
 
-        window.location.href = this.action + '?' + params.toString();
+        window.location.href = `${
+          window.location.href.split('?')[0]
+        }?${params.toString()}`;
       }
     });
 

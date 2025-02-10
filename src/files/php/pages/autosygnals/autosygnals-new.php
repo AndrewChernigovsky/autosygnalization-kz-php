@@ -27,7 +27,6 @@ $head_path = $docROOT . $path . '/files/php/layout/head.php';
 $title = 'Каталог | Auto Security';
 
 include_once $head_path;
-include_once $docROOT . $path . '/files/php/data/filters.php';
 include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);

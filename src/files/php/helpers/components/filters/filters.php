@@ -6,7 +6,7 @@ $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $docROOT . $variables->getPathFileURL();
 
-include_once $path . '/files/php/data/filters.php';
+
 include_once $path . '/files/php/data/products.php';
 include_once $path . '/files/php/helpers/components/filters/filter-cost.php';
 include_once $path . '/files/php/helpers/components/filters/filter-functions.php';
