@@ -18,8 +18,8 @@ export function initSwiperOffers() {
           clickable: true,
         },
         navigation: {
-          prevEl: '.offers__button--prev',
-          nextEl: '.offers__button--next',
+          prevEl: '.swiper-button-prev-offers',
+          nextEl: '.swiper-button-next-offers',
         },
         slidesPerView: 1,
       });
@@ -28,6 +28,6 @@ export function initSwiperOffers() {
 
   createServiceSwiper();
 }
-console.log(document.querySelector('.swiper-button-prev'));
-console.log(document.querySelector('.swiper-button-next'));
+console.log(document.querySelector('.swiper-button-prev-offers'));
+console.log(document.querySelector('.swiper-button-next-offers'));
 
