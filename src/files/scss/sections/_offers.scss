@@ -1,4 +1,4 @@
-@use 'variables'as var;
+@use 'variables' as var;
 
 .offers {
   position: relative;
@@ -42,7 +42,7 @@
     }
   }
 
-  &__item {  
+  &__item {
     min-height: 531px;
     display: flex;
     flex-direction: column;
@@ -54,7 +54,7 @@
       min-height: 303px;
       display: grid;
       grid-template-columns: 1fr 1fr auto;
-      grid-auto-rows: minmax(30px, auto);      
+      grid-auto-rows: minmax(30px, auto);
     }
 
     @media screen and (min-width: var.$desktop-min) {
@@ -64,7 +64,7 @@
     @media screen and (min-width: var.$desktop) {
       column-gap: 40px;
     }
-  } 
+  }
 
   &__image {
     background-color: var.$white;
@@ -79,7 +79,7 @@
       grid-row: 1 / 4;
       align-self: flex-start;
     }
-    
+
     @media screen and (min-width: var.$desktop-min) {
       max-width: 480px;
       height: 320px;
@@ -108,7 +108,7 @@
       justify-self: flex-end;
       text-align: right;
     }
-    
+
     @media screen and (min-width: var.$desktop-min) {
       margin-top: 10px;
       font-size: 20px;
@@ -135,8 +135,8 @@
       grid-column: 1 / 2;
     }
   }
-  
-  &__price{
+
+  &__price {
     max-width: 240px;
     font-style: italic;
     font-weight: 700;
@@ -150,7 +150,7 @@
       max-width: 200px;
     }
   }
-  
+
   &__currency {
     color: var.$red-D10000;
   }
@@ -171,12 +171,12 @@
       align-self: flex-end;
       justify-self: flex-start;
     }
-    
+
     @media screen and (min-width: var.$desktop-min) {
       padding: 10px;
       min-height: 30px;
     }
-    
+
     @media screen and (min-width: var.$desktop) {
       grid-row: 2 / 3;
       justify-self: flex-end;
@@ -226,12 +226,12 @@
       padding-right: 20px;
       text-align: left;
     }
-            
+
     &:focus-visible,
     &:hover {
       opacity: 0.7;
     }
-            
+
     &:active {
       opacity: 0.3;
     }
@@ -252,7 +252,7 @@
       justify-content: flex-start;
     }
   }
-    
+
   &__button {
     position: relative;
     width: 48px;
@@ -266,10 +266,10 @@
     border: 1px solid var.$gray_C4C4C4;
     background: var.$red-gradient;
     cursor: pointer;
-    
+
     &::before {
       position: absolute;
-      content: "";
+      content: '';
       width: 15px;
       height: 27px;
       background-repeat: no-repeat;
@@ -288,7 +288,6 @@
 
   &__button--prev::before {
     background-image: url('#{var.$DEV_PATH}assets/images/vectors/arrow-slider-prev.svg');
-
   }
 
   &__button--next::before {
@@ -303,4 +302,3 @@
     }
   }
 }
-  

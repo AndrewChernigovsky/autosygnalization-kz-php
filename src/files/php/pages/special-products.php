@@ -3,14 +3,15 @@ include_once __DIR__ . '/../helpers/classes/setVariables.php';
 include __DIR__ . '/../data/products.php';
 
 $variables = new SetVariables();
-    $variables->setVar();
-    $docROOT = $variables->getDocRoot();
-    $path = $variables->getPathFileURL();
-    $path_href = $path . '/files/php/pages/special/special.php?special=special';
+$variables->setVar();
+$docROOT = $variables->getDocRoot();
+$path = $variables->getPathFileURL();
+$path_href = $path . '/files/php/pages/special/special.php?special=special';
 
-function getSpecialOffersSection() {
-  global $path_href;
-  global $products;
+function getSpecialOffersSection()
+{
+    global $path_href;
+    global $products;
 
     ob_start(); // Начинаем буферизацию вывода
     ?>
@@ -37,8 +38,8 @@ function getSpecialOffersSection() {
         <div class="offers__container">
           <a class="offers__link-all" href="<?= htmlspecialchars($path_href); ?>">Все предложения</a>
           <div class="offers__buttons">
-            <button class="offers__button offers__button--prev swiper-button-prev-offers" type="button"></button>
-            <button class="offers__button offers__button--next swiper-button-next-offers" type="button"></button>
+            <button class="offers__button offers__button--prev swiper-button-prev-offers " type="button"></button>
+            <button class="offers__button offers__button--next swiper-button-next-offers " type="button"></button>
           </div>
         </div>
       </div>
