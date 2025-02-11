@@ -18,8 +18,8 @@ export function initSwiperOffers() {
           clickable: true,
         },
         navigation: {
-          prevEl: '.swiper-button-prev-offers',
-          nextEl: '.swiper-button-next-offers',
+          prevEl: '.offers__button--prev',
+          nextEl: '.offers__button--next',
         },
         slidesPerView: 1,
       });
