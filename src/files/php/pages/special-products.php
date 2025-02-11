@@ -6,7 +6,7 @@ $variables = new SetVariables();
     $variables->setVar();
     $docROOT = $variables->getDocRoot();
     $path = $variables->getPathFileURL();
-    $path_href = $path . '/files/php/pages/catalog/catalog.php?special=special';
+    $path_href = $path . '/files/php/pages/special/special.php?special=special';
 
 function getSpecialOffersSection() {
   global $path_href;
