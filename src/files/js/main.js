@@ -27,9 +27,7 @@ const {
   cardMoreButton,
   cartButtons,
   addToCartButton,
-  editLinkPopular,
-  editLinkParking,
-  setAutosygnalsLinkPath,
+  filtersAction,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -56,15 +54,7 @@ const {
   cardMoreButton: document.querySelector('.card-more__button-cost'),
   cartButtons: document.querySelectorAll('.cart-button'),
   addToCartButton: document.querySelector('.card-more__button-cart'),
-  editLinkPopular: document.querySelector(
-    '.link.button.y-button-primary.popular__all-products'
-  ),
-  editLinkParking: document.getElementById(
-    'link__dist_files_php_pages_parking-systems_parking-systems.php'
-  ),
-  setAutosygnalsLinkPath: document.querySelector(
-    '.autosygnals__list.list-style-none.swiper-wrapper'
-  ),
+  filtersAction: document.querySelector('.filter-form'),
 };
 
 async function loadModules() {
@@ -93,20 +83,20 @@ async function loadModules() {
     const { initSwiper } = await import('./modules/swiper.js');
     initSwiper();
   }
-  if (editLinkPopular != null) {
-    const { editLinkPopular } = await import('./modules/editLinkPopular.js');
-    editLinkPopular();
-  }
-  if (editLinkParking != null) {
-    const { editLinkParking } = await import('./modules/editLinkParking.js');
-    editLinkParking();
-  }
-  if (setAutosygnalsLinkPath != null) {
-    const { setAutosygnalsLinkPath } = await import(
-      './modules/set-autosygnals-link-path.js'
-    );
-    setAutosygnalsLinkPath();
-  }
+  // if (editLinkPopular != null) {
+  //   const { editLinkPopular } = await import('./modules/editLinkPopular.js');
+  //   editLinkPopular();
+  // }
+  // if (editLinkParking != null) {
+  //   const { editLinkParking } = await import('./modules/editLinkParking.js');
+  //   editLinkParking();
+  // }
+  // if (setAutosygnalsLinkPath != null) {
+  //   const { setAutosygnalsLinkPath } = await import(
+  //     './modules/set-autosygnals-link-path.js'
+  //   );
+  //   setAutosygnalsLinkPath();
+  // }
   if (footer != null) {
     const { toggleList } = await import('./modules/footer-menu.js');
     toggleList();
@@ -122,6 +112,20 @@ async function loadModules() {
         selected: '.select-selected',
         item: '.select-items',
         options: '.select-item',
+      },
+      currentPath
+    );
+  }
+  if (filtersAction != null) {
+    const filtersAction = await import('./modules/filter.js');
+    console.log(filtersAction);
+    const FiltersAction = filtersAction.default;
+
+    const currentPath = window.location.pathname;
+
+    new FiltersAction(
+      {
+        form: '.filter-form',
       },
       currentPath
     );
@@ -142,11 +146,7 @@ async function loadModules() {
   }
   if (filterBtn != null) {
     const { filterToggleMenu } = await import('./modules/filter.js');
-    const { saveCheckbox } = await import('./modules/filter.js');
-    const { saveRangeInParking } = await import('./modules/filter.js');
     filterToggleMenu();
-    saveCheckbox();
-    saveRangeInParking();
   }
   if (searchExist != null) {
     const { initSearch } = await import('./modules/search.js');

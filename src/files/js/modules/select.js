@@ -16,7 +16,6 @@ export default class CustomSelect {
     this.checkForFirstStartParamPresence();
     this.overwriteExistingParams();
     this.addEventListeners();
-    alert(this.path);
   }
 
   createSessionStorageObject() {
