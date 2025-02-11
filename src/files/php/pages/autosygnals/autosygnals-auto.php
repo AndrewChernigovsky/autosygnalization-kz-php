@@ -23,11 +23,10 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Парковочные системы | Auto Security';
+$title = 'Автосигнлизация AUTO';
 
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
-include_once $docROOT . $path . '/files/php/pages/special-products.php';
 
 $head = new Head($title, [], []);
 $filters_render = new FiltersRender($products, "auto");
@@ -37,7 +36,7 @@ $select = new Select();
 $selectData = new SelectData();
 
 $allProducts = $products;
-
+$correct = "auto";
 // Фильтрация по OPTIONS
 if (empty($OPTIONS)) {
     $filteredProducts = $allProducts;
@@ -64,17 +63,18 @@ if (empty($OPTIONS)) {
                 }
             }
 
-            if ($isMatch) {
+            if ($isMatch && isset($product['autosygnals']) && is_array($product['autosygnals']) && in_array($correct, $product['autosygnals'])) {
                 $filteredProducts[] = $product;
             }
+            
         }
     }
 }
-error_log(print_r($OPTIONS, true) . ' : OPTIONS');
+
 
 if (!empty($SELECT)) {
     if($SELECT === 'name') {
-        error_log(print_r($filteredProducts, true) . ' : FILTERS');
+
         usort($filteredProducts, function ($a, $b) {
             $nameA = $a['title'] ?? '';
             $nameB = $b['title'] ?? '';
@@ -104,39 +104,35 @@ echo $head->setHead();
 ?>
 
 <body>
-    <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
-    <main class="main">
-        <h2 class="title__h2">Парковочные системы</h2>
-        <div class="catalog">
-            <div class="catalog__wrapper parking-system">
-                <aside class="aside">
-                    <p>Стоимость</p>
-                    <?= $filters_render->renderFilters(false, true, false, '/files/php/pages/parking-systems/parking-systems.php'); ?>
-                </aside>
-                <div class="catalog__products">
-                    <?php
-                    $count = 0;
-                    foreach ($filteredProducts as $product) {
-                        echo getProductCardWModel([$product], false, $PAGE); // Вывод товара
-                        $count++;
-                        if ($count === 6 || $count === count($filteredProducts)): // Вставляем "Специальное предложение" после второго товара
-                            echo getSpecialOffersSection(); // Вставляем слайдер
-                        endif;
-                    }
-                    ?>
-                </div>
-            </div>
-            <?php if ($filteredProducts): ?>
-            <?php
-                error_log(print_r($filteredProducts, true) . ' :FILTERS ');
-                $pagination = new Pagination($filteredProducts);
-            ?>
-            <?= $pagination->render(); ?>
-            <?php endif; ?>
+  <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
+  <main class="main">
+    <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
+    <div class="catalog">
+      <div class="catalog__wrapper autosygnals-auto">
+        <aside class="aside">
+          <?= $filters_render->renderFilters(); ?>
+        </aside>
+        <div class="catalog__products">
+          <?= $select->createComponent($selectData->getSelectData()) ?>
+          <?php if (!empty($filteredProducts)): ?>
+              <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
+          <?php else: ?>
+              <p>Нет товаров, соответствующих выбранным фильтрам.</p>
+          <?php endif; ?>
         </div>
-        <?= getShop('setup'); ?>
-    </main>
-    <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
-    <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
+      </div>
+      <?php if ($filteredProducts): ?>
+        <?php
+          error_log(print_r($filteredProducts, true) . ' :FILTERS ');
+          $pagination = new Pagination($filteredProducts);
+          ?>
+        <?= $pagination->render('autosygnals-auto'); ?>
+      <?php endif; ?>
+    </div>
+    <?= getShop('setup'); ?>
+  </main>
+  <?php include_once $docROOT . $path . '/files/php/layout/footer.php'; ?>
+  <?php include_once $docROOT . $path . '/files/php/sections/popups/modal-cart.php'; ?>
 </body>
+
 </html>
