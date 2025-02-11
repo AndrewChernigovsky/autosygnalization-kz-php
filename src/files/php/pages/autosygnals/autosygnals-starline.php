@@ -23,20 +23,20 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Автосигнлизация New';
+$title = 'Автосигнлизация Starline';
 
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
 
 $head = new Head($title, [], []);
-$filters_render = new FiltersRender($products, "auto");
+$filters_render = new FiltersRender($products, "starline");
 $article = new Article();
 $articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
 
 $allProducts = $products;
-
+$correct = "starline";
 // Фильтрация по OPTIONS
 if (empty($OPTIONS)) {
     $filteredProducts = $allProducts;
@@ -63,9 +63,10 @@ if (empty($OPTIONS)) {
                 }
             }
 
-            if ($isMatch) {
+            if ($isMatch && isset($product['autosygnals']) && is_array($product['autosygnals']) && in_array($correct, $product['autosygnals'])) {
                 $filteredProducts[] = $product;
             }
+            
         }
     }
 }
@@ -105,9 +106,9 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
-    <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
+    <h2 class="title__h2">Каталог автосигнализаций Starline</h2>
     <div class="catalog">
-      <div class="catalog__wrapper all-products">
+      <div class="catalog__wrapper autosygnals-starline">
         <aside class="aside">
           <?= $filters_render->renderFilters(); ?>
         </aside>
@@ -125,7 +126,7 @@ echo $head->setHead();
           error_log(print_r($filteredProducts, true) . ' :FILTERS ');
           $pagination = new Pagination($filteredProducts);
           ?>
-        <?= $pagination->render(); ?>
+        <?= $pagination->render('autosygnals-starline'); ?>
       <?php endif; ?>
     </div>
     <?= getShop('setup'); ?>

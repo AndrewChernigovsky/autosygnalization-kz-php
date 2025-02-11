@@ -28,6 +28,20 @@ class Pagination
         if ($href_page === 'parking') {
             $href_page = '/files/php/pages/parking-systems/parking-systems.php?';
         }
+        if ($href_page === 'autosygnals-auto') {
+            $href_page = '/files/php/pages/autosygnals/autosygnals-auto.php?';
+        }
+        if ($href_page === 'autosygnals-gsm') {
+            $href_page = '/files/php/pages/autosygnals/autosygnals-gsm.php?';
+        }
+        if ($href_page === 'autosygnals-without-auto') {
+            $href_page = '/files/php/pages/autosygnals/autosygnals-without-auto.php?';
+        }
+        if ($href_page === 'autosygnals-starline') {
+            $href_page = '/files/php/pages/autosygnals/autosygnals-starline.php?';
+        }
+
+
 
         // Общее количество товаров
         $totalItems = count($this->items);
