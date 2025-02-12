@@ -44,7 +44,6 @@ $products = [
         "special" => true,
         "autosygnals" => [
           "auto",
-          "gsm",
           "starline",
         ],
       ],
