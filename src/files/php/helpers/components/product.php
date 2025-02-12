@@ -9,6 +9,7 @@ function getProductCard($products, $id)
     ob_start();
 
     foreach ($products['category'] as $category) {
+      error_log(print_r($products['category'],true) . 'Я ОТРАБОТАЛ');
         foreach ($category as $product) {
             if ($product['id'] === $id) {
                 ?>
@@ -33,6 +34,7 @@ function getProductCard($products, $id)
 }
 function getProductCardWModel(array $products, bool $cart = false, $page = 1)
 {
+  error_log(print_r($products,true) . 'Я ОТРАБОТАЛ');
     if (!is_array($products)) {
         return '';
     }
@@ -184,4 +186,72 @@ function getProductCardDescription($products, $id)
     }
     return '';
 }
+
+function newGetProductCardWModel(array $current_products_arr, bool $cart = false, $page = 1, $current_items_count_on_page = 5, callable $specialOffersCallback = null, $species = true,) {
+  if (!is_array($current_products_arr)) {
+      return '';
+  }
+
+  $groupedProducts = [];
+  foreach ($current_products_arr as $item) {
+      if (isset($item['id'])) {
+          if (!isset($groupedProducts[$item['id']])) {
+              $groupedProducts[$item['id']] = $item;
+              $groupedProducts[$item['id']]['quantity'] = 1;
+          } else {
+              $groupedProducts[$item['id']]['quantity'] += 1;
+          }
+      }
+  }
+
+  $groupedProducts = array_slice($groupedProducts, ($page - 1) * $current_items_count_on_page, $current_items_count_on_page);
+  
+  ob_start();
+
+  $productCount = 0;
+  $totalProducts = count($groupedProducts);
+  error_log(print_r($totalProducts, true) . "ЭТО count");
+
+  foreach ($groupedProducts as $product) {
+      $productCount++;
+
+      if ($specialOffersCallback !== null && ($productCount === $totalProducts)) {
+          call_user_func($specialOffersCallback);
+      }
+
+      ?>
+      <article class='product-card' id="<?php echo htmlspecialchars($product['id']); ?>">
+          <div class="product-card__bg">
+              <img src="<?php echo htmlspecialchars($product['gallery'][0]); ?>"
+                  alt="<?php echo htmlspecialchars($product['description']); ?>" width="300" height="250">
+          </div>
+          <div class="product-card__body">
+              <div class="product-card__head">
+                  <h3><?php echo htmlspecialchars($product['title']); ?></h3>
+                  <?php if (isset($product['price'])): ?>
+                      <p><span>Цена:</span> <?php echo htmlspecialchars($product['price']); ?>
+                          <span><?php echo htmlspecialchars($product['currency']); ?></span>
+                      </p>
+                  <?php endif; ?>
+              </div>
+              <?php if (!$cart): ?>
+                  <div class="product-card__buttons">
+                      <a class="button y-button-secondary" href="<?php echo htmlspecialchars($product['link']); ?>">Подробнее</a>
+                      <button type="button" class="button y-button-primary cart-button"
+                          data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">Купить</button>
+                  </div>
+              <?php endif; ?>
+              <?php if (isset($product['quantity']) && $cart): ?>
+                  <p>Количество: <?php echo htmlspecialchars($product['quantity']); ?></p>
+              <?php endif; ?>
+          </div>
+      </article>
+      <?php
+  }
+
+  return ob_get_clean();
+}
+
+
 ?>
+

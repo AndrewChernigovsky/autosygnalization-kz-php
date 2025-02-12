@@ -83,20 +83,6 @@ async function loadModules() {
     const { initSwiper } = await import('./modules/swiper.js');
     initSwiper();
   }
-  // if (editLinkPopular != null) {
-  //   const { editLinkPopular } = await import('./modules/editLinkPopular.js');
-  //   editLinkPopular();
-  // }
-  // if (editLinkParking != null) {
-  //   const { editLinkParking } = await import('./modules/editLinkParking.js');
-  //   editLinkParking();
-  // }
-  // if (setAutosygnalsLinkPath != null) {
-  //   const { setAutosygnalsLinkPath } = await import(
-  //     './modules/set-autosygnals-link-path.js'
-  //   );
-  //   setAutosygnalsLinkPath();
-  // }
   if (footer != null) {
     const { toggleList } = await import('./modules/footer-menu.js');
     toggleList();
@@ -116,20 +102,20 @@ async function loadModules() {
       currentPath
     );
   }
-  // if (filtersAction != null) {
-  //   const filtersAction = await import('./modules/filter.js');
-  //   console.log(filtersAction);
-  //   const FiltersAction = filtersAction.default;
+  if (filtersAction != null) {
+    const filtersAction = await import('./modules/filter.js');
+    console.log(filtersAction);
+    const FiltersAction = filtersAction.default;
 
-  //   const currentPath = window.location.pathname;
+    const currentPath = window.location.pathname;
 
-  //   new FiltersAction(
-  //     {
-  //       form: '.filter-form',
-  //     },
-  //     currentPath
-  //   );
-  // }
+    new FiltersAction(
+      {
+        form: '.filter-form',
+      },
+      currentPath
+    );
+  }
   if (cartCounter != null || cartButtons.length > 0) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');
     cartButtonHandler();

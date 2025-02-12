@@ -6,8 +6,8 @@ include_once __DIR__ . '/../../data/products.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/filters/filters.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
-include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/article.php';
+include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/select.php';
 include_once __DIR__ . '/../../helpers/components/pagination.php';
 
@@ -23,78 +23,20 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Автосигнлизация Starline';
-
+$title = 'Автосигнализации с автозапуском';
+$total_items_per_page = 10;
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
+include_once $docROOT . $path . '/files/php/pages/special-products.php';
 
 $head = new Head($title, [], []);
-$filters_render = new FiltersRender($products, "starline");
+$filters_render = new FiltersRender($products,"starline");
 $article = new Article();
 $articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
 
-$allProducts = $products;
-$correct = "starline";
-// Фильтрация по OPTIONS
-if (empty($OPTIONS)) {
-    $filteredProducts = $allProducts;
-} else {
-    $filteredProducts = [];
-    foreach ($allProducts['category'] as $category => $items) {
-        foreach ($items as $product) {
-            $isMatch = true;
-            $productCost = $product['price'] ?? 0;
-
-
-            if ($productCost < $minCost || $productCost > $maxCost) {
-                $isMatch = false;
-                continue;
-            }
-
-            foreach ($OPTIONS as $option => $value) {
-                $productFilters = $product['options-filters'] ?? [];
-                if ($value === 'on') {
-                    if (!is_array($productFilters) || !in_array($option, $productFilters)) {
-                        $isMatch = false;
-                        break;
-                    }
-                }
-            }
-
-            if ($isMatch && isset($product['autosygnals']) && is_array($product['autosygnals']) && in_array($correct, $product['autosygnals'])) {
-                $filteredProducts[] = $product;
-            }
-            
-        }
-    }
-}
-
-
-if (!empty($SELECT)) {
-    if($SELECT === 'name') {
-
-        usort($filteredProducts, function ($a, $b) {
-            $nameA = $a['title'] ?? '';
-            $nameB = $b['title'] ?? '';
-            return strcmp(mb_strtolower($nameA), mb_strtolower($nameB));
-        });
-    }
-
-    if($SELECT === 'price') {
-        if ($SELECT === 'price') {
-            usort($filteredProducts, function ($a, $b) {
-                $priceA = $a['price'] ?? 0;
-                $priceB = $b['price'] ?? 0;
-                return $priceB <=> $priceA; // Сортировка по убыванию
-            });
-
-            // Логирование для отладки
-            error_log("Sorted by Price (Descending): " . print_r($filteredProducts, true));
-        }
-    }
-}
+$filteredProducts = $filters_render->returnCorrectedArr();
 ?>
 
 <!DOCTYPE html>
@@ -115,7 +57,7 @@ echo $head->setHead();
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
           <?php if (!empty($filteredProducts)): ?>
-              <?= getProductCardWModel($filteredProducts, false, $PAGE) ?>
+              <?= newGetProductCardWModel($filteredProducts, false, $PAGE, $total_items_per_page, function() {echo getSpecialOffersSection();}) ?>
           <?php else: ?>
               <p>Нет товаров, соответствующих выбранным фильтрам.</p>
           <?php endif; ?>
@@ -123,10 +65,9 @@ echo $head->setHead();
       </div>
       <?php if ($filteredProducts): ?>
         <?php
-          error_log(print_r($filteredProducts, true) . ' :FILTERS ');
-          $pagination = new Pagination($filteredProducts);
+          $pagination = new Pagination($filteredProducts, $total_items_per_page);
           ?>
-        <?= $pagination->render('autosygnals-starline'); ?>
+        <?= $pagination->render(); ?>
       <?php endif; ?>
     </div>
     <?= getShop('setup'); ?>
