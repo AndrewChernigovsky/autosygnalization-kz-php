@@ -4,7 +4,7 @@ include_once __DIR__ . '/../../data/article.php';
 include_once __DIR__ . '/../../data/select.php';
 include_once __DIR__ . '/../../data/products.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
-include_once __DIR__ . '/../../helpers/components/filters/filters.php';
+include_once __DIR__ . '/../../helpers/components/filters/filters-new.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/article.php';
@@ -23,7 +23,7 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Каталог | Auto Security';
+$title = 'Автосигнлизация Аксессуары';
 
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
@@ -35,65 +35,7 @@ $articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
 
-$allProducts = $products;
-
-// Фильтрация по OPTIONS
-if (empty($OPTIONS)) {
-    $filteredProducts = $allProducts;
-} else {
-    $filteredProducts = [];
-    foreach ($allProducts['category'] as $category => $items) {
-        foreach ($items as $product) {
-            $isMatch = true;
-            $productCost = $product['price'] ?? 0;
-
-
-            if ($productCost < $minCost || $productCost > $maxCost) {
-                $isMatch = false;
-                continue;
-            }
-
-            foreach ($OPTIONS as $option => $value) {
-                $productFilters = $product['options-filters'] ?? [];
-                if ($value === 'on') {
-                    if (!is_array($productFilters) || !in_array($option, $productFilters)) {
-                        $isMatch = false;
-                        break;
-                    }
-                }
-            }
-
-            if ($isMatch) {
-                $filteredProducts[] = $product;
-            }
-        }
-    }
-}
-error_log(print_r($filteredProducts,true) . 'Это $filteredProducts');
-
-if (!empty($SELECT)) {
-    if($SELECT === 'name') {
-
-        usort($filteredProducts, function ($a, $b) {
-            $nameA = $a['title'] ?? '';
-            $nameB = $b['title'] ?? '';
-            return strcmp(mb_strtolower($nameA), mb_strtolower($nameB));
-        });
-    }
-
-    if($SELECT === 'price') {
-        if ($SELECT === 'price') {
-            usort($filteredProducts, function ($a, $b) {
-                $priceA = $a['price'] ?? 0;
-                $priceB = $b['price'] ?? 0;
-                return $priceB <=> $priceA; // Сортировка по убыванию
-            });
-
-            // Логирование для отладки
-            error_log("Sorted by Price (Descending): " . print_r($filteredProducts, true));
-        }
-    }
-}
+$filteredProducts = $filters_render->returnCorrectedArr();
 ?>
 
 <!DOCTYPE html>
@@ -107,7 +49,7 @@ echo $head->setHead();
   <main class="main">
     <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
     <div class="catalog">
-      <div class="catalog__wrapper all-products">
+      <div class="catalog__wrapper autosygnals-auto">
         <aside class="aside">
           <?= $filters_render->renderFilters(); ?>
         </aside>
@@ -122,10 +64,9 @@ echo $head->setHead();
       </div>
       <?php if ($filteredProducts): ?>
         <?php
-          error_log(print_r($filteredProducts, true) . ' :FILTERS ');
           $pagination = new Pagination($filteredProducts);
           ?>
-        <?= $pagination->render(); ?>
+        <?= $pagination->render('autosygnals-acssesuars'); ?>
       <?php endif; ?>
     </div>
     <?= getShop('setup'); ?>

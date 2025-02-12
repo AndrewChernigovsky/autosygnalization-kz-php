@@ -40,6 +40,10 @@ class Pagination
         if ($href_page === 'autosygnals-starline') {
             $href_page = '/files/php/pages/autosygnals/autosygnals-starline.php?';
         }
+        if ($href_page === 'autosygnals-acssesuars') {
+            $href_page = '/files/php/pages/autosygnals/autosygnals-acssesuars.php?';
+        }
+
 
 
 

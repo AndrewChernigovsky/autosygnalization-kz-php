@@ -120,7 +120,7 @@ class NavigationLinks
             'src' => "$this->path/assets/images/autosygnals/autosygnals-4.avif"
         ],
         [
-            'link' => "$this->path_pages/catalog/catalog.php?SELECT=name&min-value-cost=100&max-value-cost=300000&autosetup=on",
+            'link' => "$this->path_pages/autosygnals/autosygnals-acssesuars.php",
             'name' => 'Пульты и аксессуары',
             'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
             'src' => "$this->path/assets/images/autosygnals/autosygnals-5.avif"
