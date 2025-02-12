@@ -663,7 +663,14 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_a93-a63",
       ],
       [
@@ -679,7 +686,14 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_e96-e66",
       ],
       [
@@ -695,7 +709,14 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_a96-a66",
       ],
       [
@@ -711,7 +732,14 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_b96-b66",
       ],
       [
@@ -727,7 +755,14 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_a91-61",
       ],
       [
@@ -743,7 +778,14 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_d96",
       ],
       [
@@ -759,7 +801,14 @@ $products = [
         "price" => 52600,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_module-gsm3",
       ],
       [
@@ -775,7 +824,17 @@ $products = [
         "price" => 52600,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "starline",
+        ],
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_module-gsm6",
       ],
       [
@@ -791,7 +850,17 @@ $products = [
         "price" => 25000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "starline",
+        ],
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_module-gps",
       ],
       [
@@ -807,7 +876,14 @@ $products = [
         "price" => 34000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_module-2can-2lin",
       ],
       [
@@ -823,7 +899,14 @@ $products = [
         "price" => 7000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_module-bp-03",
       ],
       [
@@ -842,7 +925,14 @@ $products = [
         "price" => 7000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_sd-card",
       ],
       [
@@ -859,7 +949,14 @@ $products = [
         "price" => 3500,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_20w",
       ],
       [
@@ -875,7 +972,14 @@ $products = [
         "price" => 15000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_sheriff",
       ],
       [
@@ -891,7 +995,14 @@ $products = [
         "price" => 5000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "remote-controls",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_push-motor",
       ],
     ],
@@ -910,7 +1021,14 @@ $products = [
         "price" => 10000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "park-systems",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_cj-178",
       ],
       [
@@ -927,7 +1045,14 @@ $products = [
         "price" => 10000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "park-systems",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_cj-178",
       ],
       [
@@ -944,7 +1069,14 @@ $products = [
         "price" => 15000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "park-systems",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-prado150",
       ],
       [
@@ -961,7 +1093,14 @@ $products = [
         "price" => 15000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "park-systems",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_number-plate-with-camera",
       ],
       [
@@ -980,7 +1119,14 @@ $products = [
         "price" => 65000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "park-systems",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-c1100",
       ],
       [
@@ -996,7 +1142,14 @@ $products = [
         "price" => 35000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "park-systems",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-cmos130",
       ],
       [
@@ -1012,7 +1165,14 @@ $products = [
         "price" => 12000,
         "currency" => "₸",
         "quantity" => 1,
+        "options-filters" => [
+          'vnedorojnik',
+          'legkoe-avto',
+        ],
         "special" => false,
+        "autosygnals" => [
+          "park-systems",
+        ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-ccd",
       ],
     ]
