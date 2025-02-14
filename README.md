@@ -18,6 +18,8 @@ https://github.com/VinMariani
 https://github.com/AntoninaSorokan
 - Мамутов Гирей Ренатович
 https://github.com/Girey-m
+- Кривой Алексей Александрович
+https://github.com/xfir664
 
 # Структура проекта
 ### -sections - все секции
