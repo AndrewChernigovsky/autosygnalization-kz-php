@@ -44,7 +44,6 @@ $products = [
         "special" => true,
         "autosygnals" => [
           "auto",
-          "gsm",
           "starline",
         ],
       ],
@@ -825,6 +824,7 @@ $products = [
         "currency" => "₸",
         "quantity" => 1,
         "special" => false,
+        "autosygnals" => [
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
@@ -995,7 +995,7 @@ $products = [
           'legkoe-avto',
         ],
         "autosygnals" => [
-          "for-park-systems",
+          "remote-controls",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=remote-controls&id=product_remote-controls_push-motor",
       ],
@@ -1015,7 +1015,6 @@ $products = [
         "price" => 10000,
         "currency" => "₸",
         "quantity" => 1,
-        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
