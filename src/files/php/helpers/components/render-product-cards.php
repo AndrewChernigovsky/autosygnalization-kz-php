@@ -52,10 +52,9 @@ class CreateProductCards {
         $random_bg = array_rand($item['gallery']);
         $iteration_count++;
         
-        if ($this->special_offers_callback !== null && ($iteration_count === 5 || ($total_items < 10 && $this->current_page_number > 2) || $total_items < 5 )) {
+        if ($this->special_offers_callback !== null && ($iteration_count === 5 || ($total_items < 10 && $this->current_page_number > 1) || ($iteration_count === $total_items && $total_items < 5))) {
           call_user_func($this->special_offers_callback);
         }
-
        ?>
           <article class='product-card' id="<?php echo htmlspecialchars($item['id']); ?>">
             <div class="product-card__bg">
