@@ -1,6 +1,6 @@
 import { ProductAPI } from './api/getProduct.js';
 
-const cartButtons = document.querySelectorAll('.cart-button');
+const cartButtons = document.querySelectorAll('.cart-button, .card-more__button-cart');
 const cartCounter = document.querySelector('.cart .counter');
 
 export function cartButtonHandler() {
@@ -8,8 +8,7 @@ export function cartButtonHandler() {
 
   if (cartCounter) {
     let numberUniqueId = products.map((product) => product.id).length;
-    const currentCount = numberUniqueId; //здесь на всех страницах
-    cartCounter.textContent = currentCount;
+    cartCounter.textContent = numberUniqueId;
 
     if (cartButtons.length > 0) {
       const productApi = new ProductAPI();
@@ -31,7 +30,6 @@ export function cartButtonHandler() {
           sessionStorage.setItem('cart', JSON.stringify(products));
 
           const newCount = products.map((product) => product.id).length;
-
           cartCounter.textContent = newCount;
 
           productApi

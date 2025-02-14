@@ -76,11 +76,9 @@ export class CardProduct extends Component {
         (total, product) => total + product.quantity,
         0
       );
-      console.log('здесь');
 
       if (!cart) {
         this.cartCounter.textContent = currentCount;
-        console.log('здесь');
       }
 
       const productId = cart ? btn.dataset.id : btn.parentElement.dataset.id;
