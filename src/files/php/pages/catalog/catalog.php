@@ -10,6 +10,7 @@ include_once __DIR__ . '/../../helpers/components/article.php';
 include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/select.php';
 include_once __DIR__ . '/../../helpers/components/pagination.php';
+include_once __DIR__ . '/../../helpers/components/render-product-cards.php';
 
 $PAGE = $_GET['PAGE'] ?? 1;
 $OPTIONS = $_GET ?? [];
@@ -37,6 +38,7 @@ $select = new Select();
 $selectData = new SelectData();
 
 $filteredProducts = $filters_render->returnCorrectedArr();
+$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function() {echo getSpecialOffersSection();});
 ?>
 
 <!DOCTYPE html>
@@ -57,7 +59,7 @@ echo $head->setHead();
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
           <?php if (!empty($filteredProducts)): ?>
-              <?= newGetProductCardWModel($filteredProducts, false, $PAGE, $total_items_per_page, function() {echo getSpecialOffersSection();}) ?>
+            <?= $create_product_cards->renderProductCards(); ?>
           <?php else: ?>
               <p>Нет товаров, соответствующих выбранным фильтрам.</p>
           <?php endif; ?>

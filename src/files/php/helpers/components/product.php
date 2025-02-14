@@ -203,7 +203,7 @@ function newGetProductCardWModel(array $current_products_arr, bool $cart = false
           }
       }
   }
-
+  error_log(print_r($groupedProducts, true) . "ЭТО groupedProducts acsesuars");
   $groupedProducts = array_slice($groupedProducts, ($page - 1) * $current_items_count_on_page, $current_items_count_on_page);
   
   ob_start();
