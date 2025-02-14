@@ -10,10 +10,8 @@ export class CardCartButtonCounter extends Component {
 
   btnDisabledState = (quantity) => {
     if (quantity >= 1) {
-      console.log('Кнопка активна');
       return false;
     }
-    console.log('Кнопка заблокирована');
     return true;
   };
 
