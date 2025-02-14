@@ -1,3 +1,5 @@
+
+
 <?php
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
@@ -37,6 +39,7 @@ $product_section = __DIR__ . '/../../sections/card-tabs.php';
 
 $title = "$id | Auto Security";
 $head = new Head($title, [], []);
+error_log(print_r($category,true) . 'Я YT ОТРАБОТАЛ');
 ?>
 
 <!DOCTYPE html>

@@ -662,11 +662,11 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -685,11 +685,11 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -708,11 +708,11 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -731,11 +731,11 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -754,11 +754,11 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -777,11 +777,11 @@ $products = [
         "price" => 27000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -800,11 +800,11 @@ $products = [
         "price" => 52600,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -823,13 +823,11 @@ $products = [
         "price" => 52600,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
+        "autosygnals" => [
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
-        ],
-        "special" => false,
-        "autosygnals" => [
-          "starline",
         ],
         "autosygnals" => [
           "remote-controls",
@@ -849,13 +847,10 @@ $products = [
         "price" => 25000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
-        ],
-        "special" => false,
-        "autosygnals" => [
-          "starline",
         ],
         "autosygnals" => [
           "remote-controls",
@@ -875,11 +870,11 @@ $products = [
         "price" => 34000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -898,11 +893,11 @@ $products = [
         "price" => 7000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -924,11 +919,11 @@ $products = [
         "price" => 7000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -948,11 +943,11 @@ $products = [
         "price" => 3500,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -971,11 +966,11 @@ $products = [
         "price" => 15000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -994,11 +989,11 @@ $products = [
         "price" => 5000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
           "remote-controls",
         ],
@@ -1024,9 +1019,8 @@ $products = [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
-          "park-systems",
+          "for-park-systems",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_cj-178",
       ],
@@ -1044,13 +1038,13 @@ $products = [
         "price" => 10000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
-          "park-systems",
+          "for-park-systems",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_cj-178",
       ],
@@ -1068,13 +1062,13 @@ $products = [
         "price" => 15000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
-          "park-systems",
+          "for-park-systems",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-prado150",
       ],
@@ -1092,13 +1086,13 @@ $products = [
         "price" => 15000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
-          "park-systems",
+          "for-park-systems",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_number-plate-with-camera",
       ],
@@ -1118,13 +1112,13 @@ $products = [
         "price" => 65000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
-          "park-systems",
+          "for-park-systems",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-c1100",
       ],
@@ -1141,13 +1135,13 @@ $products = [
         "price" => 35000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
-          "park-systems",
+          "for-park-systems",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-cmos130",
       ],
@@ -1164,13 +1158,13 @@ $products = [
         "price" => 12000,
         "currency" => "₸",
         "quantity" => 1,
+        "special" => false,
         "options-filters" => [
           'vnedorojnik',
           'legkoe-avto',
         ],
-        "special" => false,
         "autosygnals" => [
-          "park-systems",
+          "for-park-systems",
         ],
         "link" => "$path/files/php/pages/products/product.php?category=park-systems&id=product_park-systems_camera-ccd",
       ],

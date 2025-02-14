@@ -83,20 +83,6 @@ async function loadModules() {
     const { initSwiper } = await import('./modules/swiper.js');
     initSwiper();
   }
-  // if (editLinkPopular != null) {
-  //   const { editLinkPopular } = await import('./modules/editLinkPopular.js');
-  //   editLinkPopular();
-  // }
-  // if (editLinkParking != null) {
-  //   const { editLinkParking } = await import('./modules/editLinkParking.js');
-  //   editLinkParking();
-  // }
-  // if (setAutosygnalsLinkPath != null) {
-  //   const { setAutosygnalsLinkPath } = await import(
-  //     './modules/set-autosygnals-link-path.js'
-  //   );
-  //   setAutosygnalsLinkPath();
-  // }
   if (footer != null) {
     const { toggleList } = await import('./modules/footer-menu.js');
     toggleList();

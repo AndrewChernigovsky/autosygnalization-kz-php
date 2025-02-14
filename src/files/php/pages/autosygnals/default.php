@@ -2,33 +2,24 @@
 
 include_once __DIR__ . '/../../data/products.php';
 
-$data_categories_filters = [
-  ["text" => "Автозапуск", "name" => "autosetup", "count" => "1"],
-  ["text" => "УПРАВЛЕНИЕ С ТЕЛЕФОНА", "name" => "control-phone", "count" => "1"],
-  ["text" => "БЕСПЛАТНЫЙ МОНИТОРИНГ", "name" => "free-monitoring", "count" => "1"],
-  ["text" => "УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART", "name" => "bluetooth-smart", "count" => "1"],
-  ["text" => "БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN", "name" => "block-engine-can", "count" => "1"],
-  ["text" => "УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ", "name" => "control-before-start", "count" => "1"],
-  ["text" => "УМНАЯ АВТОДИАГНОСТИКА", "name" => "smart-diagnostic", "count" => "1"],
-  ["text" => "ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА", "name" => "data-level-bensin", "count" => "1"],
+$count_category_austosignals_arr = [
+  ["text" => "Автосигнализации с автозапуском", "name" => "auto", "count" => "1"],
+  ["text" => "Автосигнализации с GSM", "name" => "gsm", "count" => "1"],
+  ["text" => "Автосигнализации без автозапуска", "name" => "without-auto", "count" => "1"],
+  ["text" => "Каталог автосигнализаций Starline", "name" => "starline", "count" => "1"],
+  ["text" => "Пульты и аксессуары", "name" => "remote-controls", "count" => "1"],
+
 ];
 
-/**
- * Обновляет значения count в $data_categories_filters на основе данных из $products.
- *
- * @param array $data_categories_filters
- * @param array $products
- * @return array
- */
-function updateFilterCounts($data_categories_filters, $products)
+
+function updateFilterCounts($count_category_austosignals_arr, $products)
 {
     $count = [];
 
-    // Подсчитываем количество товаров для каждого фильтра
     foreach ($products['category'] as $items) {
         foreach ($items as $product) {
-            if (isset($product['options-filters']) && is_array($product['options-filters'])) {
-                foreach ($product['options-filters'] as $filter) {
+            if (isset($product['autosygnals']) && is_array($product['autosygnals'])) {
+                foreach ($product['autosygnals'] as $filter) {
                     if (isset($count[$filter])) {
                         $count[$filter]++;
                     } else {
@@ -39,19 +30,16 @@ function updateFilterCounts($data_categories_filters, $products)
         }
     }
 
-    // Обновляем значения count в $data_categories_filters
-    foreach ($data_categories_filters as &$category) {
+    foreach ($count_category_austosignals_arr as &$category) {
         $filterKey = $category['name'];
         $category['count'] = $count[$filterKey] ?? 0;
     }
 
-    return $data_categories_filters;
+    return $count_category_austosignals_arr;
 }
 
-// Пример использования
-$data_categories_filters = updateFilterCounts($data_categories_filters, $products);
+$count_category_austosignals_arr = updateFilterCounts($count_category_austosignals_arr, $products);
 
-error_log(print_r($data_categories_filters, true) . ' : $data_categories_filters');
 ?>
 
 <?php
@@ -81,8 +69,8 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
         <p class="autosygnals__item-count">
           <span class="autosygnals__item-counter">
             <?php
-              if (isset($data_categories_filters[$index])) {
-                  echo $data_categories_filters[$index]['count'];
+              if (isset($count_category_austosignals_arr[$index])) {
+                  echo $count_category_austosignals_arr[$index]['count'];
               } else {
                   echo 0;
               }

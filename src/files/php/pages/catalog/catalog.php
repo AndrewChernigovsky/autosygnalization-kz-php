@@ -6,10 +6,11 @@ include_once __DIR__ . '/../../data/products.php';
 include_once __DIR__ . '/../../helpers/classes/setVariables.php';
 include_once __DIR__ . '/../../helpers/components/filters/filters.php';
 include_once __DIR__ . '/../../helpers/components/setup.php';
-include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/article.php';
+include_once __DIR__ . '/../../helpers/components/product.php';
 include_once __DIR__ . '/../../helpers/components/select.php';
 include_once __DIR__ . '/../../helpers/components/pagination.php';
+include_once __DIR__ . '/../../helpers/components/render-product-cards.php';
 
 $PAGE = $_GET['PAGE'] ?? 1;
 $OPTIONS = $_GET ?? [];
@@ -23,8 +24,8 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Каталог | Auto Security';
-
+$title = 'Автосигнализации с автозапуском';
+$total_items_per_page = 10;
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
 include_once $docROOT . $path . '/files/php/pages/special-products.php';
@@ -36,65 +37,8 @@ $articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
 
-$allProducts = $products;
-
-// Фильтрация по OPTIONS
-if (empty($OPTIONS)) {
-    $filteredProducts = $allProducts;
-} else {
-    $filteredProducts = [];
-    foreach ($allProducts['category'] as $category => $items) {
-        foreach ($items as $product) {
-            $isMatch = true;
-            $productCost = $product['price'] ?? 0;
-
-
-            if ($productCost < $minCost || $productCost > $maxCost) {
-                $isMatch = false;
-                continue;
-            }
-
-            foreach ($OPTIONS as $option => $value) {
-                $productFilters = $product['options-filters'] ?? [];
-                if ($value === 'on') {
-                    if (!is_array($productFilters) || !in_array($option, $productFilters)) {
-                        $isMatch = false;
-                        break;
-                    }
-                }
-            }
-
-            if ($isMatch) {
-                $filteredProducts[] = $product;
-            }
-        }
-    }
-}
-
-
-if (!empty($SELECT)) {
-    if($SELECT === 'name') {
-
-        usort($filteredProducts, function ($a, $b) {
-            $nameA = $a['title'] ?? '';
-            $nameB = $b['title'] ?? '';
-            return strcmp(mb_strtolower($nameA), mb_strtolower($nameB));
-        });
-    }
-
-    if($SELECT === 'price') {
-        if ($SELECT === 'price') {
-            usort($filteredProducts, function ($a, $b) {
-                $priceA = $a['price'] ?? 0;
-                $priceB = $b['price'] ?? 0;
-                return $priceB <=> $priceA; // Сортировка по убыванию
-            });
-
-            // Логирование для отладки
-            error_log("Sorted by Price (Descending): " . print_r($filteredProducts, true));
-        }
-    }
-}
+$filteredProducts = $filters_render->returnCorrectedArr();
+$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function() {echo getSpecialOffersSection();});
 ?>
 
 <!DOCTYPE html>
@@ -106,34 +50,24 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
-    <h2 class="title__h2">АВТОСИГНАЛИЗАЦИИ С АВТОЗАПУСКОМ</h2>
+    <h2 class="title__h2">Каталог всех товаров</h2>
     <div class="catalog">
-      <div class="catalog__wrapper all-products">
+      <div class="catalog__wrapper autosygnals-gsm">
         <aside class="aside">
           <?= $filters_render->renderFilters(); ?>
         </aside>
         <div class="catalog__products">
           <?= $select->createComponent($selectData->getSelectData()) ?>
           <?php if (!empty($filteredProducts)): ?>
-              <?php
-              $productCount = 0;
-              foreach ($filteredProducts as $product):
-                echo getProductCardWModel([$product], false, $PAGE);
-                $productCount++;
-                if ($productCount === 6 || $productCount === count($filteredProducts)):
-                  echo getSpecialOffersSection();
-                endif;
-              endforeach;
-              ?>
-              <?php else: ?>
+            <?= $create_product_cards->renderProductCards(); ?>
+          <?php else: ?>
               <p>Нет товаров, соответствующих выбранным фильтрам.</p>
           <?php endif; ?>
         </div>
       </div>
       <?php if ($filteredProducts): ?>
         <?php
-          error_log(print_r($filteredProducts, true) . ' :FILTERS ');
-          $pagination = new Pagination($filteredProducts);
+          $pagination = new Pagination($filteredProducts, $total_items_per_page);
           ?>
         <?= $pagination->render(); ?>
       <?php endif; ?>
