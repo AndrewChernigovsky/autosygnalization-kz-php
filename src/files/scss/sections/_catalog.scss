@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .catalog {
   display: grid;
@@ -136,6 +136,12 @@
         width: 320px;
         grid-row: 9;
       }
+    }
+  }
+
+  &__offers {
+    @media screen and (max-width: var.$desktop-min) {
+      grid-column: 1/-1;
     }
   }
 }
