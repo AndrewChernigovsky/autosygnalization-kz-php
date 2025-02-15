@@ -316,8 +316,7 @@ export default class FiltersAction {
       ).searchParams.toString();
 
       if (isUpdated && currentSearchParams !== originalSearchParams) {
-        window.history.pushState({}, '', currentUrl);
-        location.reload();
+        window.location.assign(currentUrl);
       }
     }
   }
