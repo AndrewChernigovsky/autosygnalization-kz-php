@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .filter-button {
   position: absolute;
@@ -21,7 +21,15 @@
     display: none;
   }
 
-  &+.filter-button-close+.filter-form {
+  & + .filter-button-close {
+    display: none !important;
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: none !important;
+    }
+  }
+
+  & + .filter-button-close + .filter-form {
     display: none;
 
     @media screen and (min-width: var.$desktop-min) {
@@ -29,7 +37,7 @@
     }
   }
 
-  &+.filter-button-close+.filter-form.open {
+  & + .filter-button-close + .filter-form.open {
     display: block;
     position: absolute;
     z-index: 100;
@@ -68,7 +76,7 @@
   height: 27px;
   width: 43px;
   cursor: pointer;
-  background-image: url("#{var.$DEV_PATH}assets/images/vectors/arrow-close.svg");
+  background-image: url('#{var.$DEV_PATH}assets/images/vectors/arrow-close.svg');
   background-size: cover;
   background-repeat: no-repeat;
   top: 46px;
@@ -84,7 +92,7 @@
   }
 }
 
-.filter-button+.filter-form.open {
+.filter-button + .filter-form.open {
   @media screen and (min-width: var.$desktop-min) {
     display: block;
     position: static;

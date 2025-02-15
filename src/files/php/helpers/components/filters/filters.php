@@ -5,14 +5,13 @@ $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $docROOT . $variables->getPathFileURL();
-error_log(print_r($_SERVER['SCRIPT_NAME'],true) . "Это path");
+error_log(print_r($_SERVER['SCRIPT_NAME'], true) . "Это path");
 
 include_once $path . '/files/php/data/products.php';
 
 
 class FiltersRender
 {
-    
     private $path;
     private $get_params;
     private $filters_correct;
@@ -61,7 +60,8 @@ class FiltersRender
         $this->path_send = str_replace('/dist', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
     }
 
-    public function returnCorrectedArr() {
+    public function returnCorrectedArr()
+    {
 
         $count = [];
         if (!$this->get_params && $this->filter_correct === null) {
@@ -104,8 +104,8 @@ class FiltersRender
                                     if(!isset($productTypeItem['options-filters']) || !empty(array_diff($active_params_arr, $productTypeItem['options-filters']))) {
                                         $isMatch = false;
                                     }
-                                    
-                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filter_correct,$productTypeItem['autosygnals']))) {
+
+                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filter_correct, $productTypeItem['autosygnals']))) {
                                         $isMatch = false;
                                     }
 
@@ -141,11 +141,11 @@ class FiltersRender
                                             $active_params_arr[] = $key;
                                         }
                                     }
-                          
+
                                     if(!isset($productTypeItem['options-filters']) || !empty(array_diff($active_params_arr, $productTypeItem['options-filters']))) {
                                         $isMatch = false;
                                     }
-                                    
+
                                     if ($isMatch) {
                                         $this->filters_correct_arr[] = $productTypeItem;
                                         foreach ($productTypeItem['options-filters'] as $counterName) {
@@ -167,7 +167,7 @@ class FiltersRender
                             foreach ($productType as $productTypeItem) {
                                 if (!empty($productTypeItem)) {
                                     $isMatch = true;
-                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filter_correct,$productTypeItem['autosygnals']))) {
+                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filter_correct, $productTypeItem['autosygnals']))) {
                                         $isMatch = false;
                                     }
                                     if ($isMatch) {
@@ -210,8 +210,9 @@ class FiltersRender
         return $this->filters_correct_arr;
     }
 
-    public function renderFiltersFunctions() {
-    
+    public function renderFiltersFunctions()
+    {
+
         ob_start();
         ?>
         <div class="filter-functions">
@@ -231,7 +232,8 @@ class FiltersRender
         return ob_get_clean();
     }
 
-    public function renderFiltersCost() {
+    public function renderFiltersCost()
+    {
         ob_start();
         ?>
             <div class="double-range-wrapper filter-cost">
@@ -257,12 +259,13 @@ class FiltersRender
             </div>
 
         <?php
-        
+
         return ob_get_clean();
     }
 
-    public function renderFiltersBasic() {
-       
+    public function renderFiltersBasic()
+    {
+
         ob_start();
         ?>
         <div class="filter-basic">
@@ -283,7 +286,8 @@ class FiltersRender
         return ob_get_clean();
     }
 
-    public function renderFilters($filterBasic = true, $filterCost = true, $filterFunctions = true) {
+    public function renderFilters($filterBasic = true, $filterCost = true, $filterFunctions = true)
+    {
         ob_start();
         ?>
         <button class="filter-button" type="button" id="filter-btn"
@@ -291,20 +295,20 @@ class FiltersRender
         <button class="filter-button-close" type="button" id="filter-btn-close">
             <span class="visually-hidden">скрыть фильтры</span>
         </button>
-        <form class="filter-form open" id="filter-catalog" action="<?= $this->path . $this->path_send; ?>" method="get">
+        <form class="filter-form" id="filter-catalog" action="<?= $this->path . $this->path_send; ?>" method="get">
             <?php
                 if ($filterBasic === true) {
                     echo $this->renderFiltersBasic();
                 }
 
-                if ($filterCost === true) {
-                    echo $this->renderFiltersCost();
-                }
+        if ($filterCost === true) {
+            echo $this->renderFiltersCost();
+        }
 
-                if ($filterFunctions === true) {
-                    echo $this->renderFiltersFunctions();
-                }
-            ?>
+        if ($filterFunctions === true) {
+            echo $this->renderFiltersFunctions();
+        }
+        ?>
             <div class="filters__buttons">
                 <button type="submit" class="button y-button-primary">Применить</button>
                 <button type="reset" class="button y-button-secondary">Сбросить</button>
