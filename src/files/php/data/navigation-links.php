@@ -83,7 +83,7 @@ class NavigationLinks
             "list" => [
               ["link" => $this->path_pages . "/special/special.php", "name" => 'Специальные предложения'],
               ["link" => $this->path_pages . "/cart/cart.php", "name" => 'Корзина заказа'],
-              ["link" => $this->path_pages . "/client/client.php?client=review", "name" => 'Оставить отзыв'],
+              ["link" => "https://www.google.com/maps/place/Auto+Security/@43.2382366,76.8052254,12z/data=!4m8!3m7!1s0x3883693b733bff39:0x716633e11986b3f8!8m2!3d43.2320104!4d76.87164!9m1!1b1!16s%2Fg%2F11c1sz8_h9?entry=ttu&g_ep=EgoyMDI1MDIxMi4wIKXMDSoJLDEwMjExNDUzSAFQAw%3D%3D", "name" => 'Оставить отзыв'],
               ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Галерея выполненных работ'],
               ["link" => $this->path_pages . "/contacts/contacts.php#location", "name" => 'Как к нам добраться'],
             ]
@@ -94,41 +94,38 @@ class NavigationLinks
 
     public function getCategoriesAutoSygnals()
     {
-      $categories_autosygnals = [
-        [
-            'link' => "$this->path_pages/autosygnals/autosygnals-auto.php",
-            'name' => 'Автосигнализации с автозапуском',
-            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
-            'src' => "$this->path/assets/images/autosygnals/autosygnals-1.avif"
-        ],
-        [
-            'link' => "$this->path_pages/autosygnals/autosygnals-gsm.php",
-            'name' => 'Автосигнализации с GSM',
-            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
-            'src' => "$this->path/assets/images/autosygnals/autosygnals-2.avif"
-        ],
-        [
-            'link' => "$this->path_pages/autosygnals/autosygnals-without-auto.php",
-            'name' => 'Автосигнализации без автозапуска',
-            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
-            'src' => "$this->path/assets/images/autosygnals/autosygnals-3.avif"
-        ],
-        [
-            'link' => "$this->path_pages/autosygnals/autosygnals-starline.php",
-            'name' => 'Каталог автосигнализаций Starline',
-            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
-            'src' => "$this->path/assets/images/autosygnals/autosygnals-4.avif"
-        ],
-        [
-            'link' => "$this->path_pages/autosygnals/autosygnals-acssesuars.php",
-            'name' => 'Пульты и аксессуары',
-            'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
-            'src' => "$this->path/assets/images/autosygnals/autosygnals-5.avif"
-        ],
+        $categories_autosygnals = [
+          [
+              'link' => "$this->path_pages/autosygnals/autosygnals-auto.php",
+              'name' => 'Автосигнализации с автозапуском',
+              'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+              'src' => "$this->path/assets/images/autosygnals/autosygnals-1.avif"
+          ],
+          [
+              'link' => "$this->path_pages/autosygnals/autosygnals-gsm.php",
+              'name' => 'Автосигнализации с GSM',
+              'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+              'src' => "$this->path/assets/images/autosygnals/autosygnals-2.avif"
+          ],
+          [
+              'link' => "$this->path_pages/autosygnals/autosygnals-without-auto.php",
+              'name' => 'Автосигнализации без автозапуска',
+              'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+              'src' => "$this->path/assets/images/autosygnals/autosygnals-3.avif"
+          ],
+          [
+              'link' => "$this->path_pages/autosygnals/autosygnals-starline.php",
+              'name' => 'Каталог автосигнализаций Starline',
+              'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+              'src' => "$this->path/assets/images/autosygnals/autosygnals-4.avif"
+          ],
+          [
+              'link' => "$this->path_pages/autosygnals/autosygnals-acssesuars.php",
+              'name' => 'Пульты и аксессуары',
+              'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
+              'src' => "$this->path/assets/images/autosygnals/autosygnals-5.avif"
+          ],
     ];
-    return $categories_autosygnals;
+        return $categories_autosygnals;
     }
 }
-
-
-

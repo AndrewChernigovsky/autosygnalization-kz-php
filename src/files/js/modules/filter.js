@@ -70,6 +70,7 @@ export default class FiltersAction {
             JSON.stringify(this.filterStates)
           );
         });
+
       } else if (
         element.name === 'min-range-cost' ||
         element.name === 'min-value-cost'
