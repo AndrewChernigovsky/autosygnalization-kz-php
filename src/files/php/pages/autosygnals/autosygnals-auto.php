@@ -1,24 +1,16 @@
 <?php
 
-// 
 session_start();
 $pagePath = $_SERVER['PHP_SELF'];
 
-// Если параметр SELECT передан, сохраняем все параметры GET в сессии
 if (isset($_GET['SELECT'])) {
-    // Сохраняем все параметры GET в сессии
-    $_SESSION['saved_select_auto'] = $_GET;
+    $_SESSION['get_params_auto'] = $_GET;
 }
 
-// Если параметр SELECT не передан, но параметры есть в сессии
-elseif (!isset($_GET['SELECT']) && isset($_SESSION['saved_select_auto'])) {
-    // Получаем все параметры из сессии
-    $savedParams = $_SESSION['saved_select_auto'];
-    error_log(print_r($_SESSION['saved_select_auto'],true) . 'это saved_select_auto');
-    // Строим строку запроса с сохранёнными параметрами
+elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_auto'])) {
+    $savedParams = $_SESSION['get_params_auto'];
     $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
-    
-    // Перенаправляем на текущую страницу с сохранёнными параметрами
+  
     header("Location: $redirect_url");
     exit();
 }

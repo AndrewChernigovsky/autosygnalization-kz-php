@@ -102,20 +102,20 @@ async function loadModules() {
       currentPath
     );
   }
-  // if (filtersAction != null) {
-  //   const filtersAction = await import('./modules/filter.js');
-  //   console.log(filtersAction);
-  //   const FiltersAction = filtersAction.default;
+  if (filtersAction != null) {
+    const filtersAction = await import('./modules/filter.js');
+    console.log(filtersAction);
+    const FiltersAction = filtersAction.default;
 
-  //   const currentPath = window.location.pathname;
+    const currentPath = window.location.pathname;
 
-  //   new FiltersAction(
-  //     {
-  //       form: '.filter-form',
-  //     },
-  //     currentPath
-  //   );
-  // }
+    new FiltersAction(
+      {
+        form: '.filter-form',
+      },
+      currentPath
+    );
+  }
   if (cartCounter != null || cartButtons.length > 0) {
     const { cartButtonHandler } = await import('./modules/cart-button.js');
     cartButtonHandler();
