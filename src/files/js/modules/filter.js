@@ -4,14 +4,6 @@ export function filterToggleMenu() {
   const filterBtnClose = document.getElementById('filter-btn-close');
   let flag = false;
 
-  function checkWindowSize() {
-    const isMobile = window.innerWidth <= 1024;
-    if (isMobile) {
-      filterCatalog.classList.remove('open');
-      filterBtnClose.style.display = 'none';
-    }
-  }
-
   function toggleFiltersMenu() {
     if (flag) {
       filterCatalog.classList.remove('open');
@@ -33,8 +25,6 @@ export function filterToggleMenu() {
   filterBtnClose.addEventListener('click', () => {
     toggleFiltersMenu();
   });
-  checkWindowSize();
-  window.addEventListener('resize', checkWindowSize);
 }
 export default class FiltersAction {
   constructor(block, path = 'files/php/pages/catalog/catalog.php') {
@@ -82,6 +72,7 @@ export default class FiltersAction {
             JSON.stringify(this.filterStates)
           );
         });
+
       } else if (
         element.name === 'min-range-cost' ||
         element.name === 'min-value-cost'
