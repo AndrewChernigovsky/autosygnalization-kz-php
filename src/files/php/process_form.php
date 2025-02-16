@@ -1,12 +1,13 @@
 <?php
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+header('Content-Type: application/json; charset=utf-8'); // для ответа в формате json
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $mark = $_POST['mark'] ?? '';
     $model = trim($_POST['model'] ?? '');
     $releaseYear = trim($_POST['release-year'] ?? '');
     $name = trim($_POST['name'] ?? '');
-    $phone = $_POST['phone'] ?? '';
+    $phone = trim($_POST['phone'] ?? '');
     $message = trim($_POST['message'] ?? '');
 
     $errors = [];
@@ -36,23 +37,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     if (!empty($errors)) {
-        foreach($errors as $error) {
-            echo "<p style='color:red;'>$error</p>";
-        }
+        echo json_encode(['success' => false, 'errors' => $errors]);
         exit; 
     }
+
 
     $to = "lady.mescheryakowa@yandex.ru"; 
     $subject = "Новая заявка на установку сигнализации";
     $body = "Марка: $mark\nМодель: $model\nГод выпуска: $releaseYear\nИмя: $name\nТелефон: $phone\nСообщение: $message";
     $headers = "From: lady.mescheryakowa@yandex.ru"; 
 
-    if (mail($to, $subject, $body, $headers)) {
-        echo "Заявка успешно отправлена!";
-    } else {
-        echo "Ошибка при отправке заявки. Пожалуйста, попробуйте еще раз.";
-    }
-} else {
-    echo "Неверный метод запроса.";
+
+    mail($to, $subject, $body, $headers);
+
+    echo json_encode(['success' => true]);
+    exit; 
 }
 ?>

@@ -140,6 +140,8 @@ async function loadModules() {
   }
   if (feedbackForm != null) {
     const { initValidate } = await import('./modules/initValidate.js');
+    const { formHandler } = await import('./modules/form-handler.js');
+    formHandler();
     initValidate();
   }
   if (fancyboxExist.length > 0) {

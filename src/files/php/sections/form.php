@@ -4,9 +4,9 @@ include_once __DIR__ . '/../data/brands.php';
 <section class="form" id="form">
   <div class="form__wrapper">
     <h2 class="form__title">Форма обратной связи</h2>
-    <form class="form__main-form" action="./../process_form.php" method="post" id="feedback-form">
+    <form class="form__main-form" action="/src/files/php/process_form.php" method="post" id="feedback-form">
       <fieldset class="form__fieldset">
-        <legent class="form__subtitle">Марка:</legent>
+        <legend class="form__subtitle">Марка:</legend>
         <div class="form__group-radio">
           <?php foreach ($brands as $brand): ?>
             <input class="form__radio" style="background-image: url(<?= $brand['path'] ?>);" type="radio" name="mark"
@@ -30,13 +30,13 @@ include_once __DIR__ . '/../data/brands.php';
         <li class="form__item">
           <label class="form__subtitle">Имя*:
             <input class="form__input" type="text" name="name" id="name" placeholder="Ivanov Ivan Ivanovich"
-              pattern="[A-Za-z\s]+" required>
+              pattern="[A-Za-zА-Яа-яЁё\s]+" required>
           </label>
         </li>
         <li class="form__item">
           <label class="form__subtitle">Телефон*:
             <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777"
-              pattern="[0-9]+" required>
+              pattern="^\+?[0-9\s\(\)]{5,20}$" required>
           </label>
         </li>
         <li class="form__item form__item--textarea">
