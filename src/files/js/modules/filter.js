@@ -16,10 +16,12 @@ export function filterToggleMenu() {
     if (flag) {
       filterCatalog.classList.remove('open');
       filterBtnClose.style.display = 'none';
+      console.log(flag);
       flag = false;
     } else {
       filterCatalog.classList.add('open');
       filterBtnClose.style.display = 'flex';
+      console.log(flag);
       flag = true;
     }
   }

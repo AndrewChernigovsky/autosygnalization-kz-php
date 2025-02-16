@@ -1,4 +1,27 @@
 <?php
+
+// 
+session_start();
+$pagePath = $_SERVER['PHP_SELF'];
+
+// Если параметр SELECT передан, сохраняем все параметры GET в сессии
+if (isset($_GET['SELECT'])) {
+    // Сохраняем все параметры GET в сессии
+    $_SESSION['saved_select_remote_controls'] = $_GET;
+}
+
+// Если параметр SELECT не передан, но параметры есть в сессии
+elseif (!isset($_GET['SELECT']) && isset($_SESSION['saved_select_remote_controls'])) {
+    // Получаем все параметры из сессии
+    $savedParams = $_SESSION['saved_select_remote_controls'];
+    error_log(print_r($_SESSION['saved_select_remote_controls'],true) . 'это saved_select_remote_controls');
+    // Строим строку запроса с сохранёнными параметрами
+    $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
+    
+    // Перенаправляем на текущую страницу с сохранёнными параметрами
+    header("Location: $redirect_url");
+    exit();
+}
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../data/article.php';
 include_once __DIR__ . '/../../data/select.php';

@@ -1,4 +1,28 @@
 <?php
+
+
+// 
+session_start();
+$pagePath = $_SERVER['PHP_SELF'];
+
+// Если параметр SELECT передан, сохраняем все параметры GET в сессии
+if (isset($_GET['SELECT'])) {
+    // Сохраняем все параметры GET в сессии
+    $_SESSION['saved_select_without_auto'] = $_GET;
+}
+
+// Если параметр SELECT не передан, но параметры есть в сессии
+elseif (!isset($_GET['SELECT']) && isset($_SESSION['saved_select_without_auto'])) {
+    // Получаем все параметры из сессии
+    $savedParams = $_SESSION['saved_select_without_auto'];
+    error_log(print_r($_SESSION['saved_select_without_auto'],true) . 'это saved_select_without_auto');
+    // Строим строку запроса с сохранёнными параметрами
+    $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
+    
+    // Перенаправляем на текущую страницу с сохранёнными параметрами
+    header("Location: $redirect_url");
+    exit();
+}
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../data/article.php';
 include_once __DIR__ . '/../../data/select.php';
@@ -24,7 +48,7 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Автосигнализации с автозапуском';
+$title = 'Автосигнализации без автозапуском';
 $total_items_per_page = 10;
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';
@@ -50,7 +74,7 @@ echo $head->setHead();
 <body>
   <?php include_once $docROOT . $path . '/files/php/layout/header.php'; ?>
   <main class="main">
-    <h2 class="title__h2">Автосигнализации с без автозапуска</h2>
+    <h2 class="title__h2">Автосигнализации без автозапуска</h2>
     <div class="catalog">
       <div class="catalog__wrapper autosygnals-without-auto">
         <aside class="aside">
