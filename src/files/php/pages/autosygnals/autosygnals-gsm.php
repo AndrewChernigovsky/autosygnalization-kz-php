@@ -1,4 +1,21 @@
 <?php
+
+
+// 
+session_start();
+$pagePath = $_SERVER['PHP_SELF'];
+
+if (isset($_GET['SELECT'])) {
+    $_SESSION['get_params_gsm'] = $_GET;
+}
+
+elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_gsm'])) {
+    $savedParams = $_SESSION['get_params_gsm'];
+    $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
+  
+    header("Location: $redirect_url");
+    exit();
+}
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../data/article.php';
 include_once __DIR__ . '/../../data/select.php';
@@ -24,7 +41,7 @@ $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
 $head_path = $docROOT . $path . '/files/php/layout/head.php';
-$title = 'Автосигнализации с автозапуском';
+$title = 'Автосигнализации gsm';
 $total_items_per_page = 10;
 include_once $head_path;
 include_once $docROOT . $path . '/files/php/data/products.php';

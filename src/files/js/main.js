@@ -146,15 +146,6 @@ async function loadModules() {
     const { initFancybox } = await import('./modules/fancybox.js');
     initFancybox();
   }
-  if (minValue) {
-    const { initializeRangeFilter } = await import('./modules/filter-cost.js');
-    initializeRangeFilter(
-      '.filter-cost__range--min',
-      '.filter-cost__range--max',
-      'minValue',
-      'maxValue'
-    );
-  }
   if (buttonPrint) {
     const module = await import('./modules/print-contacts.js');
     const PrintDocument = module.default;
