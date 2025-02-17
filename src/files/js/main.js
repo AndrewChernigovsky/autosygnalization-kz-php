@@ -28,6 +28,7 @@ const {
   cartButtons,
   addToCartButton,
   filtersAction,
+  formOrder,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -55,6 +56,7 @@ const {
   cartButtons: document.querySelectorAll('.cart-button'),
   addToCartButton: document.querySelector('.card-more__button-cart'),
   filtersAction: document.querySelector('.filter-form'),
+  formOrder: document.querySelector('.cart-section'),
 };
 
 async function loadModules() {
@@ -104,7 +106,6 @@ async function loadModules() {
   }
   if (filtersAction != null) {
     const filtersAction = await import('./modules/filter.js');
-    console.log(filtersAction);
     const FiltersAction = filtersAction.default;
 
     const currentPath = window.location.pathname;
@@ -188,6 +189,18 @@ async function loadModules() {
     const { renderCardButton } = await import('./modules/card-cart.js');
     renderCardButton();
   }
+  // if (formOrder !== null) {
+  //   const formOrder = await import('./modules/form-order.js');
+  //   const FormOrder = formOrder.default;
+  //   setTimeout(() => {
+  //     new FormOrder({
+  //       receptacle: '.cart-section',
+  //       form: '.checkout-form',
+  //       list: '.cart-section__products',
+  //       items: '.checkout-info',
+  //     });
+  //   }, 100); // Подождать 100 мс (можно увеличить)
+  // }
 }
 
 document.addEventListener('DOMContentLoaded', loadModules);

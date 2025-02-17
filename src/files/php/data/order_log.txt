@@ -1,0 +1,56 @@
+Array
+(
+    [form] => Array
+        (
+            [client_type] => 1
+            [country] => 115
+            [city] => Moscow
+            [street] => Крылова
+            [index] => 111111
+            [house] => 12
+            [corpus] => 43
+            [apartment] => 21
+            [user-name] => Антуан
+            [user-lastname] => Дель-Панье
+            [telephone] => +18723099732
+            [email] => ss@mail.ru
+            [delivery-method] => quick-delivery
+            [payment-method] => pay-caspy-bank
+            [comments] => 
+            [call-me] => on
+            [privacy] => on
+        )
+
+    [items] => Array
+        (
+            [0] => Array
+                (
+                    [title] => Starline A93 ECO V2
+                    [quantity] => 1
+                    [price] => 64900
+                )
+
+            [1] => Array
+                (
+                    [title] => StarLine E96 V2 BT 2CAN+4LIN 2SIM GSM+GPS
+                    [quantity] => 1
+                    [price] => 167200
+                )
+
+            [2] => Array
+                (
+                    [title] => Starline A93 V2 GSM
+                    [quantity] => 1
+                    [price] => 122700
+                )
+
+            [3] => Array
+                (
+                    [title] => Starline A93 V2 2CAN+2LIN GSM ECO
+                    [quantity] => 1
+                    [price] => 159000
+                )
+
+        )
+
+)
