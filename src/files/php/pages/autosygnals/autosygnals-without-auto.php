@@ -11,7 +11,8 @@ if (isset($_GET['SELECT'])) {
 elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_without_auto'])) {
     $savedParams = $_SESSION['get_params_without_auto'];
     $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
-  
+    session_unset();
+    session_destroy();
     header("Location: $redirect_url");
     exit();
 }
