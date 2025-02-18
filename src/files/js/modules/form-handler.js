@@ -2,7 +2,7 @@ export function formHandler() {
         document.getElementById('feedback-form').addEventListener('submit', function(event) {
             event.preventDefault();
     
-            var formData = new FormData(this); 
+            const formData = new FormData(this); 
     
             fetch('/src/files/php/process_form.php', { 
                 method: 'POST',
