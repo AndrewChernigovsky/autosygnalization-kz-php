@@ -10,7 +10,10 @@ export default class FormOrder {
     this.list = this.receptacle.querySelector(object.list);
     this.items = this.list.querySelectorAll(object.items);
 
-    if (!this.receptacle || !this.form || !this.list || !this.items) {
+    console.log(this.list, 'LIST');
+    console.log(this.items, 'ITEMS');
+
+    if (this.items.length <= 0) {
       console.log(
         'FormOrder: один из параметров неверно передан в конструктор'
       );
