@@ -10,10 +10,12 @@ export default class FormOrder {
     this.list = this.receptacle.querySelector(object.list);
     this.items = this.list.querySelectorAll(object.items);
 
-    console.log(this.list, 'LIST');
-    console.log(this.items, 'ITEMS');
-
-    if (this.items.length <= 0) {
+    if (
+      this.items.length <= 0 ||
+      !this.list ||
+      !this.form ||
+      !this.receptacle
+    ) {
       console.log(
         'FormOrder: один из параметров неверно передан в конструктор'
       );
@@ -23,7 +25,8 @@ export default class FormOrder {
     }
 
     this.sendObject = {};
-    this.path = path || window.location.pathname;
+    this.path =
+      path || window.location.pathname.includes('/dist') ? '/dist' : '';
     this.init();
   }
 
@@ -46,16 +49,22 @@ export default class FormOrder {
 
       this.items.forEach((item, index) => {
         const title =
-          item.querySelector('#product-title')?.textContent.trim() || '';
+          item.querySelector('#product-title')?.textContent?.trim() ||
+          'Название товара нет в базе данных';
         const quantity =
-          item.querySelector('#product-quantity')?.textContent.trim() || '';
+          item.querySelector('#product-quantity')?.textContent?.trim() ||
+          'Кол-во товара нет в базе данных';
         const price =
-          item.querySelector('#product-price')?.textContent.trim() || '';
+          item.querySelector('#product-price')?.textContent?.trim() ||
+          'Цены товара нет в базе данных';
 
         this.sendObject['items'][index] = {
           title,
-          quantity: Number(quantity),
-          price: Number(price),
+          quantity:
+            quantity === null || isNaN(Number(quantity))
+              ? quantity
+              : Number(quantity),
+          price: price === null || isNaN(Number(price)) ? price : Number(price),
         };
       });
       console.log(this.sendObject);
@@ -65,7 +74,13 @@ export default class FormOrder {
   }
 
   sendDataToServer() {
+    // const url = `${this.path}/files/php/data/form_order.php`;
     const url = '/src/files/php/data/form_order.php';
+
+    if (!this.sendObject || Object.keys(this.sendObject).length === 0) {
+      alert('Ошибка: данные заказа отсутствуют');
+      return;
+    }
 
     fetch(url, {
       method: 'POST',
@@ -74,7 +89,14 @@ export default class FormOrder {
       },
       body: JSON.stringify(this.sendObject),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Ошибка сервера: ${response.status} ${response.statusText}`
+          );
+        }
+        return response.json();
+      })
       .then((data) => {
         console.log('Ответ от сервера:', data);
         if (data.success) {
