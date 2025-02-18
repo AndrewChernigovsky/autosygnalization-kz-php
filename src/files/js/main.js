@@ -28,6 +28,7 @@ const {
   cartButtons,
   addToCartButton,
   filtersAction,
+  deliveryModal
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -55,6 +56,7 @@ const {
   cartButtons: document.querySelectorAll('.cart-button'),
   addToCartButton: document.querySelector('.card-more__button-cart'),
   filtersAction: document.querySelector('.filter-form'),
+  deliveryModal:document.getElementById('deliveryModal'),
 };
 
 async function loadModules() {
@@ -189,6 +191,11 @@ async function loadModules() {
   if (cardMoreButton != null) {
     const { renderCardButton } = await import('./modules/card-cart.js');
     renderCardButton();
+  }
+
+  if (deliveryModal != null) {
+    const { initModal } = await import('./modules/modal.js');
+    initModal();
   }
 }
 
