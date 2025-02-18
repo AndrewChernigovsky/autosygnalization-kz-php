@@ -30,7 +30,7 @@ export class CheckoutForm extends Component {
     const value = e.target.value;
     this.setState({
       selectedClientType: value,
-      isCompany: value === '2', // Проверяем, является ли выбранный тип "Юридическое лицо"
+      isCompany: value === 'Юридическое лицо', // Проверяем, является ли выбранный тип "Юридическое лицо"
     });
   };
 
@@ -42,7 +42,7 @@ export class CheckoutForm extends Component {
       <fieldset>
         <legend>Вы оформляете заказ как:</legend>
         <label
-          class="${selectedClientType === '1'
+          class="${selectedClientType === 'Физическое лицо'
             ? 'checkout-form__label-radio selected'
             : 'checkout-form__label-radio'}"
         >
@@ -51,12 +51,12 @@ export class CheckoutForm extends Component {
             name="client_type"
             value="Физическое лицо"
             onChange=${this.changeFace}
-            checked=${selectedClientType === '1'}
+            checked=${selectedClientType === 'Физическое лицо'}
           />
           Физическое лицо
         </label>
         <label
-          class="${selectedClientType === '2'
+          class="${selectedClientType === 'Юридическое лицо'
             ? 'checkout-form__label-radio selected'
             : 'checkout-form__label-radio'}"
         >
@@ -65,7 +65,7 @@ export class CheckoutForm extends Component {
             name="client_type"
             value="Юридическое лицо"
             onChange=${this.changeFace}
-            checked=${selectedClientType === '2'}
+            checked=${selectedClientType === 'Юридическое лицо'}
           />
           Юридическое лицо
         </label>
