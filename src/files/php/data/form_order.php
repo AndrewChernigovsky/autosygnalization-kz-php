@@ -3,17 +3,13 @@
 $data = json_decode(file_get_contents('php://input'), true);
 
 if ($data) {
-
-    $dataString = "<?php\n\n\$savedData = " . var_export($data, true) . ";\n\n?>";
-    file_put_contents('form_order_data.php', $dataString);
-
     $current_data = $data;
-    
+
     $formData = $current_data['form'];
     $items = $current_data['items'];
-    
+
     $emailBody = "Заказ от клиента:\n\n";
-    
+
     $emailBody .= "Тип клиента: " . $formData['client_type'] . "\n";
     $emailBody .= "Страна: " . $formData['country'] . "\n";
     $emailBody .= "Город: " . $formData['city'] . "\n";
@@ -31,16 +27,16 @@ if ($data) {
     $emailBody .= "Комментарий: " . $formData['comments'] . "\n";
     $emailBody .= "Включить звонок: " . $formData['call-me'] . "\n";
     $emailBody .= "Согласие на обработку данных: " . $formData['privacy'] . "\n";
-    
+
     $emailBody .= "\n\nТовары:\n";
-    
+
     foreach ($items as $item) {
         $emailBody .= "Название: " . $item['title'] . "\n";
         $emailBody .= "Количество: " . $item['quantity'] . "\n";
         $emailBody .= "Цена: " . $item['price'] . " рублей\n\n";
     }
 
-    $to = 'andrey@andrew.ru';
+    $to = 'chernigovsky108@gmail.com';
 
     $subject = 'Новый заказ на сайте';
 
@@ -57,4 +53,3 @@ if ($data) {
 } else {
     echo json_encode(['success' => false, 'message' => 'Не удалось обработать данные']);
 }
-?>
