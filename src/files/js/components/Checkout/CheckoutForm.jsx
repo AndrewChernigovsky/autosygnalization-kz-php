@@ -32,11 +32,10 @@ export class CheckoutForm extends Component {
       selectedClientType: value,
       isCompany: value === '2', // Проверяем, является ли выбранный тип "Юридическое лицо"
     });
-  }; 
+  };
 
   render() {
-    const { isCompany, selectedClientType} =
-      this.state; // Деструктурируем состояние для удобства
+    const { isCompany, selectedClientType } = this.state; // Деструктурируем состояние для удобства
 
     return html`
       <p class="checkout-form__title">Оформление заказа</p>
@@ -50,7 +49,7 @@ export class CheckoutForm extends Component {
           <input
             type="radio"
             name="client_type"
-            value="1"
+            value="Физическое лицо"
             onChange=${this.changeFace}
             checked=${selectedClientType === '1'}
           />
@@ -64,7 +63,7 @@ export class CheckoutForm extends Component {
           <input
             type="radio"
             name="client_type"
-            value="2"
+            value="Юридическое лицо"
             onChange=${this.changeFace}
             checked=${selectedClientType === '2'}
           />
