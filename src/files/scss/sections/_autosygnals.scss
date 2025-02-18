@@ -2,9 +2,11 @@
 
 .autosygnals {
   &__title {
-    font-size: 18px;
-    font-weight: 700;
     text-align: center;
+    
+    @media screen and (max-width: var.$desktop-min) {
+      padding-top: 20px;
+    }
   }
 
   &__list {
@@ -69,10 +71,6 @@
   }
 
   @media screen and (max-width: var.$tablet) {
-    &__title {
-      font-size: 24px;
-    }
-
     &__list {
       gap: 10px;
       grid-template-columns: 1fr;

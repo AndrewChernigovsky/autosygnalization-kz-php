@@ -17,7 +17,7 @@ $card = new ServiceCard();
 
 <section class="service" id="service">
   <div class="container">
-    <h2 class="service__title secondary-title">наши услуги</h2>
+    <h2 class="service__title">наши услуги</h2>
     <div class="swiper swiper-service">
       <ul class="service__list service__list--component list-style-none swiper-wrapper component">
         <?php foreach ($services as $index => $service): ?>
