@@ -6,7 +6,7 @@ Array
             [country] => 115
             [city] => Moscow
             [street] => Крылова
-            [index] => 111111
+            [index] => 1289163
             [house] => 12
             [corpus] => 43
             [apartment] => 21
@@ -17,7 +17,6 @@ Array
             [delivery-method] => quick-delivery
             [payment-method] => pay-caspy-bank
             [comments] => 
-            [call-me] => on
             [privacy] => on
         )
 
@@ -25,30 +24,37 @@ Array
         (
             [0] => Array
                 (
-                    [title] => Starline A93 ECO V2
+                    [title] => Starline A93 V2 2CAN+2LIN GSM ECO
                     [quantity] => 1
-                    [price] => 64900
+                    [price] => 159000
                 )
 
             [1] => Array
                 (
-                    [title] => StarLine E96 V2 BT 2CAN+4LIN 2SIM GSM+GPS
+                    [title] => Starline A60 Eco
                     [quantity] => 1
-                    [price] => 167200
+                    [price] => 43700
                 )
 
             [2] => Array
                 (
-                    [title] => Starline A93 V2 GSM
+                    [title] => StarLine 2CAN 2LIN Встраиваемый модуль
                     [quantity] => 1
-                    [price] => 122700
+                    [price] => 34000
                 )
 
             [3] => Array
                 (
-                    [title] => Starline A93 V2 2CAN+2LIN GSM ECO
+                    [title] => Sd-карта памяти для видеорегистраторов
                     [quantity] => 1
-                    [price] => 159000
+                    [price] => 7000
+                )
+
+            [4] => Array
+                (
+                    [title] => Sheriff Доводчик стекол 4х
+                    [quantity] => 1
+                    [price] => 15000
                 )
 
         )
