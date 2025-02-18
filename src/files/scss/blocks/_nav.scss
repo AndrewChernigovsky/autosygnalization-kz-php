@@ -96,16 +96,23 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 10px;
+  gap: 15px;
   font-size: 20px;
   font-weight: bold;
 
   @media screen and (max-width: var.$desktop-min) {
+    display: none;
     font-size: 12px;
   }
 
   @media screen and (min-width: var.$desktop-min) {
     margin: 0 20px;
+    justify-content: center;
+    grid-column: 7/10;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    gap: 20px;
   }
 
   img {
@@ -337,12 +344,12 @@
 .menu-btns {
   display: flex;
   align-items: center;
-  grid-column: 1/9;
+  grid-column: 1/7;
   justify-content: center;
   gap: 5%;
 
   @media screen and (min-width: var.$desktop-min) {
-    justify-content: end;
+    justify-content: flex-start;
     gap: 0;
 
     div:first-of-type {

@@ -95,7 +95,8 @@ $navigationLinks = new NavigationLinks();
           <div class="search">
             <input type="search" placeholder="Поиск..." name="Поиск" />
           </div>
-          <div class="phone">
+        </div>
+        <div class="phone">
             <svg width="50" height="50">
               <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#phone' ?>"></use>
             </svg>
@@ -110,7 +111,6 @@ $navigationLinks = new NavigationLinks();
               ?>
             </ul>
           </div>
-        </div>
         <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link geo-address">
           <div class="header__image image">
             <svg width="50" height="50">
