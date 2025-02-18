@@ -17,6 +17,7 @@ export class Cart extends Component {
       products: [],
       errorMessage: null,
     };
+    this.classFormOrder = null;
   }
 
   componentDidMount() {
@@ -48,7 +49,7 @@ export class Cart extends Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevState.products !== this.state.products) {
       import('../modules/form-order.js').then(({ default: FormOrder }) => {
-        new FormOrder({
+        this.classFormOrder = new FormOrder({
           receptacle: '.cart-section',
           form: '.checkout-form',
           list: '.cart-section__products',
