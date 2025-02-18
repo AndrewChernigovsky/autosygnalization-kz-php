@@ -194,8 +194,8 @@ async function loadModules() {
   }
 
   if (deliveryModal != null) {
-    const { initModal } = await import('./modules/modal.js');
-    initModal();
+    const { initDeliveryModal } = await import('./modules/deliveryModal.js');
+    initDeliveryModal();
   }
 }
 
