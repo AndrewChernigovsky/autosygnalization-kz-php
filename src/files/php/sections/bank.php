@@ -15,11 +15,11 @@ $phones = $contacts->getPhones();
     <button type='button' class="y-button-primary button buy-btn">Оставить заявку</button>
     <div class="bank__wrapper">
       <div class="bank__image--square">
-        <img src="<?= $path . '/assets/images/kaspi-1.png' ?>" alt="логотип Каспи Банка" width='100' height='100'>
+        <img src="<?= $path . '/assets/images/kaspi-1.avif' ?>" alt="логотип Каспи Банка" width='100' height='100'>
       </div>
-      <div class="bank__image--round" style="background-color: #fff; border: 4px solid white; border-radius: 50%;">
+      <!-- <div class="bank__image--round" style="background-color: #fff; border: 4px solid white; border-radius: 50%;">
         <img src="<?= $path . '/assets/images/kaspi.avif' ?>" alt="логотип Каспи Банка" width='50' height='50'>      
-      </div>
+      </div> -->
       <p>0-0-12</p>
     </div>
   </div>

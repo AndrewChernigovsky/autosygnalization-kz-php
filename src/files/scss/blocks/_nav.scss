@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .nav {
   grid-row: 1 / 2;
@@ -52,7 +52,7 @@
   min-width: inherit;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 20px;
     height: 20px;
@@ -61,7 +61,7 @@
     left: 6px;
     z-index: 1;
     mask-position: center;
-    mask-image: url("#{var.$DEV_PATH}assets/images/vectors/search.svg");
+    mask-image: url('#{var.$DEV_PATH}assets/images/vectors/search.svg');
     background-color: var.$black;
     mask-position: center;
     mask-repeat: no-repeat;
@@ -196,7 +196,7 @@
       position: relative;
 
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         top: 50%;
         left: 50%;
@@ -212,7 +212,7 @@
       position: relative;
 
       &::before {
-        content: "";
+        content: '';
         position: fixed;
         z-index: 10;
         background-color: var.$gray-bg;
@@ -227,7 +227,7 @@
         z-index: 13;
 
         &::before {
-          content: "";
+          content: '';
           position: absolute;
           top: 50%;
           left: 50%;
@@ -240,7 +240,7 @@
         }
 
         &::after {
-          content: "";
+          content: '';
           position: absolute;
           top: 50%;
           left: 50%;
@@ -255,7 +255,6 @@
   }
 
   .menu-btns {
-
     .phone,
     .search {
       display: none;
@@ -264,7 +263,7 @@
     &.active {
       position: fixed;
       display: grid;
-      top: 25px;
+      top: 15px;
       left: 10%;
       z-index: 11;
 

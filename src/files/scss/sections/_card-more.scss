@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .card-more {
   position: relative;
@@ -23,7 +23,7 @@
     width: 1024px;
     grid-template-columns: repeat(2, 195px) repeat(2, 1fr);
   }
-  
+
   @media screen and (min-width: var.$desktop) {
     width: 1440px;
     padding-right: 30px;
@@ -65,8 +65,8 @@
         align-self: flex-start;
         grid-column: 1/4;
         grid-row: 1/2;
-      }  
-      
+      }
+
       @media screen and (min-width: var.$desktop-min) {
         grid-column: 1/3;
       }
@@ -86,7 +86,7 @@
       }
     }
 
-    &__description {      
+    &__description {
       margin: 0;
       margin-bottom: 10px;
       padding: 10px;
@@ -109,7 +109,7 @@
       font-size: 20px;
       text-transform: uppercase;
 
-      @media screen and (min-width: var.$desktop)  {
+      @media screen and (min-width: var.$desktop) {
         font-size: 24px;
       }
     }
@@ -133,12 +133,12 @@
     @media screen and (min-width: var.$desktop-min) {
       grid-column: 3/5;
     }
-    
+
     @media screen and (min-width: var.$desktop) {
       font-size: 34px;
       line-height: 40px;
       align-self: flex-end;
-    } 
+    }
   }
 
   &__text {
@@ -233,7 +233,7 @@
   .swiper {
     @media screen and (min-width: var.$desktop-min) {
       margin: 0;
-    }    
+    }
   }
 
   .swiper-wrapper {
@@ -241,9 +241,9 @@
 
     @media screen and (min-width: var.$desktop-min) {
       height: 300px;
-    } 
+    }
 
-    @media screen and (min-width: var.$desktop)  {
+    @media screen and (min-width: var.$desktop) {
       width: 520px;
       height: 520px;
     }
@@ -279,7 +279,7 @@
     width: 300px;
     height: 300px;
 
-    @media screen and (min-width: var.$desktop)  {
+    @media screen and (min-width: var.$desktop) {
       width: 520px;
       height: 520px;
       margin: 0;
@@ -290,17 +290,18 @@
     }
   }
 
-  .small-slide {    
+  .small-slide {
     padding: 5px;
     border-radius: 5px;
     max-width: 65px;
     height: 65px;
+    overflow: hidden;
 
     @media screen and (min-width: var.$desktop-min) {
       flex-direction: column;
     }
 
-    @media screen and (min-width: var.$desktop)  {
+    @media screen and (min-width: var.$desktop) {
       min-width: 150px;
       height: 150px;
       align-items: center;
@@ -373,13 +374,13 @@
       background-size: 80px 80px;
     }
   }
-  
+
   &__button--min {
-    background-image: url('#{var.$DEV_PATH}assets/images/vectors/minus-icon.svg');    
+    background-image: url('#{var.$DEV_PATH}assets/images/vectors/minus-icon.svg');
   }
 
   &__button--max {
-    background-image: url('#{var.$DEV_PATH}assets/images/vectors/plus-icon.svg');    
+    background-image: url('#{var.$DEV_PATH}assets/images/vectors/plus-icon.svg');
   }
 
   &__quantity {
@@ -388,7 +389,7 @@
     height: 50px;
     border-radius: 50%;
 
-    @media screen and (min-width: var.$desktop-min) {      
+    @media screen and (min-width: var.$desktop-min) {
       max-height: 50px;
       min-height: 50px;
     }
@@ -400,7 +401,7 @@
       font-size: 64px;
       line-height: 86px;
     }
-  }  
+  }
 
   & + p {
     text-align: center;
@@ -408,11 +409,11 @@
     margin: 20px auto;
 
     @media screen and (min-width: var.$tablet) {
-        max-width: 768px;
-      }
+      max-width: 768px;
+    }
 
     @media screen and (min-width: var.$desktop) {
-        max-width: 1440px;
-      }
+      max-width: 1440px;
+    }
   }
 }
