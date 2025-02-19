@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .nav {
   grid-row: 1 / 2;
@@ -52,7 +52,7 @@
   min-width: inherit;
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     width: 20px;
     height: 20px;
@@ -61,7 +61,7 @@
     left: 6px;
     z-index: 1;
     mask-position: center;
-    mask-image: url("#{var.$DEV_PATH}assets/images/vectors/search.svg");
+    mask-image: url('#{var.$DEV_PATH}assets/images/vectors/search.svg');
     background-color: var.$black;
     mask-position: center;
     mask-repeat: no-repeat;
@@ -71,7 +71,8 @@
   input {
     border-radius: 30px;
     min-height: 32px;
-    background-color: var.$red-64001E;
+    // background-color: var.$red-64001E;
+    background-color: var.$red-D10000;
     display: flex;
     color: var.$white;
     min-width: 100%;
@@ -89,6 +90,10 @@
     &:autofill {
       background-color: var.$red-B40036;
     }
+
+    &::placeholder {
+      color: var.$white;
+    }
   }
 }
 
@@ -96,16 +101,23 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 10px;
+  gap: 15px;
   font-size: 20px;
   font-weight: bold;
 
   @media screen and (max-width: var.$desktop-min) {
+    display: none;
     font-size: 12px;
   }
 
   @media screen and (min-width: var.$desktop-min) {
     margin: 0 20px;
+    justify-content: center;
+    grid-column: 7/10;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    gap: 20px;
   }
 
   img {
@@ -184,7 +196,7 @@
       position: relative;
 
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         top: 50%;
         left: 50%;
@@ -200,7 +212,7 @@
       position: relative;
 
       &::before {
-        content: "";
+        content: '';
         position: fixed;
         z-index: 10;
         background-color: var.$gray-bg;
@@ -215,7 +227,7 @@
         z-index: 13;
 
         &::before {
-          content: "";
+          content: '';
           position: absolute;
           top: 50%;
           left: 50%;
@@ -228,7 +240,7 @@
         }
 
         &::after {
-          content: "";
+          content: '';
           position: absolute;
           top: 50%;
           left: 50%;
@@ -243,7 +255,6 @@
   }
 
   .menu-btns {
-
     .phone,
     .search {
       display: none;
@@ -252,7 +263,7 @@
     &.active {
       position: fixed;
       display: grid;
-      top: 25px;
+      top: 15px;
       left: 10%;
       z-index: 11;
 
@@ -337,12 +348,12 @@
 .menu-btns {
   display: flex;
   align-items: center;
-  grid-column: 1/9;
+  grid-column: 1/7;
   justify-content: center;
   gap: 5%;
 
   @media screen and (min-width: var.$desktop-min) {
-    justify-content: end;
+    justify-content: flex-start;
     gap: 0;
 
     div:first-of-type {

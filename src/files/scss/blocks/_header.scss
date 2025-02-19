@@ -8,12 +8,17 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px 0;
+    padding: 19px 0;
+
+    @media screen and (min-width: var.$tablet) {
+      padding: 22px 0;
+    }
   }
 
   &__menu {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
+    width: 100%;
 
     .geo-address {
       display: flex;
@@ -25,6 +30,7 @@
       text-decoration: underline;
       text-align: center;
 
+
       svg {
         width: 30px;
 
@@ -34,7 +40,8 @@
       }
 
       @media screen and (min-width: 1025px) {
-        grid-column: 9/13;
+        max-width: 260px;
+        grid-column: 10/13;
       }
     }
   }

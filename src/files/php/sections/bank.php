@@ -12,21 +12,15 @@ $phones = $contacts->getPhones();
   <div class="container">
     <h2>Возможно оформление <span style="color: red">в рассрочку </span>/ <span style="color: orangered">
         кредит</span> через Каспи Банк</h2>
-    <div class="bank__image">
-      <p>Звоните:</p>
-      <div class="bank__phones">
-        <?php
-        if (!empty($phones)) {
-          foreach ($phones as $phone) {
-            $cleanedPhone = str_replace(' ', '', $phone['phone']);
-            echo '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">' . htmlspecialchars($phone['phone']) . '</a>';
-          }
-        }
-        ?>
+    <button type='button' class="y-button-primary button buy-btn">Оставить заявку</button>
+    <div class="bank__wrapper">
+      <div class="bank__image--square">
+        <img src="<?= $path . '/assets/images/kaspi-1.avif' ?>" alt="логотип Каспи Банка" width='100' height='100'>
       </div>
-      <div class="bank__image" style="background-color: #fff; border: 4px solid white; border-radius: 50%;">
-        <img src="<?= $path . '/assets/images/kaspi.avif' ?>" alt="логотип Каспи Банка" width='50' height='50'>
-      </div>
+      <!-- <div class="bank__image--round" style="background-color: #fff; border: 4px solid white; border-radius: 50%;">
+        <img src="<?= $path . '/assets/images/kaspi.avif' ?>" alt="логотип Каспи Банка" width='50' height='50'>      
+      </div> -->
+      <p>0-0-12</p>
     </div>
   </div>
 </section>

@@ -9,6 +9,7 @@ const {
   phoneButton,
   buttonPrint,
   buyBtn,
+  buyBtns,
   minValue,
   filterBtn,
   buttonsTabs,
@@ -29,6 +30,7 @@ const {
   addToCartButton,
   filtersAction,
   formOrder,
+  deliveryModal
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -38,6 +40,7 @@ const {
   selected: document.querySelector('.select-selected'),
   buttonPrint: document.getElementById('print-btn'),
   buyBtn: document.getElementById('buy-btn'),
+  buyBtns: document.querySelectorAll('.buy-btn'),
   minValue: document.getElementById('minValue'),
   filterBtn: document.getElementById('filter-btn'),
   buttonsTabs: document.querySelectorAll('.tab__button'),
@@ -56,6 +59,7 @@ const {
   cartButtons: document.querySelectorAll('.cart-button'),
   addToCartButton: document.querySelector('.card-more__button-cart'),
   filtersAction: document.querySelector('.filter-form'),
+  deliveryModal:document.getElementById('deliveryModal'),
   formOrder: document.querySelector('.cart-section'),
 };
 
@@ -164,6 +168,13 @@ async function loadModules() {
     const initBuy = module.default;
     new initBuy(buyBtn);
   }
+
+  if (buyBtns.length > 0) {
+    const module = await import('./modules/buy.js');
+    const initBuy = module.default;
+    buyBtns.forEach((btn) => new initBuy(btn));
+  }
+
   if (buttonsTabs != null) {
     const { showTabs } = await import('./modules/tabs.js');
     showTabs();
@@ -191,18 +202,11 @@ async function loadModules() {
     const { renderCardButton } = await import('./modules/card-cart.js');
     renderCardButton();
   }
-  // if (formOrder !== null) {
-  //   const formOrder = await import('./modules/form-order.js');
-  //   const FormOrder = formOrder.default;
-  //   setTimeout(() => {
-  //     new FormOrder({
-  //       receptacle: '.cart-section',
-  //       form: '.checkout-form',
-  //       list: '.cart-section__products',
-  //       items: '.checkout-info',
-  //     });
-  //   }, 100); // Подождать 100 мс (можно увеличить)
-  // }
+
+  if (deliveryModal != null) {
+    const { initDeliveryModal } = await import('./modules/deliveryModal.js');
+    initDeliveryModal();
+  }
 }
 
 document.addEventListener('DOMContentLoaded', loadModules);

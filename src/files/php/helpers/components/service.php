@@ -24,7 +24,7 @@ class ServiceCard
       <div class="service-card__buttons">
         <a class="y-button-secondary button animated-button"
           href="<?php echo htmlspecialchars($path . $card['href']); ?>">Подробнее</a>
-        <button type="button" class="y-button-primary button">Заказать</button>
+        <button type="button" class="y-button-primary button buy-btn">Заказать</button>
       </div>
       </в>
       <?php

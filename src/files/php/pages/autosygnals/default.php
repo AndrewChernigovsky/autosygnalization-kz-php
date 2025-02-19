@@ -55,7 +55,7 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
 
 <section class="autosygnals" id="autosygnals">
   <div class="container">
-    <h2 class="autosygnals__title">Автосигнализации</h2>
+    <h2 class="autosygnals__title title__h2">Автосигнализации</h2>
     <div class="autosygnals__wrapper swiper swiper-autosygnals">
       <ul class="autosygnals__list list-style-none swiper-wrapper">
       <?php foreach ($autosygnals as $index => $slide): ?>

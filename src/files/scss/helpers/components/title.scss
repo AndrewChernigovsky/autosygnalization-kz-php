@@ -5,6 +5,7 @@
     margin: 0;
     padding-top: 10px;
     padding-bottom: 22px;
+    font-size: 27px;
 
     @media screen and (min-width: var.$desktop-min) {
       padding-top: 45px;
@@ -13,8 +14,8 @@
     }
 
     @media screen and (min-width: var.$desktop) {
-      padding-top: 90px;
-      padding-bottom: 30px;
+      padding-top: 60px;
+      padding-bottom: 40px;
       font-size: 64px;
       line-height: 88px;
     }
