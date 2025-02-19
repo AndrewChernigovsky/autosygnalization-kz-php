@@ -9,6 +9,7 @@ const {
   phoneButton,
   buttonPrint,
   buyBtn,
+  buyBtns,
   minValue,
   filterBtn,
   buttonsTabs,
@@ -38,6 +39,7 @@ const {
   selected: document.querySelector('.select-selected'),
   buttonPrint: document.getElementById('print-btn'),
   buyBtn: document.getElementById('buy-btn'),
+  buyBtns: document.querySelectorAll('.buy-btn'),
   minValue: document.getElementById('minValue'),
   filterBtn: document.getElementById('filter-btn'),
   buttonsTabs: document.querySelectorAll('.tab__button'),
@@ -165,6 +167,13 @@ async function loadModules() {
     const initBuy = module.default;
     new initBuy(buyBtn);
   }
+
+  if (buyBtns.length > 0) {
+    const module = await import('./modules/buy.js');
+    const initBuy = module.default;
+    buyBtns.forEach((btn) => new initBuy(btn));
+  }
+
   if (buttonsTabs != null) {
     const { showTabs } = await import('./modules/tabs.js');
     showTabs();
