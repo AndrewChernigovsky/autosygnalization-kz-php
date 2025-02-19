@@ -1,5 +1,5 @@
 <?php
-
+require_once __DIR__ . '/../config/config.php';
 header('Content-Type: application/json; charset=utf-8'); // для ответа в формате json
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -57,4 +57,37 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ]);
         exit;
     }
+}
+
+<?php
+
+$data = json_decode(file_get_contents('php://input'), true);
+
+if ($data) {
+    $current_data = $data;
+
+    $formData = $current_data['form'];
+    $items = $current_data['items'];
+
+    
+    $to = 'chernigovsky108@gmail.com';
+
+    $subject = 'Новый заказ на сайте';
+
+    $headers = "MIME-Version: 1.0" . "\r\n";
+    $headers .= "Content-Type: text/plain; charset=UTF-8" . "\r\n";
+    $headers .= "From: andrey@andrew.ru" . "\r\n";
+    $CHAT_ID = 'CHAT_ID';
+    $TOKEN = 'TOKEN';
+    $message = urlencode($emailBody);
+    $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$$message";
+    file_get_contents($url);
+    if (mail($to, $subject, $emailBody, $headers)) {
+        echo json_encode(['success' => true, 'message' => 'Письмо отправлено']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Не удалось отправить письмо']);
+    }
+
+} else {
+    echo json_encode(['success' => false, 'message' => 'Не удалось обработать данные']);
 }

@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__ . '/../config/config.php';
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 if ($data) {
@@ -55,8 +57,8 @@ if ($data) {
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8" . "\r\n";
     $headers .= "From: andrey@andrew.ru" . "\r\n";
-    $CHAT_ID = '1185760592';
-    $TOKEN = '7721650697:AAHg2hG_BSZbNQuXVAICrdcTN2GFbOY8VqE';
+    $CHAT_ID = 'CHAT_ID';
+    $TOKEN = 'TOKEN';
     $message = urlencode($emailBody);
     $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$$message";
     file_get_contents($url);
