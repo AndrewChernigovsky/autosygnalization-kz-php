@@ -14,6 +14,10 @@ if ($data) {
     $emailBody .= "🏙 *Город:* " . $formData['city'] . "\n";
     $emailBody .= "📍 *Адрес:* " . $formData['street'] . ", " . $formData['house'] . "-" . $formData['apartment'] . "\n";
     $emailBody .= "📬 *Индекс:* " . $formData['index'] . "\n";
+    if ($formData['client_type'] === "Физическое лицо") {
+        $emailBody .= "🆔 *Имя:* " . $formData['user-name'] . "\n";
+        $emailBody .= "🆔 *Фамилия:* " . $formData['user-lastname'] . "\n";
+    }
     $emailBody .= "📞 *Телефон:* " . $formData['telephone'] . "\n";
     $emailBody .= "✉️ *Email:* " . $formData['email'] . "\n";
     $emailBody .= "🚚 *Доставка:* " . $formData['delivery-method'] . "\n";
