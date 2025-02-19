@@ -17,6 +17,7 @@ export class Cart extends Component {
       products: [],
       errorMessage: null,
     };
+    this.classFormOrder = null;
   }
 
   componentDidMount() {
@@ -43,6 +44,19 @@ export class Cart extends Component {
         console.error('Error:', error);
         this.setState({ errorMessage: 'Не удалось загрузить продукты' });
       });
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.products !== this.state.products) {
+      import('../modules/form-order.js').then(({ default: FormOrder }) => {
+        this.classFormOrder = new FormOrder({
+          receptacle: '.cart-section',
+          form: '.checkout-form',
+          list: '.cart-section__products',
+          items: '.checkout-info',
+        });
+      });
+    }
   }
 
   handleRemoveProduct = (id) => {
@@ -153,7 +167,7 @@ export class Cart extends Component {
 
     let numberUniqueId = localProducts.map((product) => product.id).length;
 
-    cartCounter.textContent = numberUniqueId; // это на корзина
+    cartCounter.textContent = numberUniqueId;
     this.setState({ totalQuantity, totalCost }, () => {
       if (costTotal.length > 0) {
         costTotal.forEach((cost) => {
@@ -167,6 +181,12 @@ export class Cart extends Component {
       }
     });
   }
+
+  handleClearCart = () => {
+    sessionStorage.removeItem('cart');
+    this.setState({ totalQuantity: 0, totalCost: 0, products: [] });
+    this.renderProducts({ category: [] });
+  };
 
   render() {
     const head = document.querySelector('.cart-section__head');
@@ -194,10 +214,4 @@ export class Cart extends Component {
       }
     }
   }
-
-  handleClearCart = () => {
-    sessionStorage.removeItem('cart');
-    this.setState({ totalQuantity: 0, totalCost: 0, products: [] });
-    this.renderProducts({ category: [] });
-  };
 }

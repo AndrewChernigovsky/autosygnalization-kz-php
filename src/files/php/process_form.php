@@ -16,34 +16,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     error_log(print_r(empty($name), true) . ' : NAME');
 
     if ($name != '') {
+        error_log(print_r($name, true) . ' : NAME');
+        error_log(print_r(empty($name), true) . ' : NAME');
+    }
+
+    if ($name != '') {
         $errors[] = 'Введите ваше имя';
     }
 
     if ($phone != '') {
-        $errors[] = 'Введите ваш номер телефона';
-    }
+        if ($phone != '') {
+            $errors[] = 'Введите ваш номер телефона';
+        }
 
-    if (!empty($errors)) {
-        echo json_encode(['success' => false, 'errors' => $errors]);
+        if (!empty($errors)) {
+            echo json_encode(['success' => false, 'errors' => $errors]);
+            exit;
+        }
+
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        echo json_encode($data);
+        $json = file_get_contents('php://input');
+        $data = json_decode($json, true);
+
+        echo json_encode($data);
+
+        $to = "";
+        $subject = "Новая заявка на установку сигнализации";
+        $body = "Марка: $mark\nМодель: $model\nГод выпуска: $releaseYear\nИмя: $name\nТелефон: $phone\nСообщение: $message";
+        $headers = "From: ";
+
+
+        mail($to, $subject, $body, $headers);
+
+        echo json_encode(['success' => true,
+            "name" => $name,
+            "phone" => $phone
+            ]);
         exit;
     }
-
-    $json = file_get_contents('php://input');
-    $data = json_decode($json, true);
-
-    echo json_encode($data);
-
-    $to = "";
-    $subject = "Новая заявка на установку сигнализации";
-    $body = "Марка: $mark\nМодель: $model\nГод выпуска: $releaseYear\nИмя: $name\nТелефон: $phone\nСообщение: $message";
-    $headers = "From: ";
-
-
-    mail($to, $subject, $body, $headers);
-
-    echo json_encode(['success' => true,
-        "name" => $name,
-        "phone" => $phone
-        ]);
-    exit;
 }

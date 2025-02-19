@@ -29,15 +29,15 @@ export class CartProductCard extends Component {
     return html` ${checkout
       ? html`
           <li class="checkout-info">
-            <span>${title} </span>
+            <span id="product-title">${title} </span>
             <div>
               <span>Количество:</span>
-              <span>${quantity} </span>
+              <span id="product-quantity">${quantity} </span>
             </div>
             <div>
               <p>
                 Цена:
-                <span>${price} </span>
+                <span id="product-price">${price} </span>
                 <span>${currency} </span>
               </p>
             </div>
@@ -54,7 +54,9 @@ export class CartProductCard extends Component {
                 <span>Цена: </span>
                 <span>${price} ${currency}</span>
               </div>
-              <a class="button y-button-secondary" href=${this.props.link}>Подробнее</a>
+              <a class="button y-button-secondary" href=${this.props.link}
+                >Подробнее</a
+              >
             </div>
             <div class="product-card__buttons cart-btn">
               <${CartButtonCounter}

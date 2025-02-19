@@ -29,6 +29,7 @@ const {
   cartButtons,
   addToCartButton,
   filtersAction,
+  formOrder,
   deliveryModal
 } = {
   feedbackForm: document.getElementById('feedback-form'),
@@ -59,6 +60,7 @@ const {
   addToCartButton: document.querySelector('.card-more__button-cart'),
   filtersAction: document.querySelector('.filter-form'),
   deliveryModal:document.getElementById('deliveryModal'),
+  formOrder: document.querySelector('.cart-section'),
 };
 
 async function loadModules() {
@@ -108,7 +110,6 @@ async function loadModules() {
   }
   if (filtersAction != null) {
     const filtersAction = await import('./modules/filter.js');
-    console.log(filtersAction);
     const FiltersAction = filtersAction.default;
 
     const currentPath = window.location.pathname;
