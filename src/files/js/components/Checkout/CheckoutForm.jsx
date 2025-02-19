@@ -7,7 +7,7 @@ export class CheckoutForm extends Component {
     super();
     this.state = {
       isCompany: false, // Состояние для отслеживания типа клиента
-      selectedClientType: '1', // Состояние для отслеживания выбранного типа клиента
+      selectedClientType: 'Физическое лицо', // Состояние для отслеживания выбранного типа клиента
     };
     this.PRODUCTION = window.location.href.includes('/dist/');
     this.path2Policy = `${

@@ -10,44 +10,111 @@ if ($data) {
     $formData = $current_data['form'];
     $items = $current_data['items'];
 
-    $emailBody = "📦 *Новый заказ от клиента:*\n\n";
-    $emailBody .= "👤 *Тип клиента:* " . $formData['client_type'] . "\n";
-    $emailBody .= "🌍 *Страна:* " . $formData['country'] . "\n";
-    $emailBody .= "🏙 *Город:* " . $formData['city'] . "\n";
-    $emailBody .= "📍 *Адрес:* " . $formData['street'] . ", " . $formData['house'] . "-" . $formData['apartment'] . "\n";
-    $emailBody .= "📬 *Индекс:* " . $formData['index'] . "\n";
-    if ($formData['client_type'] === "Физическое лицо") {
-        $emailBody .= "🆔 *Имя:* " . $formData['user-name'] . "\n";
-        $emailBody .= "🆔 *Фамилия:* " . $formData['user-lastname'] . "\n";
+    function validateText($text, $field = null, $max_length = 255)
+    {
+        $text = trim($text);
+        if ((empty($text) || !preg_match("/^[\p{L}\s-]+$/u", $text)) && $field !== null) {
+            echo json_encode(['success' => false, 'message' => "Некорректное значение: $field"]);
+            exit;
+        }
+
+        if (mb_strlen($text) > $max_length) {
+            echo json_encode(['success' => false, 'message' => "$field не должен превышать $max_length символов"]);
+            exit;
+        } else if (mb_strlen($text) <= 0) {
+            return 'Не указано';
+        }
+
+        return $text;
     }
-    $emailBody .= "📞 *Телефон:* " . $formData['telephone'] . "\n";
-    $emailBody .= "✉️ *Email:* " . $formData['email'] . "\n";
+
+    function validateNumber($number, $length, $field)
+    {
+        if (!preg_match("/^\d{1," . $length . "}$/", $number)) {
+            echo json_encode(['success' => false, 'message' => "Некорректное значение: {$field}"]);
+            exit;
+        }
+        return $number;
+    }
+
+    function validatePhone($phone, $max_length = 20)
+    {
+        if (!preg_match("/^[0-9+\-() ]+$/", $phone) || strlen($phone) > $max_length) {
+            echo json_encode(['success' => false, 'message' => "Некорректный телефон"]);
+            exit;
+        }
+        return $phone;
+    }
+
+    function validateEmail($email)
+    {
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo json_encode(['success' => false, 'message' => "Некорректный email"]);
+            exit;
+        }
+        return $email;
+    }
+
+    $client_type = validateText($formData['client_type'], 'Тип клиента', 100);
+    $country = validateText($formData['country'], 'Страна', 40);
+    $city = validateText($formData['city'], 'Город', 40);
+    $street = validateText($formData['street'], 'Улица', 50);
+    $house = validateNumber($formData['house'], 3, 'Дом');
+    $apartment = validateNumber($formData['apartment'], 3, 'Квартира');
+    $index = validateNumber($formData['index'], 6, 'Индекс');
+    $user_name = validateText($formData['user-name'], 'Имя', 20);
+    $user_lastname = validateText($formData['user-lastname'], 'Фамилия', 30);
+    $telephone = validatePhone($formData['telephone']);
+    $comments = validateText($formData['comments'], null, 200);
+    $email = validateEmail($formData['email']);
+
+
+    $emailBody = "📦 *Новый заказ от клиента:*\n\n";
+    $emailBody .= "👤 *Тип клиента:* " . $client_type . "\n";
+    $emailBody .= "🌍 *Страна:* " . $country . "\n";
+    $emailBody .= "🏙 *Город:* " . $city . "\n";
+    $emailBody .= "📍 *Адрес:* " . $street . ", " . $house . "-" . $apartment . "\n";
+    $emailBody .= "📬 *Индекс:* " . $index . "\n";
+    $emailBody .= "🆔 *Имя:* " . $user_name . "\n";
+    $emailBody .= "🆔 *Фамилия:* " . $user_lastname . "\n";
+    $emailBody .= "📞 *Телефон:* " . $telephone . "\n";
+    $emailBody .= "✉️ *Email:* " . $email . "\n";
     $emailBody .= "🚚 *Доставка:* " . $formData['delivery-method'] . "\n";
     $emailBody .= "💳 *Оплата:* " . $formData['payment-method'] . "\n";
-    $emailBody .= "📝 *Комментарий:* " . $formData['comments'] . "\n";
+    $emailBody .= "📝 *Комментарий:* " . $comments . "\n";
     $emailBody .= "📞 *Звонок:* " . ($formData['call-me'] ? "Да" : "Нет") . "\n";
-    $emailBody .= "✅ *Согласие:* " . ($formData['privacy'] ? "Да" : "Нет") . "\n";
+    $emailBody .= "✅ *Согласие на обработку персональных данных:* " . ($formData['privacy'] ? "Да" : "Нет") . "\n";
 
 
     // Данные компании
     if ($formData['client_type'] === "Юридическое лицо") {
+        $company_name = validateText($formData['company-name'], 'Название компании', 40);
+        $company_adress = validateText($formData['company-adress'], 'Юридический адрес', 80);
+        $INN = validateNumber($formData['INN'], 10, 'ИНН');
+        $KPP = validateNumber($formData['KPP'], 9, 'КПП');
+        $OGRN = validateNumber($formData['OGRN'], 13, 'ОГРН');
+        $BIK = validateNumber($formData['BIK'], 9, 'БИК');
+        $cash_number = validateNumber($formData['cash-number'], 20, 'Расчетный счет');
+        $company_index = validateNumber($formData['company-index'], 6, 'Индекс компании');
+        $company_telephone = validatePhone($formData['company-telephone']);
+
         $emailBody .= "\n🏢 *Данные компании:*\n";
-        $emailBody .= "🏛 *Название:* " . $formData['company-name'] . "\n";
-        $emailBody .= "📍 *Юридический адрес:* " . $formData['company-adress'] . "\n";
-        $emailBody .= "📬 *Индекс:* " . $formData['index'] . "\n";
-        $emailBody .= "🆔 *ИНН:* " . $formData['INN'] . "\n";
-        $emailBody .= "📜 *КПП:* " . $formData['KPP'] . "\n";
-        $emailBody .= "📃 *ОГРН:* " . $formData['OGRN'] . "\n";
-        $emailBody .= "🏦 *БИК:* " . $formData['BIK'] . "\n";
-        $emailBody .= "💳 *Расчетный счет:* " . $formData['cash-number'] . "\n";
-        $emailBody .= "📞 *Телефон компании:* " . $formData['telephone'] . "\n";
+        $emailBody .= "🏛 *Название:* {$company_name}\n";
+        $emailBody .= "📍 *Юридический адрес:* {$company_adress}\n";
+        $emailBody .= "📬 *Индекс:* {$company_index}\n";
+        $emailBody .= "🆔 *ИНН:* {$INN}\n";
+        $emailBody .= "📜 *КПП:* {$KPP}\n";
+        $emailBody .= "📃 *ОГРН:* {$OGRN}\n";
+        $emailBody .= "🏦 *БИК:* {$BIK}\n";
+        $emailBody .= "💳 *Расчетный счет:* {$cash_number}\n";
+        $emailBody .= "📞 *Телефон компании:* {$company_telephone}\n";
     }
 
-    $emailBody .= "\n🛍 *Товары:*\n";
+    $emailBody .= "\n🛍 *Товары:*\n\n";
     foreach ($items as $item) {
         $emailBody .= "🔹 *" . $item['title'] . "*\n";
         $emailBody .= "   📦 Количество: " . $item['quantity'] . "\n";
-        $emailBody .= "   💰 Цена: " . $item['price'] . " рублей\n\n";
+        $emailBody .= "   💰 Цена: " . $item['price'] . " тенге\n\n";
     }
 
     $to = 'chernigovsky108@gmail.com';
