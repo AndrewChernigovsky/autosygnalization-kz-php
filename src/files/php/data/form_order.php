@@ -43,7 +43,10 @@ if ($data) {
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-Type: text/plain; charset=UTF-8" . "\r\n";
     $headers .= "From: andrey@andrew.ru" . "\r\n";
-
+    $CHAT_ID = '1185760592';
+    $TOKEN = '7721650697:AAHg2hG_BSZbNQuXVAICrdcTN2GFbOY8VqE';
+    $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$emailBody";
+    file_get_contents($url);
     if (mail($to, $subject, $emailBody, $headers)) {
         echo json_encode(['success' => true, 'message' => 'Письмо отправлено']);
     } else {

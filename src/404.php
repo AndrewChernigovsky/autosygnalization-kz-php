@@ -1,11 +1,9 @@
 <?php
-
 $path_to_include = __DIR__ . '/files/php/helpers/classes/setVariables.php';
 if (!file_exists($path_to_include)) {
   die("Файл не найден: $path_to_include");
 }
 include $path_to_include;
-
 
 $variables = new SetVariables();
 $variables->setVar();
@@ -30,19 +28,19 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include $base_path . '/header.php'; ?>
-  <main class="main">
-    <div class="container" style="text-align: center; padding: 100px 0;">
-      <h1 style="font-size: 24px;">По данному запросу ничего не найдено</h1>
-      <a href="<?= $path . '/index.php'; ?>" class="link"
-        style="color: orange; font-weight: 700; font-size: 36px">Вернуться на
-        главную</a>
-    </div>
-  </main>
+    <?php include $base_path . '/header.php'; ?>
+    <main class="main">
+        <div class="container" style="text-align: center; padding: 100px 0;">
+            <h1 style="font-size: 24px;">По данному запросу ничего не найдено</h1>
+            <a href="<?= $path . '/index.php'; ?>" class="link"
+                style="color: orange; font-weight: 700; font-size: 36px">Вернуться на
+                главную</a>
+        </div>
+    </main>
 
-  <?php include $base_path . '/footer.php'; ?>
-  <?php include_once $path_components . '/phone-button.php'; ?>
-  <?php include_once $file_2_section . '/popups/modal-form.php'; ?>
+    <?php include $base_path . '/footer.php'; ?>
+    <?php include_once $path_components . '/phone-button.php'; ?>
+    <?php include_once $file_2_section . '/popups/modal-form.php'; ?>
 </body>
 
 </html>
