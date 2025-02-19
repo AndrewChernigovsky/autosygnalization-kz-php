@@ -71,7 +71,8 @@
   input {
     border-radius: 30px;
     min-height: 32px;
-    background-color: var.$red-64001E;
+    // background-color: var.$red-64001E;
+    background-color: var.$red-D10000;
     display: flex;
     color: var.$white;
     min-width: 100%;
@@ -88,6 +89,10 @@
 
     &:autofill {
       background-color: var.$red-B40036;
+    }
+
+    &::placeholder {
+      color: var.$white;
     }
   }
 }

@@ -2,40 +2,58 @@
 
 .bank {
   padding: 50px 0;
+  background-color: white;
+  clip-path: polygon(0 0, 100% 7%, 100% 100%, 0% 93%);
 
-  &__image {
+  h2 {
+    color: var.$black;
+    margin-bottom: 30px;
+    font-size: 24px;
+  }
+
+  button {
+    margin: 0 auto;
+    margin-bottom: 20px;
+  }
+
+  &__wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 10px;
-  }
+    flex-wrap: wrap;
+    gap: 40px;
+    margin: 0 auto;
 
-  &__phones {
-    display: grid;
-
-    a {
-      color: var.$white;
-      transition: 0.3s ease-in-out;
-      font-size: 14px;
-
-      &:hover {
-        opacity: 0.6;
-      }
+    p {
+      color: var.$red-D10000;
+      font-size: 60px;
+      font-family: "OSWALD", Arial, sans-serif;
+      font-weight: 700;
+      margin: 0;
     }
-  }
+}
 
+&__image--round {
   img {
     border-radius: 50%;
     width: 100px;
     height: 100px;
     display: flex;
   }
+}
 
-  @media screen and (max-width: var.$tablet) {
-    h2 {
-      font-size: 16px;
+&__image--square  {
+  img {
+    width: 150px;
+    height: 100px;
+    display: flex;
+
+    @media screen and (min-width: var.$tablet) {
+      width: 190px;
+      height: 150px;
     }
   }
+}
 
   @media screen and (min-width: var.$desktop-min) {
     h2 {
@@ -44,14 +62,7 @@
 
     &__image {
       p {
-        font-size: 24px;
-      }
-    }
-
-    &__phones {
-
-      a {
-        font-size: 24px;
+        font-size: 38px;
       }
     }
   }

@@ -83,7 +83,7 @@ class NavigationLinks
             "list" => [
               ["link" => $this->path_pages . "/special/special.php", "name" => 'Специальные предложения'],
               ["link" => $this->path_pages . "/cart/cart.php", "name" => 'Корзина заказа'],
-              ["link" => "https://www.google.com/maps/place/Auto+Security/@43.2382366,76.8052254,12z/data=!4m8!3m7!1s0x3883693b733bff39:0x716633e11986b3f8!8m2!3d43.2320104!4d76.87164!9m1!1b1!16s%2Fg%2F11c1sz8_h9?entry=ttu&g_ep=EgoyMDI1MDIxMi4wIKXMDSoJLDEwMjExNDUzSAFQAw%3D%3D", "name" => 'Оставить отзыв'],
+              ["link" => "https://2gis.kz/almaty/geo/70000001027313872", "name" => 'Оставить отзыв'],
               ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Галерея выполненных работ'],
               ["link" => $this->path_pages . "/contacts/contacts.php#location", "name" => 'Как к нам добраться'],
             ]
