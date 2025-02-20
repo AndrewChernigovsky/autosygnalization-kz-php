@@ -8,19 +8,23 @@ export function formHandler() {
       method: 'POST',
       body: formData
     })
-      .then(response => response.json())
+      .then(response => {
+        console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
+        return response.json();
+      })
       .then(data => {
+        console.log('Received data:', data);
         if (!data.success) {
-
-          alert(data.errors.join('\n'));
+          alert(data.errors?.join('\n') || 'Произошла ошибка');
         } else {
-          alert('Форма успешно отправлена!');
+          alert('Заявка успешно отправлена!');
           this.reset();
         }
       })
       .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при отправке формы.');
+        console.error('Подробности ошибки:', error);
+        alert('Произошла ошибка при отправке заявки.');
       });
   });
 }

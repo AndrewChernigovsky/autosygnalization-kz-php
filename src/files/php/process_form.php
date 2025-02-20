@@ -1,8 +1,16 @@
 <?php
-require_once __DIR__ . '/../config/config.php';
-header('Content-Type: application/json; charset=utf-8'); // для ответа в формате json
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+
+header('Content-Type: application/json; charset=utf-8');
+
+// очистка буфера
+ob_clean();
+
+require_once __DIR__ . '/config/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
     $mark = $_POST['mark'] ?? '';
     $model = trim($_POST['model'] ?? '');
     $releaseYear = trim($_POST['release-year'] ?? '');
@@ -12,82 +20,56 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $errors = [];
 
-    error_log(print_r($name, true) . ' : NAME');
-    error_log(print_r(empty($name), true) . ' : NAME');
-
-    if ($name != '') {
-        error_log(print_r($name, true) . ' : NAME');
-        error_log(print_r(empty($name), true) . ' : NAME');
-    }
-
-    if ($name != '') {
+    if (empty($name)) {
         $errors[] = 'Введите ваше имя';
     }
 
-    if ($phone != '') {
-        if ($phone != '') {
-            $errors[] = 'Введите ваш номер телефона';
-        }
+    if (empty($phone)) {
+        $errors[] = 'Введите ваш номер телефона';
+    }
 
-        if (!empty($errors)) {
-            echo json_encode(['success' => false, 'errors' => $errors]);
-            exit;
-        }
-
-        $json = file_get_contents('php://input');
-        $data = json_decode($json, true);
-
-        echo json_encode($data);
-        $json = file_get_contents('php://input');
-        $data = json_decode($json, true);
-
-        echo json_encode($data);
-
-        $to = "";
-        $subject = "Новая заявка на установку сигнализации";
-        $body = "Марка: $mark\nМодель: $model\nГод выпуска: $releaseYear\nИмя: $name\nТелефон: $phone\nСообщение: $message";
-        $headers = "From: ";
-
-
-        mail($to, $subject, $body, $headers);
-
-        echo json_encode(['success' => true,
-            "name" => $name,
-            "phone" => $phone
-            ]);
+    if (!empty($errors)) {
+        echo json_encode(['success' => false, 'errors' => $errors]);
         exit;
     }
-}
 
-<?php
+    $emailBody = "Новая заявка от клиента\n" .
+                 "Имя клиента: $name\n" .
+                 "Телефон клиента: $phone\n" .
+                 "Марка машины: $mark\n" .
+                 "Модель машины: $model\n" .
+                 "Год выпуска машины: $releaseYear\n" .
+                 "Сообщение клиента: $message\n";
 
-$data = json_decode(file_get_contents('php://input'), true);
-
-if ($data) {
-    $current_data = $data;
-
-    $formData = $current_data['form'];
-    $items = $current_data['items'];
-
-    
     $to = 'chernigovsky108@gmail.com';
+    $subject = 'Новая заявка на сайте';
+    $headers = "MIME-Version: 1.0\r\n" .
+               "Content-Type: text/plain; charset=UTF-8\r\n" .
+               "From: andrey@andrew.ru\r\n";
 
-    $subject = 'Новый заказ на сайте';
+    // отправка в телегу
+    $telegramUrl = "https://api.telegram.org/bot" . TOKEN . "/sendMessage?chat_id=" . CHAT_ID . "&text=" . urlencode($emailBody);
+    $telegramResult = file_get_contents($telegramUrl);
 
-    $headers = "MIME-Version: 1.0" . "\r\n";
-    $headers .= "Content-Type: text/plain; charset=UTF-8" . "\r\n";
-    $headers .= "From: andrey@andrew.ru" . "\r\n";
-    $CHAT_ID = 'CHAT_ID';
-    $TOKEN = 'TOKEN';
-    $message = urlencode($emailBody);
-    $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$$message";
-    file_get_contents($url);
-    if (mail($to, $subject, $emailBody, $headers)) {
-        echo json_encode(['success' => true, 'message' => 'Письмо отправлено']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Не удалось отправить письмо']);
-    }
-
+    $mailResult = mail($to, $subject, $emailBody, $headers);
+    
+    echo json_encode([
+        'success' => $mailResult,
+        'message' => $mailResult ? 'Письмо отправлено' : 'Не удалось отправить письмо',
+        'data' => [
+            'name' => $name,
+            'phone' => $phone,
+            'mark' => $mark,
+            'model' => $model,
+            'releaseYear' => $releaseYear,
+            'message' => $message
+        ]
+    ]);
+    exit;
 } else {
-    echo json_encode(['success' => false, 'message' => 'Не удалось обработать данные']);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Метод запроса должен быть POST'
+    ]);
+    exit;
 }
