@@ -1,6 +1,6 @@
 import { html, Component } from 'htm/preact';
 import { CardCartButtonCounter } from './CardCartButtonCounter.jsx';
-import { compileString } from 'sass';
+
 
 export class CardProduct extends Component {
   constructor(props) {
@@ -10,6 +10,7 @@ export class CardProduct extends Component {
       price: props.cost || 0,
     };
     this.cartCounter = document.querySelector('.cart .counter');
+    this.setModalCart = null;
   }
 
   componentDidMount() {
@@ -28,10 +29,22 @@ export class CardProduct extends Component {
       console.error('Price element not found');
     }
 
+
     this.updateQuantityFromCart();
 
     const addToCartButton = document.querySelector('.card-more__button-cart');
     if (addToCartButton) {
+      addToCartButton.addEventListener('click', this.handleAddToCart);
+    }
+
+    if (addToCartButton) {
+      import('../../modules/cart-modal.js').then(({ setModalCart }) => {
+        this.setModalCart = setModalCart;
+        addToCartButton.addEventListener('click', this.setModalCart);
+      }).catch(error => {
+        console.error('Ошибка при загрузке cart-modal.js:', error);
+      });
+  
       addToCartButton.addEventListener('click', this.handleAddToCart);
     }
   }
@@ -40,6 +53,9 @@ export class CardProduct extends Component {
     const addToCartButton = document.querySelector('.card-more__button-cart');
     if (addToCartButton) {
       addToCartButton.removeEventListener('click', this.handleAddToCart);
+      if (this.setModalCart) {
+        addToCartButton.removeEventListener('click', this.setModalCart); // Теперь удалится корректно
+      }
     }
   }
 

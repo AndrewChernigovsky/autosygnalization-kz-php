@@ -183,10 +183,10 @@ async function loadModules() {
     const { setModalCart } = await import('./modules/cart-modal.js');
     cartButtons.forEach((btn) => btn.addEventListener('click', setModalCart));
   }
-  if (modalCart != null && addToCartButton != null) {
-    const { setModalCart } = await import('./modules/cart-modal.js');
-    addToCartButton.addEventListener('click', setModalCart);
-  }
+  // if (modalCart != null && addToCartButton != null) {
+  //   const { setModalCart } = await import('./modules/cart-modal.js');
+  //   addToCartButton.addEventListener('click', setModalCart);
+  // }
   if (productsContainerCart != null) {
     const { Cart } = await import('./components/Cart.jsx');
     render(html`<${Cart} />`, document.body);
