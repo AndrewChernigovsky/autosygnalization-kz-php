@@ -19,12 +19,6 @@ export default class FormOrder {
       console.log(
         'FormOrder: один из параметров неверно передан в конструктор'
       );
-      if (this.form) {
-        this.form.addEventListener('submit', (e) => {
-          e.preventDefault();
-          alert('Ошибка: данные заказа отсутствуют');
-        })
-      }
       return;
     } else {
       console.log('FormOrder: все параметры переданы в конструктор');
@@ -40,7 +34,7 @@ export default class FormOrder {
     this.editSubmitEvent();
   }
 
-  editSubmitEvent() {
+  editSubmitEvent = () => {
     this.form.addEventListener('submit', (event) => {
       event.preventDefault();
 
@@ -76,6 +70,8 @@ export default class FormOrder {
       console.log(this.sendObject);
 
       this.sendDataToServer();
+      this.destroy();
+      location.reload();
     });
   }
 
@@ -118,6 +114,9 @@ export default class FormOrder {
   }
 
   destroy() {  
+    if (this.form) {
+      this.form.removeEventListener('submit', this.editSubmitEvent);
+    }
     this.receptacle = null;
     this.form = null;
     this.list = null;
