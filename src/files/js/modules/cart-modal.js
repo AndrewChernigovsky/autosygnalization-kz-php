@@ -30,7 +30,7 @@ export function setModalCart() {
   cost.textContent = `Сумма: ${format.customFormatNumber(allCost)} ₸`;
   allCount.textContent = `Всего товаров: ${allCountElem}`;
 
-  let timer = 50;
+  let timer = 7;
   timerElement.textContent = `Скрытие через ${timer} секунд`;
 
   // Очищаем предыдущий интервал, если он существует
