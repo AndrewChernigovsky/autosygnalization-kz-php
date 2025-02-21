@@ -14,7 +14,7 @@ export class CheckoutCompany extends Component {
       </label>
       <label>
         <p>Индекс</p>
-        <input type="text" name="index" />
+        <input type="text" name="company-index" />
       </label>
       <label>
         <p>ИНН*</p>
@@ -38,7 +38,7 @@ export class CheckoutCompany extends Component {
       </label>
       <label>
         <p>Телефон*</p>
-        <input type="tel" required name="telephone" />
+        <input type="tel" required name="company-telephone" />
       </label>
     `;
   }

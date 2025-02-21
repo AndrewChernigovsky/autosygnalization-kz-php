@@ -14,24 +14,23 @@ export function setModalCart() {
   const timerElement = clone.querySelector('.cart-popup__timer');
   const cost = clone.querySelector('.cart-popup__summary');
   const allCount = clone.querySelector('.cart-popup__all-count');
+
+  
   const allCountElem = cartItems.reduce((total, product) => {
     return total + product.quantity;
   }, 0);
+  const allCost = cartItems.reduce((total, product) => {
+    return total + (Number(product.price) * Number(product.quantity));
+  }, 0) || 'Корзина пуста';
+  const allQuantity = cartItems.length || 'Корзина пуста';
 
-  let allQuantity = 0;
-  let allCost = 0;
-
-  cartItems.forEach((item) => {
-    allQuantity += 1;
-    allCost += item.price * item.quantity;
-  });
 
   const format = new FormatNumber();
   countItem.textContent = `Товаров в корзине: ${allQuantity}`;
   cost.textContent = `Сумма: ${format.customFormatNumber(allCost)} ₸`;
   allCount.textContent = `Всего товаров: ${allCountElem}`;
 
-  let timer = 5;
+  let timer = 50;
   timerElement.textContent = `Скрытие через ${timer} секунд`;
 
   // Очищаем предыдущий интервал, если он существует
@@ -68,7 +67,6 @@ export function setModalCart() {
 
   currentPopup = popup; // Сохраняем текущее модальное окно
 
-  console.log(popup, 'popup');
 
   const btnClosePopup = popup.querySelector('#close-cart-popup');
   if (btnClosePopup) {

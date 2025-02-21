@@ -7,7 +7,6 @@ export class CardProduct extends Component {
     super(props);
     this.state = {
       quantity: 1,
-      isRemoveButtonDisabled: false,
       price: props.cost || 0,
     };
     this.cartCounter = document.querySelector('.cart .counter');
@@ -128,7 +127,6 @@ export class CardProduct extends Component {
         this.updateSessionStorage(this.props.id, newQuantity, btn, 'remove');
 
         if (newQuantity === 0) {
-          this.setState({ isRemoveButtonDisabled: true });
           if (typeof this.props.removeCount === 'function') {
             this.props.removeCount(this.props.id);
           } else {
@@ -149,7 +147,7 @@ export class CardProduct extends Component {
     this.setState(
       (prevState) => {
         const newQuantity = prevState.quantity + 1;
-        // this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
+        this.updateSessionStorage(this.props.id, newQuantity, btn, 'add');
 
         return { quantity: newQuantity };
       },
@@ -190,11 +188,10 @@ export class CardProduct extends Component {
   render() {
     return html`
       <${CardCartButtonCounter}
-        id=${this.id}
+        id=${this.props.id}
         removeCount=${this.removeToCart}
         addCount=${this.addToCart}
         quantity=${this.state.quantity}
-        isRemoveButtonDisabled=${this.state.isRemoveButtonDisabled}
       />
     `;
   }
