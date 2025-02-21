@@ -19,6 +19,12 @@ export default class FormOrder {
       console.log(
         'FormOrder: один из параметров неверно передан в конструктор'
       );
+      if (this.form) {
+        this.form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          alert('Ошибка: данные заказа отсутствуют');
+        })
+      }
       return;
     } else {
       console.log('FormOrder: все параметры переданы в конструктор');
@@ -109,5 +115,15 @@ export default class FormOrder {
         console.error('Ошибка:', error);
         alert('Произошла ошибка при отправке данных');
       });
+  }
+
+  destroy() {  
+    this.receptacle = null;
+    this.form = null;
+    this.list = null;
+    this.items = null;
+    this.sendObject = null;
+    this.path = null;
+
   }
 }

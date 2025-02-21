@@ -48,6 +48,10 @@ export class Cart extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevState.products !== this.state.products) {
+      if (this.classFormOrder) {
+        this.classFormOrder.destroy();
+        this.classFormOrder = null;
+      }
       import('../modules/form-order.js').then(({ default: FormOrder }) => {
         this.classFormOrder = new FormOrder({
           receptacle: '.cart-section',
