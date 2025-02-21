@@ -5,23 +5,15 @@ require_once __DIR__ . '/../config/config.php';
 $data = json_decode(file_get_contents('php://input'), true);
 
 if ($data) {
+    error_log(print_r($data, true)); // Логирование полученных данных
+
     $current_data = $data;
 
-
-
-    $emailBody .= " *Марка:* " . $current_data['model'] . "\n";
+    $emailBody = " *Марка:* " . $current_data['model'] . "\n";
     $emailBody .= " *Год выпуска:* " . $current_data['release-year'] . "\n";
     $emailBody .= " *Имя:* " . $current_data['name'] . "\n";
     $emailBody .= " *Телефон:* " . $current_data['phone'] . "\n";
-    $emailBody .= " *Коментарий:* " . $current_data['massage'] . "\n";
-
-
-
-
-
-
-
-
+    $emailBody .= " *Коментарий:* " . $current_data['message'] . "\n";
 
     $to = 'chernigovsky108@gmail.com';
 
@@ -33,7 +25,7 @@ if ($data) {
     $CHAT_ID = CHAT_ID;
     $TOKEN = TOKEN;
     $message = urlencode($emailBody);
-    $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$$message";
+    $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$message";
     file_get_contents($url);
     if (mail($to, $subject, $emailBody, $headers)) {
         echo json_encode(['success' => true, 'message' => 'Письмо отправлено']);

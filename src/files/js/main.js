@@ -31,7 +31,8 @@ const {
   addToCartButton,
   filtersAction,
   formOrder,
-  deliveryModal
+  deliveryModal,
+  processForm,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -62,6 +63,7 @@ const {
   filtersAction: document.querySelector('.filter-form'),
   deliveryModal:document.getElementById('deliveryModal'),
   formOrder: document.querySelector('.cart-section'),
+  processForm: document.querySelector('.form__main-form'),
 };
 
 async function loadModules() {
@@ -144,12 +146,12 @@ async function loadModules() {
     const { initSearch } = await import('./modules/search.js');
     initSearch();
   }
-  if (feedbackForm != null) {
-    const { initValidate } = await import('./modules/initValidate.js');
-    const { formHandler } = await import('./modules/form-handler.js');
-    formHandler();
-    initValidate();
-  }
+  // if (feedbackForm != null) {
+  //   const { initValidate } = await import('./modules/initValidate.js');
+  //   const { formHandler } = await import('./modules/form-handler.js');
+  //   formHandler();
+  //   initValidate();
+  // }
   if (fancyboxExist.length > 0) {
     const { initFancybox } = await import('./modules/fancybox.js');
     initFancybox();
@@ -211,6 +213,19 @@ async function loadModules() {
   }
   if (document.getElementById("service")) {
     mountGetData("service");
+  }
+  if (processForm != null) {
+    const formHandler = await import('./modules/form-handler.js');
+    const ProcessForm = formHandler.default;
+
+    const currentPath = window.location.pathname;
+
+    new ProcessForm(
+      {
+        form: '.form__main-form',
+      },
+      currentPath
+    );
   }
 }
 
