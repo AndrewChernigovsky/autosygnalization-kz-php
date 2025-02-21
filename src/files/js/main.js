@@ -1,5 +1,6 @@
-import { render } from 'preact';
+import { h, render } from 'preact';
 import { html } from 'htm/preact';
+import { mountGetData } from "./components/Search.jsx";
 
 const {
   feedbackForm,
@@ -191,6 +192,7 @@ async function loadModules() {
     const { Cart } = await import('./components/Cart.jsx');
     render(html`<${Cart} />`, document.body);
   }
+  
   if (checkoutForm != null) {
     const { CheckoutForm } = await import(
       './components/Checkout/CheckoutForm.jsx'
@@ -207,6 +209,10 @@ async function loadModules() {
     const { initDeliveryModal } = await import('./modules/deliveryModal.js');
     initDeliveryModal();
   }
+  if (document.getElementById("service")) {
+    mountGetData("service");
+  }
 }
 
 document.addEventListener('DOMContentLoaded', loadModules);
+

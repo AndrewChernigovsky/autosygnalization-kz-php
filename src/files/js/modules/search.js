@@ -11,5 +11,9 @@ export function initSearch() {
         return
       }
     })
+    document.addEventListener('click', () => {
+      search.classList.remove('active');
+    });
+    
   }
 }

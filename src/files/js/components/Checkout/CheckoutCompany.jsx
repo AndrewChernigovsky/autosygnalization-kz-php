@@ -3,7 +3,7 @@ import { html, Component } from 'htm/preact';
 export class CheckoutCompany extends Component {
   render() {
     return html`
-      <legend>Данные компании</legend>
+      <legend class="heading">Данные компании:</legend>
       <label>
         <p>Название компании</p>
         <input type="text" name="company-name" />

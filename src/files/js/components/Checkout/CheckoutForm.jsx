@@ -107,7 +107,7 @@ export class CheckoutForm extends Component {
         </div>
       </fieldset>
       <fieldset>
-        <legend>Данные клиента:</legend>
+        <legend class="heading">Данные клиента:</legend>
         <label>
           <p>Ваше имя*</p>
           <input type="text" required name="user-name" />

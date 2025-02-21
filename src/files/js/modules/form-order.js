@@ -72,7 +72,6 @@ export default class FormOrder {
       console.log(this.sendObject);
 
       this.sendDataToServer();
-      this.destroy();
     });
   }
 
