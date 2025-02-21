@@ -3,27 +3,17 @@ import { html, Component } from 'htm/preact';
 export class CardCartButtonCounter extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      quantity: 1,
-    };
+
   }
 
-  btnDisabledState = (quantity) => {
-    if (quantity >= 1) {
-      return false;
-    }
-    return true;
-  };
-
   render({ id, addCount, removeCount, quantity }) {
-    const isDisabled = this.btnDisabledState(quantity);
     return html`
       <button
         type="button"
         class="button card-more__button card-more__button--min"
         data-id=${id}
         onClick=${removeCount}
-        disabled=${isDisabled}
+        disabled=${quantity <= 1}
         aria-label="Убрать товар"
       >
         −

@@ -1,6 +1,6 @@
 import { ProductAPI } from './api/getProduct.js';
 
-const cartButtons = document.querySelectorAll('.cart-button, .card-more__button-cart');
+const cartButtons = document.querySelectorAll('.cart-button');
 const cartCounter = document.querySelector('.cart .counter');
 
 export function cartButtonHandler() {
