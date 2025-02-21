@@ -7,7 +7,7 @@ header('Content-Type: application/json; charset=utf-8');
 // очистка буфера
 ob_clean();
 
-require_once __DIR__ . '/config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -48,8 +48,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                "From: andrey@andrew.ru\r\n";
 
     // отправка в телегу
-    $telegramUrl = "https://api.telegram.org/bot" . TOKEN . "/sendMessage?chat_id=" . CHAT_ID . "&text=" . urlencode($emailBody);
-    $telegramResult = file_get_contents($telegramUrl);
+    $CHAT_ID = CHAT_ID;
+    $TOKEN = TOKEN;
+    $message = urlencode($emailBody);
+    $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$message";
+    file_get_contents($url);
+    // $telegramUrl = "https://api.telegram.org/bot" . TOKEN . "/sendMessage?chat_id=" . CHAT_ID . "&text=" . urlencode($emailBody);
+    // $telegramResult = file_get_contents($telegramUrl);
 
     $mailResult = mail($to, $subject, $emailBody, $headers);
     

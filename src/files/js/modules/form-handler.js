@@ -4,7 +4,7 @@ export function formHandler() {
 
     const formData = new FormData(this);
 
-    fetch('/dist/files/php/process_form.php', {
+    fetch('/dist/files/php/data/process_form.php', {
       method: 'POST',
       body: formData
     })
