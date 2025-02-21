@@ -58,6 +58,7 @@ export class Cart extends Component {
           form: '.checkout-form',
           list: '.cart-section__products',
           items: '.checkout-info',
+          cost: '.cost-total',
         });
       });
     }

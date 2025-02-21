@@ -9,6 +9,7 @@ export default class FormOrder {
     this.form = this.receptacle.querySelector(object.form);
     this.list = this.receptacle.querySelector(object.list);
     this.items = this.list.querySelectorAll(object.items);
+    this.cost = this.receptacle.querySelector(object.cost);
 
     if (
       this.items.length <= 0 ||
@@ -42,6 +43,7 @@ export default class FormOrder {
       this.sendObject = {};
       this.sendObject['form'] = {};
       this.sendObject['items'] = {};
+      this.sendObject['cost'] = this.cost.textContent;
 
       data.forEach((value, key) => {
         this.sendObject['form'][key] = value;
@@ -71,7 +73,6 @@ export default class FormOrder {
 
       this.sendDataToServer();
       this.destroy();
-      location.reload();
     });
   }
 

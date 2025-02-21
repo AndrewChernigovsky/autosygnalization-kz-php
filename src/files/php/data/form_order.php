@@ -117,6 +117,8 @@ if ($data) {
         $emailBody .= "   💰 Цена: " . $item['price'] . " тенге\n\n";
     }
 
+    $emailBody .= "\n💰 *Сумма заказа:* " . $current_data['cost'] . "\n";
+
     $to = 'chernigovsky108@gmail.com';
 
     $subject = 'Новый заказ на сайте';
