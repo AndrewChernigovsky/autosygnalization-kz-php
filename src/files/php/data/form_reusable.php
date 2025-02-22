@@ -9,14 +9,44 @@ fclose($inputStream);
 error_log(print_r($data, true) . " данные");
 if ($data) {
     // Логирование полученных данных
+    function validateText($text, $field = null, $max_length = 255)
+    {
+        $text = trim($text);
+        if ((empty($text) || !preg_match("/^[\p{L}\s-]+$/u", $text)) && $field !== null) {
+            echo json_encode(['success' => false, 'message' => "Некорректное значение: $field"]);
+            exit;
+        }
+
+        if (mb_strlen($text) > $max_length) {
+            echo json_encode(['success' => false, 'message' => "$field не должен превышать $max_length символов"]);
+            exit;
+        } else if (mb_strlen($text) <= 0) {
+            return 'Не указано';
+        }
+
+        return $text;
+    }
+
+    function validatePhone($phone, $max_length = 20)
+    {
+        if (!preg_match("/^[0-9+\-() ]+$/", $phone) || strlen($phone) > $max_length) {
+            echo json_encode(['success' => false, 'message' => "Некорректный телефон"]);
+            exit;
+        }
+        return $phone;
+    }
+
 
     $current_data = $data;
+    $name = validateText($current_data['name'], 'Имя', 50);
+    $phone = validatePhone($current_data['phone']);
 
-    $emailBody = " *Марка:* " . $current_data['model'] . "\n";
-    $emailBody .= " *Год выпуска:* " . $current_data['release-year'] . "\n";
-    $emailBody .= " *Имя:* " . $current_data['name'] . "\n";
+    $emailBody = " *Имя:* " . $current_data['name'] . "\n";
     $emailBody .= " *Телефон:* " . $current_data['phone'] . "\n";
-    $emailBody .= " *Коментарий:* " . $current_data['message'] . "\n";
+    if (isset($current_data['message'])) {
+        $message = validateText($current_data['message'], 'Коментарий', 200);
+        $emailBody .= " *Коментарий:* " . $current_data['message'] . "\n";
+    }
 
     $to = 'chernigovsky108@gmail.com';
     $subject = 'Новый заказ на сайте';

@@ -33,6 +33,7 @@ const {
   formOrder,
   deliveryModal,
   processForm,
+  formReusable,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -64,6 +65,7 @@ const {
   deliveryModal:document.getElementById('deliveryModal'),
   formOrder: document.querySelector('.cart-section'),
   processForm: document.querySelector('.form__main-form'),
+  formReusable: document.querySelector('.popup.modal-form'),
 };
 
 async function loadModules() {
@@ -211,9 +213,9 @@ async function loadModules() {
     const { initDeliveryModal } = await import('./modules/deliveryModal.js');
     initDeliveryModal();
   }
-  if (document.getElementById("service")) {
-    mountGetData("service");
-  }
+  // if (document.getElementById("service")) {
+  //   mountGetData("service");
+  // }
   if (processForm != null) {
     const formHandler = await import('./modules/form-handler.js');
     const ProcessForm = formHandler.default;
@@ -222,6 +224,20 @@ async function loadModules() {
 
     new ProcessForm(
       {
+        form: '.form__main-form',
+      },
+      currentPath
+    );
+  }
+  if (formReusable != null) {
+    const formReusable = await import('./modules/form-reusable.js');
+    const FormReusable = formReusable.default;
+
+    const currentPath = window.location.pathname;
+
+    new FormReusable(
+      {
+        container: '.popup.modal-form',
         form: '.form__main-form',
       },
       currentPath

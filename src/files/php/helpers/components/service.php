@@ -16,18 +16,18 @@ class ServiceCard
     // error_log(print_r($card, true) . ' 111');
     ob_start();
     ?>
-    <div class="service-card">
-      <h3 class="service-card__title third-title"><?php echo htmlspecialchars($card['name']); ?></h3>
-      <img src="<?php echo htmlspecialchars($path . htmlspecialchars($card['image']['src'])); ?>"
+<div class="service-card" id="service-card">
+    <h3 class="service-card__title third-title"><?php echo htmlspecialchars($card['name']); ?></h3>
+    <img src="<?php echo htmlspecialchars($path . htmlspecialchars($card['image']['src'])); ?>"
         alt="<?php echo htmlspecialchars($card['image']['description']) . ' ' . htmlspecialchars($card['name']); ?>"
         width="300" height="400">
-      <div class="service-card__buttons">
+    <div class="service-card__buttons">
         <a class="y-button-secondary button animated-button"
-          href="<?php echo htmlspecialchars($path . $card['href']); ?>">Подробнее</a>
+            href="<?php echo htmlspecialchars($path . $card['href']); ?>">Подробнее</a>
         <button type="button" class="y-button-primary button buy-btn">Заказать</button>
-      </div>
-      </в>
-      <?php
+    </div>
+    </в>
+    <?php
       return ob_get_clean();
   }
 
