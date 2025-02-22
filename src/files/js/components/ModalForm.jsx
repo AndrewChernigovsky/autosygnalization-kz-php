@@ -33,18 +33,18 @@ export class ModalForm extends Component {
       <section class="form" id="form-modal">
         <div class="form__wrapper">
           <h2 class="form__title">Оставьте заявку и мы вам перезвоним</h2>
-          <form class="form__main-form" action="#" method="post" id="feedback-form" onSubmit=${this.handleSubmit}>
+          <form class="form__main-form" action="#" method="post" id="feedback-form">
             <ul class="form__list list-style-none">
               <li class="form__item">
                 <label class="form__subtitle">Введите ФИО*:
                   <input class="form__input" type="text" name="name" id="name" placeholder="Ivanov Ivan Ivanovich"
-                    pattern="[A-Za-z\s]+" required onInput=${this.handleInputChange} value=${this.state.name}>
+                   required onInput=${this.handleInputChange} value=${this.state.name}>
                 </label>
               </li>
               <li class="form__item">
                 <label class="form__subtitle">Введите Телефон*:
                   <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777"
-                    pattern="[0-9]+" required onInput=${this.handleInputChange} value=${this.state.phone}>
+                  required onInput=${this.handleInputChange} value=${this.state.phone}>
                 </label>
               </li>
               ${!this.props.fast && html`

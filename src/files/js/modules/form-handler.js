@@ -1,26 +1,72 @@
-export function formHandler() {
-  document.getElementById('feedback-form').addEventListener('submit', function (event) {
-    event.preventDefault();
+export default class ProcessForm {
+  constructor(object, path) {
+    if (!object) {
+      console.log('FormOrder: неверно переданы параметры в конструктор');
+      return;
+    }
 
-    const formData = new FormData(this);
+    this.form = document.querySelector(object.form);
+    this.sendObject = {};
+    this.path =
+      path || window.location.pathname.includes('/dist') ? '/dist' : '';
+    this.init();
+  }
 
-    fetch('/dist/files/php/process_form.php', {
+  init() {
+    this.editSubmitEvent();
+  }
+
+  editSubmitEvent = () => {
+    this.form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const data = new FormData(this.form);
+      this.sendObject = {};
+
+
+      data.forEach((value, key) => {
+        this.sendObject[key] = value;
+      });
+
+      this.sendDataToServer();
+
+
+    });
+  }
+
+  sendDataToServer() {
+    const url = `${this.path}/files/php/data/process_form.php`;
+    
+    console.log('Отправляемые данные:', this.sendObject); // Логирование данных
+  
+    fetch(url, {
       method: 'POST',
-      body: formData
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.sendObject),
     })
-      .then(response => response.json())
-      .then(data => {
-        if (!data.success) {
-
-          alert(data.errors.join('\n'));
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(
+            `Ошибка сервера: ${response.status} ${response.statusText}`
+          );
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log('Ответ от сервера:', data);
+        if (data.success) {
+          alert('Заказ успешно отправлен!');
         } else {
-          alert('Форма успешно отправлена!');
-          this.reset();
+          alert('Ошибка при отправке заказа');
         }
       })
-      .catch(error => {
-        console.error('Ошибка:', error);
-        alert('Произошла ошибка при отправке формы.');
+      .catch((error) => {
+        console.log('Ошибка:', error);
+        alert('Произошла ошибка при отправке данных');
       });
-  });
+  }
+
+
 }
