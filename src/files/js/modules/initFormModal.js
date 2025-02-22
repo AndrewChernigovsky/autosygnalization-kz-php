@@ -57,9 +57,22 @@ export default class InitFormModal {
   }
 
   closeModal() {
-    this.modalForm.classList.remove('active');
-    this.modalFormMob.classList.remove('active');
-    this.phoneButtonWrapper.classList.remove('active');
-    this.phoneButton.classList.remove('animated-calling');
+    try {
+      const modalElements = {
+        modalForm: document.querySelector('.popup.modal-form'),
+        modalFormMob: document.querySelector('.popup'),
+        phoneButtonWrapper: document.querySelector('.phone-button__wrapper'),
+        phoneButton: document.querySelector('.phone-button')
+      };
+
+      Object.values(modalElements).forEach(element => {
+        if (element && element.classList) {
+          element.classList.remove('active', 'animated-calling');
+        }
+      });
+
+    } catch (error) {
+      console.error('Ошибка при закрытии модального окна:', error);
+    }
   }
 }

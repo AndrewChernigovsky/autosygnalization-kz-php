@@ -25,7 +25,8 @@
     }
   }
 
-  &__main-form {
+  &__main-form,
+  &__quick-order {
     display: grid;
     grid-template-columns: 300px;
     justify-content: center;

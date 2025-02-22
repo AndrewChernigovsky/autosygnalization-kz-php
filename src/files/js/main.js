@@ -30,7 +30,7 @@ const {
   addToCartButton,
   filtersAction,
   formOrder,
-  deliveryModal
+  deliveryModal,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -59,7 +59,7 @@ const {
   cartButtons: document.querySelectorAll('.cart-button'),
   addToCartButton: document.querySelector('.card-more__button-cart'),
   filtersAction: document.querySelector('.filter-form'),
-  deliveryModal:document.getElementById('deliveryModal'),
+  deliveryModal: document.getElementById('deliveryModal'),
   formOrder: document.querySelector('.cart-section'),
 };
 
