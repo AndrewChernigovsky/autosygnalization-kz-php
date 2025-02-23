@@ -45,13 +45,13 @@ $navigationLinks = new NavigationLinks();
 ?>
 
 <header class="header">
-  <div class="container">
-    <div class="header__head">
-      <div class="header__menu">
-        <?php echo $logo->getLogo() ?>
-        <nav class="nav">
-          <ul class="nav-list list-type-none">
-            <?php
+    <div class="container">
+        <div class="header__head">
+            <div class="header__menu">
+                <?php echo $logo->getLogo() ?>
+                <nav class="nav">
+                    <ul class="nav-list list-type-none">
+                        <?php
             foreach ($navigationLinks->getNavlinks() as $link) {
               $uniqueId = 'link_' . preg_replace('/[\/?=&]/', '_', $link['path']);
               echo '<li class="nav-item">
@@ -59,19 +59,19 @@ $navigationLinks = new NavigationLinks();
           </li>';
             }
             ?>
-          </ul>
-        </nav>
-        <div class="header__contacts">
-          <div class="header__geo geo">
-            <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="header__geo-image link">
-              <div class="header__image image">
-                <svg width="50" height="50">
-                  <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
-                </svg>
-              </div>
-            </a>
-            <address>
-              <?php
+                    </ul>
+                </nav>
+                <div class="header__contacts">
+                    <div class="header__geo geo">
+                        <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="header__geo-image link">
+                            <div class="header__image image">
+                                <svg width="50" height="50">
+                                    <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
+                                </svg>
+                            </div>
+                        </a>
+                        <address>
+                            <?php
               if (!empty($phones)) {
                 foreach ($phones as $phone) {
                   $cleanedPhone = str_replace(' ', '', $phone['phone']);
@@ -79,47 +79,47 @@ $navigationLinks = new NavigationLinks();
                 }
               }
               ?>
-              <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link">
-                <?php echo $address ?>
-              </a>
-            </address>
-          </div>
-          <?php echo $cart->initCart();
+                            <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link">
+                                <?php echo $address ?>
+                            </a>
+                        </address>
+                    </div>
+                    <?php echo $cart->initCart();
           ?>
-          <div class="menu-toggle">
-            <button type="button" id="btn-open-menu" class="button"><span class="visually-hidden">Открыть
-                меню</span></button>
-          </div>
-        </div>
-        <div class="menu-btns">
-          <div class="search">
-            <input type="search" placeholder="Поиск..." name="Поиск" />
-          </div>
-        </div>
-        <div class="phone">
-            <svg width="50" height="50">
-              <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#phone' ?>"></use>
-            </svg>
-            <ul>
-              <?php
-              if (!empty($phones)) {
-                foreach ($phones as $phone) {
-                  $cleanedPhone = str_replace(' ', '', $phone['phone']);
-                  echo '<li><a href="tel:' . htmlspecialchars($cleanedPhone) . '">' . htmlspecialchars($phone['phone']) . '</a></li>';
-                }
+                    <div class="menu-toggle">
+                        <button type="button" id="btn-open-menu" class="button"><span class="visually-hidden">Открыть
+                                меню</span></button>
+                    </div>
+                </div>
+                <div class="menu-btns">
+                    <div class="search">
+                        <input type="search" placeholder="Поиск..." name="Поиск" id="search-input" />
+                    </div>
+                </div>
+                <div class="phone">
+                    <svg width="50" height="50">
+                        <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#phone' ?>"></use>
+                    </svg>
+                    <ul>
+                        <?php
+            if (!empty($phones)) {
+              foreach ($phones as $phone) {
+                $cleanedPhone = str_replace(' ', '', $phone['phone']);
+                echo '<li><a href="tel:' . htmlspecialchars($cleanedPhone) . '">' . htmlspecialchars($phone['phone']) . '</a></li>';
               }
-              ?>
-            </ul>
-          </div>
-        <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link geo-address">
-          <div class="header__image image">
-            <svg width="50" height="50">
-              <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
-            </svg>
-          </div>
-          <?php echo $address ?>
-        </a>
-      </div>
+            }
+            ?>
+                    </ul>
+                </div>
+                <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link geo-address">
+                    <div class="header__image image">
+                        <svg width="50" height="50">
+                            <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
+                        </svg>
+                    </div>
+                    <?php echo $address ?>
+                </a>
+            </div>
+        </div>
     </div>
-  </div>
 </header>

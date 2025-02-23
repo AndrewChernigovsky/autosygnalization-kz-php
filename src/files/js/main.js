@@ -1,6 +1,6 @@
 import { h, render } from 'preact';
 import { html } from 'htm/preact';
-import { mountGetData } from "./components/Search.jsx";
+import { SetWork, mountSetWork } from "./components/Search.jsx";
 
 const {
   feedbackForm,
@@ -213,9 +213,9 @@ async function loadModules() {
     const { initDeliveryModal } = await import('./modules/deliveryModal.js');
     initDeliveryModal();
   }
-  // if (document.getElementById("service")) {
-  //   mountGetData("service");
-  // }
+  if (document.getElementById("search-input")) {
+    mountSetWork("search-input");
+  }
   if (processForm != null) {
     const formHandler = await import('./modules/form-handler.js');
     const ProcessForm = formHandler.default;
