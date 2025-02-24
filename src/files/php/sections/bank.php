@@ -17,10 +17,13 @@ $phones = $contacts->getPhones();
       <div class="bank__image--square">
         <img src="<?= $path . '/assets/images/kaspi-1.avif' ?>" alt="логотип Каспи Банка" width='100' height='100'>
       </div>
-      <!-- <div class="bank__image--round" style="background-color: #fff; border: 4px solid white; border-radius: 50%;">
-        <img src="<?= $path . '/assets/images/kaspi.avif' ?>" alt="логотип Каспи Банка" width='50' height='50'>      
-      </div> -->
-      <p>0-0-12</p>
+      <div class="bank__image--square">
+        <img src="<?= $path . '/assets/images/kaspi-2.avif' ?>" alt="логотип Каспи Банка" width='100' height='100'>
+      </div>
+      <div class="bank__image-wrapper">
+        <p>0-0-12</p>
+        <img src="<?= $path . '/assets/images/kaspi-4.avif' ?>" alt="логотип Каспи Банка" width='100' height='100'>
+      </div>
     </div>
   </div>
 </section>
