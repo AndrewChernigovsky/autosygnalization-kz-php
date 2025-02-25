@@ -101,7 +101,7 @@
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  gap: 15px;
+  gap: 10px;
   font-size: 20px;
   font-weight: bold;
 
@@ -111,9 +111,18 @@
     grid-column: 1/13;
 
     svg {
-      width: 40px;
-      height: 40px;
+      display: none;
+
+      @media screen and (min-width: var.$tablet) {
+        display: block;
+        width: 40px;
+        height: 40px;
+      }
     }
+  }
+
+  @media screen and (min-width: var.$tablet) {
+    gap: 15px;
   }
 
   @media screen and (min-width: var.$desktop-min) {
@@ -134,15 +143,28 @@
   ul {
     list-style-type: none;
     padding-left: 0;
+
+    @media screen and (max-width: var.$desktop-min) {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+  }
   }
 
   li {
-    padding-bottom: 5px;
     transition: 0.3 ease-in-out;
 
+    @media screen and (min-width: var.$desktop-min) {
+      padding-bottom: 5px;
+    }
+
     &:not(:first-of-type) {
-      padding-top: 5px;
-      border-top: 2px solid var.$white;
+
+      @media screen and (min-width: var.$desktop-min) {
+        border-top: 2px solid var.$white;
+        padding-top: 5px;
+      }
     }
 
     &:hover {
@@ -153,6 +175,12 @@
   a {
     color: var.$white;
     text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      gap: 20px;
+    }
   }
 }
 
@@ -240,7 +268,7 @@
           transform: translate(-50%, -50%) rotate(-45deg);
           background-color: var.$white;
           width: inherit;
-          height: 8px;
+          height: 3px;
           box-shadow: none;
           border-radius: 10px;
         }
@@ -253,7 +281,7 @@
           transform: translate(-50%, -50%) rotate(45deg);
           background-color: var.$white;
           width: inherit;
-          height: 8px;
+          height: 3px;
           border-radius: 10px;
         }
       }
@@ -269,7 +297,7 @@
     &.active {
       position: fixed;
       display: grid;
-      top: 15px;
+      top: 20px;
       left: 10%;
       z-index: 11;
 

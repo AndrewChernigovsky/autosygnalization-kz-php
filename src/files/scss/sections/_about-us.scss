@@ -270,6 +270,11 @@
       position: relative;
       z-index: 2;
 
+      @media screen and (min-width: var.$desktop-min) {
+        font-size: 30px;
+        margin-bottom: 50px;
+      }
+
       &::after {
         content: '';
         display: block;
@@ -283,6 +288,9 @@
         right: 0;
         margin: auto;
  
+        @media screen and (min-width: var.$desktop-min) {
+          width: 35%;
+        }
       }
     }
 

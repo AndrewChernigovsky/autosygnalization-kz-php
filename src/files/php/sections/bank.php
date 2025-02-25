@@ -14,10 +14,10 @@ $phones = $contacts->getPhones();
         кредит</span> через Каспи Банк</h2>
     <button type='button' class="y-button-primary button buy-btn">Оставить заявку</button>
     <div class="bank__wrapper">
-      <div class="bank__image--square">
+      <div class="bank__image">
         <img src="<?= $path . '/assets/images/kaspi-1.avif' ?>" alt="логотип Каспи Банка" width='100' height='100'>
       </div>
-      <div class="bank__image--square">
+      <div class="bank__image bank__image--third">
         <img src="<?= $path . '/assets/images/kaspi-2.avif' ?>" alt="логотип Каспи Банка" width='100' height='100'>
       </div>
       <div class="bank__image-wrapper">

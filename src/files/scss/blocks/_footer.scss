@@ -189,7 +189,6 @@
 
   &__menu-list {
     display: grid;
-    gap: 8px;
     list-style-type: none;
     padding: 0 20px;
     padding-left: 15px;
@@ -216,30 +215,10 @@
     }
 
     &:first-of-type li ul {
-      border-left: 2px solid var.$white;
-      position: relative;
-      padding-left: 10px;
-      margin-left: 25px;
-
-      &::before {
-        content: "";
-        position: absolute;
-        left: -20px;
-        top: 0;
-        width: 20px;
-        height: 2px;
-        background-color: var.$white;
-      }
-
-      &::after {
-        content: "";
-        position: absolute;
-        left: -27px;
-        top: -5px;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        background-color: var.$white;
+      margin-left: -15px;
+       
+      @media screen and (min-width: var.$tablet) {
+        margin-left: 0;
       }
     }
   }
@@ -503,6 +482,23 @@
 
     &__menu-title {
       min-height: 100%;
+
+      &:first-of-type {
+        border-left: 2px solid white;
+        padding-left: 10px;
+
+        &::before {
+          content: "";
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background-color: var.$white;
+          position: absolute;
+          display: block;
+          top: 0;
+          left: -6px;
+        }
+      }
 
       &:not(:last-of-type) {
         border-right: 2px solid var.$white;

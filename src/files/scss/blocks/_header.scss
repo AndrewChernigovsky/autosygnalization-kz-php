@@ -32,16 +32,18 @@
 
 
       svg {
-        width: 30px;
+        width: 50px;
+        stroke-width: 10px;
 
         @media screen and (max-width: var.$tablet) {
           display: none;
         }
       }
 
-      @media screen and (min-width: 1025px) {
-        max-width: 260px;
+      @media screen and (min-width: var.$desktop-min) {
+        max-width: 350px;
         grid-column: 10/13;
+        text-align: flex-start;
       }
     }
   }
