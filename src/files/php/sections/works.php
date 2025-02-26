@@ -37,7 +37,7 @@ $works = [
                 <?php foreach ($works as $work): ?>
                     <div class="swiper-slide works__slide">
                         <h3 class="works__slide-title"><?php echo $work['title']; ?></h3>
-                        <div class="works__slide-image">
+                        <div class="works__slide-image swiper-zoom-container">
                             <img src="<?php echo $work['image']; ?>" alt="Фото работы нашего сервиса" width="600" height="300" />
                         </div>
                         <a href="#" class="works__slide-button y-button-primary button">Подробнее</a>
