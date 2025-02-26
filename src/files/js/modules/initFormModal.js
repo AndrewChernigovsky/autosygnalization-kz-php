@@ -59,7 +59,11 @@ export default class InitFormModal {
   closeModal() {
     this.modalForm.classList.remove('active');
     this.modalFormMob.classList.remove('active');
-    this.phoneButtonWrapper.classList.remove('active');
-    this.phoneButton.classList.remove('animated-calling');
+    if (this.phoneButtonWrapper) {
+      this.phoneButtonWrapper.classList.remove('active');
+    }
+    if (this.phoneButton) {
+      this.phoneButton.classList.remove('animated-calling');
+    }
   }
 }
