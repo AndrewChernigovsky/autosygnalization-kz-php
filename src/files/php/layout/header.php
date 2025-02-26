@@ -62,11 +62,11 @@ $navigationLinks = new NavigationLinks();
                     </ul>
                 </nav>
                 <div class="header__contacts">
-                    <div class="header__geo geo">
-                        <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="header__geo-image link">
+                    <div class="header__instagram">
+                        <a href="https://www.instagram.com/autosecurity_kz" class="header__instagram-image link">
                             <div class="header__image image">
                                 <svg width="50" height="50">
-                                    <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>
+                                    <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#instagramm-icon' ?>" fill="currentColor"></use>
                                 </svg>
                             </div>
                         </a>

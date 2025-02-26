@@ -71,7 +71,6 @@
   input {
     border-radius: 30px;
     min-height: 32px;
-    // background-color: var.$red-64001E;
     background-color: var.$red-D10000;
     display: flex;
     color: var.$white;
@@ -104,11 +103,22 @@
   gap: 10px;
   font-size: 20px;
   font-weight: bold;
+  justify-content: center;
+  font-size: 12px;
+  grid-column: 1/13;
 
-  @media screen and (max-width: var.$desktop-min) {
+  @media screen and (min-width: var.$tablet) {
+    gap: 15px;
+  }
+
+  @media screen and (min-width: 1025px ) {
     justify-content: center;
-    font-size: 12px;
-    grid-column: 1/13;
+    grid-column: 7/10;
+  }
+
+  @media screen and (min-width: var.$desktop) {
+    gap: 20px;
+  }
 
     svg {
       display: none;
@@ -119,21 +129,6 @@
         height: 40px;
       }
     }
-  }
-
-  @media screen and (min-width: var.$tablet) {
-    gap: 15px;
-  }
-
-  @media screen and (min-width: var.$desktop-min) {
-    margin: 0 20px;
-    justify-content: center;
-    grid-column: 7/10;
-  }
-
-  @media screen and (min-width: var.$desktop) {
-    gap: 20px;
-  }
 
   img {
     width: 20px;
@@ -144,12 +139,12 @@
     list-style-type: none;
     padding-left: 0;
 
-    @media screen and (max-width: var.$desktop-min) {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: center;
-  }
+      @media screen and (max-width: var.$desktop-min) {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
   }
 
   li {
@@ -161,7 +156,7 @@
 
     &:not(:first-of-type) {
 
-      @media screen and (min-width: var.$desktop-min) {
+      @media screen and (min-width: 1025px) {
         border-top: 2px solid var.$white;
         padding-top: 5px;
       }

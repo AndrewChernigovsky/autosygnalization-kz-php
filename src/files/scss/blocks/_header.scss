@@ -40,10 +40,10 @@
         }
       }
 
-      @media screen and (min-width: var.$desktop-min) {
-        max-width: 350px;
+      @media screen and (min-width: 1025px) {
+        min-width: 390px;
         grid-column: 10/13;
-        text-align: flex-start;
+        text-align: left;
       }
     }
   }
@@ -69,7 +69,7 @@
   }
 
 
-  &__geo {
+  &__instagram {
     display: flex;
     align-items: center;
 
@@ -84,7 +84,7 @@
     }
   }
 
-  &__geo-image {
+  &__instagram-image {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -98,6 +98,7 @@
       svg {
         width: 35px;
         height: 35px;
+        color: var.$white;
       }
     }
 
