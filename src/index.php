@@ -42,6 +42,7 @@ echo $head->setHead();
       'popular.php',
       'bank.php',
       'service.php',
+      'works.php',
       'quality.php',
       'sertificates.php',
       'form.php',
