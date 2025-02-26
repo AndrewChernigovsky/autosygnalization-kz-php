@@ -72,20 +72,19 @@ $navigationLinks = new NavigationLinks();
                         </a>
                         <address>
                             <?php
-              if (!empty($phones)) {
-                foreach ($phones as $phone) {
-                  $cleanedPhone = str_replace(' ', '', $phone['phone']);
-                  echo '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">' . htmlspecialchars($phone['phone']) . '</a>';
-                }
-              }
-              ?>
-                            <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link">
+                              if (!empty($phones)) {
+                                foreach ($phones as $phone) {
+                                  $cleanedPhone = str_replace(' ', '', $phone['phone']);
+                                  echo '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">' . htmlspecialchars($phone['phone']) . '</a>';
+                                }
+                              }
+                            ?>
+                            <!-- <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link">
                                 <?php echo $address ?>
-                            </a>
+                            </a> -->
                         </address>
                     </div>
-                    <?php echo $cart->initCart();
-          ?>
+                    <?php echo $cart->initCart();?>
                     <div class="menu-toggle">
                         <button type="button" id="btn-open-menu" class="button"><span class="visually-hidden">Открыть
                                 меню</span></button>
@@ -111,7 +110,7 @@ $navigationLinks = new NavigationLinks();
             ?>
                     </ul>
                 </div>
-                <a href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA" class="link geo-address">
+                <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address">
                     <div class="header__image image">
                         <svg width="50" height="50">
                             <use href="<?php echo $path . '/assets/images/vectors/sprite.svg#geo' ?>"></use>

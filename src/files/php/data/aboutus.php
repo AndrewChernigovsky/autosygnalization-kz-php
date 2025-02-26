@@ -17,6 +17,14 @@ class AboutusData
     $imagesAboutUs = [
       ["src" => "{$this->path}/assets/images/about_us/about_1.avif"],
       ["src" => "{$this->path}/assets/images/about_us/about_2.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_1.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_2.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_1.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_1.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_2.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_1.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_2.avif"],
+      ["src" => "{$this->path}/assets/images/about_us/about_1.avif"],
     ];
     return $imagesAboutUs;
   }

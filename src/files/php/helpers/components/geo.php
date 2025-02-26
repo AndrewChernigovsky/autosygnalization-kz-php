@@ -7,7 +7,7 @@ class GEO
 {
   private $variables;
   private $insertSVG;
-  private $address = "https://maps.app.goo.gl/72eQCZUbxVCKh43PA";
+  private $address = "https://2gis.kz/almaty/geo/70000001027313872";
   private $contacts;
 
   public function __construct()
