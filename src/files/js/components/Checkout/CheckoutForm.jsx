@@ -19,11 +19,35 @@ export class CheckoutForm extends Component {
   openWindow = (e, type) => {
     e.preventDefault();
     const path = type === 'policy' ? this.path2Policy : this.path2Deal;
-    window.open(
+    const newWindow = window.open(
       path,
       'window',
-      'width=800,height=600,scrollbars=yes,status=no,toolbar=no,menubar=no,resizable=yes,location=no'
+      'width=800, height=600, scrollbars=yes, status=no, toolbar=no, menubar=no, resizable=yes, location=no'
     );
+    newWindow.document.write(`
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${type === 'policy' ? 'Политика конфиденциальности' : 'Договор купли-продажи'}</title>
+          <style>
+            body {
+              padding: 20px;
+              font-family: Arial, sans-serif;
+              line-height: 1.6;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="content"></div>
+        </body>
+      </html>
+    `);
+
+    fetch(path)
+      .then(response => response.text())
+      .then(text => {
+        newWindow.document.getElementById('content').innerHTML = text.replace(/\n/g, '<br>');
+      });
   };
 
   changeFace = (e) => {
