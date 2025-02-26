@@ -123,14 +123,17 @@ export default class FormOrder {
     this.inputHandlers = {};
   
     const getClientType = (e) => {
-      const clientType = e ? e.target.value : this.form.querySelector('input[name="client_type"]:checked')?.value;
+      const clientType = e 
+        ? e.target.value 
+        : this.form.querySelector('input[name="client_type"]:checked')?.value;
   
+      // Удаляем старые обработчики перед добавлением новых
       Object.entries(this.inputHandlers).forEach(([key, handler]) => {
         const input = this.form.querySelector(`input[name="${key}"]`);
         if (input) input.removeEventListener('input', handler);
       });
   
-      this.inputHandlers = {};
+      this.inputHandlers = {}; // Очищаем объект с обработчиками
   
       const addInputHandler = (name, regex, maxLength) => {
         const input = this.form.querySelector(`input[name="${name}"]`);
@@ -140,10 +143,11 @@ export default class FormOrder {
           e.target.value = e.target.value.replace(regex, '').slice(0, maxLength);
         };
   
-        input.addEventListener('input', handler, { signal: this.abortController.signal });
+        input.addEventListener('input', handler);
         this.inputHandlers[name] = handler;
       };
-
+  
+      // Общие инпуты
       addInputHandler('city', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 40);
       addInputHandler('street', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 50);
       addInputHandler('index', /[^0-9]/g, 6);
@@ -155,7 +159,7 @@ export default class FormOrder {
       addInputHandler('telephone', /[^0-9+\-() ]/g, 20);
       addInputHandler('email', /[^a-zA-Z0-9@._%+-]/g, 200);
   
-      // Добавляем инпуты для юридических лиц, если выбрано "Юридическое лицо"
+      // Если выбрано "Юридическое лицо"
       if (clientType === 'Юридическое лицо') {
         addInputHandler('company-name', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 40);
         addInputHandler('company-adress', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 80);
@@ -169,12 +173,14 @@ export default class FormOrder {
       }
     };
   
+    // Навешиваем обработчики на переключение типа клиента
     inputClientTypeCheckbox.forEach(input => {
-      input.addEventListener('change', getClientType, { signal: this.abortController.signal });
+      input.addEventListener('change', getClientType);
     });
   
-    getClientType();
+    getClientType(); // Запускаем сразу при загрузке
   }
+  
   
   
   destroy() {  
