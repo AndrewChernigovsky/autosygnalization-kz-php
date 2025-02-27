@@ -27,23 +27,22 @@
       justify-self: center;
       font-weight: 700;
       padding: 10px;
+      margin-top: 20px;
       text-decoration: underline;
       text-align: center;
 
 
       svg {
-        width: 50px;
+        width: 40px;
+        height: 40px;
         stroke-width: 10px;
-
-        @media screen and (max-width: var.$tablet) {
-          display: none;
-        }
       }
 
       @media screen and (min-width: 1025px) {
         min-width: 390px;
         grid-column: 10/13;
         text-align: left;
+        margin-top: 0;
       }
     }
   }
@@ -96,9 +95,10 @@
       align-items: center;
 
       svg {
-        width: 35px;
+        width: 30px;
         height: 35px;
         color: var.$white;
+        margin-right: 10px;
       }
     }
 
