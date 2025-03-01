@@ -1,6 +1,7 @@
 import { html, Component } from 'htm/preact';
 import { CheckoutSelect } from './CheckoutSelect';
 import { CheckoutCompany } from './CheckoutCompany';
+import { createPolicyModal, loadPolicyDocument } from '../../modules/policy-modal';
 
 export class CheckoutForm extends Component {
   constructor() {
@@ -14,40 +15,16 @@ export class CheckoutForm extends Component {
       this.PRODUCTION ? '/dist/' : '/'
     }files/docs/policy.txt`;
     this.path2Deal = `${this.PRODUCTION ? '/dist/' : '/'}files/docs/deal.txt`;
+
   }
 
-  openWindow = (e, type) => {
+  openWindow = async (e, type) => {
     e.preventDefault();
     const path = type === 'policy' ? this.path2Policy : this.path2Deal;
-    const newWindow = window.open(
-      path,
-      'window',
-      'width=800, height=600, scrollbars=yes, status=no, toolbar=no, menubar=no, resizable=yes, location=no'
-    );
-    newWindow.document.write(`
-      <html>
-        <head>
-          <meta charset="utf-8">
-          <title>${type === 'policy' ? 'Политика конфиденциальности' : 'Договор купли-продажи'}</title>
-          <style>
-            body {
-              padding: 20px;
-              font-family: Arial, sans-serif;
-              line-height: 1.6;
-            }
-          </style>
-        </head>
-        <body>
-          <div id="content"></div>
-        </body>
-      </html>
-    `);
-
-    fetch(path)
-      .then(response => response.text())
-      .then(text => {
-        newWindow.document.getElementById('content').innerHTML = text.replace(/\n/g, '<br>');
-      });
+    const title = type === 'policy' ? 'Политика конфиденциальности' : 'Договор купли-продажи';
+    const modal = createPolicyModal(title);
+    const content = await loadPolicyDocument(path);
+    modal.setContent(content);
   };
 
   changeFace = (e) => {

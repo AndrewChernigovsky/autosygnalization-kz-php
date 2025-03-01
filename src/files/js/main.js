@@ -34,6 +34,7 @@ const {
   deliveryModal,
   processForm,
   formReusable,
+  policyModal,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -66,6 +67,7 @@ const {
   formOrder: document.querySelector('.cart-section'),
   processForm: document.querySelector('.form__main-form'),
   formReusable: document.querySelector('.popup.modal-form'),
+  policyModal: document.querySelector('.policy-modal'),
 };
 
 async function loadModules() {
@@ -242,6 +244,13 @@ async function loadModules() {
       },
       currentPath
     );
+  }
+
+  if (policyModal != null) {
+    const { createPolicyModal, loadPolicyDocument } = await import('./modules/policy-modal.js');
+    const modal = createPolicyModal('Политика конфиденциальности');
+    const content = await loadPolicyDocument('./files/docs/policy.txt');
+    modal.setContent(content);
   }
 }
 
