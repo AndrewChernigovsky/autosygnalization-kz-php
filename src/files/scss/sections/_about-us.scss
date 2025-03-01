@@ -319,14 +319,15 @@
     
     img {
       width: 100%;
-      height: 300px;
+      // height: auto;
+      min-height: 300px;
       object-fit: cover;
       display: block;
     }
 
-    @media screen and (max-width: var.$tablet) {
-      width: 100%;
-    }
+    // @media screen and (max-width: var.$tablet) {
+    //   height: 300px;
+    // }
   }
 
   &__swiper-pagination {
