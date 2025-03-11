@@ -13,9 +13,9 @@ $works = [
         'href' => '/files/php/pages/service/service.php?service=setup'
     ],
     [
-        'image' => "$path/assets/images/works/rus.avif",
-        'title' => 'РУСИФИКАЦИЯ АВТО И ЧИПТЮНИНГ',
-        'href' => '/files/php/pages/service/service.php?service=rus',
+        'image' => "$path/assets/images/works/setup-media.avif",
+        'title' => 'УСТАНОВКА АВТОЗВУКА И МУЛЬТИМЕДИА',
+        'href' => '/files/php/pages/service/service.php?service=setup-media'
     ],
     [
         'image' => "$path/assets/images/works/locks.avif",
@@ -23,9 +23,9 @@ $works = [
         'href' => '/files/php/pages/service/service.php?service=locks'
     ],
     [
-        'image' => "$path/assets/images/works/setup-media.avif",
-        'title' => 'УСТАНОВКА АВТОЗВУКА И МУЛЬТИМЕДИА',
-        'href' => '/files/php/pages/service/service.php?service=setup-media'
+        'image' => "$path/assets/images/works/rus.avif",
+        'title' => 'РУСИФИКАЦИЯ АВТО И ЧИПТЮНИНГ',
+        'href' => '/files/php/pages/service/service.php?service=rus',
     ],
     [
         'image' => "$path/assets/images/works/system-parking.avif",
