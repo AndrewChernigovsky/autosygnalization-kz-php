@@ -3,8 +3,9 @@ import { Pagination, Autoplay, Zoom } from 'swiper/modules';
 
 const worksSwiper = new Swiper('.swiper-works', {
     modules: [Pagination, Autoplay, Zoom],
-    slidesPerView: 3,
-    spaceBetween: 30,
+    spaceBetween: 10,
+    slidesPerView: 1.5,
+    centeredSlides: true,
     loop: true,
     zoom: true,
     autoplay: {
@@ -16,16 +17,29 @@ const worksSwiper = new Swiper('.swiper-works', {
         clickable: true,
     },
     breakpoints: {
-        320: {
-            slidesPerView: 1,
-        },
+        // 320: {
+        //     slidesPerView: 1,
+        // },
         768: {
             slidesPerView: 2,
         },
         1024: {
             slidesPerView: 3,
+            spaceBetween: 30,
+            centeredSlides: false,
         }
-    }
+    },
+    on: {
+        slideChange: function () {
+
+            this.slides.forEach(slide => {
+                slide.classList.remove('active');
+            });
+            // центральный слайд
+            const centerIndex = this.activeIndex + Math.floor(this.params.slidesPerView / 2) - (this.params.slidesPerView % 2 === 0 ? 1 : 0);
+            this.slides[centerIndex].classList.add('active');
+        },
+    },
 });
 
 document.querySelectorAll('.works__slide-image img').forEach(img => {
