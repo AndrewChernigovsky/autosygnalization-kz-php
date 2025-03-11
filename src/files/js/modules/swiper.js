@@ -14,6 +14,7 @@ export function initSwiper() {
 
   const swiperArticle = document.querySelector('#swiper-article');
 
+  const swiperWorks = document.querySelector('.swiper-works');
 
   async function loadModule() {
     if (swiperIntro != null) {
@@ -58,6 +59,10 @@ export function initSwiper() {
     if (swiperArticle != null) {
       const { initSwiperArticle } = await import('./swipers/swiper-article.js');
       initSwiperArticle();
+    }
+    if (swiperWorks != null) {
+      const { initSwiperWorks } = await import('./swipers/swiper-works.js');
+      initSwiperWorks();
     }
   }
   loadModule();
