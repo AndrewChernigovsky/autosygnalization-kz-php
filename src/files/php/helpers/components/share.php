@@ -25,7 +25,14 @@ class Share
         <?php if (isset($this->icons) && is_array($this->icons)): ?>
           <?php foreach ($this->icons as $icon): ?>
             <li>
-              <a href="<?= htmlspecialchars($icon['href']); ?>" title="<?= htmlspecialchars($icon['name']); ?>">
+              <a href="<?= htmlspecialchars($icon['href']); ?>" title="<?= htmlspecialchars($icon['name']); ?>"
+                 <?php 
+                 if (isset($icon['attributes']) && is_array($icon['attributes'])) {
+                     foreach ($icon['attributes'] as $attr => $value) {
+                         echo htmlspecialchars($attr) . '="' . htmlspecialchars($value) . '" ';
+                     }
+                 }
+                 ?>>
                 <img src="<?= htmlspecialchars($icon['path']); ?>" width="<?= htmlspecialchars($icon['width']); ?>"
                   height="<?= htmlspecialchars($icon['height']); ?>" alt="<?= htmlspecialchars($icon['name']); ?>" />
                 <span class="visually-hidden"><?= htmlspecialchars($icon['name']); ?></span>

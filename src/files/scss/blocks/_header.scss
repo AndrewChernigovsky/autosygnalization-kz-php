@@ -27,21 +27,22 @@
       justify-self: center;
       font-weight: 700;
       padding: 10px;
+      margin-top: 20px;
       text-decoration: underline;
       text-align: center;
 
 
       svg {
-        width: 30px;
-
-        @media screen and (max-width: var.$tablet) {
-          display: none;
-        }
+        width: 40px;
+        height: 40px;
+        stroke-width: 10px;
       }
 
       @media screen and (min-width: 1025px) {
-        max-width: 260px;
+        min-width: 390px;
         grid-column: 10/13;
+        text-align: left;
+        margin-top: 0;
       }
     }
   }
@@ -67,7 +68,7 @@
   }
 
 
-  &__geo {
+  &__instagram {
     display: flex;
     align-items: center;
 
@@ -82,7 +83,7 @@
     }
   }
 
-  &__geo-image {
+  &__instagram-image {
     display: flex;
     align-items: center;
     gap: 10px;
@@ -94,8 +95,10 @@
       align-items: center;
 
       svg {
-        width: 35px;
+        width: 30px;
         height: 35px;
+        color: var.$white;
+        margin-right: 10px;
       }
     }
 

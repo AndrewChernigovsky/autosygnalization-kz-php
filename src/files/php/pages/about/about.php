@@ -47,7 +47,7 @@ echo $head->setHead();
                 оборудования на различные автомобили.</li>
               <li class="present__list-item">Мы постоянно повышаем свою квалификацию, участвуем в конференциях.</li>
               <li class="present__list-item">Аккуратность и ответственность – именно это сегодня является важными
-                отличиями команды “Auto Security”.</li>
+                отличиями команды "Auto Security".</li>
               <li class="present__list-item">Наш сервис укомплектован современным диагностическим оборудованием,
                 позволяющим нам корректно работать с абсолютно новыми автомобилями.</li>
               <li class="present__list-item">Нашим клиентам мы предлагаем услугу выезда для экономии времени и
@@ -68,7 +68,7 @@ echo $head->setHead();
               <?php
               foreach ($aboutUs->getImagesAboutUs() as $image) {
                 echo "<div class='tech-photo__swiper-slide swiper-slide'>
-                <img src='{$image['src']}' alt='картинка' width='600' height='300'>
+                  <img src='{$image['src']}' alt='картинка' width='600' height='300'>
                 </div>";
               }
               ?>

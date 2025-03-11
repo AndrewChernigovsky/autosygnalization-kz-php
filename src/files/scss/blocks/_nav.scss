@@ -71,7 +71,6 @@
   input {
     border-radius: 30px;
     min-height: 32px;
-    // background-color: var.$red-64001E;
     background-color: var.$red-D10000;
     display: flex;
     color: var.$white;
@@ -98,27 +97,33 @@
 }
 
 .phone {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  gap: 15px;
-  font-size: 20px;
-  font-weight: bold;
+  display: none;
 
-  @media screen and (max-width: var.$desktop-min) {
-    display: none;
-    font-size: 12px;
-  }
-
-  @media screen and (min-width: var.$desktop-min) {
-    margin: 0 20px;
+  @media screen and (min-width: 1025px ) {
     justify-content: center;
     grid-column: 7/10;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    gap: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    font-size: 12px;
   }
 
   @media screen and (min-width: var.$desktop) {
     gap: 20px;
   }
+
+    svg {
+      display: none;
+
+      @media screen and (min-width: var.$tablet) {
+        display: block;
+        width: 40px;
+        height: 40px;
+      }
+    }
 
   img {
     width: 20px;
@@ -128,15 +133,28 @@
   ul {
     list-style-type: none;
     padding-left: 0;
+
+      @media screen and (max-width: var.$desktop-min) {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: center;
+    }
   }
 
   li {
-    padding-bottom: 5px;
     transition: 0.3 ease-in-out;
 
+    @media screen and (min-width: var.$desktop-min) {
+      padding-bottom: 5px;
+    }
+
     &:not(:first-of-type) {
-      padding-top: 5px;
-      border-top: 2px solid var.$white;
+
+      @media screen and (min-width: 1025px) {
+        border-top: 2px solid var.$white;
+        padding-top: 5px;
+      }
     }
 
     &:hover {
@@ -147,6 +165,12 @@
   a {
     color: var.$white;
     text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
+
+    @media screen and (min-width: var.$desktop-min) {
+      gap: 20px;
+    }
   }
 }
 
@@ -234,7 +258,7 @@
           transform: translate(-50%, -50%) rotate(-45deg);
           background-color: var.$white;
           width: inherit;
-          height: 8px;
+          height: 3px;
           box-shadow: none;
           border-radius: 10px;
         }
@@ -247,7 +271,7 @@
           transform: translate(-50%, -50%) rotate(45deg);
           background-color: var.$white;
           width: inherit;
-          height: 8px;
+          height: 3px;
           border-radius: 10px;
         }
       }
@@ -263,20 +287,12 @@
     &.active {
       position: fixed;
       display: grid;
-      top: 15px;
+      top: 20px;
       left: 10%;
       z-index: 11;
 
-      .phone {
-        position: fixed;
-        bottom: 0;
-        left: 10%;
-        display: flex;
-
-        svg {
-          width: 20px;
-          height: 20px;
-        }
+      @media screen and (min-width: var.$tablet) {
+        top: 30px;
       }
 
       .search {
@@ -342,6 +358,42 @@
         }
       }
     }
+  }
+
+  .phone.active {
+      position: fixed;
+      bottom: 15px;
+      left: 10%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      font-weight: bold;
+      font-size: 12px;
+      z-index: 11;
+
+      ul {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+
+        @media screen and (min-width: var.$tablet) {
+          flex-direction: row;
+        }
+      }
+
+      svg {
+        display: block;
+        color: var.$red-FF0000;
+
+        @media screen and (min-width: var.$tablet) {
+          width: 20px;
+          height: 20px;
+          order: 2;
+        }
+      }
   }
 }
 

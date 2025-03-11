@@ -1,4 +1,8 @@
 <?php
+
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+$currentUrl = $protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+
 include_once __DIR__ . '/../helpers/classes/setVariables.php';
 
 $variables = new SetVariables();
@@ -8,33 +12,52 @@ $path = $variables->getPathFileURL();
 
 $icons = [
   [
-    "path" => "$path/assets/images/vectors/facebook-icon.svg",
-    "name"=> "facebook",
-    "width" => 20,
-    "height" => 20,
-    "href" => "#"
-  ],
+    'name' => 'facebook',
+    'href' => 'https://www.facebook.com/sharer/sharer.php?u=' . urlencode($currentUrl),
+    'path' => "$path/assets/images/vectors/facebook-icon.svg",
+    'width' => '20',
+    'height' => '20',
+    'attributes' => [
+        'target' => '_blank',
+        'rel' => 'noopener noreferrer',
+        'data-social' => 'facebook'
+    ]
+],
   [
-    "path" => "$path/assets/images/vectors/vk-icon.svg",
-    "name" => "vk",
-    "width" => 20,
-    "height" => 20,
-    "href" => "#"
+    'name' => 'VK',
+    'href' => 'https://vk.com/share.php?url=' . urlencode($currentUrl),
+    'path' => "$path/assets/images/vectors/vk-icon.svg",
+    'width' => '20',
+    'height' => '20',
+    'attributes' => [
+        'target' => '_blank',
+        'rel' => 'noopener noreferrer',
+        'data-social' => 'vk'
+    ]
+],
+[
+  'name' => 'ok',
+  'href' => 'https://connect.ok.ru/offer?url=' . urlencode($currentUrl),
+  'path' => "$path/assets/images/vectors/ok-icon.svg",
+  'width' => '20',
+  'height' => '20',
+  'attributes' => [
+      'target' => '_blank',
+      'rel' => 'noopener noreferrer',
+      'data-social' => 'ok'
+  ]
+],
+[
+  'name' => 'google',
+  'href' => 'https://plus.google.com/share?url=' . urlencode($currentUrl),
+  'path' => "$path/assets/images/vectors/google-icon.svg",
+  'width' => '20',
+  'height' => '20',
+  'attributes' => [
+      'target' => '_blank',
+      'rel' => 'noopener noreferrer',
+      'data-social' => 'google'
+  ]
   ],
-  [
-    "path" => "$path/assets/images/vectors/ok-icon.svg",
-    "name" => "ok",
-    "width" => 20,
-    "height" => 20,
-    "href" => "#"
-  ],
-  [
-    "path" => "$path/assets/images/vectors/google-icon.svg",
-    "name" => "google",
-    "width" => 20,
-    "height" => 20,
-    "href" => "#"
-  ],  
 ]
-
 ?>

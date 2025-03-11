@@ -95,9 +95,10 @@
     margin: 0;
     margin-bottom: 10px;
     padding: 10px;
-    font-family: var.$primary-font;
+    font-family: 'Monserrat', Arial, sans-serif;
+    font-weight: 400;
     font-size: 18px;
-    line-height: 22px;
+    line-height: 28px;
     background-color: var.$gray_424242;
     color: var.$white;
     border-radius: 20px;
@@ -110,7 +111,7 @@
       padding: 20px;
       text-transform: none;
       font-size: 22px;
-      line-height: 24px;
+      line-height: 33px;
     }
 
     @media (min-width: var.$desktop) {

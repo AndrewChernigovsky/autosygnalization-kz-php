@@ -31,7 +31,7 @@ class NavigationLinks
         $navigationLinks = [
           ['name' => 'Главная', 'path' => "$this->path/index.php"],
           ['name' => 'Автосигнализации', 'path' => "$this->path_pages/autosygnals/autosygnals.php"],
-          ['name' => 'Парковочные системы', 'path' => "$this->path_pages/parking-systems/parking-systems.php"],
+          ['name' => 'Видеорегистраторы', 'path' => "$this->path_pages/parking-systems/parking-systems.php"],
           ['name' => 'Наши услуги', 'path' => "$this->path_pages/service/service.php"],
           ['name' => 'О нас', 'path' => "$this->path_pages/about/about.php"],
           ['name' => 'Контакты', 'path' => "$this->path_pages/contacts/contacts.php"],
@@ -54,7 +54,7 @@ class NavigationLinks
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска'],
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=catalog", 'name' => 'Каталог автосигнализаций Starline'],
                   ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=accessories", 'name' => 'Пульты и аксессуары'],
-                  ['link' => "$this->path_pages/parking-systems/parking-systems.php", 'name' => 'Парковочные системы'],
+                  ['link' => "$this->path_pages/parking-systems/parking-systems.php", 'name' => 'Видеорегистраторы'],
                   ['link' => "$this->path_pages/price/price.php", 'name' => "Прайс на материал и установку"]
                 ],
               ],
