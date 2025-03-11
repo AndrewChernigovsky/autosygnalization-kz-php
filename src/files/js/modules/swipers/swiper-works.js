@@ -5,6 +5,8 @@ const worksSwiper = new Swiper('.swiper-works', {
     modules: [Pagination, Autoplay, Zoom],
     spaceBetween: 10,
     slidesPerView: 1.5,
+    // spaceBetween: 20,
+    // slidesPerView: 3,
     centeredSlides: true,
     loop: true,
     zoom: true,
@@ -26,17 +28,27 @@ const worksSwiper = new Swiper('.swiper-works', {
         1024: {
             slidesPerView: 3,
             spaceBetween: 30,
-            centeredSlides: false,
+            centeredSlides: true,
         }
     },
+    // on: {
+    //     slideChange: function () {
+
+    //         this.slides.forEach(slide => {
+    //             slide.classList.remove('active');
+    //         });
+    //         // центральный слайд
+    //         const centerIndex = this.activeIndex + Math.floor(this.params.slidesPerView / 2) - (this.params.slidesPerView % 2 === 0 ? 1 : 0);
+    //         this.slides[centerIndex].classList.add('active');
+    //     },
+    // },
     on: {
         slideChange: function () {
-
             this.slides.forEach(slide => {
                 slide.classList.remove('active');
             });
-            // центральный слайд
-            const centerIndex = this.activeIndex + Math.floor(this.params.slidesPerView / 2) - (this.params.slidesPerView % 2 === 0 ? 1 : 0);
+            // Определяем центральный слайд
+            const centerIndex = this.activeIndex % this.slides.length; // Используем модуль для корректного индекса
             this.slides[centerIndex].classList.add('active');
         },
     },

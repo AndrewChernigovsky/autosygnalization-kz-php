@@ -8,14 +8,14 @@ $path = $variables->getPathFileURL();
 
 $works = [
     [
-        'image' => "$path/assets/images/works/rus.avif",
-        'title' => 'РУСИФИКАЦИЯ АВТО И ЧИПТЮНИНГ',
-        'href' => '/files/php/pages/service/service.php?service=rus',
-    ],
-    [
         'image' => "$path/assets/images/works/setup.avif",
         'title' => 'УСТАНОВКА И РЕМОНТ АВТОСИГНАЛИЗАЦИЙ',
         'href' => '/files/php/pages/service/service.php?service=setup'
+    ],
+    [
+        'image' => "$path/assets/images/works/rus.avif",
+        'title' => 'РУСИФИКАЦИЯ АВТО И ЧИПТЮНИНГ',
+        'href' => '/files/php/pages/service/service.php?service=rus',
     ],
     [
         'image' => "$path/assets/images/works/locks.avif",
