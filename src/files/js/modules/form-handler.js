@@ -1,5 +1,5 @@
 export default class ProcessForm {
-  constructor(object, path) {
+  constructor(object) {
     if (!object) {
       console.log('FormOrder: неверно переданы параметры в конструктор');
       return;
@@ -15,8 +15,7 @@ export default class ProcessForm {
 
 
     this.sendObject = {};
-    this.path =
-      path || window.location.pathname.includes('/dist') ? '/dist' : '';
+    this.path = window.location.pathname.includes('/dist') ? '/dist' : '';
     this.init();
   }
 
@@ -49,9 +48,9 @@ export default class ProcessForm {
 
   sendDataToServer() {
     const url = `${this.path}/files/php/data/process_form.php`;
-    
+
     console.log('Отправляемые данные:', this.sendObject); // Логирование данных
-  
+
     fetch(url, {
       method: 'POST',
       headers: {
@@ -88,7 +87,7 @@ export default class ProcessForm {
     }
 
     this.inputModel.removeEventListener('input', setValidation);
-    this.inputModel.addEventListener('input',setValidation);
+    this.inputModel.addEventListener('input', setValidation);
   }
 
   validReleaseYear(maxLength = 4) {
@@ -105,16 +104,16 @@ export default class ProcessForm {
     this.inputReleaseYear.addEventListener('input', setValidation);
 
   }
-  
+
   validName(maxLength = 40) {
     const regExp = /[^a-zA-ZА-Яа-яЁё -]/g; // Разрешаем буквы, пробелы и дефис
     const setValidation = () => {
-        let value = this.inputName.value.replace(regExp, '').slice(0, maxLength);
+      let value = this.inputName.value.replace(regExp, '').slice(0, maxLength);
 
-        // Убираем повторяющиеся пробелы (например, "Иван   Иванов" → "Иван Иванов")
-        value = value.replace(/\s+/g, ' ');
+      // Убираем повторяющиеся пробелы (например, "Иван   Иванов" → "Иван Иванов")
+      value = value.replace(/\s+/g, ' ');
 
-        this.inputName.value = value;
+      this.inputName.value = value;
     };
 
     this.inputName.removeEventListener('input', setValidation);
@@ -124,21 +123,21 @@ export default class ProcessForm {
   validPhone(maxLength = 11) {
     // Удаляем старые слушатели, если они есть
     const handler = (event) => {
-        let value = event.target.value;
-        
-        // Если первый символ не +, добавляем его
-        if (!value.startsWith('+')) {
-            value = '+' + value;
-        }
-        
-        // Удаляем все кроме цифр и первого +
-        value = value.replace(/[^0-9]/g, '');
+      let value = event.target.value;
+
+      // Если первый символ не +, добавляем его
+      if (!value.startsWith('+')) {
         value = '+' + value;
-        
-        // Ограничиваем длину
-        value = value.slice(0, maxLength);
-        
-        this.inputPhone.value = value;
+      }
+
+      // Удаляем все кроме цифр и первого +
+      value = value.replace(/[^0-9]/g, '');
+      value = '+' + value;
+
+      // Ограничиваем длину
+      value = value.slice(0, maxLength);
+
+      this.inputPhone.value = value;
     };
 
     this.inputPhone.removeEventListener('input', handler);

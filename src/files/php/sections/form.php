@@ -4,7 +4,7 @@ include_once __DIR__ . '/../data/brands.php';
 <section class="form" id="form">
   <div class="form__wrapper">
     <h2 class="form__title">Форма обратной связи</h2>
-    <form class="form__main-form" action="/src/files/php/process_form.php" method="post" id="feedback-form">
+    <form class="form__main-form" action="/files/php/process_form.php" method="post" id="feedback-form">
       <fieldset class="form__fieldset">
         <legend class="form__subtitle">Марка:</legend>
         <div class="form__group-radio">

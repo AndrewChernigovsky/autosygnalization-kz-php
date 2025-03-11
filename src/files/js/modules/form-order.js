@@ -1,5 +1,5 @@
 export default class FormOrder {
-  constructor(object, path) {
+  constructor(object) {
     if (!object) {
       console.log('FormOrder: неверно переданы параметры в конструктор');
       return;
@@ -27,8 +27,7 @@ export default class FormOrder {
     }
 
     this.sendObject = {};
-    this.path =
-      path || window.location.pathname.includes('/dist') ? '/dist' : '';
+    this.path = window.location.pathname.includes('/dist') ? '/dist' : '';
     this.init();
   }
 
@@ -40,18 +39,18 @@ export default class FormOrder {
   editSubmitEvent = () => {
     this.form.addEventListener('submit', (event) => {
       event.preventDefault();
-  
+
       const data = new FormData(this.form);
       this.sendObject = {
         form: {},
         items: {},
         cost: this.cost.textContent,
       };
-  
+
       data.forEach((value, key) => {
         this.sendObject.form[key] = value;
       });
-  
+
       this.items.forEach((item, index) => {
         const title =
           item.querySelector('#product-title')?.textContent?.trim() ||
@@ -62,16 +61,16 @@ export default class FormOrder {
         const price =
           item.querySelector('#product-price')?.textContent?.trim() ||
           'Цены товара нет в базе данных';
-  
+
         this.sendObject.items[index] = {
           title,
           quantity: isNaN(Number(quantity)) ? quantity : Number(quantity),
           price: isNaN(Number(price)) ? price : Number(price),
         };
       });
-  
+
       console.log(this.sendObject);
-  
+
       this.sendDataToServer()
         .then(() => {
           this.destroy();
@@ -80,18 +79,18 @@ export default class FormOrder {
         .catch((error) => {
           console.error('Ошибка при отправке данных:', error);
         });
-  
+
     }, { signal: this.abortController.signal });
   };
-  
+
   sendDataToServer() {
     const url = `${this.path}/files/php/data/form_order.php`;
-  
+
     if (!this.sendObject || Object.keys(this.sendObject).length === 0) {
       alert('Ошибка: данные заказа отсутствуют');
       return Promise.reject('Нет данных для отправки');
     }
-  
+
     return fetch(url, {
       method: 'POST',
       headers: {
@@ -115,38 +114,38 @@ export default class FormOrder {
         }
       });
   }
-  
+
   validation() {
     const inputClientTypeCheckbox = this.form.querySelectorAll('input[name="client_type"]');
-  
+
     // Объект для хранения ссылок на обработчики
     this.inputHandlers = {};
-  
+
     const getClientType = (e) => {
-      const clientType = e 
-        ? e.target.value 
+      const clientType = e
+        ? e.target.value
         : this.form.querySelector('input[name="client_type"]:checked')?.value;
-  
+
       // Удаляем старые обработчики перед добавлением новых
       Object.entries(this.inputHandlers).forEach(([key, handler]) => {
         const input = this.form.querySelector(`input[name="${key}"]`);
         if (input) input.removeEventListener('input', handler);
       });
-  
+
       this.inputHandlers = {}; // Очищаем объект с обработчиками
-  
+
       const addInputHandler = (name, regex, maxLength) => {
         const input = this.form.querySelector(`input[name="${name}"]`);
         if (!input) return;
-  
+
         const handler = (e) => {
           e.target.value = e.target.value.replace(regex, '').slice(0, maxLength);
         };
-  
+
         input.addEventListener('input', handler);
         this.inputHandlers[name] = handler;
       };
-  
+
       // Общие инпуты
       addInputHandler('city', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 40);
       addInputHandler('street', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 50);
@@ -158,7 +157,7 @@ export default class FormOrder {
       addInputHandler('user-lastname', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 30);
       addInputHandler('telephone', /[^0-9+\-() ]/g, 20);
       addInputHandler('email', /[^a-zA-Z0-9@._%+-]/g, 200);
-  
+
       // Если выбрано "Юридическое лицо"
       if (clientType === 'Юридическое лицо') {
         addInputHandler('company-name', /[^а-яА-ЯёЁa-zA-Z\s-]/g, 40);
@@ -172,18 +171,18 @@ export default class FormOrder {
         addInputHandler('company-telephone', /[^0-9+\-() ]/g, 20);
       }
     };
-  
+
     // Навешиваем обработчики на переключение типа клиента
     inputClientTypeCheckbox.forEach(input => {
       input.addEventListener('change', getClientType);
     });
-  
+
     getClientType(); // Запускаем сразу при загрузке
   }
-  
-  
-  
-  destroy() {  
+
+
+
+  destroy() {
     this.abortController.abort();
     this.receptacle = null;
     this.form = null;

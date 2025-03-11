@@ -63,7 +63,7 @@ const {
   cartButtons: document.querySelectorAll('.cart-button'),
   addToCartButton: document.querySelector('.card-more__button-cart'),
   filtersAction: document.querySelector('.filter-form'),
-  deliveryModal:document.getElementById('deliveryModal'),
+  deliveryModal: document.getElementById('deliveryModal'),
   formOrder: document.querySelector('.cart-section'),
   processForm: document.querySelector('.form__main-form'),
   formReusable: document.querySelector('.popup.modal-form'),
@@ -190,15 +190,12 @@ async function loadModules() {
     const { setModalCart } = await import('./modules/cart-modal.js');
     cartButtons.forEach((btn) => btn.addEventListener('click', setModalCart));
   }
-  // if (modalCart != null && addToCartButton != null) {
-  //   const { setModalCart } = await import('./modules/cart-modal.js');
-  //   addToCartButton.addEventListener('click', setModalCart);
-  // }
+
   if (productsContainerCart != null) {
     const { Cart } = await import('./components/Cart.jsx');
     render(html`<${Cart} />`, document.body);
   }
-  
+
   if (checkoutForm != null) {
     const { CheckoutForm } = await import(
       './components/Checkout/CheckoutForm.jsx'
@@ -222,27 +219,21 @@ async function loadModules() {
     const formHandler = await import('./modules/form-handler.js');
     const ProcessForm = formHandler.default;
 
-    const currentPath = window.location.pathname;
-
     new ProcessForm(
       {
         form: '.form__main-form',
-      },
-      currentPath
+      }
     );
   }
   if (formReusable != null) {
     const formReusable = await import('./modules/form-reusable.js');
     const FormReusable = formReusable.default;
 
-    const currentPath = window.location.pathname;
-
     new FormReusable(
       {
         container: '.popup.modal-form',
         form: '.form__main-form',
-      },
-      currentPath
+      }
     );
   }
 
