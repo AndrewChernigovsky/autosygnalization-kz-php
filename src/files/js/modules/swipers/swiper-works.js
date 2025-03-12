@@ -1,14 +1,13 @@
 import Swiper from 'swiper';
-import { Pagination, Autoplay, Zoom } from 'swiper/modules';
+import { Pagination, Autoplay} from 'swiper/modules';
 
 export function initSwiperWorks() {
   const workSwiper = new Swiper('.swiper-works', {
-    modules: [Pagination, Autoplay, Zoom],
+    modules: [Pagination, Autoplay],
     spaceBetween: 10,
     slidesPerView: 1.5,
     centeredSlides: true,
     loop: true,
-    zoom: true,
     autoplay: {
       delay: 3000,
       disableOnInteraction: false,
@@ -24,17 +23,7 @@ export function initSwiperWorks() {
       1024: {
         slidesPerView: 3,
         spaceBetween: 30,
-        centeredSlides: true,
       }
-    },
-    on: {
-      slideChange: function () {
-        this.slides.forEach(slide => {
-          slide.classList.remove('active');
-        });
-        const centerIndex = this.activeIndex % this.slides.length;
-        this.slides[centerIndex].classList.add('active');
-      },
     },
   });
 
