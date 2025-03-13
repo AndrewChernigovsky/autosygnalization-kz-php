@@ -47,13 +47,13 @@ class NavigationLinks
             'title' => 'Магазин',
             'list' => [
               [
-                'name' => 'Автосигнализации',
+                //'name' => 'Автосигнализации',
                 'children' => [
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=auto", 'name' => 'Автосигнализации с автозапуском'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=gsm", 'name' => 'Автосигнализации с GSM'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=no-auto", 'name' => 'Автосигнализации без автозапуска'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=catalog", 'name' => 'Каталог автосигнализаций Starline'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals.php?auto=accessories", 'name' => 'Пульты и аксессуары'],
+                  ['link' => "$this->path_pages/autosygnals/autosygnals-auto.php", 'name' => 'Автосигнализации с автозапуском'],
+                  ['link' => "$this->path_pages/autosygnals/autosygnals-gsm.php", 'name' => 'Автосигнализации с GSM'],
+                  ['link' => "$this->path_pages/autosygnals/autosygnals-without-auto.php", 'name' => 'Автосигнализации без автозапуска'],
+                  ['link' => "$this->path_pages/autosygnals/autosygnals-starline.php", 'name' => 'Каталог автосигнализаций Starline'],
+                  ['link' => "$this->path_pages/autosygnals/autosygnals-acssesuars.php", 'name' => 'Пульты и аксессуары'],
                   ['link' => "$this->path_pages/parking-systems/parking-systems.php", 'name' => 'Видеорегистраторы'],
                   ['link' => "$this->path_pages/price/price.php", 'name' => "Прайс на материал и установку"]
                 ],

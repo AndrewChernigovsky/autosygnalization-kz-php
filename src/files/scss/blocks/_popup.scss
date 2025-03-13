@@ -14,7 +14,7 @@
     text-align: center;
     align-items: center;
     padding: 10px;
-    border-radius: 20px 20px 0 20px;
+    border-radius: 20px 20px 20px 20px;
 
     &.active {
       display: grid;
@@ -202,7 +202,8 @@
   display: grid;
   min-width: 230px;
   top: 75%;
-  right: 2%;
+  right: 3%;
+  border-radius: 20px 20px 0 20px;
 }
 
 .cart-popup {
