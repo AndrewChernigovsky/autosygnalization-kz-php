@@ -198,6 +198,13 @@
   }
 }
 
+.popup.phone-popup.active {
+  display: grid;
+  min-width: 230px;
+  top: 75%;
+  right: 2%;
+}
+
 .cart-popup {
   background: var.$gray-bg-autosygnals;
   min-width: 300px;
