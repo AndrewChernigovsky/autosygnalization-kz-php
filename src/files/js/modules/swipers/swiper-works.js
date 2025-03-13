@@ -30,21 +30,29 @@ export function initSwiperWorks() {
   document.querySelector('.works__swiper').addEventListener('click', function (e) {
     const img = e.target.closest('.works__slide-image img');
     if (img) {
-      e.preventDefault();
-      const modal = document.createElement('div');
-      modal.className = 'modal-image';
+        e.preventDefault();
+        const modal = document.createElement('div');
+        modal.className = 'modal-image';
 
-      const modalImg = document.createElement('img');
-      modalImg.src = img.src;
+        const modalImg = document.createElement('img');
+        modalImg.src = img.src;
 
-      modal.appendChild(modalImg);
-      document.body.appendChild(modal);
+        const closeButton = document.createElement('button');
+        closeButton.className = 'close-button';
 
-      modal.addEventListener('click', function () {
-        this.remove();
-      });
+        closeButton.addEventListener('click', function () {
+            modal.remove(); 
+        });
+
+        modal.appendChild(modalImg);
+        modal.appendChild(closeButton);
+        document.body.appendChild(modal);
+
+        modal.addEventListener('click', function () {
+          this.remove();
+        });
     }
-  })
+});
 
   return workSwiper;
 };

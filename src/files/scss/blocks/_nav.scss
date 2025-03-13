@@ -140,6 +140,7 @@
       gap: 20px;
       align-items: center;
     }
+
   }
 
   li {
@@ -206,7 +207,7 @@
   }
 
   .menu-toggle {
-    width: 50px;
+    width: 40px;
     height: 100%;
     margin-left: 15px;
     display: flex;
@@ -336,7 +337,7 @@
 
     &.active {
       position: fixed;
-      bottom: 10%;
+      bottom: 95px;
       z-index: 11;
       left: 10%;
 
@@ -355,6 +356,16 @@
         svg {
           width: 25px;
           height: 25px;
+        }
+      }
+
+      & > .geo__wrapper {
+
+        display: flex;
+        gap: 7px;
+
+        svg {
+          flex-shrink: 0;
         }
       }
     }
@@ -382,11 +393,19 @@
         @media screen and (min-width: var.$tablet) {
           flex-direction: row;
         }
+
+        & li:first-of-type {
+          @media screen and (max-width: var.$desktop-min) {
+            border-bottom: 1px solid var.$white;
+            padding-bottom: 10px;
+          }
+        }
       }
 
       svg {
         display: block;
         color: var.$red-FF0000;
+        width: 45px;
 
         @media screen and (min-width: var.$tablet) {
           width: 20px;

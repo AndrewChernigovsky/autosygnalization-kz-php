@@ -6,11 +6,8 @@
   @media screen and (max-width: var.$tablet) {
     display: none;
     position: fixed;
-    bottom: 80px;
     right: 10px;
-    min-width: 300px;
-    max-width: 300px;
-    width: calc(100% - 40px);
+    min-width: 340px;
     z-index: 23;
     background-color: var.$gray;
     justify-content: flex-end;
@@ -18,10 +15,6 @@
     align-items: center;
     padding: 10px;
     border-radius: 20px 20px 0 20px;
-
-    #modal-form-close {
-      display: none;
-    }
 
     &.active {
       display: grid;
@@ -78,6 +71,55 @@
 .popup.modal-form {
   display: none;
 
+  .form__input--textarea {
+    min-height: 150px;
+  }
+
+  .popup__button--close {
+    width: 40px;
+    height: 40px;
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    outline: none;
+    position: relative;
+    transition: 0.3s ease-in-out;
+    cursor: pointer;
+
+    @media screen and (min-width: 769px) {
+      margin-right: 20px;
+    }
+
+    &::after,
+    &::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background-color: var.$gray-bg-autosygnals;
+      top: 50%;
+      left: 50%;
+    }
+
+    &::before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    &::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    &:hover {
+      opacity: 0.6;
+      transform: scale(1.14);
+    }
+
+    &:focus,
+    &:focus-visible {
+      border: 2px solid var.$black;
+    }
+  }
+
   @media screen and (min-width: 769px) {
     display: none;
     position: fixed;
@@ -88,48 +130,6 @@
     border-radius: 15px;
     padding: 50px 0;
     background-color: var.$white;
-
-    .popup__button--close {
-      width: 40px;
-      height: 40px;
-      margin-left: auto;
-      margin-right: 20px;
-      background: transparent;
-      border: none;
-      outline: none;
-      position: relative;
-      transition: 0.3s ease-in-out;
-      cursor: pointer;
-
-      &::after,
-      &::before {
-        content: "";
-        position: absolute;
-        width: 100%;
-        height: 2px;
-        background-color: var.$gray-bg-autosygnals;
-        top: 50%;
-        left: 50%;
-      }
-
-      &::before {
-        transform: translate(-50%, -50%) rotate(45deg);
-      }
-
-      &::after {
-        transform: translate(-50%, -50%) rotate(-45deg);
-      }
-
-      &:hover {
-        opacity: 0.6;
-        transform: scale(1.14);
-      }
-
-      &:focus,
-      &:focus-visible {
-        border: 2px solid var.$black;
-      }
-    }
 
     .form {
       .form__title {
@@ -158,6 +158,11 @@
 
   &.active {
     display: grid;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 11;
   }
 
   @media screen and (min-width: var.$desktop) {
