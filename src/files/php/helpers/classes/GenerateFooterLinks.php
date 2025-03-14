@@ -2,68 +2,68 @@
 
 class GenerateFooterLinks
 {
-  private $items;
+    private $items;
 
-  public function __construct($items)
-  {
-    $this->items = $items;
-  }
-
-  public function generateFooter()
-  {
-    function renderList($items)
+    public function __construct($items)
     {
-      $output = '<ul class="footer__menu-list">';
-
-      foreach ($items as $item) {
-        $output .= '<li>';
-        if (isset($item['link'])) {
-          $output .= '<a href="' . htmlspecialchars($item['link']) . '">';
-        }
-        $output .= '<span class="toggle-list toggle-inner-list active">' . htmlspecialchars($item['name']) . '</span>';
-        if (isset($item['link'])) {
-          $output .= '</a>';
-        }
-
-        if (isset($item['children'])) {
-          $output .= renderList($item['children']);
-        }
-
-        $output .= '</li>';
-      }
-
-      $output .= '</ul>';
-      return $output;
+        $this->items = $items;
     }
 
-    function renderNavigation($items)
+    public function generateFooter()
     {
-      $output = '';
+        function renderList($items)
+        {
+            $output = '<ul class="footer__menu-list">';
 
-      foreach ($items as $navItem) {
-        $output .= '<div class="footer__menu-title">';
-        $output .= '<h3 class="toggle-list active">';
-        if (isset($navItem['link'])) {
-          $output .= '<a href="' . htmlspecialchars($navItem['link']) . '">';
+            foreach ($items as $item) {
+                $output .= '<li>';
+                if (isset($item['link'])) {
+                    $output .= '<a href="' . htmlspecialchars($item['link']) . '">';
+                }
+                if (isset($item['name'])) {
+                    $output .= '<span class="toggle-list toggle-inner-list active">' . htmlspecialchars($item['name']) . '</span>';
+                }
+                if (isset($item['link'])) {
+                    $output .= '</a>';
+                }
+
+                if (isset($item['children'])) {
+                    $output .= renderList($item['children']);
+                }
+
+                $output .= '</li>';
+            }
+
+            $output .= '</ul>';
+            return $output;
         }
-        $output .= htmlspecialchars($navItem['title']);
-        if (isset($navItem['link'])) {
-          $output .= '</a>';
+
+        function renderNavigation($items)
+        {
+            $output = '';
+
+            foreach ($items as $navItem) {
+                $output .= '<div class="footer__menu-title">';
+                $output .= '<h3 class="toggle-list active">';
+                if (isset($navItem['link'])) {
+                    $output .= '<a href="' . htmlspecialchars($navItem['link']) . '">';
+                }
+                $output .= htmlspecialchars($navItem['title']);
+                if (isset($navItem['link'])) {
+                    $output .= '</a>';
+                }
+                $output .= '</h3>';
+
+                if (isset($navItem['list'])) {
+                    $output .= renderList($navItem['list']);
+                }
+
+                $output .= '</div>';
+            }
+
+            return $output;
         }
-        $output .= '</h3>';
 
-        if (isset($navItem['list'])) {
-          $output .= renderList($navItem['list']);
-        }
-
-        $output .= '</div>';
-      }
-
-      return $output;
+        echo renderNavigation($this->items);
     }
-
-    echo renderNavigation($this->items);
-  }
 }
-
-?>
