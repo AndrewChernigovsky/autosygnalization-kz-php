@@ -15,7 +15,7 @@ $slides = [
     'type' => ['video/webm', 'video/mp4'],
     'title' => 'АВТОСИГНАЛИЗАЦИИ АВТОЗАПУСК GSM GPS',
     'list' => ['ПРОДАЖА', 'УСТАНОВКА', 'РЕМОНТ'],
-    'link' => "$path/files/php/pages/services/services-page.php",
+    'link' => "$path/files/php/pages/autosygnals/autosygnals.php",
   ],
   [
     'poster' => "$path/assets/images/video-images/poster-2.avif",
@@ -24,7 +24,7 @@ $slides = [
     'type' => ['video/webm', 'video/mp4'],
     'title' => 'РУСИФИКАЦИЯ АВТОМОБИЛЕЙ, ЧИПТЮНИНГ',
     'list' => ['ЛИЦЕНЗИОННЫЕ ПРОШИВКИ', 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА'],
-    'link' => "$path/files/php/pages/parking-systems/parking-systems.php"
+    'link' => "$path/files/php/pages/service/service.php?service=rus"
   ],
   [
     'poster' => "$path/assets/images/video-images/poster-3.avif",
@@ -33,7 +33,7 @@ $slides = [
     'type' => ['video/webm', 'video/mp4'],
     'title' => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ',
     'list' => ['ПРОДАЖА', 'МОНТАЖ', 'ВОЗМОЖЕН ВЫЕЗД'],
-    'link' => "$path/files/php/pages/autosygnals/autosygnals.php",
+    'link' => "$path//files/php/pages/service/service.php?service=setup-videoregistration",
   ],
   [
     'poster' => "$path/assets/images/video-images/poster-4.avif",
@@ -46,7 +46,7 @@ $slides = [
       'УСТАНОВКА СИСТЕМ ПАРКИНГА',
       'ОТКЛЮЧЕНИЕ АВТОСИГНАЛИЗАЦИЙ',
     ],
-    'link' => "$path/files/php/pages/services/services-page.php",
+    'link' => "$path/files/php/pages/service/service.php?service=autoelectric",
   ],
 ];
 

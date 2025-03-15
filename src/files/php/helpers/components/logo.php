@@ -12,7 +12,7 @@ class Logo
     $this->variables = new SetVariables();
     $this->variables->setVar();
     $this->icon = new Contacts();
-    $this->path = $this->variables->getPathFileURL();
+    $this->path = $this->variables->getPathFileURLLogo();
   }
 
   public function getLogo()

@@ -4,11 +4,14 @@ class SetVariables
   private $currentPath;
   private $pathFile;
   private $pathFile_URL;
+
+  private $pathFile_URL_logo;
   private $basePath;
 
   private $distPath;
 
   private static $docRoot;
+
 
   public function __construct()
   {
@@ -24,10 +27,13 @@ class SetVariables
       $this->currentPath = "http://localhost:3000/dist/index.php";
       $this->pathFile = "http://localhost:3000/dist";
       $this->pathFile_URL = '/dist';
+      $this->pathFile_URL_logo = '/dist';
     } else {
       $this->currentPath = "/index.php";
       $this->pathFile = "";
       $this->pathFile_URL = '';
+      $this->pathFile_URL_logo = '/';
+      
     }
   }
 
@@ -45,6 +51,7 @@ class SetVariables
   {
     return $this->pathFile_URL;
   }
+
   public function getBasePath()
   {
 
@@ -56,6 +63,11 @@ class SetVariables
   public static function getDocRoot()
   {
     return self::$docRoot;
+  }
+
+  public function getPathFileURLLogo()
+  {
+    return $this->pathFile_URL_logo;
   }
 }
 
