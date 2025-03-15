@@ -290,7 +290,7 @@
       display: grid;
       top: 20px;
       left: 10%;
-      z-index: 11;
+      z-index: 12;
 
       @media screen and (min-width: var.$tablet) {
         top: 30px;
@@ -340,6 +340,10 @@
       bottom: 95px;
       z-index: 11;
       left: 10%;
+
+      @media screen and (min-width: var.$tablet) {
+        bottom: 70px;
+      }
 
       address {
         display: flex;
@@ -395,7 +399,7 @@
         }
 
         & li:first-of-type {
-          @media screen and (max-width: var.$desktop-min) {
+          @media screen and (max-width: var.$tablet) {
             border-bottom: 1px solid var.$white;
             padding-bottom: 10px;
           }
