@@ -99,7 +99,7 @@
 .phone {
   display: none;
 
-  @media screen and (min-width: 1025px ) {
+  @media screen and (min-width: 1025px) {
     justify-content: center;
     grid-column: 7/10;
     display: flex;
@@ -115,15 +115,15 @@
     gap: 20px;
   }
 
-    svg {
-      display: none;
+  svg {
+    display: none;
 
-      @media screen and (min-width: var.$tablet) {
-        display: block;
-        width: 40px;
-        height: 40px;
-      }
+    @media screen and (min-width: var.$tablet) {
+      display: block;
+      width: 40px;
+      height: 40px;
     }
+  }
 
   img {
     width: 20px;
@@ -134,13 +134,12 @@
     list-style-type: none;
     padding-left: 0;
 
-      @media screen and (max-width: var.$desktop-min) {
+    @media screen and (max-width: var.$desktop-min) {
       display: flex;
       justify-content: space-between;
       gap: 20px;
       align-items: center;
     }
-
   }
 
   li {
@@ -151,7 +150,6 @@
     }
 
     &:not(:first-of-type) {
-
       @media screen and (min-width: 1025px) {
         border-top: 2px solid var.$white;
         padding-top: 5px;
@@ -197,12 +195,12 @@
 
     .nav-list {
       display: grid;
-      min-height: 100%;
       align-content: center;
       padding: 120px 0;
-      padding: 120px 0;
-      height: 100%;
+      min-height: 30%;
+      max-height: 70%;
       overflow-y: auto;
+      overflow-x: hidden;
     }
   }
 
@@ -364,7 +362,6 @@
       }
 
       & > .geo__wrapper {
-
         display: flex;
         gap: 7px;
 
@@ -376,47 +373,47 @@
   }
 
   .phone.active {
-      position: fixed;
-      bottom: 15px;
-      left: 10%;
+    position: fixed;
+    bottom: 15px;
+    left: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+    font-size: 12px;
+    z-index: 11;
+
+    ul {
       display: flex;
-      justify-content: center;
-      align-items: center;
+      flex-direction: column;
+      justify-content: space-between;
       gap: 10px;
-      font-weight: bold;
-      font-size: 12px;
-      z-index: 11;
+      align-items: center;
 
-      ul {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        gap: 10px;
-        align-items: center;
-
-        @media screen and (min-width: var.$tablet) {
-          flex-direction: row;
-        }
-
-        & li:first-of-type {
-          @media screen and (max-width: var.$tablet) {
-            border-bottom: 1px solid var.$white;
-            padding-bottom: 10px;
-          }
-        }
+      @media screen and (min-width: var.$tablet) {
+        flex-direction: row;
       }
 
-      svg {
-        display: block;
-        color: var.$red-FF0000;
-        width: 45px;
-
-        @media screen and (min-width: var.$tablet) {
-          width: 20px;
-          height: 20px;
-          order: 2;
+      & li:first-of-type {
+        @media screen and (max-width: var.$tablet) {
+          border-bottom: 1px solid var.$white;
+          padding-bottom: 10px;
         }
       }
+    }
+
+    svg {
+      display: block;
+      color: var.$red-FF0000;
+      width: 45px;
+
+      @media screen and (min-width: var.$tablet) {
+        width: 20px;
+        height: 20px;
+        order: 2;
+      }
+    }
   }
 }
 
