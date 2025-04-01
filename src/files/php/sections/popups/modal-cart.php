@@ -14,7 +14,7 @@ $path = $variables->getPathFileURL();
     <p class="cart-popup__all-count"></p>
     <p class="cart-popup__summary"></p>
     <a class="cart-popup__link link button y-button-primary"
-      href="<?= $path . '/files/php/pages/cart/cart.php'; ?>">Перейти в
+      href="/cart">Перейти в
       корзину</a>
     <p class="cart-popup__timer"></p>
   </div>

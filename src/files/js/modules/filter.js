@@ -25,7 +25,7 @@ export function filterToggleMenu() {
   });
 }
 export default class FiltersAction {
-  constructor(block, path = 'files/php/pages/catalog/catalog.php') {
+  constructor(block, path = '/catalog') {
     const mainSelector = document.querySelector(block.form);
     if (!mainSelector) return;
     this.path = path;

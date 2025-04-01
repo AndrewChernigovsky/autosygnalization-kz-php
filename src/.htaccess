@@ -1,49 +1,164 @@
-<Files config.php>
-  Order allow,deny
-  Deny from all
+# Запрет доступа к файлам
+<Files "config.php">
+  Require all denied
 </Files>
 
+<Files "admin.php">
+  Require ip 127.0.0.1
+  Require ip 78.81.244.251
+  Require ip 51.158.252.220
+  Require ip 171.97.222.134
+</Files>
+
+# Разрешение доступа к PDF-файлам
 <FilesMatch "\.pdf$">
-  Order Allow,Deny
-  Allow from all
+  Require all granted
 </FilesMatch>
 
+# MIME-типы
 AddType application/pdf .pdf
 AddType application/font-woff .woff
 AddType application/font-woff2 .woff2
 AddType application/vnd.ms-fontobject .eot
 AddType font/ttf .ttf
 AddType font/otf .otf
-AddType text/plain .txt
+AddType image/avif .avif
 
+<IfModule mod_mime.c>
+  AddType image/avif avif
+</IfModule>
+
+
+# Управление CORS для шрифтов
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
-  Header set Access-Control-Allow-Origin "*"
-  Allow from all
+  <IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+  </IfModule>
+  Require all granted
 </FilesMatch>
 
+# Кэширование
+<IfModule mod_expires.c>
+  ExpiresActive Off
+  ExpiresByType image/x-icon "access plus 7 days"
+  ExpiresByType image/jpeg "access plus 7 days"
+  ExpiresByType image/png "access plus 7 days"
+  ExpiresByType image/gif "access plus 7 days"
+  ExpiresByType image/avif "access plus 7 days"
+  ExpiresByType application/x-shockwave-flash "access plus 7 days"
+  ExpiresByType text/css "access plus 7 days"
+  ExpiresByType text/javascript "access plus 7 days"
+  ExpiresByType application/javascript "access plus 7 days"
+  ExpiresByType application/x-javascript "access plus 7 days"
+  ExpiresByType text/html "access plus 1 day"
+  ExpiresByType application/xhtml+xml "access plus 10 minutes"
+</IfModule>
+
+# ЧПУ
 RewriteEngine On
 
-RewriteRule ^files/php/functions - [L]
+# Обработка ошибок
+ErrorDocument 404 /files/php/errors/404.php
+ErrorDocument 403 /files/php/errors/403.php
+ErrorDocument 500 /files/php/errors/500.php
+# ErrorLog /var/log/apache2/test-hosting-online.error.log
 
-# RewriteCond %{REQUEST_FILENAME} !-d
-# RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteRule ^.*$ /404.php [L]
+# ЧПУ для новостей
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^products/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ /files/php/pages/products/product.php?category=$1&id=$2 [L,QSA]
 
-# RewriteCond %{REQUEST_FILENAME} !-d
-# RewriteCond %{REQUEST_FILENAME} !-f
-# RewriteRule ^([^\.]+)$ $1.php [NC,L]
 
-# RewriteCond %{THE_REQUEST} \s/index\.php [NC]
-# RewriteRule ^index\.php(.*)$ /$1 [R=301,L]
 
-# RewriteCond %{HTTP_HOST} ^www\.(.*)$ [NC]
-# RewriteRule ^(.*)$ http://%1/$1 [R=301,L]
+RewriteRule ^autosygnals$ /files/php/pages/autosygnals/autosygnals.php [L,QSA]
+RewriteRule ^service$ /files/php/pages/service/service.php [L,QSA]
+RewriteRule ^about$ /files/php/pages/about/about.php [L,QSA]
+RewriteRule ^contacts$ /files/php/pages/contacts/contacts.php [L,QSA]
+RewriteRule ^price$ /files/php/pages/price/price.php [L,QSA]
+RewriteRule ^special$ /files/php/pages/special/special.php [L,QSA]
+RewriteRule ^cart$ /files/php/pages/cart/cart.php [L,QSA]
+RewriteRule ^/$ /index.php [L,QSA]
 
-# RewriteCond %{REQUEST_URI} ^(.*)//+(.*)$
-# RewriteRule . %1/%2 [R=301,L]
 
-# RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /([^\ ]+)\.php
-# RewriteRule ^/?(.*)\.php$ /$1 [L,R=301]
 
-# RewriteCond %{REQUEST_FILENAME}\.php -f
-# RewriteRule ^/?(.*)$ /$1.php [L]
+# Обработка URL без параметров
+RewriteRule ^parking-systems$ /files/php/pages/parking-systems/parking-systems.php [L,QSA]
+
+# Обработка parking-systems.php с параметром SELECT
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+RewriteRule ^parking-systems\.php$ /files/php/pages/parking-systems/parking-systems.php [L,QSA]
+
+# Обработка parking-systems.php с параметрами SELECT и PAGE
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
+RewriteRule ^parking-systems\.php$ /files/php/pages/parking-systems/parking-systems.php [L,QSA]
+
+
+
+# Обработка URL без параметров
+RewriteRule ^catalog$ /files/php/pages/catalog/catalog.php [L,QSA]
+
+# Обработка catalog.php с параметром SELECT
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+RewriteRule ^catalog\.php$ /files/php/pages/catalog/catalog.php [L,QSA]
+
+# Обработка catalog.php с параметрами SELECT и PAGE
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
+RewriteRule ^catalog\.php$ /files/php/pages/catalog/catalog.php [L,QSA]
+
+
+# Обработка URL без параметров
+RewriteRule ^autosygnals-auto$ /files/php/pages/autosygnals/autosygnals-auto.php [L,QSA]
+
+# Обработка autosygnals.php с параметром SELECT
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-auto\.php$ /files/php/pages/autosygnals/autosygnals-auto.php [L,QSA]
+
+# Обработка catalog.php с параметрами SELECT и PAGE
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-auto\.php$ /files/php/pages/autosygnals/autosygnals-auto.php [L,QSA]
+
+
+# Обработка URL без параметров
+RewriteRule ^autosygnals-gsm$ /files/php/pages/autosygnals/autosygnals-gsm.php [L,QSA]
+
+# Обработка autosygnals.php с параметром SELECT
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-gsm\.php$ /files/php/pages/autosygnals/autosygnals-gsm.php [L,QSA]
+
+# Обработка catalog.php с параметрами SELECT и PAGE
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-gsm\.php$ /files/php/pages/autosygnals/autosygnals-gsm.php [L,QSA]
+
+
+# Обработка URL без параметров
+RewriteRule ^autosygnals-without-auto$ /files/php/pages/autosygnals/autosygnals-without-auto.php [L,QSA]
+
+# Обработка autosygnals.php с параметром SELECT
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-without-auto\.php$ /files/php/pages/autosygnals/autosygnals-without-auto.php [L,QSA]
+
+# Обработка catalog.php с параметрами SELECT и PAGE
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-without-auto\.php$ /files/php/pages/autosygnals/autosygnals-without-auto.php [L,QSA]
+
+# Обработка URL без параметров
+RewriteRule ^autosygnals-starline$ /files/php/pages/autosygnals/autosygnals-starline.php [L,QSA]
+
+# Обработка autosygnals.php с параметром SELECT
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-starline\.php$ /files/php/pages/autosygnals/autosygnals-starline.php [L,QSA]
+
+# Обработка catalog.php с параметрами SELECT и PAGE
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-starline\.php$ /files/php/pages/autosygnals/autosygnals-starline.php [L,QSA]
+
+# Обработка URL без параметров
+RewriteRule ^autosygnals-acssesuars$ /files/php/pages/autosygnals/autosygnals-acssesuars.php [L,QSA]
+
+# Обработка autosygnals.php с параметром SELECT
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-acssesuars\.php$ /files/php/pages/autosygnals/autosygnals-acssesuars.php [L,QSA]
+
+# Обработка catalog.php с параметрами SELECT и PAGE
+RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
+RewriteRule ^autosygnals-acssesuars\.php$ /files/php/pages/autosygnals/autosygnals-acssesuars.php [L,QSA]

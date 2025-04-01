@@ -1,5 +1,5 @@
 export default class CustomSelect {
-  constructor(block, path = 'files/php/pages/catalog/catalog.php') {
+  constructor(block, path = '/catalog') {
     if (!block) {
       console.error('CustomSelect: неверно переданы параметры в конструктор');
       return;

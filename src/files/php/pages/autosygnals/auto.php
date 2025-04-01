@@ -13,7 +13,6 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
   <div class="container">
     <h2 class="autosygnals__title">Автосигнализации с автозапуском</h2>
   </div>
-  </div>
 </section>
 <?php
 include_once __DIR__ . '/../../helpers/components/setup.php';

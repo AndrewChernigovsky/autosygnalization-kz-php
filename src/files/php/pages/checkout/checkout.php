@@ -44,7 +44,7 @@ echo $head->setHead();
         <form action="" method="post" class="checkout-form">
           <div class="checkout-form__body"></div>
           <div class="checkout-form__footer">
-            <a href="<?= $path . '/files/php/pages/catalog/catalog.php'; ?>"
+            <a href="<?= "/catalog?SELECT=name&PAGE=1" ?>"
               class="link button y-button-third">Продолжить покупки</a>
             <p>
               <span>Итого: </span>

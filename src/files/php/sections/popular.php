@@ -8,7 +8,7 @@ $variables->setVar();
 
 $path = $variables->getPathFileURL();
 $card = new PopularCard();
-$path_href = $path . '/files/php/pages/catalog/catalog.php';
+$path_href = "/catalog?SELECT=name&PAGE=1";
 ?>
 <section class="popular" id="popular">
   <div class="container">
@@ -41,7 +41,7 @@ $path_href = $path . '/files/php/pages/catalog/catalog.php';
                     <a class="popular__item-link link y-button-secondary"
                       href="<?= htmlspecialchars($product['link']); ?>" >Подробнее</a>
                     <a class="popular__item-link link y-button-primary  cart-button"
-                      href="<?= $path . '/files/php/pages/cart/cart.php' ;?>" data-cost="<?= htmlspecialchars($product['price'])?>" data-id="<?= htmlspecialchars($product['id'])?>">Купить</a>
+                      href="<?= "/cart";?>" data-cost="<?= htmlspecialchars($product['price'])?>" data-id="<?= htmlspecialchars($product['id'])?>">Купить</a>
                   </div>
                 </li>
               <?php endif; ?>

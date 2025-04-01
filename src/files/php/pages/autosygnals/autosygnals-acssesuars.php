@@ -5,11 +5,10 @@ $pagePath = $_SERVER['PHP_SELF'];
 
 if (isset($_GET['SELECT'])) {
     $_SESSION['get_params_remote_controls'] = $_GET;
-}
-
-elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_remote_controls'])) {
+} elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_remote_controls'])) {
     $savedParams = $_SESSION['get_params_remote_controls'];
     $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
+    error_log(print_r($_SERVER['PHP_SELF'], true) . ' :SELF11 ');
     session_unset();
     session_destroy();
     header("Location: $redirect_url");
@@ -47,7 +46,7 @@ include_once $docROOT . $path . '/files/php/data/products.php';
 include_once $docROOT . $path . '/files/php/pages/special-products.php';
 
 $head = new Head($title, [], []);
-$filters_render = new FiltersRender($products,"remote-controls");
+$filters_render = new FiltersRender($products, "remote-controls");
 $article = new Article();
 $articleData = new ArticleData();
 $select = new Select();
@@ -55,7 +54,7 @@ $selectData = new SelectData();
 
 
 $filteredProducts = $filters_render->returnCorrectedArr();
-$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function() {echo getSpecialOffersSection();});
+$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function () {echo getSpecialOffersSection();});
 ?>
 
 <!DOCTYPE html>

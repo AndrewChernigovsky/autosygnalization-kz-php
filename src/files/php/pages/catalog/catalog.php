@@ -5,15 +5,14 @@ $pagePath = $_SERVER['PHP_SELF'];
 
 if (isset($_GET['SELECT'])) {
     $_SESSION['get_params_catalog'] = $_GET;
-}
-
-elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_catalog'])) {
+} elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_catalog'])) {
     $savedParams = $_SESSION['get_params_catalog'];
     $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
-  
-    header("Location: $redirect_url");
+
+    // header("Location: $redirect_url");
     exit();
 }
+
 include_once __DIR__ . '/../../api/sessions/session.php';
 include_once __DIR__ . '/../../data/article.php';
 include_once __DIR__ . '/../../data/select.php';
@@ -53,7 +52,7 @@ $select = new Select();
 $selectData = new SelectData();
 
 $filteredProducts = $filters_render->returnCorrectedArr();
-$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function() {echo getSpecialOffersSection();});
+$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function () {echo getSpecialOffersSection();});
 ?>
 
 <!DOCTYPE html>

@@ -40,7 +40,7 @@ echo $head->setHead();
           <span class="cost-total"></span>
         </p>
         <div class="cart-section__options">
-          <a href="<?= "$path/files/php/pages/catalog/catalog.php"; ?>" class="button y-button-primary">Вернуться в
+          <a href="<?= "/catalog?SELECT=name&PAGE=1"; ?>" class="button y-button-primary">Вернуться в
             магазин</a>
           <div class="cart-section__option">
             <button type="button" class="button y-button-secondary  y-button-third" id="buy-fast-order">Быстрый

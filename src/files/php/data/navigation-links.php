@@ -29,12 +29,12 @@ class NavigationLinks
     public function getNavlinks()
     {
         $navigationLinks = [
-          ['name' => 'Главная', 'path' => "$this->path/index.php"],
-          ['name' => 'Автосигнализации', 'path' => "$this->path_pages/autosygnals/autosygnals.php"],
-          ['name' => 'Видеорегистраторы', 'path' => "$this->path_pages/parking-systems/parking-systems.php"],
-          ['name' => 'Наши услуги', 'path' => "$this->path_pages/service/service.php"],
-          ['name' => 'О нас', 'path' => "$this->path_pages/about/about.php"],
-          ['name' => 'Контакты', 'path' => "$this->path_pages/contacts/contacts.php"],
+          ['name' => 'Главная', 'path' => "/"],
+          ['name' => 'Автосигнализации', 'path' => "/autosygnals"],
+          ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name"],
+          ['name' => 'Наши услуги', 'path' => "/service"],
+          ['name' => 'О нас', 'path' => "/about"],
+          ['name' => 'Контакты', 'path' => "/contacts"],
         ];
         return $navigationLinks;
     }
@@ -49,13 +49,13 @@ class NavigationLinks
               [
                 //'name' => 'Автосигнализации',
                 'children' => [
-                  ['link' => "$this->path_pages/autosygnals/autosygnals-auto.php", 'name' => 'Автосигнализации с автозапуском'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals-gsm.php", 'name' => 'Автосигнализации с GSM'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals-without-auto.php", 'name' => 'Автосигнализации без автозапуска'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals-starline.php", 'name' => 'Каталог автосигнализаций Starline'],
-                  ['link' => "$this->path_pages/autosygnals/autosygnals-acssesuars.php", 'name' => 'Пульты и аксессуары'],
-                  ['link' => "$this->path_pages/parking-systems/parking-systems.php", 'name' => 'Видеорегистраторы'],
-                  ['link' => "$this->path_pages/price/price.php", 'name' => "Прайс на материал и установку"]
+                  ['link' => "/autosygnals-auto?SELECT=name", 'name' => 'Автосигнализации с автозапуском'],
+                  ['link' => "/autosygnals-gsm?SELECT=name", 'name' => 'Автосигнализации с GSM'],
+                  ['link' => "/autosygnals-without-auto?SELECT=name", 'name' => 'Автосигнализации без автозапуска'],
+                  ['link' => "/autosygnals-starline?SELECT=name", 'name' => 'Каталог автосигнализаций Starline'],
+                  ['link' => "/autosygnals-acssesuars?SELECT=name", 'name' => 'Пульты и аксессуары'],
+                  ['link' => "/parking-systems?SELECT=name", 'name' => 'Видеорегистраторы'],
+                  ['link' => "/price", 'name' => "Прайс на материал и установку"]
                 ],
               ],
             ],
@@ -75,14 +75,14 @@ class NavigationLinks
                 'link' => "$this->path_pages/service/service.php?service=setup-videoregistration",
                 'name' => "Установка видеорегистраторов и антирадаров"
               ],
-              ['link' => "$this->path_pages/price/price.php", 'name' => "Прайс на услуги"],
+              ['link' => "/price", 'name' => "Прайс на услуги"],
             ],
           ],
           [
             'title' => "Клиенту",
             "list" => [
-              ["link" => $this->path_pages . "/special/special.php", "name" => 'Специальные предложения'],
-              ["link" => $this->path_pages . "/cart/cart.php", "name" => 'Корзина заказа'],
+              ["link" => $this->path_pages . "/special", "name" => 'Специальные предложения'],
+              ["link" => $this->path_pages . "/cart", "name" => 'Корзина заказа'],
               ["link" => "https://2gis.kz/almaty/geo/70000001027313872", "name" => 'Оставить отзыв'],
               ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Галерея выполненных работ'],
               ["link" => $this->path_pages . "/contacts/contacts.php#location", "name" => 'Как к нам добраться'],
@@ -96,31 +96,31 @@ class NavigationLinks
     {
         $categories_autosygnals = [
           [
-              'link' => "$this->path_pages/autosygnals/autosygnals-auto.php",
+              'link' => "/autosygnals-auto?SELECT=name",
               'name' => 'Автосигнализации с автозапуском',
               'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
               'src' => "$this->path/assets/images/autosygnals/autosygnals-1.avif"
           ],
           [
-              'link' => "$this->path_pages/autosygnals/autosygnals-gsm.php",
+              'link' => "/autosygnals-gsm?SELECT=name",
               'name' => 'Автосигнализации с GSM',
               'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
               'src' => "$this->path/assets/images/autosygnals/autosygnals-2.avif"
           ],
           [
-              'link' => "$this->path_pages/autosygnals/autosygnals-without-auto.php",
+              'link' => "/autosygnals-without-auto?SELECT=name",
               'name' => 'Автосигнализации без автозапуска',
               'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
               'src' => "$this->path/assets/images/autosygnals/autosygnals-3.avif"
           ],
           [
-              'link' => "$this->path_pages/autosygnals/autosygnals-starline.php",
+              'link' => "/autosygnals-starline?SELECT=name",
               'name' => 'Каталог автосигнализаций Starline',
               'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
               'src' => "$this->path/assets/images/autosygnals/autosygnals-4.avif"
           ],
           [
-              'link' => "$this->path_pages/autosygnals/autosygnals-acssesuars.php",
+              'link' => "/autosygnals-acssesuars?SELECT=name",
               'name' => 'Пульты и аксессуары',
               'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
               'src' => "$this->path/assets/images/autosygnals/autosygnals-5.avif"

@@ -105,6 +105,7 @@ async function loadModules() {
     const CustomSelect = select.default;
 
     const currentPath = window.location.pathname;
+    console.log(currentPath, 'PATH111');
 
     new CustomSelect(
       {
@@ -120,6 +121,7 @@ async function loadModules() {
     const FiltersAction = filtersAction.default;
 
     const currentPath = window.location.pathname;
+    console.log(currentPath, 'PATH');
 
     new FiltersAction(
       {

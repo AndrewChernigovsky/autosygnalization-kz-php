@@ -5,8 +5,9 @@ $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $docROOT . $variables->getPathFileURL();
+error_log($path . ' : FULL_PATH');
 error_log(print_r($_SERVER['SCRIPT_NAME'], true) . "Это path");
-
+// error_log(print_r($_SESSION, true) . ' :SESSION ');
 include_once $path . '/files/php/data/products.php';
 
 
@@ -57,7 +58,11 @@ class FiltersRender
         $this->filters_min_value = $this->get_params['min-value-cost'] ?? 100;
         $this->filters_max_value = $this->get_params['max-value-cost'] ?? 300000;
         $this->SELECT = $this->get_params['SELECT'] ?? '';
-        $this->path_send = str_replace('/dist', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+        $this->path_send = str_replace('/', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+
+        // $this->path_send =  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
+        error_log(print_r($_SERVER['REQUEST_URI'], true) . ' : 111111');
     }
 
     public function returnCorrectedArr()

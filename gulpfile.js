@@ -72,7 +72,7 @@ const phpTask = (cb) => {
         return src([
           './src/index.php',
           './src/404.php',
-          './src/files/php/pages/**/*.php',
+          './src/files/php/pages/**/*.php'
         ]).pipe(browserSync.stream());
       }
       cb();
@@ -85,14 +85,16 @@ const phpTask = (cb) => {
 
 const watchTask = () => {
   browserSync.init({
-    proxy: 'http://autosygnalization-kz-php/dist',
-    // proxy: "localhost:80/dist",
+    proxy: 'http://autosygnalization-kz-php',
+    // proxy: "localhost:80",
     notify: false,
+    open: false
   });
   if (!PRODUCTION) {
     watch([paths.styles.watch], sassTask);
     watch([paths.scripts.src], esbuildTask);
     watch(['./src/**/*.php'], phpTask);
+    watch(['./src/*.htaccess'], copyStatics);
   }
 };
 
