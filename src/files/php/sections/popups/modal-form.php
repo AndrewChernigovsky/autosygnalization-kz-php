@@ -9,7 +9,7 @@ $variables->setVar();
 $path = $variables->getPathFileURL();
 ?>
 
-<div class="popup">
+<div class="popup phone-popup">
   <div class="popup__phones">
     <?php
     if (!empty($phones)) {

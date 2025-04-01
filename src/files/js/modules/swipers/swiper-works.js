@@ -1,14 +1,13 @@
 import Swiper from 'swiper';
-import { Pagination, Autoplay, Zoom } from 'swiper/modules';
+import { Pagination, Autoplay} from 'swiper/modules';
 
 export function initSwiperWorks() {
   const workSwiper = new Swiper('.swiper-works', {
-    modules: [Pagination, Autoplay, Zoom],
+    modules: [Pagination, Autoplay],
     spaceBetween: 10,
     slidesPerView: 1.5,
     centeredSlides: true,
     loop: true,
-    zoom: true,
     autoplay: {
       delay: 3000,
       disableOnInteraction: false,
@@ -24,38 +23,36 @@ export function initSwiperWorks() {
       1024: {
         slidesPerView: 3,
         spaceBetween: 30,
-        centeredSlides: true,
       }
-    },
-    on: {
-      slideChange: function () {
-        this.slides.forEach(slide => {
-          slide.classList.remove('active');
-        });
-        const centerIndex = this.activeIndex % this.slides.length;
-        this.slides[centerIndex].classList.add('active');
-      },
     },
   });
 
   document.querySelector('.works__swiper').addEventListener('click', function (e) {
     const img = e.target.closest('.works__slide-image img');
     if (img) {
-      e.preventDefault();
-      const modal = document.createElement('div');
-      modal.className = 'modal-image';
+        e.preventDefault();
+        const modal = document.createElement('div');
+        modal.className = 'modal-image';
 
-      const modalImg = document.createElement('img');
-      modalImg.src = img.src;
+        const modalImg = document.createElement('img');
+        modalImg.src = img.src;
 
-      modal.appendChild(modalImg);
-      document.body.appendChild(modal);
+        const closeButton = document.createElement('button');
+        closeButton.className = 'close-button';
 
-      modal.addEventListener('click', function () {
-        this.remove();
-      });
+        closeButton.addEventListener('click', function () {
+            modal.remove(); 
+        });
+
+        modal.appendChild(modalImg);
+        modal.appendChild(closeButton);
+        document.body.appendChild(modal);
+
+        modal.addEventListener('click', function () {
+          this.remove();
+        });
     }
-  })
+});
 
   return workSwiper;
 };

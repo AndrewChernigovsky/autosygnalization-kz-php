@@ -29,6 +29,10 @@
     text-align: center;
     word-break: break-all;
     text-transform: uppercase;
+
+    @media screen and (min-width: var.$tablet) and (max-width: 1040px)  {
+      min-height: 55px;
+    }
   }
 
   &__item-image {

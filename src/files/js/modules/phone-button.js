@@ -1,6 +1,6 @@
 const phoneButton = document.querySelector('.phone-button');
 const phoneButtonWrapper = document.querySelector('.phone-button__wrapper');
-const modalFormMob = document.querySelector('.popup');
+const modalFormMob = document.querySelector('.popup.phone-popup');
 const modalForm = document.querySelector('.popup.modal-form');
 const closeButton = document.querySelector('#modal-form-close');
 
