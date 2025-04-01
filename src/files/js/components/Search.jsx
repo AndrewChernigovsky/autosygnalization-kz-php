@@ -37,6 +37,8 @@ export function SetWork() {
     }
 
     resultsListRef.current = document.createElement('ul');
+    resultsListRef.current.classList.add('search-menu');
+
     Object.assign(resultsListRef.current.style, styles);
 
     searchInputRef.current.parentElement.appendChild(resultsListRef.current);
@@ -163,18 +165,18 @@ export function SetWork() {
     // Добавляем стилизацию скроллбара через CSS
     const style = document.createElement('style');
     style.innerHTML = `
-            ul::-webkit-scrollbar {
+            ul.search-menu::-webkit-scrollbar {
                 width: 8px;
             }
-            ul::-webkit-scrollbar-track {
+            ul.search-menu::-webkit-scrollbar-track {
                 background: #222;
                 border-radius: 10px;
             }
-            ul::-webkit-scrollbar-thumb {
+            ul.search-menu::-webkit-scrollbar-thumb {
                 background: red;
                 border-radius: 10px;
             }
-            ul::-webkit-scrollbar-thumb:hover {
+            u.search-menul::-webkit-scrollbar-thumb:hover {
                 background: darkred;
             }
         `;
