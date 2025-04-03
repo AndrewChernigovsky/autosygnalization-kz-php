@@ -1,0 +1,8 @@
+CREATE TABLE IF NOT EXISTS Users (
+    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_name VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    role ENUM('Admin', 'Editor') NOT NULL DEFAULT 'Editor',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); 

@@ -1,37 +1,48 @@
 {
+  "name": "autoseciruty.kz",
+  "version": "1.0.0",
+  "description": "Проект по Автосигнализациям Казахастан г.Алматы Autoseciruty",
+  "main": "index.php",
+  "keywords": [],
+  "author": "Andrey Andreevich",
+  "license": "CC BY-NC-ND 4.0",
   "type": "module",
   "scripts": {
     "dev": "cross-env PRODUCTION=false gulp",
     "build": "cross-env PRODUCTION=true gulp build",
-    "statics": "cross-env PRODUCTION=true gulp statics  && gulp fonts",
-    "images": "cross-env PRODUCTION=true node sharp.js",
-    "images:new": "cross-env PRODUCTION=true node sharp_new_images.js",
-    "sprite": "cross-env PRODUCTION=true gulp sprite",
-    "libs": "node esbuild-libs.js"
+    "serve": "cross-env PRODUCTION=true gulp serve",
+    "statics": "cross-env PRODUCTION=true gulp statics"
   },
   "devDependencies": {
+    "@fancyapps/ui": "^5.0.36",
+    "htm": "^3.1.1",
+    "inputmask": "^5.0.9",
+    "preact": "^10.25.4",
+    "sharp": "^0.33.5",
+    "svg-sprite-loader": "^6.0.11",
+    "swiper": "^11.1.15",
     "@babel/core": "^7.26.0",
     "@babel/preset-env": "^7.26.0",
-    "@fancyapps/ui": "^5.0.36",
+    "@esbuild-plugins/node-resolve": "^0.2.2",
+    "babel-plugin-transform-remove-console": "^6.9.4",
+    "babel-plugin-transform-remove-debugger": "^6.9.4",
     "browser-sync": "^3.0.3",
     "cross-env": "^7.0.3",
+    "dompurify": "^3.2.4",
     "esbuild": "^0.24.2",
     "gulp": "^5.0.0",
     "gulp-changed": "^5.0.2",
     "gulp-sass": "^5.1.0",
     "gulp-svg-sprite": "^2.0.3",
-    "htm": "^3.1.1",
-    "inputmask": "^5.0.9",
-    "preact": "^10.25.4",
+    "quill": "^2.0.3",
     "sass": "^1.82.0",
-    "sharp": "^0.33.5",
-    "svg-sprite-loader": "^6.0.11",
-    "swiper": "^11.1.15"
+    "sweetalert2": "^11.17.2",
+    "terser": "^5.37.0"
   },
   "dependencies": {
     "gulp-autoprefixer": "^9.0.0",
     "gulp-clean-css": "^4.3.0",
-    "node-sass": "^9.0.0"
-  },
-  "packageManager": "pnpm@9.14.4+sha512.c8180b3fbe4e4bca02c94234717896b5529740a6cbadf19fa78254270403ea2f27d4e1d46a08a0f56c89b63dc8ebfd3ee53326da720273794e6200fcf0d184ab"
+    "node-sass": "^9.0.0",
+    "sortablejs": "^1.15.6"
+  }
 }

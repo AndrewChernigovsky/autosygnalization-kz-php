@@ -1,0 +1,58 @@
+{
+  "name": "cryptoinfo/news",
+  "description": "Your project description",
+  "type": "project",
+  "require": {
+    "php": ">=8.1",
+    "ext-fileinfo": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "LAYOUT\\": "php/layout/",
+      "PROCESS\\": "php/process/",
+      "HELPERS\\": "php/helpers/",
+      "PROCESS\\IMAGES\\": "php/process/images/",
+      "COMPONENTS\\": "php/components/",
+      "DATABASE\\": "php/database/",
+      "MODELS\\CATEGORIES\\": "php/models/categories/",
+      "API\\CATEGORIES\\": "php/api/categories/",
+      "MODELS\\NEWS\\": "php/models/news/",
+      "API\\NEWS\\": "php/api/news/",
+      "MODELS\\SOCIAL\\": "php/models/social/",
+      "API\\SOCIAL\\": "php/api/social/",
+      "MODELS\\AUTH\\": "php/models/auth/",
+      "API\\AUTH\\": "php/api/auth/",
+      "MODELS\\": "php/models/",
+      "API\\": "php/api/",
+      "MODELS\\ARTICLES\\": "php/models/articles/",
+      "API\\ARTICLES\\": "php/api/articles/",
+      "API\\PRODUCT\\": "php/api/product/",
+      "CONTROLLERS\\": "php/controllers/",
+      "CONTROLLERS\\CATEGORIES\\": "php/controllers/categories/",
+      "CONTROLLERS\\TAGS\\": "php/controllers/tags/",
+      "FUNCTIONS\\": "php/functions/",
+      "FUNCTIONS\\MAIL\\": "php/functions/mail/",
+      "MODELS\\NEWS\\BACKUP\\": "php/models/news/backup/",
+      "MODELS\\TAGS\\": "php/models/tags/",
+      "MODELS\\META\\": "php/models/meta/",
+      "AUTH\\SESSIONS\\": "php/auth/sessions",
+      "AUTH\\": "php/auth/"
+    },
+    "files": [
+      "php/process/images/process-images.php",
+      "php/process/images/process-images-articles.php",
+      "php/functions/generateCPUURL.php",
+      "php/functions/createFolderUpload.php",
+      "php/functions/saveImageBanner.php",
+      "php/functions/generateSheme.php",
+      "php/functions/generateMetaTags.php",
+      "php/functions/saveImages.php",
+      "php/functions/mail/telegram.php",
+      "php/functions/getProductCard.php",
+      "php/functions/renderPhoneButton.php"
+    ]
+  },
+  "config": {
+    "optimize-autoloader": true
+  }
+}

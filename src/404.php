@@ -1,5 +1,5 @@
 <?php
-$path_to_include = __DIR__ . '/files/php/helpers/classes/setVariables.php';
+$path_to_include = __DIR__ . '/server/php/helpers/classes/setVariables.php';
 if (!file_exists($path_to_include)) {
   die("Файл не найден: $path_to_include");
 }
@@ -10,12 +10,12 @@ $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
-$head_path = $docROOT . $path . '/files/php/layout/head.php';
-$sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
+$head_path = $docROOT . $path . '/server/php/layout/head.php';
+$sections_path = $docROOT . $path . '/server/php/helpers/include-sections.php';
 include $head_path;
 include $sections_path;
-$base_path = $docROOT . $path . '/files/php/layout';
-$path_components = $docROOT . $path . '/files/php/helpers/components';
+$base_path = $docROOT . $path . '/server/php/layout';
+$path_components = $docROOT . $path . '/server/php/helpers/components';
 
 $title = 'Не найдено | Auto Security';
 $head = new Head($title, [], []);

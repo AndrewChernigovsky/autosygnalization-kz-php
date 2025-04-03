@@ -1,25 +1,19 @@
 <?php
 
-$path_to_include = __DIR__ . '/files/php/helpers/classes/setVariables.php';
-error_log($path_to_include . ' путь к setVar');
-if (!file_exists($path_to_include)) {
-    die("Файл не найден: $path_to_include");
-} else {
-    include $path_to_include;
-}
-
+use HELPERS\IncludeSections;
+use HELPERS\SetVariables;
 
 $variables = new SetVariables();
 $variables->setVar();
 $docROOT = $variables->getDocRoot();
 $path = $variables->getPathFileURL();
 
-$head_path = $docROOT . $path . '/files/php/layout/head.php';
-$sections_path = $docROOT . $path . '/files/php/helpers/include-sections.php';
+$head_path = $docROOT . $path . '/server/php/layout/head.php';
+
 include $head_path;
-include $sections_path;
-$base_path = $docROOT . $path . '/files/php/layout';
-$path_components = $docROOT . $path . '/files/php/helpers/components';
+
+$base_path = $docROOT . $path . '/server/php/layout';
+$path_components = $docROOT . $path . '/server/php/helpers/components';
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
@@ -35,7 +29,7 @@ echo $head->setHead();
   <?php include $base_path . '/header.php'; ?>
   <main class="main">
     <?php
-    $file_2_section = './files/php/sections/';
+    $file_2_section = './server/php/sections/';
 $files_to_include = [
   'intro.php',
   'marks.php',

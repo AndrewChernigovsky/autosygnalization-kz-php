@@ -1,20 +1,20 @@
-import { src, dest, watch, parallel, series } from 'gulp';
-import * as dartSass from 'sass';
-import gulpSass from 'gulp-sass';
-import autoPrefixer from 'gulp-autoprefixer';
-import cleanCSS from 'gulp-clean-css';
-import browserSync from 'browser-sync';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import svgSprite from 'gulp-svg-sprite';
-import { esbuildFooWatch } from './esbuild.js';
+import { src, dest, watch, series } from "gulp";
+import * as dartSass from "sass";
+import gulpSass from "gulp-sass";
+import autoPrefixer from "gulp-autoprefixer";
+import cleanCSS from "gulp-clean-css";
+import browserSync from "browser-sync";
+import fs from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import svgSprite from "gulp-svg-sprite";
+import { esbuildFooWatch, esbuildLibBuild } from "./esbuild.js";
 import changed from 'gulp-changed';
 
 const config = {
   mode: {
     symbol: {
-      sprite: '../sprite.svg',
+      sprite: "../sprite.svg",
       render: {
         css: false,
       },
@@ -24,22 +24,22 @@ const config = {
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PRODUCTION = process.env.PRODUCTION === 'true';
+const PRODUCTION = process.env.PRODUCTION === "true";
 
 const sass = gulpSass(dartSass);
 
 const paths = {
   styles: {
-    srcLib: './src/files/libs/libs.scss',
-    src: './src/files/scss/style.scss',
-    watch: './src/files/scss/**/*.scss',
-    dest: './dist/files/css/',
+    srcLib: "./src/client/libs/index.scss",
+    src: "./src/client/scss/style.scss",
+    watch: "./src/client/scss/**/*.scss",
+    dest: "./dist/client/css/",
   },
   scripts: {
-    src: './src/files/js/**/*.{js,jsx}',
+    src: "./src/client/js/**/*.{js,jsx}",
   },
-  src: './src',
-  dist: './dist',
+  src: "./src",
+  dist: "./dist",
 };
 
 const esbuildTask = async (done) => {
@@ -48,72 +48,87 @@ const esbuildTask = async (done) => {
   done();
 };
 
+const esbuildLibsTask = async (done) => {
+  await esbuildLibBuild();
+  done();
+};
+
 const phpTask = (cb) => {
   let tasks = [];
 
-  const destPathPhp = './dist/files/php';
-  const destPathRoot = './dist/';
+  const destPathPhp = './dist/server/php';
+  const destPathErrors = './dist/server/errors'; // Новый путь для errors
 
+  // Копирование PHP файлов
   tasks.push(
-    src(['./src/files/php/**'], { encoding: false })
+    src(['./src/server/php/**'], { encoding: false })
       .pipe(changed(destPathPhp))
       .pipe(dest(destPathPhp))
   );
 
+  // Копирование файлов errors
   tasks.push(
-    src(['./src/index.php', './src/404.php'], { encoding: false })
-      .pipe(changed(destPathRoot))
-      .pipe(dest(destPathRoot))
+    src(['./src/server/errors/**/*.php'], { encoding: false })
+      .pipe(dest(destPathErrors))
+  );
+
+  // Копирование index.php
+  tasks.push(
+    src(['./src/index.php'], { encoding: false })
+      .pipe(changed(paths.dist))
+      .pipe(dest(paths.dist))
   );
 
   return Promise.all(tasks)
     .then(() => {
       if (!PRODUCTION) {
-        return src([
-          './src/index.php',
-          './src/404.php',
-          './src/files/php/pages/**/*.php'
-        ]).pipe(browserSync.stream());
+        return src(['./src/index.php', './src/server/errors/**/*.php', './src/server/php/pages/**/*.php'])
+          .pipe(browserSync.stream());
       }
       cb();
     })
-    .catch((err) => {
+    .catch(err => {
       console.error('Ошибка при копировании php файлов:', err);
       cb(err);
     });
 };
 
-const watchTask = () => {
+const watchTask = (done) => {
   browserSync.init({
-    proxy: 'http://autosygnalization-kz-php',
-    // proxy: "localhost:80",
+    proxy: "http://autosygnalization-kz-php/",
     notify: false,
     open: false
   });
   if (!PRODUCTION) {
-    watch([paths.styles.watch], sassTask);
-    watch([paths.scripts.src], esbuildTask);
-    watch(['./src/**/*.php'], phpTask);
-    watch(['./src/*.htaccess'], copyStatics);
+    watch([paths.styles.watch], sassTask).on('change', browserSync.reload);
+    watch([paths.scripts.src], esbuildTask).on('change', browserSync.reload);
+    watch(["./src/server/**/*.php", "./src/**/*.php", "./src/server/errors/**/*.php"], phpTask).on('change', browserSync.reload);
   }
+
+  done();
 };
 
 async function cleanDist(dirnames) {
+  const promises = [];
+
+  // Создайте массив для исключений
+  const exclusions = ['dist/client/libs', 'dist/client/images'];
+
   for (const dir of dirnames) {
     const distPath = path.join(__dirname, dir);
 
+    // Проверяем, нужно ли исключить этот путь
+    if (exclusions.some(exclusion => distPath.includes(path.join(__dirname, exclusion)))) {
+      console.log(`Пропуск ${distPath} (исключено из удаления)`);
+      continue; // Пропускаем удаление для исключенных директорий
+    }
+
     try {
       await fs.access(distPath);
-      const files = await fs.readdir(distPath);
-      await Promise.all(
-        files.map((file) =>
-          fs.rm(path.join(distPath, file), { recursive: true, force: true })
-        )
-      );
-
+      await fs.rm(distPath, { recursive: true, force: true });
       console.log(`Содержимое ${distPath} успешно удалено!`);
     } catch (err) {
-      if (err.code === 'ENOENT') {
+      if (err.code === "ENOENT") {
         await fs.mkdir(distPath, { recursive: true });
         console.log(`${distPath} успешно создана!`);
       } else {
@@ -121,14 +136,18 @@ async function cleanDist(dirnames) {
       }
     }
   }
+
+  await Promise.all(promises);
+  console.log('Все операции завершены!');
 }
+
 
 const sassTask = () => {
   let stream = src([paths.styles.src]).pipe(
     sass({
-      outputStyle: 'expanded',
-      silenceDeprecations: ['legacy-js-api'],
-    }).on('error', sass.logError)
+      outputStyle: "expanded",
+      silenceDeprecations: ["legacy-js-api"],
+    }).on("error", sass.logError)
   );
 
   stream = stream.pipe(autoPrefixer());
@@ -146,37 +165,95 @@ const sassTaskLibs = () => {
   return src(paths.styles.srcLib)
     .pipe(
       sass({
-        outputStyle: 'expanded',
-        silenceDeprecations: ['legacy-js-api'],
-      }).on('error', sass.logError)
+        outputStyle: "expanded",
+        silenceDeprecations: ["legacy-js-api"],
+      }).on("error", sass.logError)
     )
     .pipe(autoPrefixer())
     .pipe(cleanCSS({ level: 2 }))
-    .pipe(dest('./dist/assets/libs/'));
+    .pipe(dest("./dist/client/libs/"));
 };
+
+const setConfig = (cb) => {
+  const tasks = [];
+
+  if (!PRODUCTION) {
+    tasks.push(
+      src(['./src/config/config.php'])
+        .pipe(dest('./dist/server/php/config/'))
+    )
+  } else {
+    tasks.push(
+      src(['./src/server/php/config/config.php'])
+        .pipe(dest('./dist/server/php/config/'))
+    )
+  }
+
+  return Promise.all(tasks)
+    .then(() => {
+      cb();
+    })
+    .catch((err) => {
+      console.error("Ошибка при копировании config файлов:", err);
+      cb(err);
+    });
+}
+
+const setConfigServe = (cb) => {
+  const tasks = [];
+
+  tasks.push(
+    src(['./src/config/config.php'])
+      .pipe(dest('./dist/server/php/config/'))
+  )
+
+  return Promise.all(tasks)
+    .then(() => {
+      cb();
+    })
+    .catch((err) => {
+      console.error("Ошибка при копировании config файлов:", err);
+      cb(err);
+    });
+}
+
 
 const copyStatics = (cb) => {
   const tasks = [];
 
   tasks.push(
-    src(
-      ['./src/assets/**/*', '!./statics/images/**', '!./src/assets/videos/**'],
-      { encoding: false }
-    ).pipe(dest('./dist/assets'))
+    src(['./src/client/**/*', '!./statics/images/**', '!./src/client/scss/**', '!./src/client/libs/*.scss'], { encoding: false })
+      .pipe(dest('./dist/client'))
   );
 
   tasks.push(
     src([
-      './src/.htaccess',
-      './src/index.php',
-      './src/404.php',
-      './src/sitemap.xml',
-      './src/robots.txt',
-      './src/yandex_12ed8a33b1d44641.html',
-      './src/browserconfig.xml',
-      './src/favicon.ico',
-      './src/manifest.json',
+      "./src/.htaccess",
+      "./src/index.php",
+      "./src/sitemap.xml",
+      "./src/robots.txt",
+      "./src/yandex_12ed8a33b1d44641.html",
+      "./src/browserconfig.xml",
+      "./src/favicon.ico",
+      "./src/manifest.json",
     ]).pipe(dest(paths.dist))
+  );
+
+  tasks.push(
+    src(["./src/server/errors/**/*.php"], { encoding: false })
+      .pipe(dest(paths.dist + '/server/errors'))
+  );
+
+  tasks.push(
+    src(["./src/server/vendor/**/*"], { encoding: false })
+      .pipe(dest(paths.dist + '/server/vendor'))
+  );
+
+  tasks.push(
+    src([
+      "./src/server/composer.json",
+      "./src/server/composer.lock",
+    ]).pipe(dest(paths.dist + '/server'))
   );
 
   return Promise.all(tasks)
@@ -184,104 +261,33 @@ const copyStatics = (cb) => {
       cb();
     })
     .catch((err) => {
-      console.error('Ошибка при копировании статических файлов:', err);
+      console.error("Ошибка при копировании статических файлов:", err);
       cb(err);
     });
 };
 
-const images = (cb) => {
-  return src(
-    [
-      './statics/images/**/*.{png,jpg,avif,webp}',
-      './src/assets/images/**/*.svg',
-    ],
-    { encoding: false }
-  )
-    .pipe(dest(paths.dist + '/assets/images'))
-    .on('end', cb);
-};
-
-const videos = (cb) => {
-  return src(['./src/assets/videos/**/*.{mp4,png,webp,avif,webm}'], {
-    encoding: false,
-  })
-    .pipe(dest(paths.dist + '/assets/videos'))
-    .on('end', cb);
-};
-
-const docs = async () => {
-  await cleanDist(['./dist/files/docs']);
-
-  return new Promise((resolve, reject) => {
-    src(['./src/files/docs/**/*.{pdf,txt,md}'], { encoding: false })
-      .pipe(dest(paths.dist + '/files/docs/'))
-      .on('end', resolve)
-      .on('error', reject);
-  });
-};
-
 const sprite = () => {
   return src([
-    './src/assets/images/vectors/**/*.svg',
-    '!./src/assets/images/vectors/sprite.svg',
+    "./src/client/vectors/icons/**/*.svg",
+    "!./src/client/vectors/sprite.svg",
   ])
     .pipe(svgSprite(config))
-    .pipe(dest('./dist/assets/images/vectors'));
+    .pipe(dest("./dist/client/vectors/"));
 };
 
 const fonts = (cb) => {
-  src(['./src/assets/fonts/**/*.{ttf,woff,woff2}'], { encoding: false })
-    .pipe(dest(paths.dist + '/assets/fonts'))
-    .on('end', cb);
+  src(["./src/client/fonts/**/*.{ttf,woff,woff2}"], { encoding: false })
+    .pipe(dest(paths.dist + "/client/fonts"))
+    .on("end", cb);
 };
 
-const statics = parallel(
-  () => cleanDist(['dist']),
-  copyStatics,
-  fonts,
-  images,
-  videos,
-  sprite,
-  sassTaskLibs,
-  esbuildTask
-);
-const dev = series(
-  () => cleanDist(['dist/files']),
-  copyStatics,
-  docs,
-  images,
-  sprite,
-  videos,
-  phpTask,
-  sassTask,
-  sassTaskLibs,
-  esbuildTask,
-  watchTask
-);
-const build = series(
-  () => cleanDist(['dist/files']),
-  copyStatics,
-  docs,
-  images,
-  videos,
-  phpTask,
-  sassTask,
-  sassTaskLibs,
-  esbuildTask
-);
+const statics = series(() => cleanDist(['dist']), copyStatics, fonts, sprite, sassTaskLibs, esbuildLibsTask);
 
-export {
-  images,
-  sassTask,
-  sassTaskLibs,
-  esbuildTask,
-  phpTask,
-  watchTask,
-  build,
-  statics,
-  docs,
-  sprite,
-  fonts,
-  videos,
-};
+const dev = series(() => cleanDist(['dist/client']), copyStatics, setConfig, sprite, phpTask, sassTask, sassTaskLibs, esbuildLibsTask, esbuildTask, watchTask);
+
+const build = series(() => cleanDist(['dist/client']), copyStatics, setConfig, phpTask, sassTask, sprite, sassTaskLibs, esbuildTask);
+
+const serve = series(() => cleanDist(['dist/client']), copyStatics, setConfigServe, phpTask, sassTask, sprite, sassTaskLibs, esbuildTask, watchTask);
+
+export { sassTask, sassTaskLibs, esbuildTask, esbuildLibsTask, phpTask, watchTask, build, statics, sprite, fonts, serve };
 export default dev;
