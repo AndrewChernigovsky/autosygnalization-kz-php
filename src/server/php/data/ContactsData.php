@@ -4,16 +4,14 @@ namespace DATA;
 
 use COMPONENTS\InsertSVG;
 
-class Contacts
+class ContactsData
 {
     private $insertSVG;
-    private $logo_description = 'Логотип Компании Auto Security';
     private $phones = [
       ['phone' => '+7 707 747 8212'],
       ['phone' => '+7 701 747 8212'],
     ];
 
-    private $logo = '/client/images/logo.avif';
     private $address = "Казахстан, г.Алматы, ул.Абая 145/г, бокс №15";
     private $email = "autosecurity.kz@mail.ru";
     private $web_site = "www.autosecurity.kz";
@@ -68,10 +66,14 @@ class Contacts
     }
     public function getLogo()
     {
-        return [
-          "icon" => $this->logo,
-          "description" => $this->logo_description
-        ];
+        $logo = '/client/images/logo.avif';
+        $logo_description = 'Логотип Компании Auto Security';
+        return <<<HTML
+
+          <a href='' class='logo'>
+              <img src='{$logo}' alt='$logo_description)' width='142' height='40'/>
+          </a>";
+          HTML;
     }
     public function getContacts()
     {

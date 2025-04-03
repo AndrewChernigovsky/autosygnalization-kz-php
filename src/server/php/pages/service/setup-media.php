@@ -1,22 +1,19 @@
 <?php
-use HELPERS\SetVariables;
-include_once __DIR__ . '/../../helpers/components/share.php';
-include_once __DIR__ . '/../../data/services.php';
+use COMPONENTS\Share;
+use DATA\Services;
+
+use function FUNCTIONS\getShop;
 
 $type = isset($_GET['service']) ? $_GET['service'] : null;
 
-$variables = new SetVariables();
-$variables->setVar();
-$path = $variables->getPathFileURL();
-
 if ($type && isset($services_data[$type])) {
-  $service = $services_data[$type];
+    $service = $services_data[$type];
 } else {
-  $service = [
-    'name' => 'Услуга не найдена',
-    'src' => '',
-    'description' => 'Описание услуги не доступно.'
-  ];
+    $service = [
+      'name' => 'Услуга не найдена',
+      'src' => '',
+      'description' => 'Описание услуги не доступно.'
+    ];
 }
 
 $share = new Share();
@@ -25,14 +22,14 @@ $share = new Share();
 <section class="service-setup" id="service-setup">
   <h2 class="service-setup__title"><?= htmlspecialchars($service['name']) ?></h2>
   <div class="service-setup__wrapper">
-    <img class="service-setup__image" src="<?= htmlspecialchars($path . $service['image']['src']) ?>"
+    <img class="service-setup__image" src="<?= htmlspecialchars($service['image']['src']) ?>"
       alt="<?= htmlspecialchars($service['image']['description']) ?>">
     <p class="service-setup__description"><?= htmlspecialchars($service['description']) ?></p>
   </div>
   <h3 class="service-setup__subtitle">Мы предлагаем:</h3>
   <ul class="service-setup__list list-style-none">
     <?php foreach ($service['services'] as $item): ?>
-      <li class="service-setup__item" style="background-image: url(<?= $path . '/client/images/vectors/checkbox-mark-icon.svg'; ?>);">
+      <li class="service-setup__item" style="background-image: url(<?= '/client/images/vectors/checkbox-mark-icon.svg'; ?>);">
         <?= htmlspecialchars($item); ?>
       </li>
     <?php endforeach; ?>
@@ -45,6 +42,5 @@ $share = new Share();
 </section>
 
 <?php
-include_once __DIR__ . '/../../helpers/components/setup.php';
 echo getShop('shop');
 ?>

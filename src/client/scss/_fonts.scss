@@ -1,38 +1,36 @@
-@use 'variables'as var;
+@use 'variables' as var;
 
 @font-face {
-  font-family: "DINPRO";
-  src: url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff2'),
-  format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/din-pro-400.woff'),
-  format('woff');
+  font-family: 'DINPRO';
+  src: url('/client/fonts/din-pro-400.woff2'), format('woff2'),
+    url('/client/fonts/din-pro-400.woff'), format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "DINPRO";
-  src: url('#{var.$DEV_PATH}assets/fonts/din-pro-700.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/din-pro-700.woff') format('woff');
+  font-family: 'DINPRO';
+  src: url('/client/fonts/din-pro-700.woff2') format('woff2'),
+    url('/client/fonts/din-pro-700.woff') format('woff');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "OSWALD";
-  src: url('#{var.$DEV_PATH}assets/fonts/oswald-regular.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/oswald-regular.woff') format('woff');
+  font-family: 'OSWALD';
+  src: url('/client/fonts/oswald-regular.woff2') format('woff2'),
+    url('/client/fonts/oswald-regular.woff') format('woff');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: "OSWALD";
-  src: url('#{var.$DEV_PATH}assets/fonts/oswald-bold.woff2') format('woff2'),
-  url('#{var.$DEV_PATH}assets/fonts/oswald-bold.woff') format('woff');
+  font-family: 'OSWALD';
+  src: url('/client/fonts/oswald-bold.woff2') format('woff2'),
+    url('/client/fonts/oswald-bold.woff') format('woff');
   font-weight: 700;
   font-style: normal;
   font-display: swap;

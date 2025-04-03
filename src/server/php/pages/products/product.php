@@ -1,10 +1,17 @@
 
 
 <?php
-include_once __DIR__ . '/../../api/sessions/session.php';
+
 use HELPERS\SetVariables;
-include_once __DIR__ . '/../../data/products.php';
-include_once __DIR__ . '/../../helpers/components/product.php';
+use LAYOUT\Footer;
+use LAYOUT\Head;
+use DATA\Products;
+
+use function AUTH\SESSIONS\initSession;
+use function FUNCTIONS\getProductCardDescription;
+use function SECTIONS\cardTabsSection;
+
+initSession();
 
 $category = isset($_GET['category']) ? $_GET['category'] : null;
 $id = isset($_GET['id']) ? $_GET['id'] : null;
@@ -39,7 +46,7 @@ $product_section = __DIR__ . '/../../sections/card-tabs.php';
 
 $title = "$id | Auto Security";
 $head = new Head($title, [], []);
-error_log(print_r($category,true) . 'Я YT ОТРАБОТАЛ');
+error_log(print_r($category, true) . 'Я YT ОТРАБОТАЛ');
 ?>
 
 <!DOCTYPE html>

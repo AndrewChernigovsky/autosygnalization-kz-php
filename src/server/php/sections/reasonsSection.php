@@ -1,3 +1,11 @@
+<?php
+
+namespace SECTIONS;
+
+function reasonsSection()
+{
+    return <<<HTML
+
 <section class="reasons" id="reasons">
   <div class="container">
     <div class="reasons__wrapper">
@@ -11,3 +19,8 @@
 
   </div>
 </section>
+HTML;
+}
+
+?>
+

@@ -66,6 +66,6 @@ class GenerateFooterLinks
             return $output;
         }
 
-        echo renderNavigation($this->items);
+        return renderNavigation($this->items);
     }
 }

@@ -87,10 +87,9 @@ export function SetWork() {
   }, [data]);
 
   useEffect(() => {
-    fetch('/server/php/data/products.php', {
-      method: 'POST',
+    fetch('/server/php/api/products/get_all_products.php', {
+      method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ data: 'true' }),
     })
       .then((response) => {
         if (!response.ok) throw new Error(`Ошибка HTTP: ${response.status}`);

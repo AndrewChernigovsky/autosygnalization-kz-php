@@ -1,19 +1,23 @@
 <?php
+require_once __DIR__ . '/server/vendor/autoload.php';
 
-use HELPERS\IncludeSections;
-use HELPERS\SetVariables;
+use LAYOUT\Head;
+use LAYOUT\Header;
+use LAYOUT\Footer;
+use COMPONENTS\ModalForm;
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
-
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
-
-include $head_path;
-
-$base_path = $docROOT . $path . '/server/php/layout';
-$path_components = $docROOT . $path . '/server/php/helpers/components';
+use function SECTIONS\bankSection;
+use function SECTIONS\faqSection;
+use function SECTIONS\introSection;
+use function SECTIONS\marksSection;
+use function SECTIONS\popularSection;
+use function SECTIONS\qualitySection;
+use function SECTIONS\reasonsSection;
+use function SECTIONS\sertificatesSection;
+use function SECTIONS\serviceSection;
+use function SECTIONS\worksSection;
+use function SECTIONS\formSection;
+use function FUNCTIONS\renderPhoneButton;
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
@@ -21,35 +25,33 @@ $head = new Head($title, [], []);
 
 <!DOCTYPE html>
 <html lang="ru">
-<?php
-echo $head->setHead();
-?>
+  <head>
+    <?= $head->setHead();?>
+  </head>
 
 <body>
-  <?php include $base_path . '/header.php'; ?>
+  <?= (new Header())->getHeader()?>
   <main class="main">
     <?php
-    $file_2_section = './server/php/sections/';
-$files_to_include = [
-  'intro.php',
-  'marks.php',
-  'works.php',
-  'popular.php',
-  'bank.php',
-  'service.php',
-  'quality.php',
-  'sertificates.php',
-  'form.php',
-];
-
-$sectionLoader = new IncludeSections($file_2_section, $files_to_include);
-$sectionLoader->includeFiles();
-?>
+echo introSection();
+echo marksSection();
+echo popularSection();
+echo serviceSection();
+echo qualitySection();
+echo reasonsSection();
+echo bankSection();
+echo sertificatesSection();
+echo worksSection();
+echo faqSection();
+echo formSection();
+?> 
   </main>
 
-  <?php include $base_path . '/footer.php'; ?>
-  <?php include_once $path_components . '/phone-button.php'; ?>
-  <?php include_once $file_2_section . 'popups/modal-form.php'; ?>
+<?php
+echo (new Footer())->getFooter();
+echo (new ModalForm())->render();
+echo renderPhoneButton();
+?>
 </body>
 
 </html>

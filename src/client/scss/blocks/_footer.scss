@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .footer {
   padding: 20px 0;
@@ -24,10 +24,10 @@
     column-gap: 10px;
     row-gap: 10px;
     grid-template-areas:
-      "logo logo"
-      "social phones"
-      "email-site email-site"
-      "geo geo";
+      'logo logo'
+      'social phones'
+      'email-site email-site'
+      'geo geo';
 
     .logo {
       grid-area: logo;
@@ -146,11 +146,11 @@
       border-radius: 50%;
 
       &.telegram-icon {
-        background-image: url("#{var.$DEV_PATH}assets/images/vectors/telegram.svg");
+        background-image: url('/client/images/vectors/telegram.svg');
       }
 
       &.whatsapp-icon {
-        background-image: url("#{var.$DEV_PATH}assets/images/vectors/whatsapp.svg");
+        background-image: url('/client/images/vectors/whatsapp.svg');
       }
     }
   }
@@ -210,14 +210,14 @@
         display: block;
       }
 
-      &>span {
+      & > span {
         position: relative;
       }
     }
 
     &:first-of-type li ul {
       margin-left: -15px;
-       
+
       @media screen and (min-width: var.$tablet) {
         margin-left: 0;
       }
@@ -232,11 +232,12 @@
     text-transform: uppercase;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       border: 1px solid var.$white;
-      background: url("#{var.$DEV_PATH}assets/images/vectors/arrow.svg") no-repeat center center,
-      linear-gradient(var.$red-280000, var.$red-FF0000);
+      background: url('/client/images/vectors/arrow.svg') no-repeat center
+          center,
+        linear-gradient(var.$red-280000, var.$red-FF0000);
       background-size: 30px;
       border-radius: 5px;
       width: 48px;
@@ -249,25 +250,26 @@
 
     &.active::before {
       transform: translateY(-50%) scaleY(-1);
-      background: url("#{var.$DEV_PATH}assets/images/vectors/arrow.svg") no-repeat center center,
-      linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
+      background: url('/client/images/vectors/arrow.svg') no-repeat center
+          center,
+        linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
     }
 
-    &+ul {
+    & + ul {
       display: none;
     }
 
-    &.active+ul {
+    &.active + ul {
       display: block;
     }
   }
 
   span {
-    &.toggle-list+ul {
+    &.toggle-list + ul {
       display: none;
     }
 
-    &.toggle-list.active+ul {
+    &.toggle-list.active + ul {
       display: grid;
     }
   }
@@ -287,7 +289,7 @@
     padding-bottom: 20px;
 
     &::before {
-      content: "";
+      content: '';
       position: absolute;
       bottom: 5px;
       left: 0;
@@ -297,7 +299,7 @@
     }
 
     &::after {
-      content: "";
+      content: '';
       position: absolute;
       bottom: 0px;
       left: -10px;
@@ -315,7 +317,7 @@
       padding-bottom: 20px;
 
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         bottom: 10px;
         left: 0;
@@ -325,7 +327,7 @@
       }
 
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: 5px;
         left: -10px;
@@ -358,9 +360,9 @@
       column-gap: 10px;
       row-gap: 10px;
       grid-template-areas:
-        "logo social phones"
-        "email-site geo phones"
-        "site geo phones";
+        'logo social phones'
+        'email-site geo phones'
+        'site geo phones';
 
       .social {
         justify-items: center;
@@ -429,7 +431,7 @@
         padding-left: 0;
         cursor: auto;
 
-        &>span {
+        & > span {
           cursor: auto;
         }
 
@@ -450,7 +452,6 @@
     }
 
     &__menu-title {
-
       &::before,
       &::after {
         display: none;
@@ -459,7 +460,7 @@
 
     &__wrapper {
       &::after {
-        content: "";
+        content: '';
         position: absolute;
         bottom: 50px;
         width: 100%;
@@ -473,7 +474,7 @@
       max-width: 1440px;
     }
 
-    &__menu-list>li:not(:has(a:first-of-type)) .toggle-list {
+    &__menu-list > li:not(:has(a:first-of-type)) .toggle-list {
       cursor: auto;
 
       &:hover {
@@ -489,7 +490,7 @@
         padding-left: 10px;
 
         &::before {
-          content: "";
+          content: '';
           width: 10px;
           height: 10px;
           border-radius: 50%;
@@ -510,7 +511,7 @@
         padding-left: 10px;
 
         &::before {
-          content: "";
+          content: '';
           width: 10px;
           height: 10px;
           border-radius: 50%;
@@ -528,7 +529,7 @@
       height: 100%;
 
       &::before {
-        content: "";
+        content: '';
         width: 10px;
         height: 10px;
         border-radius: 50%;
@@ -540,7 +541,7 @@
       }
 
       &::after {
-        content: "";
+        content: '';
         width: 2px;
         height: 100%;
         border-radius: 50%;
@@ -558,7 +559,7 @@
         padding-left: 10px;
 
         &::before {
-          content: "";
+          content: '';
           width: 10px;
           height: 10px;
           border-radius: 50%;
@@ -570,7 +571,7 @@
         }
 
         &::after {
-          content: "";
+          content: '';
           width: 2px;
           height: inherit;
           border-radius: 50%;
@@ -586,7 +587,7 @@
 
   @media screen and (min-width: var.$tablet) {
     &__menu-list {
-      li>span:first-of-type:hover {
+      li > span:first-of-type:hover {
         opacity: 1;
       }
     }

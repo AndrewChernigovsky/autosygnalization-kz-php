@@ -2,29 +2,24 @@
 
 namespace COMPONENTS;
 
-use HELPERS\SetVariables;
-use InsertSVG;
-include_once __DIR__ . '/../../helpers/classes/createSVG.php';
-include_once __DIR__ . '/../../data/contacts.php';
+use COMPONENTS\InsertSVG;
+use DATA\ContactsData;
 
 class GEO
 {
-    private $variables;
     private $insertSVG;
     private $address = "https://2gis.kz/almaty/geo/70000001027313872";
     private $contacts;
 
     public function __construct()
     {
-        $this->variables = new SetVariables();
-        $this->variables->setVar();
-        $this->insertSVG = new CreateSVG();
-        $this->contacts = new Contacts();
+        $this->insertSVG = new InsertSVG();
+        $this->contacts = new ContactsData();
     }
 
     public function getGeo()
     {
-        $social = $this->contacts->getGeoIcon($this->variables->getPathFileURL());
+        $social = $this->contacts->getGeoIcon();
         $geoIcon = isset($social['geo']) ? $social['geo'] : null;
         if ($geoIcon === null) {
             return "<p>Гео-иконка не найдена.</p>";

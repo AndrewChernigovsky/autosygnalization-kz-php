@@ -105,7 +105,7 @@
       content: '';
       width: 25px;
       height: 25px;
-      background-image: url('#{var.$DEV_PATH}assets/images/vectors/phone-no-border.svg');
+      background-image: url('/client/images/vectors/phone-no-border.svg');
       background-repeat: no-repeat;
       background-size: 25px 25px;
       left: 20px;
@@ -126,13 +126,13 @@
     }
   }
 
-  &__item--whatsap h3{
+  &__item--whatsap h3 {
     position: relative;
 
-    &::after{
+    &::after {
       position: absolute;
       content: '';
-      background-image: url('#{var.$DEV_PATH}assets/images/vectors/whatsapp.svg');
+      background-image: url('/client/images/vectors/whatsapp.svg');
       background-repeat: no-repeat;
       background-size: 28px 28px;
       left: 13px;
@@ -147,63 +147,62 @@
   &__item--address,
   &__item--schedule,
   &__item--social {
-
     @media screen and (min-width: var.$tablet) {
       width: 300px;
     }
   }
 
-  &__item--email h3{
+  &__item--email h3 {
     position: relative;
 
-      &::after {
-        position: absolute;
-        content: '';
-        width: 20px;
-        height: 20px;
-        background-image: url('#{var.$DEV_PATH}assets/images/vectors/message-icon.svg');
-        background-repeat: no-repeat;
-        background-size: 20px 20px;
-      }
+    &::after {
+      position: absolute;
+      content: '';
+      width: 20px;
+      height: 20px;
+      background-image: url('/client/images/vectors/message-icon.svg');
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+    }
   }
 
-  &__item--address h3{
+  &__item--address h3 {
     position: relative;
 
-      &::after {
-        position: absolute;
-        content: '';
-        width: 25px;
-        height: 25px;
-        mask-image: url('#{var.$DEV_PATH}assets/images/vectors/geo.svg');
-        mask-repeat: no-repeat;
-        mask-size: 25px 25px;
-        background-color: var.$red;
-      }
+    &::after {
+      position: absolute;
+      content: '';
+      width: 25px;
+      height: 25px;
+      mask-image: url('/client/images/vectors/geo.svg');
+      mask-repeat: no-repeat;
+      mask-size: 25px 25px;
+      background-color: var.$red;
+    }
   }
 
-  &__item--schedule{
+  &__item--schedule {
     text-align: center;
   }
 
-  &__item--schedule h3{
+  &__item--schedule h3 {
     position: relative;
 
-      &::after {
-        position: absolute;
-        content: '';
-        width: 25px;
-        height: 25px;
-        mask-image: url('#{var.$DEV_PATH}assets/images/vectors/clock.svg');
-        mask-repeat: no-repeat;
-        mask-size: 25px 25px;
-        background-color: var.$red;
-        left: -12px;
+    &::after {
+      position: absolute;
+      content: '';
+      width: 25px;
+      height: 25px;
+      mask-image: url('/client/images/vectors/clock.svg');
+      mask-repeat: no-repeat;
+      mask-size: 25px 25px;
+      background-color: var.$red;
+      left: -12px;
 
-        @media screen and (min-width: var.$desktop-min) {
-          left: -20px;
-        }
+      @media screen and (min-width: var.$desktop-min) {
+        left: -20px;
       }
+    }
   }
 
   &__item--schedule span {
@@ -211,13 +210,12 @@
   }
 
   &__item--social {
-
     &::after {
       background-image: none;
     }
   }
 
-  &__item--social h3{
+  &__item--social h3 {
     &::after {
       background-image: none;
     }
@@ -245,14 +243,14 @@
     height: 40px;
   }
 
-  &__item--social-icons svg{
+  &__item--social-icons svg {
     width: 30px;
     height: 30px;
   }
 
   &__item--btn {
     background-color: transparent;
-  
+
     @media screen and (min-width: var.$desktop-min) {
       text-transform: none;
     }
@@ -318,7 +316,7 @@
 
     & p {
       margin: 0 auto 15px;
-  
+
       @media screen and (min-width: var.$tablet) {
         font-size: 24px;
         width: 600px;

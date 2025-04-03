@@ -1,4 +1,4 @@
-@use 'variables'as var;
+@use 'variables' as var;
 
 .quality {
   position: relative;
@@ -68,7 +68,7 @@
             position: absolute;
             width: 40px;
             height: 40px;
-            background-image: url('#{var.$DEV_PATH}assets/images/vectors/shield.svg');
+            background-image: url('/client/images/vectors/shield.svg');
             background-size: cover;
             background-position: center;
           }
@@ -121,7 +121,7 @@
         position: absolute;
         width: 40px;
         height: 40px;
-        background-image: url('#{var.$DEV_PATH}assets/images/vectors/aprove.svg');
+        background-image: url('/client/images/vectors/aprove.svg');
         background-size: cover;
         background-position: center;
       }

@@ -7,15 +7,24 @@ namespace Composer\Autoload;
 class ComposerStaticInit756303a4a47fe87338093be10799f679
 {
     public static $files = array (
-        'e67970574dd343e22436f04703f03751' => __DIR__ . '/../..' . '/php/process/images/process-images.php',
-        '19cce2cf4d64b6fcdd53c4752bca252a' => __DIR__ . '/../..' . '/php/process/images/process-images-articles.php',
-        '355042477b58ebe328e72de686d49d69' => __DIR__ . '/../..' . '/php/functions/generateCPUURL.php',
-        '44db94122911e20aa94ef2b01f60885d' => __DIR__ . '/../..' . '/php/functions/createFolderUpload.php',
-        '508824f6601808cf1f05fad537e25295' => __DIR__ . '/../..' . '/php/functions/saveImageBanner.php',
-        '6a9c120c55872ab020c6e7af6485ef83' => __DIR__ . '/../..' . '/php/functions/generateSheme.php',
-        '2bd170ca2be41074dbf9d8197fb1c6a6' => __DIR__ . '/../..' . '/php/functions/generateMetaTags.php',
-        '034e481be784d1f172ad7d55e3bd8c13' => __DIR__ . '/../..' . '/php/functions/saveImages.php',
-        '638f5d793b85c8ac2adfa068f48d615c' => __DIR__ . '/../..' . '/php/functions/mail/telegram.php',
+        'a9ce8fdb4a3f4a9598e4cf2cc7472519' => __DIR__ . '/../..' . '/php/sections/introSection.php',
+        '15d4f65003e931db08610190fe1776a2' => __DIR__ . '/../..' . '/php/sections/faqSection.php',
+        'df46a49cf2bfc006d6d1ef02bafc5032' => __DIR__ . '/../..' . '/php/sections/formSection.php',
+        'dcfecf585362473d379555e9af1c511b' => __DIR__ . '/../..' . '/php/sections/marksSection.php',
+        '16153e0641517f57af7ed22667d7a313' => __DIR__ . '/../..' . '/php/sections/popularSection.php',
+        '976651149b75c11ccaa3dc640bd20ec2' => __DIR__ . '/../..' . '/php/sections/qualitySection.php',
+        'e7ecb3869a15cafb9ab32703185e9936' => __DIR__ . '/../..' . '/php/sections/reasonsSection.php',
+        '3c43a7ea99e2cb5d778b2a7ffa01ce79' => __DIR__ . '/../..' . '/php/sections/sertificatesSection.php',
+        '1acb604afd1a463be919f726e5aa612f' => __DIR__ . '/../..' . '/php/sections/worksSection.php',
+        '2af5699ca3c2aa78346eb7ef07ea68b8' => __DIR__ . '/../..' . '/php/sections/serviceSection.php',
+        '0c27ca5354cd188502dacc494e7dcd3a' => __DIR__ . '/../..' . '/php/sections/bankSection.php',
+        '645a24e8c759d9e2e03d8df0b23526f4' => __DIR__ . '/../..' . '/php/sections/cardTabsSection.php',
+        '68b01011c55aa98ffa53200da532411b' => __DIR__ . '/../..' . '/php/functions/mail/telegram.php',
+        'c56035af57f7f04d38d2e81e14f413f9' => __DIR__ . '/../..' . '/php/functions/getProductCard.php',
+        '4aad28a6c85a7fe482abbd4f044aa707' => __DIR__ . '/../..' . '/php/functions/renderPhoneButton.php',
+        '4edcde4043197f25343a33ac8e210dfa' => __DIR__ . '/../..' . '/php/auth/sessions/get_session_data.php',
+        'f1584729dffd7986af617e40fa2328d4' => __DIR__ . '/../..' . '/php/auth/sessions/session-destroy.php',
+        'd7379fc243d6d6377f2fdbeacb6ce9d4' => __DIR__ . '/../..' . '/php/auth/sessions/session.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -51,6 +60,7 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         ),
         'D' => 
         array (
+            'DATA\\' => 5,
             'DATABASE\\' => 9,
         ),
         'C' => 
@@ -62,7 +72,10 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         ),
         'A' => 
         array (
+            'AUTH\\SESSIONS\\' => 14,
+            'AUTH\\' => 5,
             'API\\SOCIAL\\' => 11,
+            'API\\PRODUCTS\\' => 13,
             'API\\NEWS\\' => 9,
             'API\\CATEGORIES\\' => 15,
             'API\\AUTH\\' => 9,
@@ -132,6 +145,10 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         array (
             0 => __DIR__ . '/../..' . '/php/functions',
         ),
+        'DATA\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/php/data',
+        ),
         'DATABASE\\' => 
         array (
             0 => __DIR__ . '/../..' . '/php/database',
@@ -152,9 +169,21 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         array (
             0 => __DIR__ . '/../..' . '/php/components',
         ),
+        'AUTH\\SESSIONS\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/php/auth/sessions',
+        ),
+        'AUTH\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/php/auth',
+        ),
         'API\\SOCIAL\\' => 
         array (
             0 => __DIR__ . '/../..' . '/php/api/social',
+        ),
+        'API\\PRODUCTS\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/php/api/products',
         ),
         'API\\NEWS\\' => 
         array (
@@ -179,11 +208,42 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
     );
 
     public static $classMap = array (
+        'COMPONENTS\\Article' => __DIR__ . '/../..' . '/php/components/Article.php',
+        'COMPONENTS\\Cart' => __DIR__ . '/../..' . '/php/components/Cart.php',
+        'COMPONENTS\\CreateProductCards' => __DIR__ . '/../..' . '/php/components/CreateProductCards.php',
+        'COMPONENTS\\FiltersRender' => __DIR__ . '/../..' . '/php/components/FiltersRender.php',
+        'COMPONENTS\\GEO' => __DIR__ . '/../..' . '/php/components/GEO.php',
+        'COMPONENTS\\InsertPhone' => __DIR__ . '/../..' . '/php/components/InsertPhone.php',
+        'COMPONENTS\\InsertSVG' => __DIR__ . '/../..' . '/php/components/InsertSVG.php',
+        'COMPONENTS\\Logo' => __DIR__ . '/../..' . '/php/components/Logo.php',
+        'COMPONENTS\\ModalCart' => __DIR__ . '/../..' . '/php/components/ModalCart.php',
+        'COMPONENTS\\ModalForm' => __DIR__ . '/../..' . '/php/components/ModalForm.php',
+        'COMPONENTS\\Pagination' => __DIR__ . '/../..' . '/php/components/Pagination.php',
+        'COMPONENTS\\PopularCard' => __DIR__ . '/../..' . '/php/components/PopularCard.php',
+        'COMPONENTS\\Select' => __DIR__ . '/../..' . '/php/components/Select.php',
+        'COMPONENTS\\ServiceCard' => __DIR__ . '/../..' . '/php/components/ServiceCard.php',
+        'COMPONENTS\\Share' => __DIR__ . '/../..' . '/php/components/Share.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'DATABASE\\DataBase' => __DIR__ . '/../..' . '/php/database/DataBase.php',
         'DATABASE\\InitDataBase' => __DIR__ . '/../..' . '/php/database/InitDataBase.php',
+        'DATA\\AboutusData' => __DIR__ . '/../..' . '/php/data/AboutusData.php',
+        'DATA\\ArticleData' => __DIR__ . '/../..' . '/php/data/ArticleData.php',
+        'DATA\\BrandsData' => __DIR__ . '/../..' . '/php/data/BrandsData.php',
+        'DATA\\ContactsData' => __DIR__ . '/../..' . '/php/data/ContactsData.php',
+        'DATA\\NavigationLinks' => __DIR__ . '/../..' . '/php/data/NavigationLinks.php',
+        'DATA\\Products' => __DIR__ . '/../..' . '/php/data/Products.php',
+        'DATA\\QualityVideos' => __DIR__ . '/../..' . '/php/data/QualityVideos.php',
+        'DATA\\SelectData' => __DIR__ . '/../..' . '/php/data/SelectData.php',
+        'DATA\\ServicesData' => __DIR__ . '/../..' . '/php/data/ServicesData.php',
+        'DATA\\SlidesData' => __DIR__ . '/../..' . '/php/data/SlidesData.php',
+        'DATA\\TabsData' => __DIR__ . '/../..' . '/php/data/TabsData.php',
+        'HELPERS\\CreateTag' => __DIR__ . '/../..' . '/php/helpers/CreateTag.php',
         'HELPERS\\GenerateFooterLinks' => __DIR__ . '/../..' . '/php/helpers/GenerateFooterLinks.php',
         'HELPERS\\IncludeSections' => __DIR__ . '/../..' . '/php/helpers/IncludeSections.php',
+        'HELPERS\\Services' => __DIR__ . '/../..' . '/php/helpers/Services.php',
+        'LAYOUT\\Footer' => __DIR__ . '/../..' . '/php/layout/Footer.php',
+        'LAYOUT\\Head' => __DIR__ . '/../..' . '/php/layout/Head.php',
+        'LAYOUT\\Header' => __DIR__ . '/../..' . '/php/layout/Header.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

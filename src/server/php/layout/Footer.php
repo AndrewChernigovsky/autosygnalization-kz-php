@@ -2,9 +2,7 @@
 
 namespace LAYOUT;
 
-include_once __DIR__ . '/../data/navigation-links.php';
-
-use DATA\Contacts;
+use DATA\ContactsData;
 use COMPONENTS\GEO;
 use COMPONENTS\Logo;
 use COMPONENTS\InsertPhone;
@@ -13,23 +11,12 @@ use DATA\NavigationLinks;
 
 class Footer
 {
-    private $basePath;
-    private $path;
-    private $docROOT;
-
-    public function __construct($basePath, $path, $docROOT)
-    {
-        $this->basePath = $basePath;
-        $this->path = $path;
-        $this->docROOT = $docROOT;
-    }
-
-    public function setHead(): string
+    public function getFooter(): string
     {
         // Инициализация компонентов
         $geo = new GEO();
         $logo = new Logo();
-        $contacts = new Contacts();
+        $contacts = new ContactsData();
         $phones = $contacts->getPhones();
         $email = $contacts->getEmail(true);
         $web_site = $contacts->getWebsite(true);

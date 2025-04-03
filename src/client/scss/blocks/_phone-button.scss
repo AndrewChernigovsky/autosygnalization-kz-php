@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .phone-button {
   width: 50px;
@@ -18,7 +18,7 @@
   }
 
   &__wrapper {
-    mask-image: url('#{var.$DEV_PATH}assets/images/vectors/phone-no-border.svg');
+    mask-image: url('/client/images/vectors/phone-no-border.svg');
     background-color: var.$white;
     mask-position: center;
     mask-repeat: no-repeat;
@@ -50,10 +50,8 @@
       &::after {
         transform: translate(-50%, -50%) rotate(-45deg);
       }
-
     }
   }
-
 
   @media screen and (min-width: 769px) {
     width: 80px;

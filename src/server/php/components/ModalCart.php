@@ -1,10 +1,12 @@
-<?php use HELPERS\SetVariables;
-$variables = new SetVariables();
-$variables->
-  setVar();
-$path = $variables->getPathFileURL();
-?>
+<?php
 
+namespace COMPONENTS;
+
+class ModalCart
+{
+    public function render(): string
+    {
+        return <<<HTML
 <template id="cart-popup">
   <div class="cart-popup">
     <button type="button" id="close-cart-popup">
@@ -19,3 +21,6 @@ $path = $variables->getPathFileURL();
     <p class="cart-popup__timer"></p>
   </div>
 </template>
+HTML;
+    }
+}

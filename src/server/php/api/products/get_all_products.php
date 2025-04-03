@@ -2,15 +2,17 @@
 
 namespace API\PRODUCTS;
 
-session_start();
+use DATA\Products;
 
 header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
-header("Access-Control-Allow-Methods: POST");
+header("Access-Control-Allow-Headers: Content-Type");
+header("Access-Control-Allow-Methods: GET");
 
-include_once __DIR__ . '/../../data/products.php';
+if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
-if (isset($products)) {
+    $products = (new Products())->getData();
+    header('Content-Type: application/json');
     echo json_encode($products);
-    exit;
+} else {
+    echo json_encode(['message' => 'Данные не получены']);
 }

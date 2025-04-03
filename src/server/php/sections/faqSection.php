@@ -1,3 +1,10 @@
+<?php
+
+namespace SECTIONS;
+
+function faqSection()
+{
+    return <<<HTML
 <section class="faq" id="faq">
   <div class="container">
     <h2>вопросы-ответы</h2>
@@ -83,3 +90,9 @@
     }));
   </script>
 </section>
+
+HTML;
+}
+
+?>
+

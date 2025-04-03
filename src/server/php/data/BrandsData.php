@@ -1,5 +1,6 @@
 <?php
 
+namespace DATA;
 
 class BrandsData
 {

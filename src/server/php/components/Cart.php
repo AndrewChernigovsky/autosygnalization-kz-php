@@ -2,28 +2,21 @@
 
 namespace COMPONENTS;
 
-use HELPERS\SetVariables;
-
-include_once __DIR__ . '/../../api/sessions/session.php';
+use function AUTH\SESSIONS\initSession;
 
 class Cart
 {
-    private $path;
-    private $variables;
     private $pdo;
     private $totalQuantity;
     public function __construct()
     {
-        $this->variables = new SetVariables();
-        $this->variables->setVar();
-        $path = $this->variables->getPathFileURL();
-        $this->path = $path;
         $this->totalQuantity = $this->getTotalQuantity();
+        initSession();
     }
 
     public function initCart()
     {
-        $icon = $this->path . '/client/images/vectors/sprite.svg#cart';
+        $icon = '/client/images/vectors/sprite.svg#cart';
         $link = "/cart";
         ob_start();
         ?>

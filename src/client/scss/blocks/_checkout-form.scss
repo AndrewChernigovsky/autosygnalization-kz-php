@@ -1,4 +1,4 @@
-@use "variables" as var;
+@use 'variables' as var;
 
 .checkout-form {
   max-width: 1000px;
@@ -47,14 +47,14 @@
       font-family: var.$secondary-font;
       padding: 5px 8px;
       border-radius: 10px;
-      border: 1px solid var.$gray_413E3E; 
-      cursor: pointer;  
-      
+      border: 1px solid var.$gray_413E3E;
+      cursor: pointer;
+
       &:hover {
         border: 1px solid var.$green;
       }
 
-      input[type="radio"] {
+      input[type='radio'] {
         display: none;
       }
 
@@ -90,7 +90,8 @@
         line-height: 26px;
       }
 
-      input:not([type="radio"], [type="checkbox"]), textarea {
+      input:not([type='radio'], [type='checkbox']),
+      textarea {
         padding: 8px;
         font-family: var.$primary-font;
         font-size: 18px;
@@ -142,13 +143,13 @@
         mask-position: center;
         mask-size: 20px 20px;
         cursor: pointer;
-      } 
-      
+      }
+
       & input:checked {
-          border: none;
-          mask-image: url("#{var.$DEV_PATH}assets/images/vectors/aprove.svg");
-          background-color: var.$green;
-        }
+        border: none;
+        mask-image: url('/client/images/vectors/aprove.svg');
+        background-color: var.$green;
+      }
 
       .checkout-form__subtitle {
         grid-column: 2 / 11;
@@ -171,7 +172,6 @@
     align-items: start;
     gap: 10px;
     text-transform: none;
-  
 
     label a {
       margin: 0 5px;
@@ -211,12 +211,15 @@
 
     &:checked {
       border: none;
-      mask-image: url("#{var.$DEV_PATH}assets/images/vectors/aprove.svg");
+      mask-image: url('/client/images/vectors/aprove.svg');
       background-color: var.$green;
     }
   }
 
-  select, input, textarea, input:not([type="radio"]) {
+  select,
+  input,
+  textarea,
+  input:not([type='radio']) {
     &:hover,
     &:focus-visible {
       border: 1px solid var.$green;
@@ -243,7 +246,7 @@
       align-items: center;
       font-family: var.$primary-font;
 
-      @media screen and (min-width: var.$tablet) {        
+      @media screen and (min-width: var.$tablet) {
         font-size: 18px;
       }
     }

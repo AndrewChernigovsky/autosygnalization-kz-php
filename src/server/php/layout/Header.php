@@ -2,7 +2,7 @@
 
 namespace LAYOUT;
 
-use DATA\Contacts;
+use DATA\ContactsData;
 use COMPONENTS\Cart;
 use COMPONENTS\Logo;
 use DATA\NavigationLinks;
@@ -21,10 +21,8 @@ class Header
         // Инициализация компонентов
         $logo = new Logo();
         $cart = new Cart();
-        $contacts = new Contacts();
+        $contacts = new ContactsData();
         $phones = $contacts->getPhones();
-        $email = $contacts->getEmail();
-        $web_site = $contacts->getWebsite();
         $address = $contacts->getAddress();
 
         $navigationLinks = new NavigationLinks();

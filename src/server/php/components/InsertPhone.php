@@ -2,9 +2,9 @@
 
 namespace COMPONENTS;
 
-use HELPERS\CreateSVG;
+use COMPONENTS\InsertSVG;
 
-class InsertPhone extends CreateSVG
+class InsertPhone extends InsertSVG
 {
     public function displayPhones($contacts_phone, $social = [])
     {
