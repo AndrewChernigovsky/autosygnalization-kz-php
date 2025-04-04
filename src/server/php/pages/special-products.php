@@ -1,17 +1,17 @@
 <?php
-use HELPERS\SetVariables;
+require_once __DIR__ . '/../../../vendor/autoload.php';
+use DATA\Products;
+
+
 include __DIR__ . '/../data/products.php';
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
+
 $path_href = $path . '/server/php/pages/special/special.php?special=special';
 
 function getSpecialOffersSection()
 {
+  $products = (new Products())->getData();
     global $path_href;
-    global $products;
 
     ob_start(); // Начинаем буферизацию вывода
     ?>

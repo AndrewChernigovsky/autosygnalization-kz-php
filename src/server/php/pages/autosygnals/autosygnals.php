@@ -1,51 +1,60 @@
 <?php
-include_once __DIR__ . '/../../api/sessions/session.php';
-use HELPERS\SetVariables;
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-$autoType = isset($_GET['auto']) ? $_GET['auto'] : null;
+use LAYOUT\Header;
+use LAYOUT\Footer;
+use LAYOUT\Head;
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
+use function AUTH\SESSIONS\initSession;
 
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
-$sections_path = $docROOT . $path . '/server/php/helpers/include-sections.php';
-include_once $head_path;
-include_once $sections_path;
-$base_path = $docROOT . $path . '/server/php/layout';
-function getContent($base_path, $type)
+initSession();
+
+$autoType = isset($_GET["auto"]) ? $_GET["auto"] : null;
+
+function getContent($type)
 {
-    include $base_path . '/header.php';
-    "<main class='main'>";
-    "<div>";
-    include_once "./$type.php";
-    include_once './../../helpers/components/setup.php';
-    "</div>";
-    "</main>";
-    include $base_path . '/footer.php';
+    ob_start();
+    $header = (new Header())->getHeader();
+
+    echo "<main class='main'>";
+    echo "<div>";
+
+    if (file_exists("./$type.php")) {
+        include_once "./$type.php";
+    } else {
+        echo "<p>Файл $type.php не найден.</p>";
+    }
+
+    echo "</div>";
+    echo "</main>";
+
+    $html = ob_get_clean();
+    $footer = (new Footer())->getFooter();
+
+    return $header . $html . $footer;
 }
-function getAutoContent($type, $base_path)
+
+function getAutoContent($type)
 {
     switch ($type) {
         case 'auto':
-            return getContent($base_path, 'auto');
+            return getContent('auto');
         case 'gsm':
-            return getContent($base_path, 'gsm');
+            return getContent('gsm');
         case 'no-auto':
-            return getContent($base_path, 'no-auto');
+            return getContent('no-auto');
         case 'catalog':
-            return getContent($base_path, 'catalog');
+            return getContent('catalog');
         case 'accessories':
-            return getContent($base_path, 'acessories');
+            return getContent('acessories');
         case 'price':
-            return getContent($base_path, 'gsm');
+            return getContent('gsm');
         default:
-            return getContent($base_path, 'default');
+            return getContent('default');
     }
 }
 
-$content = getAutoContent($autoType, $base_path);
+$content = getAutoContent($autoType);
 $title = 'Автосигнализации | Auto Security';
 $head = new Head($title, [], []);
 ?>
@@ -54,6 +63,7 @@ $head = new Head($title, [], []);
 <html lang="ru">
 <?php
 echo $head->setHead();
+echo $content;
 ?>
 
 <body>

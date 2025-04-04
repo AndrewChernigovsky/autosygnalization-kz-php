@@ -2,18 +2,6 @@
 
 namespace COMPONENTS;
 
-use HELPERS\SetVariables;
-
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $docROOT . $variables->getPathFileURL();
-error_log($path . ' : FULL_PATH');
-error_log(print_r($_SERVER['SCRIPT_NAME'], true) . "Это path");
-// error_log(print_r($_SESSION, true) . ' :SESSION ');
-include_once $path . '/server/php/data/products.php';
-
-
 class FiltersRender
 {
     private $path;
@@ -50,11 +38,8 @@ class FiltersRender
         ];
 
         $this->get_params = !empty($get_params) ? $get_params : $_GET;
-        $this->filter_correct = $filters_correct;
+        $this->filters_correct = $filters_correct;
 
-        $variables = new SetVariables();
-        $variables->setVar();
-        $this->path = $variables->getPathFileURL();
         $this->products = $products;
         $this->filters_products_count = [];
         $this->filters_correct_arr = [];
@@ -62,17 +47,13 @@ class FiltersRender
         $this->filters_max_value = $this->get_params['max-value-cost'] ?? 300000;
         $this->SELECT = $this->get_params['SELECT'] ?? '';
         $this->path_send = str_replace('/', '', parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
-
-        // $this->path_send =  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
-        error_log(print_r($_SERVER['REQUEST_URI'], true) . ' : 111111');
     }
 
     public function returnCorrectedArr()
     {
 
         $count = [];
-        if (!$this->get_params && $this->filter_correct === null) {
+        if (!$this->get_params && $this->filters_correct === null) {
             foreach ($this->products as $categoryType) {
                 if (!empty($categoryType)) {
                     foreach ($categoryType as $productType) {
@@ -89,7 +70,7 @@ class FiltersRender
                     }
                 }
             }
-        } elseif ($this->get_params && $this->filter_correct !== null) {
+        } elseif ($this->get_params && $this->filters_correct !== null) {
             $this->filters_correct_arr = [];
             foreach ($this->products as $categoryType) {
                 if (!empty($categoryType)) {
@@ -113,7 +94,7 @@ class FiltersRender
                                         $isMatch = false;
                                     }
 
-                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filter_correct, $productTypeItem['autosygnals']))) {
+                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filters_correct, $productTypeItem['autosygnals']))) {
                                         $isMatch = false;
                                     }
 
@@ -130,7 +111,7 @@ class FiltersRender
                     }
                 }
             }
-        } elseif ($this->get_params && $this->filter_correct === null) {
+        } elseif ($this->get_params && $this->filters_correct === null) {
             $this->filters_correct_arr = [];
             foreach ($this->products as $categoryType) {
                 if (!empty($categoryType)) {
@@ -166,7 +147,7 @@ class FiltersRender
                     }
                 }
             }
-        } elseif (!$this->get_params && $this->filter_correct !== null) {
+        } elseif (!$this->get_params && $this->filters_correct !== null) {
             $this->filters_correct_arr = [];
             foreach ($this->products as $categoryType) {
                 if (!empty($categoryType)) {
@@ -175,7 +156,7 @@ class FiltersRender
                             foreach ($productType as $productTypeItem) {
                                 if (!empty($productTypeItem)) {
                                     $isMatch = true;
-                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filter_correct, $productTypeItem['autosygnals']))) {
+                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filters_correct, $productTypeItem['autosygnals']))) {
                                         $isMatch = false;
                                     }
                                     if ($isMatch) {
@@ -299,11 +280,11 @@ class FiltersRender
         ob_start();
         ?>
         <button class="filter-button" type="button" id="filter-btn"
-            style="background-image: url(<?= htmlspecialchars($this->path . '/client/vectors/filters.svg'); ?>);">Фильтр</button>
+            style="background-image: url(<?= htmlspecialchars('/client/vectors/filters.svg'); ?>);">Фильтр</button>
         <button class="filter-button-close" type="button" id="filter-btn-close">
             <span class="visually-hidden">скрыть фильтры</span>
         </button>
-        <form class="filter-form" id="filter-catalog" action="<?= $this->path . $this->path_send; ?>" method="get">
+        <form class="filter-form" id="filter-catalog" action="<?=  $this->path_send; ?>" method="get">
             <?php
                 if ($filterBasic === true) {
                     echo $this->renderFiltersBasic();

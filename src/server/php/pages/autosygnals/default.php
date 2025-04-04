@@ -1,6 +1,13 @@
 <?php
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-include_once __DIR__ . '/../../data/products.php';
+use DATA\Products;
+use DATA\NavigationLinks;
+
+use function FUNCTIONS\getShop;
+
+$products = (new Products())->getData();
+$navigationLinks = new NavigationLinks();
 
 $count_category_austosignals_arr = [
   ["text" => "Автосигнализации с автозапуском", "name" => "auto", "count" => "1"],
@@ -8,7 +15,6 @@ $count_category_austosignals_arr = [
   ["text" => "Автосигнализации без автозапуска", "name" => "without-auto", "count" => "1"],
   ["text" => "Каталог автосигнализаций Starline", "name" => "starline", "count" => "1"],
   ["text" => "Пульты и аксессуары", "name" => "remote-controls", "count" => "1"],
-
 ];
 
 
@@ -43,13 +49,6 @@ $count_category_austosignals_arr = updateFilterCounts($count_category_austosigna
 ?>
 
 <?php
-use HELPERS\SetVariables;
-include_once __DIR__ . '/../../data/navigation-links.php';
-
-$variables = new SetVariables();
-$variables->setVar();
-$path = $variables->getPathFileURL();
-$navigationLinks = new NavigationLinks();
 $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
 ?>
 
@@ -89,7 +88,4 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
   </div>
   </div>
 </section>
-<?php
-include_once __DIR__ . '/../../helpers/components/setup.php';
-echo getShop('setup');
-?>
+<?=  getShop('setup');?>
