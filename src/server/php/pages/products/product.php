@@ -2,12 +2,16 @@
 
 <?php
 
-use HELPERS\SetVariables;
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use LAYOUT\Header;
 use LAYOUT\Footer;
 use LAYOUT\Head;
 use DATA\Products;
+use COMPONENTS\ModalCart;
 
 use function AUTH\SESSIONS\initSession;
+use function FUNCTIONS\getProductCardImage;
 use function FUNCTIONS\getProductCardDescription;
 use function SECTIONS\cardTabsSection;
 
@@ -16,6 +20,7 @@ initSession();
 $category = isset($_GET['category']) ? $_GET['category'] : null;
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
+$products = (new Products())->getData();
 function getAutoContent($products, $category, $id)
 {
     $result = "";
@@ -32,20 +37,10 @@ function getAutoContent($products, $category, $id)
 
 $contentImage = getAutoContent($products, $category, $id);
 $contentDescription = getProductCardDescription($products, $id);
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
-
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
-$sections_path = $docROOT . $path . '/server/php/helpers/include-sections.php';
-include_once $head_path;
-include_once $sections_path;
-$base_path = $docROOT . $path . '/server/php/layout';
-$product_section = __DIR__ . '/../../sections/card-tabs.php';
 
 $title = "$id | Auto Security";
 $head = new Head($title, [], []);
+$header = new Header();
 error_log(print_r($category, true) . 'Я YT ОТРАБОТАЛ');
 ?>
 
@@ -56,7 +51,7 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include $base_path . '/header.php'; ?>
+  <?= $header->getHeader();?>
   <main class="main">
     <section class="card-more">
       <?= $contentImage; ?>
@@ -64,7 +59,7 @@ echo $head->setHead();
       <div class="product-card__wrapper">
         <div class="product-card__container">
           <p class="product-card__text">Доставка:</p>
-          <a class="product-card__link" href="#" style="background-image: url(<?= $path . '/client/images/vectors/link-icon.svg'; ?>);">о доставке и оплате</a>
+          <a class="product-card__link" href="#" style="background-image: url(<?= $path . '/client/vectors/link-icon.svg'; ?>);">о доставке и оплате</a>
         </div>      
         <a class="product-card__link product-card__link--mod" href="#">Наличие товара уточняйте у продавца.</a>
       </div>
@@ -94,7 +89,7 @@ echo $head->setHead();
     <?php endif; ?>
       <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
     </section>    
-    <?php include $product_section;?>
+    <?= cardTabsSection($_GET['id'])?>
     <div class="modal" id="deliveryModal">
       <div class="modal__content">
         <span class="modal__close-button" id="modalClose">&times;</span>
@@ -116,8 +111,12 @@ echo $head->setHead();
       </div>
     </div>
   </main>
-  <?php include $base_path . '/footer.php'; ?>
-  <?php include_once $docROOT . $path . '/server/php/sections/popups/modal-cart.php'; ?>
+  <?php
+  echo (new Footer())->getFooter();
+echo (new ModalCart())->render();
+
+
+?>
 </body>
 
 </html>

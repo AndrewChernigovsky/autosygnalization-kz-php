@@ -16,7 +16,7 @@ class Cart
 
     public function initCart()
     {
-        $icon = '/client/images/vectors/sprite.svg#cart';
+        $icon = '/client/vectors/sprite.svg#cart';
         $link = "/cart";
         ob_start();
         ?>

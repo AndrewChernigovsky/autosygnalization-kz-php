@@ -269,7 +269,6 @@ const copyStatics = (cb) => {
 const sprite = () => {
   return src([
     "./src/client/vectors/icons/**/*.svg",
-    "!./src/client/vectors/sprite.svg",
   ])
     .pipe(svgSprite(config))
     .pipe(dest("./dist/client/vectors/"));

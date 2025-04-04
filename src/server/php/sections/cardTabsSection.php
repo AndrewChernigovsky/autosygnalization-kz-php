@@ -1,20 +1,15 @@
 <?php
+
+namespace SECTIONS;
+
 use DATA\TabsData;
 
-$current_product_id = isset($_GET['id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['id']) ? $_GET['id'] : '';
+// $current_product_id = isset($_GET['id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['id']) ? $_GET['id'] : '';
 
-error_log(print_r($current_product_id, true) . " Это id продукта");
+// error_log(print_r($current_product_id, true) . " Это id продукта");
 
-$product_tabs = [];
-$tabs = (new TabsData())->getData();
-if (!empty($tabs)) {
-    foreach ($tabs as $product) {
-        if ($product['id'] === $current_product_id && isset($product['tabs'])) {
-            $product_tabs = $product['tabs'];
-            break;
-        }
-    }
-}
+// $product_tabs = [];
+
 
 function isActiveClassTab($index)
 {
@@ -44,8 +39,18 @@ function isTextTab($title)
 }
 
 
-function cardTabsSection($product_tabs = [])
+function cardTabsSection($id)
 {
+
+    $tabs = (new TabsData())->getData();
+    if (!empty($tabs)) {
+        foreach ($tabs as $product) {
+            if ($product['id'] === $id && isset($product['tabs'])) {
+                $product_tabs = $product['tabs'];
+                break;
+            }
+        }
+    }
     if (empty($product_tabs)) {
         return '<p>Информация о товаре недоступна.</p>';
     }
@@ -97,7 +102,7 @@ function cardTabsSection($product_tabs = [])
                                       <?php if (!empty($item['title'])): ?>
                                           <h3 class="tab__title"><?= htmlspecialchars($item['title']) ?></h3>
                                       <?php endif; ?>
-                                      <p class="tab__description"><?= htmlspecialchars($item['description']) ?></p>
+                                      <p class="tab__description"><?= $item['description'] ?></p>
                                   </li>
                               <?php endforeach; ?>
                           </ul>
@@ -113,7 +118,7 @@ function cardTabsSection($product_tabs = [])
                                       <?php if (!empty($item['title'])): ?>
                                           <h3 class="tab__title"><?= htmlspecialchars($item['title']) ?></h3>
                                       <?php endif; ?>
-                                      <p class="tab__description"><?= htmlspecialchars($item['description']) ?></p>
+                                      <p class="tab__description"><?= $item['description'] ?></p>
                                   </li>
                               <?php endforeach; ?>
                           </ul>
@@ -123,7 +128,7 @@ function cardTabsSection($product_tabs = [])
                       <?php if (isset($tab_content['description'])): ?>
                           <ul class="tab__list tab__list--no-column <?= $tab_classes ?> list-style-none" data-content="<?= htmlspecialchars($tab_title) ?>">
                               <li class="tab__item tab__item--text">
-                                  <p class="tab__description"><?= htmlspecialchars($tab_content['description']) ?></p>
+                                  <p class="tab__description"><?= $tab_content['description'] ?></p>
                               </li>
                           </ul>
                       <?php endif; ?>
@@ -136,7 +141,7 @@ function cardTabsSection($product_tabs = [])
                                   <?php if (!empty($item['title'])): ?>
                                       <h3 class="tab__title"><?= htmlspecialchars($item['title']) ?></h3>
                                   <?php endif; ?>
-                                  <p class="tab__description"><?= htmlspecialchars($item['description']) ?></p>
+                                  <p class="tab__description"><?= $item['description'] ?></p>
                               </li>
                           <?php endforeach; ?>
                       </ul>

@@ -147,7 +147,7 @@
 
       & input:checked {
         border: none;
-        mask-image: url('/client/images/vectors/aprove.svg');
+        mask-image: url('/client/vectors/aprove.svg');
         background-color: var.$green;
       }
 
@@ -211,7 +211,7 @@
 
     &:checked {
       border: none;
-      mask-image: url('/client/images/vectors/aprove.svg');
+      mask-image: url('/client/vectors/aprove.svg');
       background-color: var.$green;
     }
   }

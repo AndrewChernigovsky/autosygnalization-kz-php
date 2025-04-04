@@ -11,7 +11,8 @@
     "dev": "cross-env PRODUCTION=false gulp",
     "build": "cross-env PRODUCTION=true gulp build",
     "serve": "cross-env PRODUCTION=true gulp serve",
-    "statics": "cross-env PRODUCTION=true gulp statics"
+    "statics": "cross-env PRODUCTION=true gulp statics",
+    "statics:img": "node sharp.js"
   },
   "devDependencies": {
     "@fancyapps/ui": "^5.0.36",

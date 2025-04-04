@@ -105,7 +105,7 @@
       content: '';
       width: 25px;
       height: 25px;
-      background-image: url('/client/images/vectors/phone-no-border.svg');
+      background-image: url('/client/vectors/phone-no-border.svg');
       background-repeat: no-repeat;
       background-size: 25px 25px;
       left: 20px;
@@ -132,7 +132,7 @@
     &::after {
       position: absolute;
       content: '';
-      background-image: url('/client/images/vectors/whatsapp.svg');
+      background-image: url('/client/vectors/whatsapp.svg');
       background-repeat: no-repeat;
       background-size: 28px 28px;
       left: 13px;
@@ -160,7 +160,7 @@
       content: '';
       width: 20px;
       height: 20px;
-      background-image: url('/client/images/vectors/message-icon.svg');
+      background-image: url('/client/vectors/message-icon.svg');
       background-repeat: no-repeat;
       background-size: 20px 20px;
     }
@@ -174,7 +174,7 @@
       content: '';
       width: 25px;
       height: 25px;
-      mask-image: url('/client/images/vectors/geo.svg');
+      mask-image: url('/client/vectors/geo.svg');
       mask-repeat: no-repeat;
       mask-size: 25px 25px;
       background-color: var.$red;
@@ -193,7 +193,7 @@
       content: '';
       width: 25px;
       height: 25px;
-      mask-image: url('/client/images/vectors/clock.svg');
+      mask-image: url('/client/vectors/clock.svg');
       mask-repeat: no-repeat;
       mask-size: 25px 25px;
       background-color: var.$red;

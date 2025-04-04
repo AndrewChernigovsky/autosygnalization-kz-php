@@ -299,7 +299,7 @@ class FiltersRender
         ob_start();
         ?>
         <button class="filter-button" type="button" id="filter-btn"
-            style="background-image: url(<?= htmlspecialchars($this->path . '/client/images/vectors/filters.svg'); ?>);">Фильтр</button>
+            style="background-image: url(<?= htmlspecialchars($this->path . '/client/vectors/filters.svg'); ?>);">Фильтр</button>
         <button class="filter-button-close" type="button" id="filter-btn-close">
             <span class="visually-hidden">скрыть фильтры</span>
         </button>

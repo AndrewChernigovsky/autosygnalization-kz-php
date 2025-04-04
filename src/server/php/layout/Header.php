@@ -44,7 +44,7 @@ class Header
                         <a href="https://www.instagram.com/autosecurity_kz" class="header__instagram-image link">
                             <div class="header__image image">
                                 <svg width="50" height="50">
-                                    <use href="/client/images/vectors/sprite.svg#instagramm-icon" fill="currentColor"></use>
+                                    <use href="/client/vectors/sprite.svg#instagramm-icon" fill="currentColor"></use>
                                 </svg>
                             </div>
                         </a>
@@ -66,7 +66,7 @@ class Header
                 </div>
                 <div class="phone">
                     <svg width="50" height="50">
-                        <use href="/client/images/vectors/sprite.svg#phone"></use>
+                        <use href="/client/vectors/sprite.svg#phone"></use>
                     </svg>
                     <ul>
                         {$this->generatePhoneLinks($phones)}
@@ -75,7 +75,7 @@ class Header
                 <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address">
                     <div class="header__image image">
                         <svg width="50" height="50">
-                            <use href="/client/images/vectors/sprite.svg#geo"></use>
+                            <use href="/client/vectors/sprite.svg#geo"></use>
                         </svg>
                     </div>
                     {$address}

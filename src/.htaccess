@@ -167,3 +167,14 @@ RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
 RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
 
 RewriteRule ^contacts\.php$ /server/php/pages/service/service.php [L]
+
+# Обработка URL без параметров
+RewriteRule ^product$ /server/php/pages/products/product.php [L,QSA]
+
+# Обработка autosygnals.php с параметром category
+RewriteCond %{QUERY_STRING} ^category=([a-zA-Z0-9_-]+)$
+RewriteRule ^product\.php$ /server/php/pages/products/product.php  [L,QSA]
+
+# Обработка catalog.php с параметрами category и id
+RewriteCond %{QUERY_STRING} ^category=([a-zA-Z0-9_-]+)&id=([a-zA-Z0-9_-]+)$
+RewriteRule ^product\.php$ /server/php/pages/products/product.php [L,QSA]

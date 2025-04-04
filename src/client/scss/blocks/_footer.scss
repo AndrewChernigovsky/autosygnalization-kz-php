@@ -146,11 +146,11 @@
       border-radius: 50%;
 
       &.telegram-icon {
-        background-image: url('/client/images/vectors/telegram.svg');
+        background-image: url('/client/vectors/telegram.svg');
       }
 
       &.whatsapp-icon {
-        background-image: url('/client/images/vectors/whatsapp.svg');
+        background-image: url('/client/vectors/whatsapp.svg');
       }
     }
   }
@@ -235,8 +235,7 @@
       content: '';
       position: absolute;
       border: 1px solid var.$white;
-      background: url('/client/images/vectors/arrow.svg') no-repeat center
-          center,
+      background: url('/client/vectors/arrow.svg') no-repeat center center,
         linear-gradient(var.$red-280000, var.$red-FF0000);
       background-size: 30px;
       border-radius: 5px;
@@ -250,8 +249,7 @@
 
     &.active::before {
       transform: translateY(-50%) scaleY(-1);
-      background: url('/client/images/vectors/arrow.svg') no-repeat center
-          center,
+      background: url('/client/vectors/arrow.svg') no-repeat center center,
         linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
     }
 

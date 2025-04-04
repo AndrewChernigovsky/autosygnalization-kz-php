@@ -3,7 +3,6 @@ import { html } from 'htm/preact';
 import { CartProductCard } from './CartProductCard.jsx';
 import { CartCountTotal } from './CartCountTotal.jsx';
 
-const data = { data: 'true' };
 const cartCounter = document.querySelector('.cart .counter');
 const costTotal = document.querySelectorAll('.cost-total');
 const quantityTotal = document.querySelectorAll('.quantity-total');
@@ -25,15 +24,13 @@ export class Cart extends Component {
   }
 
   fetchProducts() {
-    const PRODUCTION = window.location.href.includes('/dist/');
-    const url = `${PRODUCTION ? '/dist/' : '/'}files/php/data/products.php`;
+    const url = '/server/php/api/products/get_all_products.php';
 
     fetch(url, {
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((products) => {

@@ -27,11 +27,12 @@ class Footer
             'name' => 'icon_phone',
             'width' => '50',
             'height' => '50',
-            "image" => "/client/images/vectors/sprite.svg#phone-no-border",
+            "image" => "/client/vectors/sprite.svg#phone-no-border",
             'href' => '#'
         ];
 
         $navigationFooterLinks = new GenerateFooterLinks((new NavigationLinks())->getNavigationFooterLinks());
+        $phones_footer = $insertPHONE->displayPhones($phones, $icon_phone);
 
         // Генерация HTML
         return <<<HTML
@@ -48,7 +49,7 @@ class Footer
             </ul>
           </div>
           <div class="phones">
-            {$insertPHONE->displayPhones($phones, $icon_phone)}
+            {$phones_footer}
           </div>
           <div class="email-site">
             <div class="email">{$email}</div>

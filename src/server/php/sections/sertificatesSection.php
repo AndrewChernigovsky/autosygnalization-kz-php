@@ -2,16 +2,14 @@
 
 namespace SECTIONS;
 
+require_once __DIR__ . '/../../../server/vendor/autoload.php';
+
+use DATA\SertificatesData;
+
 function sertificatesSection(): string
 {
+    $certificates = (new SertificatesData())->getData();
     // Массив с ссылками на сертификаты
-    $certificates = [
-        "/client/images/sertificates/sertificate-1.avif",
-        "/client/images/sertificates/sertificate-2.avif",
-        "/client/images/sertificates/sertificate-3.avif",
-        "/client/images/sertificates/sertificate-4.avif",
-        "/client/images/sertificates/sertificate-5.avif",
-    ];
 
     // Генерация HTML
     ob_start();

@@ -2,6 +2,8 @@
 
 namespace API\PRODUCTS;
 
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
 use DATA\Products;
 
 header("Access-Control-Allow-Origin: *");

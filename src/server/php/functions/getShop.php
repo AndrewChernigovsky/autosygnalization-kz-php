@@ -2,10 +2,12 @@
 
 namespace FUNCTIONS;
 
+use DATA\SetupsData;
+
 function getShop($type = 'shop')
 {
-    include __DIR__ . '/../../data/setup.php';
 
+    $setups = (new SetupsData())->getData();
     $shop = $setups[$type];
     ob_start();
 

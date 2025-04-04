@@ -1,32 +1,32 @@
 <?php
-include_once __DIR__ . '/../../api/sessions/session.php';
-use HELPERS\SetVariables;
-include_once __DIR__ . '/../../helpers/components/setup.php';
-include_once __DIR__ . '/../../helpers/components/product.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
+use LAYOUT\Header;
+use LAYOUT\Footer;
+use LAYOUT\Head;
+use DATA\Products;
+use COMPONENTS\ModalForm;
 
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
+use function AUTH\SESSIONS\initSession;
+use function FUNCTIONS\getShop;
+
+initSession();
+$header = new Header();
+$footer = new Footer();
+$modalForm = new ModalForm();
+$products = (new Products())->getData();
+
 $title = 'Корзина | Auto Security';
-
-include_once $head_path;
-include_once $docROOT . $path . '/server/php/data/products.php';
-
 $head = new Head($title, [], []);
 ?>
 
 
 <!DOCTYPE html>
 <html lang="ru">
-<?php
-echo $head->setHead();
-?>
+<?= $head->setHead();?>
 
 <body>
-  <?php include_once $docROOT . $path . '/server/php/layout/header.php'; ?>
+  <?= $header->getHeader();?>
   <main class="main">
     <section class="cart-section">
       <div class="container">
@@ -54,11 +54,11 @@ echo $head->setHead();
 
       </div>
     </section>
-    <?= getShop('setup'); ?>
-    <?= getShop('shop'); ?>
+    <?= getShop("setup"); ?>
+    <?= getShop("shop"); ?>
   </main>
 
-  <?php include_once $docROOT . $path . '/server/php/layout/footer.php'; ?>
+  <?= $footer->getFooter();?>
   <template id="product-template">
     <article class='product-card' id="">
       <div class="product-card__bg">
@@ -77,7 +77,7 @@ echo $head->setHead();
       </div>
     </article>
   </template>
-  <?php include_once "$docROOT$path/server/php/sections/popups/modal-form.php"; ?>
+  <?= $modalForm->render();?>
 </body>
 
 </html>

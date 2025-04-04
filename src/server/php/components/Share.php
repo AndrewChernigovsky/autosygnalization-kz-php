@@ -22,7 +22,7 @@ class Share
         ob_start();
         ?>
     <div class="share">
-      <p style="background-image: url(<?= htmlspecialchars($this->path . '/client/images/vectors/share-icon.svg'); ?>);">
+      <p style="background-image: url(<?= htmlspecialchars($this->path . '/client/vectors/share-icon.svg'); ?>);">
         Поделиться:</p>
       <ul class="share__list list-style-none">
         <?php if (isset($this->icons) && is_array($this->icons)): ?>

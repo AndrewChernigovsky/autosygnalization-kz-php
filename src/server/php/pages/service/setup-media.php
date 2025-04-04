@@ -29,7 +29,7 @@ $share = new Share();
   <h3 class="service-setup__subtitle">Мы предлагаем:</h3>
   <ul class="service-setup__list list-style-none">
     <?php foreach ($service['services'] as $item): ?>
-      <li class="service-setup__item" style="background-image: url(<?= '/client/images/vectors/checkbox-mark-icon.svg'; ?>);">
+      <li class="service-setup__item" style="background-image: url(<?= '/client/vectors/checkbox-mark-icon.svg'; ?>);">
         <?= htmlspecialchars($item); ?>
       </li>
     <?php endforeach; ?>

@@ -8,17 +8,19 @@ class InsertPhone extends InsertSVG
 {
     public function displayPhones($contacts_phone, $social = [])
     {
+        $html = '';
         if (!empty($contacts_phone)) {
             foreach ($contacts_phone as $phone) {
                 $cleanedPhone = str_replace(' ', '', $phone['phone']);
-                echo "<a class='link' href='tel:" . htmlspecialchars($cleanedPhone) . "'>";
+                $html .= "<a class='link' href='tel:" . htmlspecialchars($cleanedPhone) . "'>";
 
                 if (!empty($social)) {
-                    echo $this->insertSvg($social);
+                    $html .= $this->insertSvg($social);
                 }
 
-                echo htmlspecialchars($phone['phone']) . '</a>';
+                $html .= htmlspecialchars($phone['phone']) . '</a>';
             }
         }
+        return $html;
     }
 }

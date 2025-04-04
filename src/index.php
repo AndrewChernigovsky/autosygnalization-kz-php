@@ -7,12 +7,12 @@ use LAYOUT\Footer;
 use COMPONENTS\ModalForm;
 
 use function SECTIONS\bankSection;
-use function SECTIONS\faqSection;
+// use function SECTIONS\faqSection;
 use function SECTIONS\introSection;
 use function SECTIONS\marksSection;
 use function SECTIONS\popularSection;
 use function SECTIONS\qualitySection;
-use function SECTIONS\reasonsSection;
+// use function SECTIONS\reasonsSection;
 use function SECTIONS\sertificatesSection;
 use function SECTIONS\serviceSection;
 use function SECTIONS\worksSection;
@@ -38,11 +38,9 @@ echo marksSection();
 echo popularSection();
 echo serviceSection();
 echo qualitySection();
-echo reasonsSection();
 echo bankSection();
 echo sertificatesSection();
 echo worksSection();
-echo faqSection();
 echo formSection();
 ?> 
   </main>

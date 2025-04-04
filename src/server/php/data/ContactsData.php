@@ -24,13 +24,13 @@ class ContactsData
     public function getSocialIcons()
     {
         return [
-          "instagramm" => ['name' => 'Instagram', 'width' => '50', 'height' => '50', "image" => '/client/images/vectors/sprite.svg#instagramm-icon', 'href' => "https://www.instagram.com/autosecurity_kz"],
+          "instagramm" => ['name' => 'Instagram', 'width' => '50', 'height' => '50', "image" => '/client/vectors/sprite.svg#instagramm-icon', 'href' => "https://www.instagram.com/autosecurity_kz"],
         ];
     }
     public function getGeoIcon()
     {
         return [
-          "geo" => ['name' => 'geo', 'width' => '50', 'height' => '50', "image" => '/client/images/vectors/sprite.svg#geo', 'href' => 'href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA"'],
+          "geo" => ['name' => 'geo', 'width' => '50', 'height' => '50', "image" => '/client/vectors/sprite.svg#geo', 'href' => 'href="https://maps.app.goo.gl/72eQCZUbxVCKh43PA"'],
         ];
     }
 
@@ -38,7 +38,7 @@ class ContactsData
     {
         if ($link) {
             $output = '';
-            $path = htmlspecialchars('/client/images/vectors/message-icon.svg');
+            $path = htmlspecialchars('/client/vectors/message-icon.svg');
             $output .= "<a class='link' style='background-image: url(\"$path\")' href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
             return $output;
         } else {
@@ -53,7 +53,7 @@ class ContactsData
     {
         if ($link) {
             $output = '';
-            $path = htmlspecialchars('/client/images/vectors/home-icon.svg');
+            $path = htmlspecialchars('/client/vectors/home-icon.svg');
             $output .= "<a class='link' style='background-image: url(\"$path\");' href='http://autosecurity.site'>" . htmlspecialchars($this->web_site) . '</a>'; // Используйте экранирование для URL
             return $output;
         } else {
@@ -71,8 +71,8 @@ class ContactsData
         return <<<HTML
 
           <a href='' class='logo'>
-              <img src='{$logo}' alt='$logo_description)' width='142' height='40'/>
-          </a>";
+              <img src='{$logo}' alt='$logo_description' width='142' height='40'/>
+          </a>
           HTML;
     }
     public function getContacts()
