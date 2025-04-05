@@ -20,6 +20,7 @@ return array(
     '645a24e8c759d9e2e03d8df0b23526f4' => $baseDir . '/php/sections/cardTabsSection.php',
     '68b01011c55aa98ffa53200da532411b' => $baseDir . '/php/functions/mail/telegram.php',
     'bb7b18e454c5d4e332fa22ab23202ed5' => $baseDir . '/php/functions/getShop.php',
+    'aae476027f8218953ce297970b35aa36' => $baseDir . '/php/functions/autosygnalParams.php',
     'c56035af57f7f04d38d2e81e14f413f9' => $baseDir . '/php/functions/getProductCard.php',
     '4aad28a6c85a7fe482abbd4f044aa707' => $baseDir . '/php/functions/renderPhoneButton.php',
     '4edcde4043197f25343a33ac8e210dfa' => $baseDir . '/php/auth/sessions/get_session_data.php',

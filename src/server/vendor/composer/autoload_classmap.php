@@ -21,6 +21,7 @@ return array(
     'COMPONENTS\\Select' => $baseDir . '/php/components/Select.php',
     'COMPONENTS\\ServiceCard' => $baseDir . '/php/components/ServiceCard.php',
     'COMPONENTS\\Share' => $baseDir . '/php/components/Share.php',
+    'COMPONENTS\\SpecialProducts' => $baseDir . '/php/components/SpecialProducts.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'DATABASE\\DataBase' => $baseDir . '/php/database/DataBase.php',
     'DATABASE\\InitDataBase' => $baseDir . '/php/database/InitDataBase.php',

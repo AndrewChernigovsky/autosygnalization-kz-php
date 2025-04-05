@@ -1,34 +1,29 @@
 <?php
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
+use DATA\Products;
+use DATA\SelectData;
+use DATA\ArticleData;
+use LAYOUT\Header;
+use LAYOUT\Head;
+use LAYOUT\Footer;
+use COMPONENTS\Article;
+use COMPONENTS\FiltersRender;
+use COMPONENTS\CreateProductCards;
+use COMPONENTS\Select;
+use COMPONENTS\Pagination;
+use COMPONENTS\ModalCart;
+use COMPONENTS\SpecialProducts;
 
-// 
-session_start();
-$pagePath = $_SERVER['PHP_SELF'];
+use function AUTH\SESSIONS\initSession;
+use function FUNCTIONS\getShop;
+use function FUNCTIONS\getParamsAutosygnals;
 
-if (isset($_GET['SELECT'])) {
-    $_SESSION['get_params_gsm'] = $_GET;
-}
+getParamsAutosygnals("get_params_gsm");
 
-elseif (!isset($_GET['SELECT']) && isset($_SESSION['get_params_gsm'])) {
-    $savedParams = $_SESSION['get_params_gsm'];
-    $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($savedParams);
-    session_unset();
-    session_destroy();
-    header("Location: $redirect_url");
-    exit();
-}
-include_once __DIR__ . '/../../api/sessions/session.php';
-include_once __DIR__ . '/../../data/article.php';
-include_once __DIR__ . '/../../data/select.php';
-include_once __DIR__ . '/../../data/products.php';
-use HELPERS\SetVariables;
-include_once __DIR__ . '/../../helpers/components/filters/filters.php';
-include_once __DIR__ . '/../../helpers/components/setup.php';
-include_once __DIR__ . '/../../helpers/components/article.php';
-include_once __DIR__ . '/../../helpers/components/product.php';
-include_once __DIR__ . '/../../helpers/components/select.php';
-include_once __DIR__ . '/../../helpers/components/pagination.php';
-include_once __DIR__ . '/../../helpers/components/render-product-cards.php';
+initSession();
+
+$products = (new Products())->getData();
 
 $PAGE = $_GET['PAGE'] ?? 1;
 $OPTIONS = $_GET ?? [];
@@ -36,27 +31,23 @@ $minCost = $_GET['min-value-cost'] ?? 0;
 $maxCost = $_GET['max-value-cost'] ?? PHP_FLOAT_MAX;
 $SELECT = $_GET['SELECT'] ?? '';
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
-
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
-$title = 'Автосигнализации gsm';
 $total_items_per_page = 10;
-include_once $head_path;
-include_once $docROOT . $path . '/server/php/data/products.php';
-include_once $docROOT . $path . '/server/php/pages/special-products.php';
+$title = 'Автосигнализации gsm';
 
+$header = new Header();
+$footer = new Footer();
 $head = new Head($title, [], []);
-$filters_render = new FiltersRender($products,"gsm");
+$filters_render = new FiltersRender($products, "gsm");
 $article = new Article();
 $articleData = new ArticleData();
 $select = new Select();
 $selectData = new SelectData();
 
 $filteredProducts = $filters_render->returnCorrectedArr();
-$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function() {echo getSpecialOffersSection();});
+$create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function () {
+    $special = (new SpecialProducts())->render();
+    echo $special;
+});
 ?>
 
 <!DOCTYPE html>
@@ -66,7 +57,7 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include_once $docROOT . $path . '/server/php/layout/header.php'; ?>
+<?=$header->getHeader();  ?>
   <main class="main">
     <h2 class="title__h2">Автосигнализации с GSM</h2>
     <div class="catalog">
@@ -75,7 +66,7 @@ echo $head->setHead();
           <?= $filters_render->renderFilters(); ?>
         </aside>
         <div class="catalog__products">
-          <?= $select->createComponent($selectData->getSelectData()) ?>
+        <?= $select->createComponent($selectData->getData()) ?>
           <?php if (!empty($filteredProducts)): ?>
             <?= $create_product_cards->renderProductCards(); ?>
           <?php else: ?>
@@ -92,8 +83,8 @@ echo $head->setHead();
     </div>
     <?= getShop('setup'); ?>
   </main>
-  <?php include_once $docROOT . $path . '/server/php/layout/footer.php'; ?>
-  <?php include_once $docROOT . $path . '/server/php/sections/popups/modal-cart.php'; ?>
+  <?= $footer->getFooter(); ?>
+  <?= (new ModalCart())->render();?>
 </body>
 
 </html>
