@@ -21,35 +21,39 @@ use function FUNCTIONS\renderPhoneButton;
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
+
+error_log(123123 . ' : ');
+
 ?>
 
 <!DOCTYPE html>
 <html lang="ru">
-  <head>
-    <?= $head->setHead();?>
-  </head>
+
+<head>
+  <?= $head->setHead(); ?>
+</head>
 
 <body>
-  <?= (new Header())->getHeader()?>
+  <?= (new Header())->getHeader() ?>
   <main class="main">
     <?php
-echo introSection();
-echo marksSection();
-echo popularSection();
-echo serviceSection();
-echo qualitySection();
-echo bankSection();
-echo sertificatesSection();
-echo worksSection();
-echo formSection();
-?> 
+    echo introSection();
+    echo marksSection();
+    echo popularSection();
+    echo serviceSection();
+    echo qualitySection();
+    echo bankSection();
+    echo sertificatesSection();
+    echo worksSection();
+    echo formSection();
+    ?>
   </main>
 
-<?php
-echo (new Footer())->getFooter();
-echo (new ModalForm())->render();
-echo renderPhoneButton();
-?>
+  <?php
+  echo (new Footer())->getFooter();
+  echo (new ModalForm())->render();
+  echo renderPhoneButton();
+  ?>
 </body>
 
 </html>

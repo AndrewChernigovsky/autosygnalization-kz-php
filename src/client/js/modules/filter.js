@@ -142,9 +142,10 @@ export default class FiltersAction {
 
       const cleanUrl = this.currentUrl.href.split('?')[0];
       const selectValue = this.currentUrl.searchParams.get('SELECT');
+      const selectType = this.currentUrl.searchParams.get('type');
 
       if (this.currentParams.has('SELECT')) {
-        location.assign(`${cleanUrl}?SELECT=${selectValue}&${params}`);
+        location.assign(`${cleanUrl}?SELECT=${selectValue}&type=${selectType}&${params}`);
       }
     });
   }
