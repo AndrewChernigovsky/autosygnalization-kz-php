@@ -105,82 +105,16 @@ RewriteRule ^catalog\.php$ /server/php/pages/catalog/catalog.php [L,QSA]
 RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
 RewriteRule ^catalog\.php$ /server/php/pages/catalog/catalog.php [L,QSA]
 
-
 # Rule 1: Redirect /autosygnals to autosygnals.php
 RewriteRule ^autosygnals$ /server/php/pages/autosygnals/autosygnals.php [L,QSA]
 
-# Rule 2: Handle autosygnal.php with SELECT parameter
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+# Rule 2: Обработка autosygnal.php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
 RewriteRule ^autosygnal\.php$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
 
-# Rule 3: Handle autosygnal.php with SELECT and PAGE parameters
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
-RewriteRule ^autosygnal\.php$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-# Rule 4: Handle autosygnal.php with SELECT and type parameters
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&type=([a-zA-Z0-9_-]+)$
-RewriteRule ^autosygnal\.php$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&type=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$$
-RewriteRule ^autosygnal\.php$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&type=([a-zA-Z0-9_-]+)&min-value-cost=([a-zA-Z0-9_-]+)&max-value-cost=([a-zA-Z0-9_-]+)$
-RewriteRule ^autosygnal\.php$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-# Rule 2: Обработка autosygnal без расширения .php
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
+# Rule 3: Обработка autosygnal без расширения .php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
 RewriteRule ^autosygnal$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
-RewriteRule ^autosygnal$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&type=([a-zA-Z0-9_-]+)$
-RewriteRule ^autosygnal$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&type=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$$
-RewriteRule ^autosygnal$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
-
-
-# # Обработка URL без параметров
-# RewriteRule ^autosygnals-gsm$ /server/php/pages/autosygnals/autosygnals-gsm.php [L,QSA]
-
-# # Обработка autosygnals.php с параметром SELECT
-# RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
-# RewriteRule ^autosygnals-gsm\.php$ /server/php/pages/autosygnals/autosygnals-gsm.php [L,QSA]
-
-# # Обработка catalog.php с параметрами SELECT и PAGE
-# RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
-# RewriteRule ^autosygnals-gsm\.php$ /server/php/pages/autosygnals/autosygnals-gsm.php [L,QSA]
-
-
-# # Обработка URL без параметров
-# RewriteRule ^autosygnals-without-auto$ /server/php/pages/autosygnals/autosygnals-without-auto.php [L,QSA]
-
-# # Обработка autosygnals.php с параметром SELECT
-# RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
-# RewriteRule ^autosygnals-without-auto\.php$ /server/php/pages/autosygnals/autosygnals-without-auto.php [L,QSA]
-
-# # Обработка catalog.php с параметрами SELECT и PAGE
-# RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
-# RewriteRule ^autosygnals-without-auto\.php$ /server/php/pages/autosygnals/autosygnals-without-auto.php [L,QSA]
-
-# # Обработка URL без параметров
-# RewriteRule ^autosygnals-starline$ /server/php/pages/autosygnals/autosygnals-starline.php [L,QSA]
-
-# # Обработка autosygnals.php с параметром SELECT
-# RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
-# RewriteRule ^autosygnals-starline\.php$ /server/php/pages/autosygnals/autosygnals-starline.php [L,QSA]
-
-# # Обработка catalog.php с параметрами SELECT и PAGE
-# RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)&PAGE=([a-zA-Z0-9_-]+)$
-# RewriteRule ^autosygnals-starline\.php$ /server/php/pages/autosygnals/autosygnals-starline.php [L,QSA]
-
-# # Обработка URL без параметров
-# RewriteRule ^autosygnals-acssesuars$ /server/php/pages/autosygnals/autosygnals-acssesuars.php [L,QSA]
-
-# # Обработка autosygnals.php с параметром SELECT
-# RewriteCond %{QUERY_STRING} ^SELECT=([a-zA-Z0-9_-]+)$
-# RewriteRule ^autosygnals-acssesuars\.php$ /server/php/pages/autosygnals/autosygnals-acssesuars.php [L,QSA]
 
 # Обработка service.php с параметром service
 RewriteCond %{QUERY_STRING} ^service=([a-zA-Z0-9_-]+)$
@@ -188,6 +122,24 @@ RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
 
 # Обработка URL без параметров
 RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+
+
+
+# Rule 1: Redirect /services to services.php
+RewriteRule ^services$ /server/php/pages/service/services.php [L,QSA]
+
+# Rule 2: Обработка service.php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
+RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
+
+# Rule 3: Обработка service без расширения .php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
+RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+
+
+
+
+
 
 RewriteRule ^contacts\.php$ /server/php/pages/service/service.php [L]
 

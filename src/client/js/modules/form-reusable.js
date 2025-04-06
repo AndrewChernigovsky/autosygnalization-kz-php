@@ -1,12 +1,10 @@
 export default class FormReusable {
-  constructor(object, path) {
+  constructor(object) {
     this.container = document.querySelector(object.container);
     this.form = this.container.querySelector(object.form);
     this.inputName = this.form.querySelector('input[name="name"]');
     this.inputPhone = this.form.querySelector('input[name="phone"]');
     this.textarea = this.form.querySelector('textarea[name="message"]');
-
-    this.path = path || (window.location.pathname.includes('/dist') ? '/dist' : '');
     this.sendObject = {};
 
     // Привязываем методы, чтобы this всегда указывал на экземпляр класса
@@ -25,7 +23,7 @@ export default class FormReusable {
   setWork() {
     this.form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const url = `${this.path}/server/php/data/form_reusable.php`;
+      const url = "/server/php/data/form_reusable.php";
       const formData = new FormData(this.form);
       formData.forEach((value, key) => {
         this.sendObject[key] = value;

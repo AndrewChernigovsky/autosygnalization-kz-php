@@ -39,9 +39,6 @@ $maxCost = $_GET['max-value-cost'] ?? PHP_FLOAT_MAX;
 $SELECT = $_GET['SELECT'] ?? '';
 $TYPE = $_GET['type'] ?? "auto";
 
-error_log($TYPE . ' : TYPE');
-
-$head = new Head($title, [], []);
 $header = new Header();
 $footer = new Footer();
 $filters_render = new FiltersRender($products, $TYPE);
@@ -59,11 +56,12 @@ $title = '';
 
 foreach ($autosygnals as $autosygnal) {
   if (isset($autosygnal['type']) && $autosygnal['type'] === $TYPE) {
-    $title = $autosygnal['name'];
+    $title = $autosygnal['name'] . "| Auto Security";
     break;
   }
 }
 
+$head = new Head($title, [], []);
 ?>
 
 <!DOCTYPE html>

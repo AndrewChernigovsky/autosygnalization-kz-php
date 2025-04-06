@@ -1,32 +1,28 @@
 <?php
-include_once __DIR__ . '/../../api/sessions/session.php';
-use HELPERS\SetVariables;
-include_once __DIR__ . '/../../data/aboutus.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
+use function AUTH\SESSIONS\initSession;
+use DATA\AboutusData;
+use LAYOUT\Footer;
+use LAYOUT\Head;
+use LAYOUT\Header;
 
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
+initSession();
+
 $title = 'О нас | Auto Security';
-
-include_once $head_path;
-
+$header = new Header();
+$footer = new Footer();
 $head = new Head($title, [], []);
-
 $aboutUs = new AboutusData();
 ?>
 
 
 <!DOCTYPE html>
 <html lang="ru">
-<?php
-echo $head->setHead();
-?>
+<?= $head->setHead(); ?>
 
 <body>
-  <?php include_once $docROOT . $path . '/server/php/layout/header.php'; ?>
+  <?= $header->getHeader(); ?>
   <main class="main">
     <section class="about-us">
       <div class="container">
@@ -66,7 +62,7 @@ echo $head->setHead();
           <div class="tech-photo__swiper swiper swiper-tech-photo">
             <div class="tech-photo__swiper-wrapper swiper-wrapper">
               <?php
-              foreach ($aboutUs->getImagesAboutUs() as $image) {
+              foreach ($aboutUs->getDataImages() as $image) {
                 echo "<div class='tech-photo__swiper-slide swiper-slide'>
                   <img src='{$image['src']}' alt='картинка' width='600' height='300'>
                 </div>";
@@ -77,8 +73,10 @@ echo $head->setHead();
           </div>
           <div class="tech-photo__block">
             <h3 class="tech-photo__block-title">Обращайтесь в Auto Security</h3>
-            <p class="tech-photo__text">Вам будет оказана квалифицированная помощь по установке дополнительного электронного оборудования на Ваш автомобиль!</p>
-            <p class="tech-photo__text">Мы продиагностируем Ваш авто, отремонтируем, установим, настроим Ваше оборудование! Доверяйте профессионалам!</p>
+            <p class="tech-photo__text">Вам будет оказана квалифицированная помощь по установке дополнительного
+              электронного оборудования на Ваш автомобиль!</p>
+            <p class="tech-photo__text">Мы продиагностируем Ваш авто, отремонтируем, установим, настроим Ваше
+              оборудование! Доверяйте профессионалам!</p>
           </div>
 
         </div>
@@ -87,7 +85,7 @@ echo $head->setHead();
           <div class="reviews__swiper swiper swiper-reviews">
             <ul class="reviews__swiper-wrapper swiper-wrapper list-style-none">
               <?php
-              foreach ($aboutUs->getReviewsAboutUs() as $review) {
+              foreach ($aboutUs->getData() as $review) {
                 echo "
               <li class='reviews__swiper-slide swiper-slide'>
               <div class='swiper-slide__header'>
@@ -117,7 +115,7 @@ echo $head->setHead();
     </section>
 
   </main>
-  <?php include_once $docROOT . $path . '/server/php/layout/footer.php'; ?>
+  <?= $footer->getFooter(); ?>
 </body>
 
 </html>

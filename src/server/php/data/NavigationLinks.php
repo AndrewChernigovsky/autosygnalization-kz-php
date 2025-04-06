@@ -22,7 +22,7 @@ class NavigationLinks
       ['name' => 'Главная', 'path' => "/"],
       ['name' => 'Автосигнализации', 'path' => "/autosygnals"],
       ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name"],
-      ['name' => 'Наши услуги', 'path' => "/service"],
+      ['name' => 'Наши услуги', 'path' => "/services"],
       ['name' => 'О нас', 'path' => "/about"],
       ['name' => 'Контакты', 'path' => "/contacts"],
     ];
@@ -39,11 +39,11 @@ class NavigationLinks
           [
             //'name' => 'Автосигнализации',
             'children' => [
-              ['link' => "/autosygnals?type=auto&SELECT=name", 'name' => 'Автосигнализации с автозапуском'],
-              ['link' => "/autosygnals?type=gsm&SELECT=name", 'name' => 'Автосигнализации с GSM'],
-              ['link' => "/autosygnals?type=without-auto&SELECT=name", 'name' => 'Автосигнализации без автозапуска'],
-              ['link' => "/autosygnals?type=starline&SELECT=name", 'name' => 'Каталог автосигнализаций Starline'],
-              ['link' => "/autosygnals?type=acssesuars&SELECT=name", 'name' => 'Пульты и аксессуары'],
+              ['link' => "/autosygnal?type=auto&SELECT=name", 'name' => 'Автосигнализации с автозапуском'],
+              ['link' => "/autosygnal?type=gsm&SELECT=name", 'name' => 'Автосигнализации с GSM'],
+              ['link' => "/autosygnal?type=without-auto&SELECT=name", 'name' => 'Автосигнализации без автозапуска'],
+              ['link' => "/autosygnal?type=starline&SELECT=name", 'name' => 'Каталог автосигнализаций Starline'],
+              ['link' => "/autosygnal?type=acssesuars&SELECT=name", 'name' => 'Пульты и аксессуары'],
               ['link' => "/parking-systems?SELECT=name", 'name' => 'Видеорегистраторы'],
               ['link' => "/price", 'name' => "Прайс на материал и установку"]
             ],
@@ -94,28 +94,28 @@ class NavigationLinks
       ],
       [
         'type' => "gsm",
-        'link' => "/autosygnals?SELECT=name&type=gsm",
+        'link' => "/autosygnal?SELECT=name&type=gsm",
         'name' => 'Автосигнализации с GSM',
         'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
         'src' => "/client/images/autosygnals/autosygnals-2.avif"
       ],
       [
         'type' => "without-auto",
-        'link' => "/autosygnals?SELECT=name&ype=without-auto",
+        'link' => "/autosygnal?SELECT=name&ype=without-auto",
         'name' => 'Автосигнализации без автозапуска',
         'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
         'src' => "/client/images/autosygnals/autosygnals-3.avif"
       ],
       [
         'type' => "starline",
-        'link' => "/autosygnals?SELECT=name&type=starline",
+        'link' => "/autosygnal?SELECT=name&type=starline",
         'name' => 'Каталог автосигнализаций Starline',
         'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
         'src' => "/client/images/autosygnals/autosygnals-4.avif"
       ],
       [
         'type' => "acssesuars",
-        'link' => "/autosygnals?SELECT=name&type=acssesuars",
+        'link' => "/autosygnalsSELECT=name&type=acssesuars",
         'name' => 'Пульты и аксессуары',
         'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
         'src' => "/client/images/autosygnals/autosygnals-5.avif"

@@ -15,14 +15,17 @@ export default class ProcessForm {
 
 
     this.sendObject = {};
-    this.path = window.location.pathname.includes('/dist') ? '/dist' : '';
     this.init();
   }
 
   init() {
     this.editSubmitEvent();
-    this.validModel(15);
-    this.validReleaseYear(4);
+    if (this.inputModel) {
+      this.validModel(15);
+    }
+    if (this.inputReleaseYear) {
+      this.validReleaseYear(4);
+    }
     this.validName(60);
     this.validPhone(12);
     this.validMessage(100);
@@ -47,7 +50,7 @@ export default class ProcessForm {
   }
 
   sendDataToServer() {
-    const url = `${this.path}/server/php/data/process_form.php`;
+    const url = "/server/php/data/process_form.php";
 
     console.log('Отправляемые данные:', this.sendObject); // Логирование данных
 

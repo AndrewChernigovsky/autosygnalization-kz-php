@@ -1,72 +1,78 @@
 <?php
-use LAYOUT\Head;
+require_once __DIR__ . '/../../../vendor/autoload.php';
+
+use DATA\NavigationLinks;
+use DATA\ServicesData;
 use LAYOUT\Header;
+use LAYOUT\Head;
 use LAYOUT\Footer;
-use HELPERS\IncludeSections;
+use COMPONENTS\ServiceCard;
 use COMPONENTS\ModalForm;
+use COMPONENTS\Share;
+use HELPERS\Services;
 
-use function FUNCTIONS\renderPhoneButton;
+use function FUNCTIONS\getShop;
 
-include_once __DIR__ . '/../../api/sessions/session.php';
-
-$autoType = isset($_GET['service']) ? $_GET['service'] : null;
-$footer = new Footer();
 $header = new Header();
-function getContent($base_path, $path_2, $type)
-{
-    $html = '';
-    $html .= $header->getHeader();
-    $html .= "<main class='main'>";
-    $html .= "<div>";
-    $html .= setType($type);
-    "</div>";
-    "</main>";
-    renderPhoneButton();
-    include $path_2 . '/server/php/helpers/components/phone-button.php';
-    include $path_2 . '/server/php/sections/popups/modal-form.php';
-}
-function setType($type): string
-{
-    include "./$type.php";
+$footer = new Footer();
+
+$services_data = (new ServicesData())->getData();
+$service_data = new Services($services_data);
+$services = array_values($service_data->getServices());
+$navigationLinks = new NavigationLinks();
+$card = new ServiceCard();
+
+$type = isset($_GET['service']) ? $_GET['service'] : null;
+
+if ($type && isset($services_data[$type])) {
+  $service = $services_data[$type];
+} else {
+  $service = [
+    'name' => 'Услуга не найдена',
+    'src' => '',
+    'description' => 'Описание услуги не доступно.'
+  ];
 }
 
-function getAutoContent($type, $base_path, $path_2)
-{
-    switch ($type) {
-        case 'setup':
-            return getContent($base_path, $path_2, 'setup');
-        case 'locks':
-            return getContent($base_path, $path_2, 'locks');
-        case 'setup-media':
-            return getContent($base_path, $path_2, 'setup-media');
-        case 'setup-system-parking':
-            return getContent($base_path, $path_2, 'setup-system-parking');
-        case 'autoelectric':
-            return getContent($base_path, $path_2, 'autoelectric');
-        case 'rus':
-            return getContent($base_path, $path_2, 'rus');
-        case 'diagnostic':
-            return getContent($base_path, $path_2, 'diagnostic');
-        case 'disabled-autosynal':
-            return getContent($base_path, $path_2, 'disabled-autosynal');
-        case 'setup-videoregistration':
-            return getContent($base_path, $path_2, 'setup-videoregistration');
-        default:
-            return getContent($base_path, $path_2, 'default');
-    }
-}
-$content = getAutoContent($autoType, $base_path, $path_2);
-$title = 'Установка и ремонт автосигнализаций | Auto Security';
+$title = $services_data[$type]['name'] . "| Auto Security";
 $head = new Head($title, [], []);
+$share = new Share();
 ?>
 
 <!DOCTYPE html>
 <html lang="ru">
-<?php
-echo $head->setHead();
-?>
+<?= $head->setHead(); ?>
 
 <body>
+
+  <?= $header->getHeader(); ?>
+  <main class="main"></main>
+  <section class="service-setup" id="service-setup">
+    <h2 class="service-setup__title"><?= htmlspecialchars($service['name']) ?></h2>
+    <div class="service-setup__wrapper">
+      <img class="service-setup__image" src="<?= htmlspecialchars($service['image']['src']) ?>"
+        alt="<?= htmlspecialchars($service['image']['description']) ?>">
+      <p class="service-setup__description"><?= htmlspecialchars($service['description']) ?></p>
+    </div>
+    <h3 class="service-setup__subtitle">Мы предлагаем:</h3>
+    <ul class="service-setup__list list-style-none">
+      <?php foreach ($service['services'] as $item): ?>
+        <li class="service-setup__item" style="background-image: url(<?= '/client/vectors/checkbox-mark-icon.svg'; ?>);">
+          <?= htmlspecialchars($item); ?>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <p class="service-setup__text">Стоимость услуг необходимо уточнять у мастера.</p>
+    <p class="service-setup__text">Насладитесь комфортом с прекрасно установленным и настроенным нами оборудованием!</p>
+    <?= $share->getShare(); ?>
+    <p class="service-setup__price">цена: <span><?= $service['cost'] ?></span><span><?= $service['currency']; ?></span>
+    </p>
+    <button type="button" class="button y-button-primary" id="buy-btn">заказать</button>
+  </section>
+  <?= getShop('setup'); ?>
+  </main>
+  <?= $footer->getFooter(); ?>
+  <?= (new ModalForm())->render(); ?>
 </body>
 
 </html>
