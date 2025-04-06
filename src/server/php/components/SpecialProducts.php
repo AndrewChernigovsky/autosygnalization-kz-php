@@ -8,7 +8,6 @@ class SpecialProducts
 {
     public function render()
     {
-        $path_href = "special?special=special";
         $products = (new Products())->getData();
 
         ob_start(); // Начинаем буферизацию вывода
@@ -34,7 +33,7 @@ class SpecialProducts
             <?php endif; ?>
           </ul>
           <div class="offers__container">
-            <a class="offers__link-all" href="<?= htmlspecialchars($path_href); ?>">Все предложения</a>
+            <a class="offers__link-all" href="<?= "special?SELECT=name&type=special&special=special" ?>">Все предложения</a>
             <div class="offers__buttons">
               <button class="offers__button offers__button--prev swiper-button-prev-offers " type="button"></button>
               <button class="offers__button offers__button--next swiper-button-next-offers " type="button"></button>

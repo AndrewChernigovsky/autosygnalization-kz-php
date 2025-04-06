@@ -39,7 +39,7 @@ class ContactsData
         if ($link) {
             $output = '';
             $path = htmlspecialchars('/client/vectors/message-icon.svg');
-            $output .= "<a class='link' style='background-image: url(\"$path\")' href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
+            $output .= "<a class='link' href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
             return $output;
         } else {
             return htmlspecialchars($this->email);

@@ -1,31 +1,21 @@
 <?php
-include_once __DIR__ . '/../../api/sessions/session.php';
-use HELPERS\SetVariables;
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
+use DATA\ContactsData;
+use LAYOUT\Header;
+use LAYOUT\Head;
+use LAYOUT\Footer;
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
-$basePath = $variables->getBasePath();
+use function AUTH\SESSIONS\initSession;
 
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
-$sections_path = $docROOT . $path . '/server/php/helpers/include-sections.php';
-$base_path = $docROOT . $path . '/server/php/layout';
-$social = $basePath . '/server/php/helpers/components/social.php';
-$contacts_data = $basePath . '/server/php/data/contacts.php';
-
-include_once $head_path;
-include_once $sections_path;
-include_once $social;
-include_once $contacts_data;
-
+initSession();
 
 $title = 'Контакты | Auto Security';
 $head = new Head($title, [], []);
+$header = new Header();
+$footer = new Footer();
 
-
-$contacts = new Contacts(); /* Создаем экземпляр Contacts */
+$contacts = new ContactsData();
 $socialIcons = $contacts->getSocialIcons();
 $email = $contacts->getEmail(true);
 $address = $contacts->getAddress();
@@ -39,7 +29,8 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include $base_path . '/header.php'; ?>
+
+<?= $header->getHeader(); ?>
   <main class="main">
     <section class="contacts-section">
       <div class="container">
@@ -65,11 +56,11 @@ echo $head->setHead();
           </li>
           <li class="contacts-section__item contacts-section__item--email">
             <h3>Почта:</h3>
-            <p><?php echo $email ?></p>
+            <p><?= $email ?></p>
           </li>
           <li class="contacts-section__item contacts-section__item--address">
             <h3>Адрес:</h3>
-            <p><?php echo $address ?></p>
+            <p><?= $address ?></p>
           </li>
           <li class="contacts-section__item contacts-section__item--schedule">
             <h3>График работы:</h3>
@@ -122,6 +113,6 @@ echo $head->setHead();
       </div>
     </section>
   </main>
-  <?php include $base_path . '/footer.php'; ?>
+  <?= $footer->getFooter(); ?>
 </body>
 </html>

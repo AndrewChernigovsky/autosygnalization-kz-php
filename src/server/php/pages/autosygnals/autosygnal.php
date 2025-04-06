@@ -18,8 +18,10 @@ use COMPONENTS\SpecialProducts;
 
 use function AUTH\SESSIONS\initSession;
 use function FUNCTIONS\getShop;
+use function FUNCTIONS\getParamsAutosygnals;
 
 initSession();
+getParamsAutosygnals("get_params_remote_controls");
 
 $title = 'Автосигнализации | Auto Security';
 $total_items_per_page = 10;
@@ -39,8 +41,6 @@ $maxCost = $_GET['max-value-cost'] ?? PHP_FLOAT_MAX;
 $SELECT = $_GET['SELECT'] ?? '';
 $TYPE = $_GET['type'] ?? "auto";
 
-$header = new Header();
-$footer = new Footer();
 $filters_render = new FiltersRender($products, $TYPE);
 $article = new Article();
 $articleData = new ArticleData();
@@ -49,19 +49,21 @@ $selectData = new SelectData();
 
 $filteredProducts = $filters_render->returnCorrectedArr();
 $create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function () {
-  $special = (new SpecialProducts())->render();
-  echo $special;
+    $special = (new SpecialProducts())->render();
+    echo $special;
 });
+$titleDocument = '';
 $title = '';
 
 foreach ($autosygnals as $autosygnal) {
-  if (isset($autosygnal['type']) && $autosygnal['type'] === $TYPE) {
-    $title = $autosygnal['name'] . "| Auto Security";
-    break;
-  }
+    if (isset($autosygnal['type']) && $autosygnal['type'] === $TYPE) {
+        $titleDocument = $autosygnal['name'] . "| Auto Security";
+        $title = $autosygnal['name'];
+        break;
+    }
 }
 
-$head = new Head($title, [], []);
+$head = new Head($titleDocument, [], []);
 ?>
 
 <!DOCTYPE html>
@@ -90,7 +92,7 @@ $head = new Head($title, [], []);
       <?php if ($filteredProducts): ?>
         <?php
         $pagination = new Pagination($filteredProducts, $total_items_per_page);
-        ?>
+          ?>
         <?= $pagination->render(); ?>
       <?php endif; ?>
     </div>

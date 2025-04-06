@@ -45,7 +45,7 @@ $head = new Head($title, [], []);
           <div class="cart-section__option">
             <button type="button" class="button y-button-secondary  y-button-third" id="buy-fast-order">Быстрый
               заказ</button>
-            <a href="<?= "$path/server/php/pages/checkout/checkout.php"; ?>"
+            <a href="<?= "/checkout"; ?>"
               class="button y-button-secondary  y-button-third">Оформить
               заказ</a>
           </div>

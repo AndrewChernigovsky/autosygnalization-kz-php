@@ -70,6 +70,52 @@ class FiltersRender
                     }
                 }
             }
+        } elseif ($this->get_params && $this->filters_correct == "special") {
+            $this->filters_correct_arr = [];
+
+            foreach ($this->products as $categoryType) {
+                if (!empty($categoryType)) {
+                    foreach ($categoryType as $productType) {
+                        if (!empty($productType)) {
+                            foreach ($productType as $productTypeItem) {
+                                if (!empty($productTypeItem) && $productTypeItem['special'] === true) {
+                                    $isMatch = false;
+                                    $active_params_arr = [];
+                                    if (isset($productTypeItem['price']) && ($productTypeItem['price'] < $this->filters_min_value || $productTypeItem['price'] > $this->filters_max_value)) {
+                                        $isMatch = true;
+                                        continue;
+                                    }
+                                    foreach ($this->get_params as $key => $value) {
+                                        if ($value === 'on') {
+                                            $active_params_arr[] = $key;
+                                        }
+                                    }
+
+                                    if(!isset($productTypeItem['options-filters']) || !empty(array_diff($active_params_arr, $productTypeItem['options-filters']))) {
+                                        $isMatch = true;
+                                        error_log($isMatch . ' :MATCH1 ');
+                                    }
+
+                                    if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filters_correct, $productTypeItem['autosygnals']))) {
+                                        $isMatch = true;
+                                        error_log($isMatch . ' :MATCH2');
+                                    }
+
+
+
+                                    if ($isMatch) {
+                                        $this->filters_correct_arr[] = $productTypeItem;
+                                        foreach ($productTypeItem['options-filters'] as $counterName) {
+                                            $count[$counterName] = ($count[$counterName] ?? 0) + 1;
+                                        }
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         } elseif ($this->get_params && $this->filters_correct !== null) {
             $this->filters_correct_arr = [];
             foreach ($this->products as $categoryType) {

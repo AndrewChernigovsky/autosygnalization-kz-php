@@ -1,18 +1,19 @@
 <?php
-use HELPERS\SetVariables;
-include_once __DIR__ . '/../../data/prices.php';
-include_once __DIR__ . '/../../data/prices-services.php';
+require_once __DIR__ . '/../../../vendor/autoload.php';
 
-$variables = new SetVariables();
-$variables->setVar();
-$docROOT = $variables->getDocRoot();
-$path = $variables->getPathFileURL();
+use LAYOUT\Header;
+use LAYOUT\Head;
+use LAYOUT\Footer;
+use DATA\PricesData;
+use DATA\PricesServicesData;
 
-$head_path = $docROOT . $path . '/server/php/layout/head.php';
 $title = 'Прайс-лист | Auto Security';
-
-include_once $head_path;
 $head = new Head($title, [], []);
+$header = new Header();
+$footer = new Footer();
+
+$prices = (new PricesData())->getData();
+$pricesServices = (new PricesServicesData())->getData();
 ?>
 
 
@@ -23,7 +24,7 @@ echo $head->setHead();
 ?>
 
 <body>
-  <?php include_once $docROOT . $path . '/server/php/layout/header.php'; ?>
+<?= $header->getHeader(); ?>
   <main class="main">
     <section class="price">
       <div class="container">
@@ -70,10 +71,10 @@ echo $head->setHead();
                   <div class="price-services__box">
                     <?php if (!empty($service['link'])): ?>
                       <a href="<?php echo htmlspecialchars($service['link']); ?>">
-                        <?php echo ($service['title']); ?>
+                        <?php echo($service['title']); ?>
                       </a>
                     <?php else: ?>
-                      <p><?php echo ($service['title']); ?></p>
+                      <p><?php echo($service['title']); ?></p>
                     <?php endif; ?>
                     <div class="price-services__price"><?php echo htmlspecialchars($service['productServicesPrice']) . ' ' . htmlspecialchars($service['currency']); ?></div>
                   </div>
@@ -84,10 +85,10 @@ echo $head->setHead();
       </div>
     </section>
     <div class="price-button">
-      <a class="button y-button-primary" href="<?php echo $path . '/files/docs/Auto_Security_price.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+      <a class="button y-button-primary" href="<= '/files/docs/Auto_Security_price.pdf' ?>" download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
     </div>
   </main>
-  <?php include_once $docROOT . $path . '/server/php/layout/footer.php'; ?>
+  <?= $footer->getFooter(); ?>
 </body>
 
 </html>
