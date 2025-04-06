@@ -28,7 +28,7 @@ class SetupsData
               "mob" => "/client/images/setup/setup-img.avif",
               "desktop" => "/client/images/setup/setup-img.avif",
             ],
-            "url" => "/service",
+            "url" => "/services",
             "link-text" => "В раздел"
           ],
         ];

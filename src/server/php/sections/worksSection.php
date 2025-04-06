@@ -9,47 +9,47 @@ function worksSection(): string
         [
             'image' => "/client/images/works/setup.avif",
             'title' => 'УСТАНОВКА И РЕМОНТ АВТОСИГНАЛИЗАЦИЙ',
-            'href' => '/server/php/pages/service/service.php?service=setup'
+            'href' => '/service?service=setup'
         ],
         [
             'image' => "/client/images/works/setup-media.avif",
             'title' => 'УСТАНОВКА АВТОЗВУКА И МУЛЬТИМЕДИА',
-            'href' => '/server/php/pages/service/service.php?service=setup-media'
+            'href' => '/service?service=setup-media'
         ],
         [
             'image' => "/client/images/works/locks.avif",
             'title' => 'РЕМОНТ ЦЕНТРОЗАМКОВ',
-            'href' => '/server/php/pages/service/service.php?service=locks'
+            'href' => '/service?service=locks'
         ],
         [
             'image' => "/client/images/works/rus.avif",
             'title' => 'РУСИФИКАЦИЯ АВТО И ЧИПТЮНИНГ',
-            'href' => '/server/php/pages/service/service.php?service=rus',
+            'href' => '/service?service=rus',
         ],
         [
             'image' => "/client/images/works/system-parking.avif",
             'title' => 'УСТАНОВКА СИСТЕМ ПАРКИНГА',
-            'href' => '/server/php/pages/service/service.php?service=setup-system-parking'
+            'href' => '/service?service=setup-system-parking'
         ],
         [
             'image' => "/client/images/works/autoelectric.avif",
             'title' => 'УСЛУГИ АВТОЭЛЕКТРИКА',
-            'href' => '/server/php/pages/service/service.php?service=autoelectric'
+            'href' => '/service?service=autoelectric'
         ],
         [
             'image' => "/client/images/works/diagnostic.avif",
             'title' => 'КОМПЬЮТЕРНАЯ ДИАГНОСТИКА',
-            'href' => '/server/php/pages/service/service.php?service=diagnostic'
+            'href' => '/service?service=diagnostic'
         ],
         [
             'image' => "/client/images/works/disabled-autosynal.avif",
             'title' => 'ОТКЛЮЧЕНИЕ СИГНАЛИЗАЦИИ',
-            'href' => '/server/php/pages/service/service.php?service=disabled-autosynal'
+            'href' => '/service?service=disabled-autosynal'
         ],
         [
             'image' => "/client/images/works/setup-videoregistration.avif",
             'title' => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ И АНТИРАДАРОВ',
-            'href' => '/server/php/pages/service/service.php?service=setup-videoregistration'
+            'href' => '/service?service=setup-videoregistration'
         ],
     ];
 

@@ -203,7 +203,8 @@ export default class FiltersAction {
         }
         sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
       }
-      location.assign(`${this.currentUrl.href.split('?')[0]}?SELECT=name`);
+      const selectType = this.currentUrl.searchParams.get('type');
+      location.assign(`${this.currentUrl.href.split('?')[0]}?SELECT=name&type=${selectType}`);
     });
   }
 }

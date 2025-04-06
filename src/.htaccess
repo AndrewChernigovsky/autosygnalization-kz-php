@@ -77,6 +77,8 @@ RewriteRule ^contacts$ /server/php/pages/contacts/contacts.php [L,QSA]
 RewriteRule ^price$ /server/php/pages/price/price.php [L,QSA]
 RewriteRule ^special$ /server/php/pages/special/special.php [L,QSA]
 RewriteRule ^cart$ /server/php/pages/cart/cart.php [L,QSA]
+RewriteRule ^checkout$ /server/php/pages/checkout/checkout.php [L,QSA]
+
 RewriteRule ^/$ /index.php [L,QSA]
 
 
@@ -135,6 +137,25 @@ RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
 # Rule 3: Обработка service без расширения .php с любыми параметрами
 RewriteCond %{QUERY_STRING} .+
 RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+
+# Rule 1: Redirect /services to services.php
+RewriteRule ^services$ /server/php/pages/service/services.php [L,QSA]
+
+# Rule 2: Обработка service.php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
+RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
+
+# Rule 3: Обработка service без расширения .php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
+RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+
+# Rule 2: Обработка service.php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
+RewriteRule ^special\.php$ /server/php/pages/special/special.php [L,QSA]
+
+# Rule 3: Обработка special без расширения .php с любыми параметрами
+RewriteCond %{QUERY_STRING} .+
+RewriteRule ^special$ /server/php/pages/special/special.php [L,QSA]
 
 
 
