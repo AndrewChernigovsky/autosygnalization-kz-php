@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'COMPONENTS\\Article' => $baseDir . '/php/components/Article.php',
+    'COMPONENTS\\AutoCategory' => $baseDir . '/php/components/AutoCategory.php',
     'COMPONENTS\\Cart' => $baseDir . '/php/components/Cart.php',
     'COMPONENTS\\CreateProductCards' => $baseDir . '/php/components/CreateProductCards.php',
     'COMPONENTS\\FiltersRender' => $baseDir . '/php/components/FiltersRender.php',
