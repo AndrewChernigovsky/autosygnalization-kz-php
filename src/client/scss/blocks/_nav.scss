@@ -359,6 +359,12 @@
 
       @media screen and (min-width: var.$tablet) {
         bottom: 70px;
+        text-align: left;
+
+        &::before {
+          min-width: 180px;
+          margin-left: 0;
+        }
       }
 
       address {

@@ -34,8 +34,9 @@ if ($data) {
 
     function validatePhone($phone, $max_length = 20)
     {
-        if (!preg_match("/^[0-9+\-() ]+$/", $phone) || strlen($phone) > $max_length) {
-            echo json_encode(['success' => false, 'message' => "Некорректный телефон"]);
+        // Проверяем формат телефона (должен начинаться с +7 и содержать цифры)
+        if (!preg_match("/^\+7[0-9]{7,15}$/", $phone) || strlen($phone) > $max_length) {
+            echo json_encode(['success' => false, 'message' => "Некорректный номер телефона. Должен начинаться с +7"]);
             exit;
         }
         return $phone;

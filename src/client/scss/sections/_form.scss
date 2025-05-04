@@ -105,13 +105,13 @@
     font-weight: 700;
     text-transform: none;
 
-    &:has(input[type='tel'])::before {
-      content: '+7';
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      left: 5px;
-    }
+    // &:has(input[type='tel'])::before {
+    //   content: '+7';
+    //   position: absolute;
+    //   top: 50%;
+    //   transform: translateY(-50%);
+    //   left: 5px;
+    // }
 
     @media (min-width: var.$desktop) {
       margin-bottom: 20px;

@@ -13,11 +13,16 @@ export default class FormReusable {
     this.setValidationName = this.setValidationName.bind(this);
     this.setValidationPhone = this.setValidationPhone.bind(this);
     this.setValidationMessage = this.setValidationMessage.bind(this);
+    this.onPhoneFieldFocus = this.onPhoneFieldFocus.bind(this);
 
     this.init();
   }
 
   init() {
+    // Устанавливаем +7 по умолчанию при инициализации
+    if (this.inputPhone) {
+      this.inputPhone.value = '+7';
+    }
     this.setWork();
     this.validation();
   }
@@ -66,11 +71,26 @@ export default class FormReusable {
     }
     
     setValidationPhone() {
-      let value = this.inputPhone.value.replace(/[^0-9]/g, '');
-      if (this.inputPhone.value.startsWith('+')) {
-        value = '+' + value;
+      let value = this.inputPhone.value;
+      
+      // Проверяем, начинается ли значение с +7
+      if (!value.startsWith('+7')) {
+        // Если начинается с +, но не с +7, заменяем первые два символа на +7
+        if (value.startsWith('+')) {
+          value = '+7' + value.substring(1).replace(/[^0-9]/g, '');
+        } else {
+          // В противном случае добавляем +7 в начало
+          value = '+7' + value.replace(/[^0-9]/g, '');
+        }
+      } else {
+        // Если начинается с +7, просто удаляем все кроме цифр после +7
+        const prefix = '+7';
+        const rest = value.substring(2).replace(/[^0-9]/g, '');
+        value = prefix + rest;
       }
-      this.inputPhone.value = value.slice(0, 12);
+      
+      // Ограничиваем длину (учитывая +7)
+      this.inputPhone.value = value.slice(0, 13); // +7 и еще 11 цифр
     }
 
     setValidationMessage() {
@@ -82,13 +102,37 @@ export default class FormReusable {
         this.phoneButtonWrapper.classList.remove('active')
       }
       this.form.reset();
-    this.container.classList.remove('active');
-    
+      // После сброса формы снова устанавливаем +7
+      if (this.inputPhone) {
+        setTimeout(() => {
+          this.inputPhone.value = '+7';
+        }, 0);
+      }
+      this.container.classList.remove('active');
+    }
+
+  onPhoneFieldFocus() {
+    if (!this.inputPhone.value || this.inputPhone.value === '') {
+      this.inputPhone.value = '+7';
+    }
   }
 
   validation() {
     this.inputName.addEventListener('input', this.setValidationName);
     this.inputPhone.addEventListener('input', this.setValidationPhone);
+    
+    // Добавляем обработчик фокуса для поля телефона
+    this.inputPhone.addEventListener('focus', this.onPhoneFieldFocus);
+    
+    // Добавляем обработчик на сброс формы
+    this.form.addEventListener('reset', () => {
+      setTimeout(() => {
+        if (this.inputPhone) {
+          this.inputPhone.value = '+7';
+        }
+      }, 0);
+    });
+    
     if (this.textarea) {
       this.textarea.addEventListener('input', this.setValidationMessage);
     }

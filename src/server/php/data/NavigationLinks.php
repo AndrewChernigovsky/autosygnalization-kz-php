@@ -74,8 +74,9 @@ class NavigationLinks
               ["link" => "/special", "name" => 'Специальные предложения'],
               ["link" => "/cart", "name" => 'Корзина заказа'],
               ["link" => "https://2gis.kz/almaty/geo/70000001027313872", "name" => 'Оставить отзыв'],
-              ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Галерея выполненных работ'],
+              ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Архив выполненных работ'],
               ["link" => "/contacts#location", "name" => 'Как к нам добраться'],
+              ["link" => "/sertificates", "name" => 'Наши сертификаты'],
             ]
           ]
         ];
