@@ -20,7 +20,7 @@ function formSection()
     <section class="form" id="form">
         <div class="form__wrapper">
             <h2 class="form__title">Форма обратной связи</h2>
-            <form class="form__main-form" action="/server/php/process_form.php" method="post" id="feedback-form">
+            <form class="form__main-form main-form" action="/server/php/process_form.php" method="post" id="feedback-form">
                 <fieldset class="form__fieldset">
                     <legend class="form__subtitle">Марка:</legend>
                     <div class="form__group-radio">
@@ -55,7 +55,8 @@ function formSection()
                     </li>
                     <li class="form__item">
                         <label class="form__subtitle">Телефон*:
-                            <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777"
+                            <input class="form__input" type="tel" name="phone" id="phone"
+                            placeholder="(777) 77 77 777"
                                 pattern="^\+?[0-9\s\(\)]{5,20}$" required>
                         </label>
                     </li>

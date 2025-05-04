@@ -12,7 +12,7 @@ class ContactsData
       ['phone' => '+7 701 747 8212'],
     ];
 
-    private $address = "Казахстан, г.Алматы, ул.Абая 145/г, бокс №15";
+    private $address = "Казахстан, г.Алматы,<br/> ул.Абая 145/г, бокс №15";
     private $email = "autosecurity.kz@mail.ru";
     private $web_site = "www.autosecurity.kz";
 
@@ -62,7 +62,7 @@ class ContactsData
     }
     public function getAddress()
     {
-        return htmlspecialchars($this->address);
+        return $this->address;
     }
     public function getLogo()
     {

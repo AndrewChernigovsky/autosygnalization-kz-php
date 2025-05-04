@@ -7,6 +7,7 @@ export default class ProcessForm {
 
     this.form = document.querySelector(object.form);
 
+    if(!this.form) return;
     this.inputModel = this.form.querySelector('input[name="model"]');
     this.inputReleaseYear = this.form.querySelector('input[name="release-year"]');
     this.inputName = this.form.querySelector('input[name="name"]');

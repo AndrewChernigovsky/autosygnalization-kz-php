@@ -339,6 +339,24 @@
       z-index: 11;
       left: 10%;
 
+      @media screen and (max-width: var.$desktop) {
+        line-height: 1.8;
+
+        &::before {
+          content: '';
+          position: absolute;
+          display: block;
+          top: 50%;
+          transform: translateY(-50%);
+          height: 2px;
+          min-width: 200px;
+          background-color: #ffffff;
+          z-index: 2;
+          left: 0;
+          margin-left: 57px;
+        }
+      }
+
       @media screen and (min-width: var.$tablet) {
         bottom: 70px;
       }

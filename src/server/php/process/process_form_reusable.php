@@ -12,7 +12,12 @@ if ($data) {
     function validateText($text, $field = null, $max_length = 255)
     {
         $text = trim($text);
-        if ((empty($text) || !preg_match("/^[\p{L}\s-]+$/u", $text)) && $field !== null) {
+        // Если поле пустое и не обязательное
+        if (empty($text) && $field === 'Коментарий') {
+            return '';
+        }
+        
+        if ((empty($text) || !preg_match("/^[\p{L}\s-]+$/u", $text))) {
             echo json_encode(['success' => false, 'message' => "Некорректное значение: $field"]);
             exit;
         }
@@ -41,12 +46,16 @@ if ($data) {
     $name = validateText($current_data['name'], 'Имя', 50);
     $phone = validatePhone($current_data['phone']);
 
-    $emailBody = " *Имя:* " . $current_data['name'] . "\n";
-    $emailBody .= " *Телефон:* " . $current_data['phone'] . "\n";
-    if (isset($current_data['message'])) {
-        $message = validateText($current_data['message'], 'Коментарий', 200);
-        $emailBody .= " *Коментарий:* " . $current_data['message'] . "\n";
+    $emailBody = " *Имя:* " . $name . "\n";
+    $emailBody .= " *Телефон:* " . $phone . "\n";
+    
+    // Обработка комментария (необязательное поле)
+    $comment = "Не указан";
+    if (isset($current_data['message']) && !empty(trim($current_data['message']))) {
+        // Только валидируем непустой комментарий
+        $comment = validateText($current_data['message'], 'Коментарий', 200);
     }
+    $emailBody .= " *Коментарий:* " . $comment . "\n";
 
     $to = 'chernigovsky108@gmail.com';
     $subject = 'Новый заказ на сайте';
@@ -61,25 +70,25 @@ if ($data) {
     $message = urlencode($emailBody);
     $url = "https://api.telegram.org/bot$TOKEN/sendMessage?chat_id=$CHAT_ID&text=$message";
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, $url);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Отключение проверки SSL (не рекомендуется для продакшена)
-    $response = curl_exec($ch);
+    // $ch = curl_init();
+    // curl_setopt($ch, CURLOPT_URL, $url);
+    // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    // curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Отключение проверки SSL (не рекомендуется для продакшена)
+    // $response = curl_exec($ch);
 
-    if ($response === false) {
-        $error = curl_error($ch);
-        error_log("Ошибка при отправке запроса в Telegram: " . $error);
-    } else {
-        $responseData = json_decode($response, true);
-        if (isset($responseData['ok']) && $responseData['ok']) {
-            error_log("Сообщение успешно отправлено в Telegram");
-        } else {
-            error_log("Ошибка Telegram API: " . print_r($responseData, true));
-        }
-    }
+    // if ($response === false) {
+    //     $error = curl_error($ch);
+    //     error_log("Ошибка при отправке запроса в Telegram: " . $error);
+    // } else {
+    //     $responseData = json_decode($response, true);
+    //     if (isset($responseData['ok']) && $responseData['ok']) {
+    //         error_log("Сообщение успешно отправлено в Telegram");
+    //     } else {
+    //         error_log("Ошибка Telegram API: " . print_r($responseData, true));
+    //     }
+    // }
 
-    curl_close($ch);
+    // curl_close($ch);
 
     // Отправка email
     if (mail($to, $subject, $emailBody, $headers)) {

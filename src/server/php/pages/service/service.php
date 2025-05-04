@@ -52,7 +52,8 @@ $share = new Share();
     <div class="service-setup__wrapper">
       <img class="service-setup__image" src="<?= htmlspecialchars($service['image']['src']) ?>"
         alt="<?= htmlspecialchars($service['image']['description']) ?>">
-      <p class="service-setup__description"><?= htmlspecialchars($service['description']) ?></p>
+      
+      <div class="service-setup__description"><?= $service['description'] ?></div>
     </div>
     <h3 class="service-setup__subtitle">Мы предлагаем:</h3>
     <ul class="service-setup__list list-style-none">

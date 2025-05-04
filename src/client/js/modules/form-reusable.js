@@ -2,11 +2,13 @@ export default class FormReusable {
   constructor(object) {
     this.container = document.querySelector(object.container);
     this.form = this.container.querySelector(object.form);
+    if(!this.form) return;
     this.inputName = this.form.querySelector('input[name="name"]');
     this.inputPhone = this.form.querySelector('input[name="phone"]');
     this.textarea = this.form.querySelector('textarea[name="message"]');
     this.sendObject = {};
-
+    this.phoneButton = document.querySelector('#phone-button');
+    this.phoneButtonWrapper = document.querySelector('.phone-button__wrapper');
     // Привязываем методы, чтобы this всегда указывал на экземпляр класса
     this.setValidationName = this.setValidationName.bind(this);
     this.setValidationPhone = this.setValidationPhone.bind(this);
@@ -23,7 +25,7 @@ export default class FormReusable {
   setWork() {
     this.form.addEventListener('submit', (e) => {
       e.preventDefault();
-      const url = "/server/php/data/form_reusable.php";
+      const url = "/server/php/process/process_form_reusable.php";
       const formData = new FormData(this.form);
       formData.forEach((value, key) => {
         this.sendObject[key] = value;
@@ -47,6 +49,7 @@ export default class FormReusable {
           console.log('Ответ от сервера:', data);
           if (data.success) {
             alert('Заказ успешно отправлен!');
+            this.closeModal()
           } else {
             alert('Ошибка при отправке заказа');
           }
@@ -55,23 +58,32 @@ export default class FormReusable {
           console.error('Ошибка:', error);
           alert('Произошла ошибка при отправке данных');
         });
-    });
-  }
-
-  setValidationName() {
-    this.inputName.value = this.inputName.value.replace(/[^a-zA-ZА-Яа-яЁё -]/g, '').slice(0, 40);
-  }
-
-  setValidationPhone() {
-    let value = this.inputPhone.value.replace(/[^0-9]/g, '');
-    if (this.inputPhone.value.startsWith('+')) {
-      value = '+' + value;
+      });
     }
-    this.inputPhone.value = value.slice(0, 12);
-  }
+    
+    setValidationName() {
+      this.inputName.value = this.inputName.value.replace(/[^a-zA-ZА-Яа-яЁё -]/g, '').slice(0, 40);
+    }
+    
+    setValidationPhone() {
+      let value = this.inputPhone.value.replace(/[^0-9]/g, '');
+      if (this.inputPhone.value.startsWith('+')) {
+        value = '+' + value;
+      }
+      this.inputPhone.value = value.slice(0, 12);
+    }
 
-  setValidationMessage() {
-    this.textarea.value = this.textarea.value.slice(0, 100);
+    setValidationMessage() {
+      this.textarea.value = this.textarea.value.slice(0, 100);
+    }
+    
+    closeModal() {
+      if(this.phoneButton && this.phoneButtonWrapper.classList.contains('active')) {
+        this.phoneButtonWrapper.classList.remove('active')
+      }
+      this.form.reset();
+    this.container.classList.remove('active');
+    
   }
 
   validation() {
