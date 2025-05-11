@@ -97,6 +97,20 @@
       }
     }
 
+    .social {
+      color: var.$white;
+      font-family: var.$primary-font;
+      margin: 0;
+      font-size: 14px;
+      font-weight: 700;
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+      line-height: 30px;
+      padding-left: 30px;
+      background-position: left;
+      justify-content: flex-end;
+    }
+
     .site {
       grid-column: 1/-1;
       text-transform: none;
@@ -124,6 +138,17 @@
         color: var.$red;
         position: relative;
         gap: 5px;
+
+        &.menu-geo-phone {
+          flex-direction: row;
+          display: flex;
+          // padding-left: 10px;
+
+          svg {
+            position: relative;
+            transform: none;
+          }
+        }
 
         svg {
           width: 25px;
@@ -375,8 +400,8 @@
       row-gap: 10px;
       grid-template-areas:
         'logo social phones'
-        'email-site geo phones'
-        'site geo phones';
+        'logo email-site geo'
+        'logo site geo';
 
       .social {
         justify-items: center;
@@ -389,8 +414,8 @@
           display: flex;
 
           svg {
-            width: 33px;
-            height: 33px;
+            width: 25px;
+            height: 25px;
           }
         }
       }
@@ -422,7 +447,12 @@
         text-align: center;
 
         span {
-          padding-right: 40px;
+          // padding-right: 40px;
+          text-align: left;
+        }
+
+        &__wrapper {
+          padding-left: 10px;
         }
 
         svg {
@@ -616,12 +646,12 @@
       font-size: 20px;
 
       span {
-        padding-right: 70px;
+        // padding-right: 70px;
+        text-align: left;
       }
 
       svg {
         height: 29px;
-        right: 30px;
       }
     }
   }

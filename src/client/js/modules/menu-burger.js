@@ -4,6 +4,7 @@ const btns = document.querySelector('.menu-btns');
 const geo = document.querySelector('.geo');
 const wrapper = document.querySelector('.nav');
 const phones = document.querySelector('.phone');
+const geoClass = document.querySelector('.menu-geo-phone');
 
 export function toToggleMenu() {
   function toggleMenu() {
@@ -15,6 +16,7 @@ export function toToggleMenu() {
     btns.classList.toggle('active')
     geo.classList.toggle('active')
     phones.classList.toggle('active')
+    geoClass.classList.toggle('menu-geo-phone');
     document.querySelector('body').classList.toggle('overflow')
 
     if (wrapper.classList.contains('active')) {
@@ -25,6 +27,7 @@ export function toToggleMenu() {
         btns.classList.remove('active')
         geo.classList.remove('active')
         phones.classList.remove('active')
+        geoClass.classList.remove('menu-geo-phone');
         document.querySelector('body').classList.remove('overflow')
       }))
     }

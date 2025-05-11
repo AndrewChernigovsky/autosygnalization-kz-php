@@ -42,11 +42,11 @@ class Footer
       <div class="footer__inner">
         <div class="footer__contacts">
           {$logo->getLogo()}
-          <div class="social">
+          <div class="social" style='background-image: url(/client/vectors/icons/instagramm-icon.svg);'>
             <p>Инстаграм</p>
-            <ul class="social__icons list-style-none">
+            <!-- <ul class="social__icons list-style-none">
               {$this->generateSocialIcons($socialIcons, $contacts)}
-            </ul>
+            </ul> -->
           </div>
           <div class="phones">
             {$phones_footer}
