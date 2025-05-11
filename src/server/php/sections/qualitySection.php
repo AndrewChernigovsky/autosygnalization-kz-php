@@ -26,6 +26,16 @@ function qualitySection(): string
             </video>
         <?php endforeach; ?>
 
+        <div class="quality__present">
+            <h2>
+                <p>
+                    <span>
+                        <?= htmlspecialchars($qualityVideos['title']); ?>
+                    </span>
+                </p>
+            </h2>
+        </div>
+        
         <?php foreach ($qualityVideos['videos'] as $video): ?>
             <video class="quality__video" preload="auto" autoplay loop muted
                    poster="<?= htmlspecialchars($video['poster']); ?>">
@@ -38,14 +48,10 @@ function qualitySection(): string
                 Ваш браузер не поддерживает тег video.
             </video>
         <?php endforeach; ?>
-
         <div class="quality__present">
             <h2>
-                <p>
-                    <span>
-                        <?= htmlspecialchars($qualityVideos['title']); ?>
-                    </span>
-                </p>
+
+                        <?= "Наши преимущества"; ?>
             </h2>
             <div class="quality__list-wrapper">
                 <div class="container">

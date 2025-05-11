@@ -223,7 +223,7 @@ async function loadModules() {
 
     new ProcessForm(
       {
-        form: '.form__main-form',
+        form: '.form__main-form.main-form',
       }
     );
   }

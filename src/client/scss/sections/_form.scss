@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .form {
   &__wrapper {
@@ -104,6 +104,14 @@
     line-height: 30px;
     font-weight: 700;
     text-transform: none;
+
+    // &:has(input[type='tel'])::before {
+    //   content: '+7';
+    //   position: absolute;
+    //   top: 50%;
+    //   transform: translateY(-50%);
+    //   left: 5px;
+    // }
 
     @media (min-width: var.$desktop) {
       margin-bottom: 20px;
@@ -225,12 +233,12 @@
   }
 }
 
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }

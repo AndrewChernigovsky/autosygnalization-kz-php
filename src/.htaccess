@@ -162,7 +162,10 @@ RewriteRule ^special$ /server/php/pages/special/special.php [L,QSA]
 
 
 
-RewriteRule ^contacts\.php$ /server/php/pages/service/service.php [L]
+RewriteRule ^contacts\.php$ /server/php/pages/contacts/contacts.php [L]
+RewriteRule ^sertificates\.php$ /server/php/pages/sertificates/sertificates.php [L]
+# Добавляем правило для URL без расширения .php
+RewriteRule ^sertificates$ /server/php/pages/sertificates/sertificates.php [L,QSA]
 
 # Обработка URL без параметров
 RewriteRule ^product$ /server/php/pages/products/product.php [L,QSA]

@@ -7,6 +7,7 @@ export default class ProcessForm {
 
     this.form = document.querySelector(object.form);
 
+    if(!this.form) return;
     this.inputModel = this.form.querySelector('input[name="model"]');
     this.inputReleaseYear = this.form.querySelector('input[name="release-year"]');
     this.inputName = this.form.querySelector('input[name="name"]');
@@ -20,6 +21,10 @@ export default class ProcessForm {
 
   init() {
     this.editSubmitEvent();
+    if (this.inputPhone) {
+      // Устанавливаем +7 по умолчанию
+      this.inputPhone.value = '+7';
+    }
     if (this.inputModel) {
       this.validModel(15);
     }
@@ -29,6 +34,15 @@ export default class ProcessForm {
     this.validName(60);
     this.validPhone(12);
     this.validMessage(100);
+    
+    // Добавляем обработчик на сброс формы
+    if (this.form && this.inputPhone) {
+      this.form.addEventListener('reset', () => {
+        setTimeout(() => {
+          this.inputPhone.value = '+7';
+        }, 0);
+      });
+    }
   }
 
   editSubmitEvent = () => {
@@ -50,7 +64,7 @@ export default class ProcessForm {
   }
 
   sendDataToServer() {
-    const url = "/server/php/data/process_form.php";
+    const url = "/server/php/process/process_form.php";
 
     console.log('Отправляемые данные:', this.sendObject); // Логирование данных
 
@@ -73,6 +87,13 @@ export default class ProcessForm {
         console.log('Ответ от сервера:', data);
         if (data.success) {
           alert('Заказ успешно отправлен!');
+          this.form.reset();
+          // После сброса формы восстанавливаем +7
+          setTimeout(() => {
+            if (this.inputPhone) {
+              this.inputPhone.value = '+7';
+            }
+          }, 0);
         } else {
           alert('Ошибка при отправке заказа');
         }
@@ -128,23 +149,40 @@ export default class ProcessForm {
     const handler = (event) => {
       let value = event.target.value;
 
-      // Если первый символ не +, добавляем его
-      if (!value.startsWith('+')) {
-        value = '+' + value;
+      // Проверяем, начинается ли значение с +7
+      if (!value.startsWith('+7')) {
+        // Если начинается с +, но не с +7, заменяем первые два символа на +7
+        if (value.startsWith('+')) {
+          value = '+7' + value.substring(1).replace(/[^0-9]/g, '');
+        } else {
+          // В противном случае добавляем +7 в начало
+          value = '+7' + value.replace(/[^0-9]/g, '');
+        }
+      } else {
+        // Если начинается с +7, просто удаляем все кроме цифр после +7
+        const prefix = '+7';
+        const rest = value.substring(2).replace(/[^0-9]/g, '');
+        value = prefix + rest;
       }
 
-      // Удаляем все кроме цифр и первого +
-      value = value.replace(/[^0-9]/g, '');
-      value = '+' + value;
-
-      // Ограничиваем длину
-      value = value.slice(0, maxLength);
+      // Ограничиваем длину (учитывая +7)
+      value = value.slice(0, maxLength + 1); // +1 для символа +
 
       this.inputPhone.value = value;
     };
 
+    // Обработчик фокуса для установки +7, если поле пустое
+    const focusHandler = () => {
+      if (!this.inputPhone.value) {
+        this.inputPhone.value = '+7';
+      }
+    };
+
     this.inputPhone.removeEventListener('input', handler);
     this.inputPhone.addEventListener('input', handler);
+    
+    this.inputPhone.removeEventListener('focus', focusHandler);
+    this.inputPhone.addEventListener('focus', focusHandler);
   }
 
   validMessage(maxLength = 100) {

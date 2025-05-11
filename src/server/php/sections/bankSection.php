@@ -28,7 +28,10 @@ function bankSection()
             <span style="color: orangered">кредит</span> через Каспи Банк
         </h2>
         <div class="bank__wrapper">
+          <div class="images">
             {$imagesHtml}
+          </div>
+          <p class="bank__phone">O-O-12</p>
         </div>
         <button type="button" class="y-button-primary button buy-btn">Оставить заявку</button>
     </div>
