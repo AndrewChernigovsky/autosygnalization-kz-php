@@ -7,7 +7,7 @@ use LAYOUT\Header;
 use LAYOUT\Head;
 use LAYOUT\Footer;
 use COMPONENTS\ModalCart;
-
+use function FUNCTIONS\renderPhoneButton;
 use function FUNCTIONS\getShop;
 
 $title = 'Автосигнализации';
@@ -111,6 +111,7 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalCart())->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
 
 </html>

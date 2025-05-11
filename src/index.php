@@ -7,12 +7,10 @@ use LAYOUT\Footer;
 use COMPONENTS\ModalForm;
 
 use function SECTIONS\bankSection;
-// use function SECTIONS\faqSection;
 use function SECTIONS\introSection;
 use function SECTIONS\marksSection;
 use function SECTIONS\popularSection;
 use function SECTIONS\qualitySection;
-// use function SECTIONS\reasonsSection;
 use function SECTIONS\sertificatesSection;
 use function SECTIONS\serviceSection;
 use function SECTIONS\worksSection;
@@ -21,8 +19,6 @@ use function FUNCTIONS\renderPhoneButton;
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
-
-error_log(123123 . ' : ');
 
 ?>
 

@@ -11,31 +11,31 @@ use DATA\NavigationLinks;
 
 class Footer
 {
-    public function getFooter(): string
-    {
-        // Инициализация компонентов
-        $geo = new GEO();
-        $logo = new Logo();
-        $contacts = new ContactsData();
-        $phones = $contacts->getPhones();
-        $email = $contacts->getEmail(true);
-        $web_site = $contacts->getWebsite(true);
-        $socialIcons = $contacts->getSocialIcons();
+  public function getFooter(): string
+  {
+    // Инициализация компонентов
+    $geo = new GEO();
+    $logo = new Logo();
+    $contacts = new ContactsData();
+    $phones = $contacts->getPhones();
+    $email = $contacts->getEmail(true);
+    $web_site = $contacts->getWebsite(true);
+    $socialIcons = $contacts->getSocialIcons();
 
-        $insertPHONE = new InsertPhone();
-        $icon_phone = [
-            'name' => 'icon_phone',
-            'width' => '50',
-            'height' => '50',
-            "image" => "/client/vectors/sprite.svg#phone-no-border",
-            'href' => '#'
-        ];
+    $insertPHONE = new InsertPhone();
+    $icon_phone = [
+      'name' => 'icon_phone',
+      'width' => '50',
+      'height' => '50',
+      "image" => "/client/vectors/sprite.svg#phone-no-border",
+      'href' => '#'
+    ];
 
-        $navigationFooterLinks = new GenerateFooterLinks((new NavigationLinks())->getNavigationFooterLinks());
-        $phones_footer = $insertPHONE->displayPhones($phones, $icon_phone);
+    $navigationFooterLinks = new GenerateFooterLinks((new NavigationLinks())->getNavigationFooterLinks());
+    $phones_footer = $insertPHONE->displayPhones($phones, $icon_phone);
 
-        // Генерация HTML
-        return <<<HTML
+    // Генерация HTML
+    return <<<HTML
 <footer class="footer">
   <div class="footer__wrapper">
     <div class="container">
@@ -43,7 +43,7 @@ class Footer
         <div class="footer__contacts">
           {$logo->getLogo()}
           <div class="social">
-            <p>Социальные сети</p>
+            <p>Инстаграм</p>
             <ul class="social__icons list-style-none">
               {$this->generateSocialIcons($socialIcons, $contacts)}
             </ul>
@@ -66,14 +66,14 @@ class Footer
   </div>
 </footer>
 HTML;
-    }
+  }
 
-    private function generateSocialIcons($socialIcons, $contacts): string
-    {
-        $html = '';
-        foreach ($socialIcons as $social) {
-            $html .= '<li>' . $contacts->setSocial($social) . '</li>';
-        }
-        return $html;
+  private function generateSocialIcons($socialIcons, $contacts): string
+  {
+    $html = '';
+    foreach ($socialIcons as $social) {
+      $html .= '<li>' . $contacts->setSocial($social) . '</li>';
     }
+    return $html;
+  }
 }

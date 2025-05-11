@@ -1,0 +1,14 @@
+<svg width="50.000000" height="50.000000" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<desc>
+			Created with Pixso.
+	</desc>
+	<defs>
+		<clipPath id="clip473_6932">
+			<rect id="burger-close-icon" width="50.000000" height="50.000000" fill="white" fill-opacity="0"/>
+		</clipPath>
+	</defs>
+	<g clip-path="url(#clip473_6932)">
+		<path id="path" d="M6.03 48.53L48.46 6.1L44.92 2.57L2.5 44.99L6.03 48.53Z" fill="#000000" fill-opacity="1.000000" fill-rule="evenodd"/>
+		<path id="path" d="M1.46 6.03L43.89 48.46L47.42 44.92L5 2.49L1.46 6.03Z" fill="#000000" fill-opacity="1.000000" fill-rule="evenodd"/>
+	</g>
+</svg>

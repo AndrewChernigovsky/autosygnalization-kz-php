@@ -10,10 +10,10 @@ use LAYOUT\Footer;
 use COMPONENTS\Article;
 use COMPONENTS\FiltersRender;
 use COMPONENTS\Select;
-use COMPONENTS\Pagination;
 use COMPONENTS\ModalCart;
+use COMPONENTS\ModalForm;
 use COMPONENTS\CreateProductCards;
-
+use function FUNCTIONS\renderPhoneButton;
 use function SECTIONS\sertificatesSection;
 use function FUNCTIONS\getShop;
 use function AUTH\SESSIONS\initSession;
@@ -57,12 +57,15 @@ $selectData = new SelectData();
   <?= $header->getHeader(); ?>
   <main class="main">
     <h2 class="title__h2"><?= $title ?></h2>
-  <?= sertificatesSection();?>
-   
+    <?= sertificatesSection(); ?>
+
     <?= getShop('setup'); ?>
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalCart())->render(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?php echo renderPhoneButton();
+  ?>
 </body>
 
 </html>

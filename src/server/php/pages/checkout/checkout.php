@@ -3,9 +3,11 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 use LAYOUT\Header;
 use LAYOUT\Head;
 use LAYOUT\Footer;
+use COMPONENTS\ModalForm;
 
 use function AUTH\SESSIONS\initSession;
 use function FUNCTIONS\getShop;
+use function FUNCTIONS\renderPhoneButton;
 
 initSession();
 
@@ -26,7 +28,7 @@ echo $head->setHead();
 ?>
 
 <body>
-<?= $header->getHeader(); ?>
+  <?= $header->getHeader(); ?>
   <main class="main">
     <section class="cart-section">
       <div class="container">
@@ -44,8 +46,7 @@ echo $head->setHead();
         <form action="" method="post" class="checkout-form">
           <div class="checkout-form__body"></div>
           <div class="checkout-form__footer">
-            <a href="<?= "/catalog?SELECT=name&PAGE=1" ?>"
-              class="link button y-button-third">Продолжить покупки</a>
+            <a href="<?= "/catalog?SELECT=name&PAGE=1" ?>" class="link button y-button-third">Продолжить покупки</a>
             <p>
               <span>Итого: </span>
               <span class="quantity-total"></span>
@@ -58,8 +59,10 @@ echo $head->setHead();
       </div>
     </section>
   </main>
-  <?= getShop('setup') ;?>
+  <?= getShop('setup'); ?>
   <?= $footer->getFooter(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?= renderPhoneButton(); ?>
   <template id="product-template">
     <article class='product-card' id="">
       <div class="product-card__bg">

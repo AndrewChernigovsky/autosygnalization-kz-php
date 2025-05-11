@@ -25,9 +25,14 @@
     row-gap: 10px;
     grid-template-areas:
       'logo logo'
-      'social phones'
+      'social social'
+      'phones phones'
       'email-site email-site'
       'geo geo';
+
+    a {
+      gap: 5px;
+    }
 
     .logo {
       grid-area: logo;
@@ -42,6 +47,11 @@
       text-transform: none;
       display: grid;
       grid-area: social;
+      display: flex;
+      align-items: center;
+      margin-right: auto;
+      gap: 10px;
+      flex-direction: row-reverse;
 
       p {
         color: var.$white;
@@ -80,10 +90,10 @@
         font-size: 14px;
         font-weight: 700;
         background-repeat: no-repeat;
-        background-size: 15px 15px;
+        background-size: 20px 20px;
         line-height: 30px;
-        padding-right: 30px;
-        background-position: right;
+        padding-left: 30px;
+        background-position: left;
       }
     }
 
@@ -99,10 +109,10 @@
         font-size: 14px;
         font-weight: 700;
         background-repeat: no-repeat;
-        background-size: 15px 15px;
+        background-size: 20px 20px;
         line-height: 25px;
-        padding-right: 30px;
-        background-position: right;
+        padding-left: 30px;
+        background-position: left;
       }
     }
 
@@ -113,6 +123,12 @@
       &__wrapper {
         color: var.$red;
         position: relative;
+        gap: 5px;
+
+        svg {
+          width: 25px;
+          height: 25px;
+        }
 
         span {
           color: var.$white;

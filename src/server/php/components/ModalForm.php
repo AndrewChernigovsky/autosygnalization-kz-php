@@ -35,10 +35,10 @@ class ModalForm
   </div>
   <div class="popup__icons">
     <a href="https://t.me/auto_security_almaty">
-      <img src="/client/images/icons/telegram.avif'" alt="иконка телеграма" width="40" height="40">
+      <img src="/client/vectors/sprite.svg#telegram" alt="иконка телеграма" width="40" height="40">
     </a>
     <a href="https://clck.ru/3FQ7aJ">
-      <img src="/client/images/icons/whatsapp.avif'" alt="иконка вотсапа" width="40" height="40">
+      <img src="/client/vectors/sprite.svg#whatsapp'" alt="иконка вотсапа" width="40" height="40">
     </a>
   </div>
 </div>

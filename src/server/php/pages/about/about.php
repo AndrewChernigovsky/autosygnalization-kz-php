@@ -6,6 +6,8 @@ use DATA\AboutusData;
 use LAYOUT\Footer;
 use LAYOUT\Head;
 use LAYOUT\Header;
+use COMPONENTS\ModalForm;
+use function FUNCTIONS\renderPhoneButton;
 
 initSession();
 
@@ -116,6 +118,8 @@ $aboutUs = new AboutusData();
 
   </main>
   <?= $footer->getFooter(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
 
 </html>
