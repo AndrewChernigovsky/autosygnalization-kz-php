@@ -53,7 +53,7 @@ $head = new Head($title, [], []);
         </div>
       </div>
     </section>
-    <?= getShop('setup'); ?>
+    <?= getShop('shop'); ?>
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalForm())->render(); ?>

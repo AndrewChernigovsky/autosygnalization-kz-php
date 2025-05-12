@@ -43,7 +43,7 @@
   &__products {
     padding-bottom: 10px;
     display: grid;
-    gap: 20px;
+    gap: 50px 20px;
     justify-items: center;
 
     @media screen and (min-width: var.$tablet) {
@@ -83,8 +83,8 @@
     p:not(.article__quantity) {
       margin: 0;
       margin-bottom: 20px;
-      font-size: 48px;
-      line-height: 66px;
+      // font-size: 48px;
+      // line-height: 66px;
       font-weight: 700;
       text-align: center;
 

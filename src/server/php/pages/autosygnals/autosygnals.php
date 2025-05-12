@@ -75,7 +75,8 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
           <ul class="autosygnals__list list-style-none swiper-wrapper">
             <?php foreach ($autosygnals as $index => $slide): ?>
               <li class="autosygnals__item swiper-slide">
-                <div class="autosygnals__item-card">
+                <a class="autosygnals__item-card"
+                  href="<?php echo htmlspecialchars($slide['link'], ENT_QUOTES, 'UTF-8'); ?>">
                   <h3 class="autosygnals__item-title"><?php echo htmlspecialchars($slide['name'], ENT_QUOTES, 'UTF-8'); ?>
                   </h3>
                   <img class="autosygnals__item-image"
@@ -94,10 +95,9 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
                         ?>
                       </span> товаров
                     </p>
-                    <a class="autosygnals__item-link link y-button-primary"
-                      href="<?php echo htmlspecialchars($slide['link'], ENT_QUOTES, 'UTF-8'); ?>">В РАЗДЕЛ</a>
+                    <p class="autosygnals__item-link link y-button-primary">В РАЗДЕЛ</p>
                   </div>
-                </div>
+                </a>
               </li>
             <?php endforeach; ?>
 

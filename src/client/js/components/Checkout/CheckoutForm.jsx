@@ -1,7 +1,10 @@
 import { html, Component } from 'htm/preact';
 import { CheckoutSelect } from './CheckoutSelect';
 import { CheckoutCompany } from './CheckoutCompany';
-import { createPolicyModal, loadPolicyDocument } from '../../modules/policy-modal';
+import {
+  createPolicyModal,
+  loadPolicyDocument,
+} from '../../modules/policy-modal';
 
 export class CheckoutForm extends Component {
   constructor() {
@@ -15,13 +18,15 @@ export class CheckoutForm extends Component {
       this.PRODUCTION ? '/dist/' : '/'
     }files/docs/policy.txt`;
     this.path2Deal = `${this.PRODUCTION ? '/dist/' : '/'}files/docs/deal.txt`;
-
   }
 
   openWindow = async (e, type) => {
     e.preventDefault();
     const path = type === 'policy' ? this.path2Policy : this.path2Deal;
-    const title = type === 'policy' ? 'Политика конфиденциальности' : 'Договор купли-продажи';
+    const title =
+      type === 'policy'
+        ? 'Политика конфиденциальности'
+        : 'Договор купли-продажи';
     const modal = createPolicyModal(title);
     const content = await loadPolicyDocument(path);
     modal.setContent(content);
@@ -73,10 +78,6 @@ export class CheckoutForm extends Component {
       </fieldset>
       <fieldset>
         <legend>Выберите город:</legend>
-        <label>
-          <p>Страна*</p>
-          <${CheckoutSelect} />
-        </label>
         <label>
           <p>Город*</p>
           <input type="text" required name="city" />
@@ -143,7 +144,7 @@ export class CheckoutForm extends Component {
             checked
           />
           <p class="checkout-form__subtitle">
-            Быстрая доставка за 1-2 рабочих дня по г. Алматы - 200 тг.
+            Быстрая доставка за 1-2 рабочих дня по г. Алматы - 1000 тг.
           </p>
           <p class="checkout-form__description">
             Курьер доставит Ваш заказ за 1-2 рабочих дня с момента оформления
@@ -160,7 +161,7 @@ export class CheckoutForm extends Component {
             name="delivery-method"
           />
           <p class="checkout-form__subtitle">
-            Доставка курьером при сумме заказа от 40000 тг по г. Алматы -
+            Доставка курьером при сумме заказа от 60000 тг по г. Алматы -
             Бесплатно.
           </p>
           <p class="checkout-form__description">
@@ -179,7 +180,7 @@ export class CheckoutForm extends Component {
           <p class="checkout-form__subtitle">Пункт выдачи - Бесплатно</p>
           <p class="checkout-form__description">
             Самовывоз товара из магазина, расположенного по адресу: Казахстан,
-            г. Алматы, ул. Щепеткова, 122. Срок хранения заказа - 3 дня.
+            г. Алматы, пр.Абая 145/г, бокс №15. Срок хранения заказа - 3 дня.
           </p>
         </label>
         <label class="checkout-form__label">
@@ -200,9 +201,9 @@ export class CheckoutForm extends Component {
         </label>
       </fieldset>
       <fieldset class="checkout-form__fieldset">
-        <legend>Способ оплаты:</legend>
+        <legend>Способы оплаты:</legend>
         <label class="checkout-form__label">
-          <p class="checkout-form__subtitle">Оплата с помощью Каспи</p>
+          <p class="checkout-form__subtitle">Оплата с помощью Каспи Кредит</p>
           <p class="checkout-form__description">Доступная система: Каспи</p>
           <p class="checkout-form__description">Номер кошелька: +77077478212</p>
           <p class="checkout-form__description">
@@ -214,6 +215,22 @@ export class CheckoutForm extends Component {
             required
             name="payment-method"
             value="pay-caspy-bank"
+            checked
+          />
+        </label>
+        <label class="checkout-form__label">
+          <p class="checkout-form__subtitle">Оплата с помощью Каспи Рэд</p>
+          <p class="checkout-form__description">Доступная система: Каспи</p>
+          <p class="checkout-form__description">Номер кошелька: +77077478212</p>
+          <p class="checkout-form__description">
+            При поступлении средств на кошелек Ваш заказ будет считаться
+            оформленным.
+          </p>
+          <input
+            type="radio"
+            required
+            name="payment-method"
+            value="pay-caspy-bank-red"
             checked
           />
         </label>

@@ -70,7 +70,7 @@ $share = new Share();
     </p>
     <button type="button" class="button y-button-primary" id="buy-btn">заказать</button>
   </section>
-  <?= getShop('setup'); ?>
+  <?= getShop('shop'); ?>
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalForm())->render(); ?>

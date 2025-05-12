@@ -4,6 +4,7 @@
   position: relative;
   overflow: hidden;
   min-height: 600px;
+  border-top: 1px solid white;
 
   &__video {
     min-height: inherit;
@@ -109,7 +110,7 @@
     padding: 40px 0;
 
     li {
-      padding-left: 50px;
+      padding-left: 40px;
       text-align: left;
       font-size: 18px;
       position: relative;
@@ -120,8 +121,8 @@
         left: 0;
         transform: translateY(-50%);
         position: absolute;
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         background-image: url('/client/vectors/aprove.svg');
         background-size: cover;
         background-position: center;
@@ -170,6 +171,7 @@
         span {
           max-width: 750px;
           font-size: 32px;
+          line-height: 36px;
 
           &::before {
             width: 150px;
@@ -177,6 +179,12 @@
             left: -150px;
           }
         }
+      }
+    }
+
+    &__item {
+      &--hidden {
+        display: none;
       }
     }
 

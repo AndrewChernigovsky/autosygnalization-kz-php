@@ -38,8 +38,7 @@ class ContactsData
   {
     if ($link) {
       $output = '';
-      $path = htmlspecialchars('/client/vectors/message-icon.svg');
-      $output .= "<a class='link' style='background-image: url(\"$path\");' href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
+      $output .= "<a class='link link-message' href='mailto:autosecurity.site@mail.ru'>" . htmlspecialchars($this->email) . '</a>';
       return $output;
     } else {
       return htmlspecialchars($this->email);
@@ -53,8 +52,7 @@ class ContactsData
   {
     if ($link) {
       $output = '';
-      $path = htmlspecialchars('/client/vectors/home-icon.svg');
-      $output .= "<a class='link' style='background-image: url(\"$path\");' href='http://autosecurity.site'>" . htmlspecialchars($this->web_site) . '</a>'; // Используйте экранирование для URL
+      $output .= "<a class='link link-site'href='http://autosecurity.site'>" . htmlspecialchars($this->web_site) . '</a>'; // Используйте экранирование для URL
       return $output;
     } else {
       return htmlspecialchars($this->web_site);

@@ -72,7 +72,7 @@ echo $head->setHead();
             </p>
           </li>
           <li class="contacts-section__item contacts-section__item--social">
-            <h3>Соцсети:</h3>
+            <h3>Instagram:</h3>
             <ul class="contacts-section__item--social-icons">
               <?php
               foreach ($socialIcons as $social) {

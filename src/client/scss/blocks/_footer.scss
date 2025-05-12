@@ -98,9 +98,14 @@
     }
 
     .social {
+      width: 100%;
+    }
+
+    .social p {
       color: var.$white;
       font-family: var.$primary-font;
       margin: 0;
+      margin-right: auto;
       font-size: 14px;
       font-weight: 700;
       background-repeat: no-repeat;
@@ -109,6 +114,7 @@
       padding-left: 30px;
       background-position: left;
       justify-content: flex-end;
+      background-image: url('/client/vectors/icons/instagramm-icon.svg');
     }
 
     .site {
@@ -630,6 +636,13 @@
   }
 
   @media screen and (min-width: var.$tablet) {
+    .social p {
+      background-position: left 30%;
+      width: 90%;
+      margin-right: auto;
+      border-bottom: 1px solid white;
+      padding-bottom: 10px;
+    }
     &__menu-list {
       li > span:first-of-type:hover {
         opacity: 1;
@@ -638,6 +651,14 @@
   }
 
   @media screen and (min-width: var.$desktop) {
+    &__contacts {
+      align-items: flex-start;
+
+      .logo img {
+        margin-top: -10px;
+      }
+    }
+
     &__inner {
       max-width: 1440px;
     }

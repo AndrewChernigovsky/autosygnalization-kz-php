@@ -22,7 +22,7 @@ class ModalForm
       foreach ($this->phones as $phoneData) {
         $cleanedPhone = str_replace(' ', '', $phoneData['phone']);
         $phoneLinks .= '<a href="tel:' . htmlspecialchars($cleanedPhone) . '">' .
-          'Позвонить ' .
+          'Звонок на ' .
           '<span>' . htmlspecialchars($phoneData['phone']) . '</span>' .
           '</a>';
       }
@@ -35,10 +35,10 @@ class ModalForm
   </div>
   <div class="popup__icons">
     <a href="https://t.me/auto_security_almaty">
-      <img src="/client/vectors/sprite.svg#telegram" alt="иконка телеграма" width="40" height="40">
+     <span>Написать в </span><svg  alt="иконка телеграма" width="40" height="40"><use href="/client/vectors/sprite.svg#telegram"></use></svg>
     </a>
     <a href="https://clck.ru/3FQ7aJ">
-      <img src="/client/vectors/sprite.svg#whatsapp'" alt="иконка вотсапа" width="40" height="40">
+     <span>Написать в </span><svg  alt="иконка вотсапа" width="40" height="40"><use href="/client/vectors/sprite.svg#whatsapp"></use></svg>
     </a>
   </div>
 </div>
@@ -49,7 +49,7 @@ class ModalForm
       Закрыть форму
     </span>
   </button>
-  <div class="popup-body"><section class="form" id="form-modal"><div class="form__wrapper"><h2 class="form__title">Оставьте заявку и мы вам перезвоним</h2><form class="form__main-form" action="#" method="post" id="feedback-form"><ul class="form__list list-style-none"><li class="form__item"><label class="form__subtitle">Введите ФИО*:<input class="form__input" type="text" name="name" id="name" placeholder="Ivanov Ivan Ivanovich" required=""></label><li class="form__item"><label class="form__subtitle">Введите Телефон*:<input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777" required=""></label><li class="form__item form__item--textarea"><label class="form__subtitle">Оставьте Комментарий:<textarea class="form__input form__input--textarea" name="message" id="message" placeholder="Ваш комментарий"></textarea></label></li></li><button class="form__button y-button-primary" type="submit">Отправить заявку</button></li></ul></form></div></section>
+  <div class="popup-body"><section class="form" id="form-modal"><div class="form__wrapper"><h2 class="form__title">Оставьте заявку и мы вам перезвоним</h2><form class="form__main-form" action="#" method="post" id="feedback-form"><ul class="form__list list-style-none"><li class="form__item"><label class="form__subtitle">Имя*:<input class="form__input" type="text" name="name" id="name" placeholder="Алексей" required=""></label><li class="form__item"><label class="form__subtitle">Телефон*:<input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777" required=""></label><li class="form__item form__item--textarea"><label class="form__subtitle">Оставьте Комментарий:<textarea class="form__input form__input--textarea" name="message" id="message" placeholder="Ваш комментарий"></textarea></label></li></li><button class="form__button y-button-primary" type="submit">Отправить заявку</button></li></ul></form></div></section>
   </div>
 </div>
 HTML;

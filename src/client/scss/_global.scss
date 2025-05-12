@@ -1,5 +1,5 @@
-@use "variables" as var;
-@use "mixins" as mix;
+@use 'variables' as var;
+@use 'mixins' as mix;
 
 html {
   height: 100%;
@@ -107,6 +107,14 @@ p {
     top: 40%;
     font-size: 20px;
   }
+}
+
+.link-message {
+  background-image: url('/client/vectors/message-icon.svg');
+}
+
+.link-site {
+  background-image: url('/client/vectors/home-icon.svg');
 }
 
 @keyframes showError {

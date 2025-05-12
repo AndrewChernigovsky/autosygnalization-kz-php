@@ -2,6 +2,9 @@
 
 .header {
   background: linear-gradient(#010308, #000208);
+  position: sticky;
+  top: -1px;
+  z-index: 11;
 
   &__head {
     display: flex;
@@ -32,7 +35,6 @@
       line-height: 1.8;
       text-decoration: none;
       position: relative;
-
       flex-grow: 0;
 
       svg {

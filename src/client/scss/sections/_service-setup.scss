@@ -8,10 +8,12 @@
   padding: 300px 10px 40px;
   background-color: var.$gray_2B2B2B;
   border-radius: 20px;
+  margin-bottom: 100px;
 
   @media (min-width: var.$tablet) {
     padding-top: 20px;
     grid-template-columns: 748px;
+    margin-bottom: 150px;
   }
 
   @media (min-width: var.$desktop-min) {
@@ -21,6 +23,7 @@
   @media (min-width: var.$desktop) {
     max-width: 1440px;
     margin: 0 auto;
+    margin-bottom: 150px;
     grid-template-columns: 1440px;
     padding-bottom: 30px;
   }
@@ -50,6 +53,7 @@
   &__title {
     margin: 0;
     margin-bottom: 10px;
+    margin-top: 30px;
     font-size: 24px;
     line-height: 34px;
 
@@ -69,7 +73,7 @@
 
   &__image {
     position: absolute;
-    top: 0;
+    top: 20px;
     width: 300px;
     height: 300px;
     border-radius: 20px;
@@ -112,6 +116,7 @@
 
       li {
         line-height: 38px;
+        text-transform: none;
       }
     }
 
@@ -139,8 +144,10 @@
     font-size: 36px;
     line-height: 46px;
     font-weight: 400;
+    text-align: center;
 
     @media (min-width: var.$desktop-min) {
+      padding: 50px;
       text-transform: none;
       margin-bottom: 20px;
       padding-left: 10px;
@@ -157,25 +164,23 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
+    padding-bottom: 60px;
 
     @media (min-width: var.$tablet) {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      padding-bottom: 10px;
       border-bottom: 2px solid var.$white;
     }
 
     @media (min-width: var.$desktop-min) {
-      margin-bottom: 20px;
+      margin-bottom: 40px;
       padding-left: 10px;
       padding-right: 10px;
       gap: 15px;
     }
 
     @media (min-width: var.$desktop) {
-      margin-bottom: 10px;
-      padding-bottom: 30px;
+      margin-bottom: 40px;
+      padding-bottom: 60px;
     }
   }
 
@@ -185,10 +190,7 @@
     background-repeat: no-repeat;
     background-position: top 5px left;
     background-size: 20px 20px;
-
-    @media (min-width: var.$desktop-min) {
-      text-transform: none;
-    }
+    text-transform: none;
 
     @media (min-width: var.$desktop) {
       min-height: 50px;

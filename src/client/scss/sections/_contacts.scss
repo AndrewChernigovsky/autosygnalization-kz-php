@@ -87,6 +87,10 @@
     // padding: 30px 30px;
     cursor: pointer;
     text-align: center;
+
+    &.link-message {
+      background-image: none;
+    }
   }
 
   &__item a:hover {

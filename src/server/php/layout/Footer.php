@@ -33,6 +33,7 @@ class Footer
 
     $navigationFooterLinks = new GenerateFooterLinks((new NavigationLinks())->getNavigationFooterLinks());
     $phones_footer = $insertPHONE->displayPhones($phones, $icon_phone);
+    $date = date('Y');
 
     // Генерация HTML
     return <<<HTML
@@ -42,8 +43,8 @@ class Footer
       <div class="footer__inner">
         <div class="footer__contacts">
           {$logo->getLogo()}
-          <div class="social" style='background-image: url(/client/vectors/icons/instagramm-icon.svg);'>
-            <p>Инстаграм</p>
+          <div class="social">
+            <p>Instagram</p>
             <!-- <ul class="social__icons list-style-none">
               {$this->generateSocialIcons($socialIcons, $contacts)}
             </ul> -->
@@ -62,7 +63,7 @@ class Footer
         </div>
       </div>
     </div>
-    <p class="footer__copy">© 2024 Auto Security. Все права защищены</p>
+    <p class="footer__copy">© {$date} Auto Security. Все права защищены</p>
   </div>
 </footer>
 HTML;
