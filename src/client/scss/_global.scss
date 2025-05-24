@@ -126,3 +126,32 @@ p {
     opacity: 1;
   }
 }
+
+.hidden-header-geo {
+  margin: 0 !important;
+  width: 50px !important;
+  height: 50px !important;
+  display: none !important;
+
+  svg {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    display: none !important;
+  }
+  @media screen and (max-width: var.$desktop-min) {
+    &.hidden {
+      display: flex !important;
+    }
+  }
+}
+
+#geoAddress {
+  @media screen and (max-width: var.$desktop-min) {
+    &.hidden {
+      display: none !important;
+    }
+  }
+}

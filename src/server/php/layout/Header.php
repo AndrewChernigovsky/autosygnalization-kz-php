@@ -52,6 +52,13 @@ class Header
                             {$this->generatePhoneLinks($phones)}
                         </address>
                     </div>
+                <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address hidden-header-geo">
+                    <div class="header__image image">
+                        <svg width="50" height="50">
+                            <use href="/client/vectors/sprite.svg#geo"></use>
+                        </svg>
+                    </div>
+                </a>
                     {$cart->initCart()}
                     <div class="menu-toggle">
                         <button type="button" id="btn-open-menu" class="button">
@@ -72,7 +79,7 @@ class Header
                         {$this->generatePhoneLinks($phones)}
                     </ul>
                 </div>
-                <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address">
+                <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address" id="geoAddress">
                     <div class="header__image image">
                         <svg width="50" height="50">
                             <use href="/client/vectors/sprite.svg#geo"></use>
