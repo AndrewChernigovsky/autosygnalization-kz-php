@@ -16,11 +16,11 @@ export function initSwiperSertificates() {
           clickable: true,
         },
         spaceBetween: 10,
-        slidesPerView: 1.5,
+        slidesPerView: 1,
         // centeredSlides: true,
         breakpoints: {
           768: {
-            slidesPerView: 2.5,
+            slidesPerView: 2,
             spaceBetween: 20,
           },
           1024: {

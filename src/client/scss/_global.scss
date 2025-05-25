@@ -155,3 +155,17 @@ p {
     }
   }
 }
+
+.popup {
+  &__icons {
+    svg {
+      width: 35px;
+      height: 35px;
+    }
+  }
+
+  &.phone-popup.active {
+    top: auto !important;
+    bottom: 75px;
+  }
+}

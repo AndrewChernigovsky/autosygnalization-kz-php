@@ -49,7 +49,7 @@ function introSection()
               </video>
 
               <div class="container intro__content">
-                <h2 class="intro__title visible"><?= htmlspecialchars($slide['title'] ?? '') ?></h2>
+                <h2 class="intro__title visible secondary-title"><?= htmlspecialchars($slide['title'] ?? '') ?></h2>
 
                 <ul class="intro__list-slide list-style-none">
                   <?php foreach ($slide['list'] ?? [] as $item): ?>

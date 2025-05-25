@@ -48,7 +48,7 @@ function qualitySection(): string
       </video>
     <?php endforeach; ?>
     <div class="quality__present">
-      <h2>
+      <h2 class="secondary-title">
 
         <?= "Наши преимущества"; ?>
       </h2>

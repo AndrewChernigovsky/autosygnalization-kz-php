@@ -19,7 +19,7 @@ function formSection()
   ?>
   <section class="form" id="form">
     <div class="form__wrapper">
-      <h2 class="form__title">Форма обратной связи</h2>
+      <h2 class="form__title secondary-title">Форма обратной связи</h2>
       <form class="form__main-form main-form" action="/server/php/process_form.php" method="post" id="feedback-form">
         <!-- <fieldset class="form__fieldset">
           <legend class="form__subtitle">Марка:</legend>
