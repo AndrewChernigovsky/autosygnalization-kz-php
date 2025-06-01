@@ -84,7 +84,7 @@ export default class FormOrder {
   };
 
   sendDataToServer() {
-    const url = `${this.path}/server/php/data/form_order.php`;
+    const url = `${this.path}/server/php/process/process_form_order.php`;
 
     if (!this.sendObject || Object.keys(this.sendObject).length === 0) {
       alert('Ошибка: данные заказа отсутствуют');

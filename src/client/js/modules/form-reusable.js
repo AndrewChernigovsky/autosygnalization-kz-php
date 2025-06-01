@@ -2,7 +2,7 @@ export default class FormReusable {
   constructor(object) {
     this.container = document.querySelector(object.container);
     this.form = this.container.querySelector(object.form);
-    if(!this.form) return;
+    if (!this.form) return;
     this.inputName = this.form.querySelector('input[name="name"]');
     this.inputPhone = this.form.querySelector('input[name="phone"]');
     this.textarea = this.form.querySelector('textarea[name="message"]');
@@ -53,63 +53,72 @@ export default class FormReusable {
         .then((data) => {
           console.log('Ответ от сервера:', data);
           if (data.success) {
-            alert('Заказ успешно отправлен!');
+            alert('Данные успешно отправлены!');
             this.closeModal()
           } else {
-            alert('Ошибка при отправке заказа');
+            alert('Ошибка при отправке данных');
           }
         })
         .catch((error) => {
           console.error('Ошибка:', error);
           alert('Произошла ошибка при отправке данных');
         });
-      });
-    }
-    
-    setValidationName() {
-      this.inputName.value = this.inputName.value.replace(/[^a-zA-ZА-Яа-яЁё -]/g, '').slice(0, 40);
-    }
-    
-    setValidationPhone() {
-      let value = this.inputPhone.value;
-      
-      // Проверяем, начинается ли значение с +7
-      if (!value.startsWith('+7')) {
-        // Если начинается с +, но не с +7, заменяем первые два символа на +7
-        if (value.startsWith('+')) {
-          value = '+7' + value.substring(1).replace(/[^0-9]/g, '');
-        } else {
-          // В противном случае добавляем +7 в начало
-          value = '+7' + value.replace(/[^0-9]/g, '');
-        }
+    });
+  }
+
+  setValidationName() {
+    this.inputName.value = this.inputName.value.replace(/[^a-zA-ZА-Яа-яЁё -]/g, '').slice(0, 40);
+  }
+
+  setValidationPhone() {
+    let value = this.inputPhone.value;
+
+    // Проверяем, начинается ли значение с +7
+    if (!value.startsWith('+7')) {
+      // Если начинается с +, но не с +7, заменяем первые два символа на +7
+      if (value.startsWith('+')) {
+        value = '+7' + value.substring(1).replace(/[^0-9]/g, '');
       } else {
-        // Если начинается с +7, просто удаляем все кроме цифр после +7
-        const prefix = '+7';
-        const rest = value.substring(2).replace(/[^0-9]/g, '');
-        value = prefix + rest;
+        // В противном случае добавляем +7 в начало
+        value = '+7' + value.replace(/[^0-9]/g, '');
       }
-      
-      // Ограничиваем длину (учитывая +7)
-      this.inputPhone.value = value.slice(0, 13); // +7 и еще 11 цифр
+    } else {
+      // Если начинается с +7, просто удаляем все кроме цифр после +7
+      const prefix = '+7';
+      const rest = value.substring(2).replace(/[^0-9]/g, '');
+      value = prefix + rest;
     }
 
-    setValidationMessage() {
-      this.textarea.value = this.textarea.value.slice(0, 100);
+    // Ограничиваем длину (учитывая +7)
+    this.inputPhone.value = value.slice(0, 13); // +7 и еще 11 цифр
+  }
+
+  setValidationMessage() {
+    let value = this.textarea.value;
+
+    // Проверяем, содержит ли текст только цифры и пробелы
+    if (value.trim() && /^[0-9\s]*$/.test(value.trim())) {
+      // Если только цифры, удаляем последний введенный символ
+      value = value.slice(0, -1);
     }
-    
-    closeModal() {
-      if(this.phoneButton && this.phoneButtonWrapper.classList.contains('active')) {
-        this.phoneButtonWrapper.classList.remove('active')
-      }
-      this.form.reset();
-      // После сброса формы снова устанавливаем +7
-      if (this.inputPhone) {
-        setTimeout(() => {
-          this.inputPhone.value = '+7';
-        }, 0);
-      }
-      this.container.classList.remove('active');
+
+    // Ограничиваем длину
+    this.textarea.value = value.slice(0, 100);
+  }
+
+  closeModal() {
+    if (this.phoneButton && this.phoneButtonWrapper.classList.contains('active')) {
+      this.phoneButtonWrapper.classList.remove('active')
     }
+    this.form.reset();
+    // После сброса формы снова устанавливаем +7
+    if (this.inputPhone) {
+      setTimeout(() => {
+        this.inputPhone.value = '+7';
+      }, 0);
+    }
+    this.container.classList.remove('active');
+  }
 
   onPhoneFieldFocus() {
     if (!this.inputPhone.value || this.inputPhone.value === '') {
@@ -120,10 +129,10 @@ export default class FormReusable {
   validation() {
     this.inputName.addEventListener('input', this.setValidationName);
     this.inputPhone.addEventListener('input', this.setValidationPhone);
-    
+
     // Добавляем обработчик фокуса для поля телефона
     this.inputPhone.addEventListener('focus', this.onPhoneFieldFocus);
-    
+
     // Добавляем обработчик на сброс формы
     this.form.addEventListener('reset', () => {
       setTimeout(() => {
@@ -132,7 +141,7 @@ export default class FormReusable {
         }
       }, 0);
     });
-    
+
     if (this.textarea) {
       this.textarea.addEventListener('input', this.setValidationMessage);
     }
