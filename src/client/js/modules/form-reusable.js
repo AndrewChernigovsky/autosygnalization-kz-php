@@ -53,10 +53,10 @@ export default class FormReusable {
         .then((data) => {
           console.log('Ответ от сервера:', data);
           if (data.success) {
-            alert('Данные успешно отправлены!');
+            alert('Данные успешно отправлены, наш менеджер свяжется с вами в ближайшее время!');
             this.closeModal()
           } else {
-            alert('Ошибка при отправке данных');
+            alert('Ошибка при отправке данных, попробуйте позже');
           }
         })
         .catch((error) => {

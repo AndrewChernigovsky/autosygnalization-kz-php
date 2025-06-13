@@ -20,13 +20,13 @@ if ($data) {
   $emailBody .= " *Телефон:* " . $current_data['phone'] . "\n";
   $emailBody .= " *Коментарий:* " . $current_data['message'] . "\n";
 
-  $to = 'chernigovsky108@gmail.com';
+  $to = 'autosecurity.kz@mail.ru';
   $subject = 'Новый заказ на сайте';
 
   $headers = "MIME-Version: 1.0" . "\r\n";
   $headers .= "Content-Type: text/plain; charset=UTF-8" . "\r\n";
-  $headers .= "From: andrey@andrew.ru" . "\r\n";
-
+  $headers .= "From: Starline-Service <autosecurity@starline-service.kz>" . "\r\n";
+  $headers .= "Reply-To: Starline-Service" . "\r\n";
   // Отправка в Telegram через cURL
   $CHAT_ID = CHAT_ID;
   $TOKEN = TOKEN;

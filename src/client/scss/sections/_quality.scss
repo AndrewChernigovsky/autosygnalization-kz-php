@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use "variables" as var;
 
 .quality {
   position: relative;
@@ -74,14 +74,14 @@
           position: relative;
 
           &::before {
-            content: '';
+            content: "";
             top: 50%;
             left: -50px;
             transform: translateY(-50%);
             position: absolute;
             width: 40px;
             height: 40px;
-            background-image: url('/client/vectors/shield.svg');
+            background-image: url("/client/vectors/shield.svg");
             background-size: cover;
             background-position: center;
           }
@@ -123,17 +123,38 @@
       font-size: 18px;
       position: relative;
 
+      &:nth-child(1) {
+        &::before {
+          background-image: url("/client/vectors/aprove.svg");
+        }
+      }
+
+      &:nth-child(2) {
+        &::before {
+          background-image: url("/client/vectors/aprove.svg");
+        }
+      }
+
+      &:nth-child(3) {
+        &::before {
+          background-image: url("/client/vectors/aprove.svg");
+        }
+      }
+
       &::before {
-        content: '';
+        content: "";
         top: 50%;
         left: 0;
         transform: translateY(-50%);
         position: absolute;
         width: 30px;
         height: 30px;
-        background-image: url('/client/vectors/aprove.svg');
         background-size: cover;
         background-position: center;
+
+        @media screen and (max-width: var.$desktop-min) {
+          background-image: url("/client/vectors/aprove.svg");
+        }
       }
     }
   }

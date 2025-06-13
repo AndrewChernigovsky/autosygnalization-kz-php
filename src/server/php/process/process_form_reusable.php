@@ -49,12 +49,31 @@ if ($data) {
 
   function validatePhone($phone, $max_length = 20)
   {
-    // Проверяем формат телефона (должен начинаться с +7 и содержать цифры)
-    if (!preg_match("/^\+7[0-9]{7,15}$/", $phone) || strlen($phone) > $max_length) {
+    // Удаляем все пробелы и лишние символы, кроме цифр и + в начале
+    $phone = trim($phone);
+
+    // Проверяем, начинается ли с +7
+    if (!preg_match("/^\+7/", $phone)) {
       echo json_encode(['success' => false, 'message' => "Некорректный номер телефона. Должен начинаться с +7"]);
       exit;
     }
-    return $phone;
+
+    // Оставляем только +7 в начале и цифры
+    $cleanPhone = '+7' . preg_replace('/[^0-9]/', '', substr($phone, 2));
+
+    // Проверяем длину номера (должно быть от 10 до 18 символов: +7 + 7-15 цифр)
+    if (strlen($cleanPhone) < 10 || strlen($cleanPhone) > 18) {
+      echo json_encode(['success' => false, 'message' => "Некорректная длина номера телефона"]);
+      exit;
+    }
+
+    // Финальная проверка формата
+    if (!preg_match("/^\+7[0-9]{7,15}$/", $cleanPhone)) {
+      echo json_encode(['success' => false, 'message' => "Некорректный формат номера телефона"]);
+      exit;
+    }
+
+    return $cleanPhone;
   }
 
 
@@ -73,12 +92,13 @@ if ($data) {
   }
   $emailBody .= " *Коментарий:* " . $comment . "\n";
 
-  $to = 'chernigovsky108@gmail.com';
-  $subject = 'Новый заказ на сайте';
+  $to = 'autosecurity.kz@mail.ru';
+  $subject = 'Новая заявка на сайте';
 
   $headers = "MIME-Version: 1.0" . "\r\n";
   $headers .= "Content-Type: text/plain; charset=UTF-8" . "\r\n";
-  $headers .= "From: andrey@andrew.ru" . "\r\n";
+  $headers .= "From: Starline-Service <autosecurity@starline-service.kz>" . "\r\n";
+  $headers .= "Reply-To: Starline-Service" . "\r\n";
 
   // Отправка в Telegram через cURL
   $CHAT_ID = CHAT_ID;
