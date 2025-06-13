@@ -7,7 +7,7 @@ class QualityVideos
   public function getData()
   {
     return [
-      'title' => 'Auto Security - АВТОРИЗИРОВАННЫЙ ПАРТНЕР | STARLINE',
+      'title' => 'Auto Security - АВТОРИЗИРОВАННЫЙ ПАРТНЕР STARLINE',
       'qualities' => [
         'ДОСТУПНАЯ СТОИМОСТЬ ПРОДУКЦИИ И УСЛУГ',
         'ПРЕДОСТАВЛЯЕМ КЛИЕНТАМ НАИЛУЧШЕЕ КАЧЕСТВО ТОВАРОВ И СЕРВИСА',
