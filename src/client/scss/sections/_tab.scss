@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .tab {
 
@@ -64,7 +64,7 @@
   }
 
   &__button--active {
-    background: var.$blue-gradient;
+    background: var.$red-gradient;
   }
 
   &__content {
@@ -107,7 +107,7 @@
   }
 
   &__description {
-   float: left;
+    float: left;
 
     margin: 0;
     font-family: var.$primary-font;
@@ -148,22 +148,22 @@
       column-gap: 50px;
       row-gap: 20px;
 
-    @media (min-width: var.$desktop) {
-      row-gap: 30px;
-      column-gap: 70px;
-    }
+      @media (min-width: var.$desktop) {
+        row-gap: 30px;
+        column-gap: 70px;
+      }
 
       &::after {
         position: absolute;
         content: '';
-        width: 4px;    
-        min-height: 105%;   
+        width: 4px;
+        min-height: 105%;
         height: -webkit-fill-available;
         top: -10px;
         left: 50%;
         transform: translateX(-50%);
         background-color: var.$white;
-        
+
         @media (min-width: var.$tablet) {
           top: -25px;
         }
@@ -175,7 +175,7 @@
       column-gap: 23px;
     }
 
-    & + .tab__text {
+    &+.tab__text {
       display: block;
       font-size: 20px;
       text-align: left;
@@ -258,12 +258,12 @@
       align-items: flex-start;
     }
 
-    & > h3 {
+    &>h3 {
 
       @media (min-width: var.$tablet) {
         align-self: flex-start;
       }
-     }
+    }
   }
 
   &__item--text:nth-child(even) {
@@ -276,16 +276,16 @@
       align-items: flex-end;
     }
 
-    & > h3 {
+    &>h3 {
 
       @media (min-width: var.$tablet) {
         align-self: flex-end;
       }
-     }
+    }
   }
 }
 
-.tab__list--no-column > .tab__item.tab__item--text { 
+.tab__list--no-column>.tab__item.tab__item--text {
   @media (min-width: var.$desktop) {
     width: auto;
   }

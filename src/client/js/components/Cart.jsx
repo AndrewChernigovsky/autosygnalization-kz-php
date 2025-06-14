@@ -154,7 +154,9 @@ export class Cart extends Component {
 
     this.updateTotalQuantity();
   }
-
+  formatNumberWithSpaces(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
   updateTotalQuantity(products) {
     const localProducts =
       products || JSON.parse(sessionStorage.getItem('cart')) || [];
@@ -167,13 +169,15 @@ export class Cart extends Component {
       0
     );
 
+    console.log(totalCost, 'totalCost');
+
     let numberUniqueId = localProducts.map((product) => product.id).length;
 
     cartCounter.textContent = numberUniqueId;
     this.setState({ totalQuantity, totalCost }, () => {
       if (costTotal.length > 0) {
         costTotal.forEach((cost) => {
-          cost.textContent = this.state.totalCost.toFixed(2) + ' ₸';
+          cost.textContent = this.formatNumberWithSpaces(this.state.totalCost) + ' ₸';
         });
       }
       if (quantityTotal.length > 0) {

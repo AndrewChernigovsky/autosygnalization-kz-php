@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .card-more {
   position: relative;
@@ -63,7 +63,7 @@
 
       @media screen and (min-width: var.$tablet) {
         align-self: flex-start;
-        grid-column: 1/4;
+        grid-column: 1/2;
         grid-row: 1/2;
       }
 
@@ -403,7 +403,7 @@
     }
   }
 
-  & + p {
+  &+p {
     text-align: center;
     max-width: 300px;
     margin: 20px auto;

@@ -21,6 +21,11 @@ $category = isset($_GET['category']) ? $_GET['category'] : null;
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
 $products = (new Products())->getData();
+
+function formatPriceWithSpaces($price)
+{
+  return number_format((int) $price, 0, '', ' ');
+}
 function getAutoContent($products, $category, $id)
 {
   $result = "";
@@ -58,11 +63,12 @@ echo $head->setHead();
       <?= $contentDescription; ?>
       <div class="product-card__wrapper">
         <div class="product-card__container">
-          <p class="product-card__text">Доставка:</p>
+          <!-- <p class="product-card__text">Доставка:</p>
           <a class="product-card__link" href="#"
-            style="background-image: url(<?= $path . '/client/vectors/link-icon.svg'; ?>);">о доставке и оплате</a>
+            style="background-image: url(<?= $path . '/client/vectors/link-icon.svg'; ?>);">о доставке и оплате</a> -->
         </div>
-        <a class="product-card__link product-card__link--mod" href="#">Наличие товара уточняйте у продавца.</a>
+        <a class="product-card__link product-card__link--mod" href="#">Наличие товара необходимо уточнить у
+          менеджера.</a>
       </div>
       <p class="card-more__text">
         <span>Итоговая стоимость</span>
@@ -79,6 +85,7 @@ echo $head->setHead();
             }
           }
         }
+        $price = formatPriceWithSpaces($product['price']);
         if ($product !== null): ?>
           <div class="card-more__wrapper">
             <p>Количество</p>
@@ -100,13 +107,13 @@ echo $head->setHead();
         <p class="modal__subtitle">ОБ ОПЛАТЕ</p>
         <p>Оплата осуществляется наличными при покупке и/или установке оборудования, либо при получении товара при после
           доставки.</p>
-        <p>Также, Вы сможете оплатить товар/услугу безналичным расчетом, перечислив деньги на Kaspi Gold: +7 707 747
-          8212.</p>
+        <p>Также, можно оплатить товар/услугу безналичным расчетом, либо оформить рассрочку/кредит - для этого нужно
+          будет обратиться к менеджеру.</p>
         <p class="modal__subtitle">О ДОСТАВКЕ</p>
         <p>Доставка товара по городу осуществляется в течение 1-2 рабочих дня с момента оформления и оплаты заказа.</p>
         <p>Стоимость доставки составляет в черте города от 1.000 тг и выше, в зависимости от удаленности местоположения
           заказчика, а при заказе на сумму более 40.000 тг - бесплатно!</p>
-        <p>Также, Вы можете забрать товар самовывозом из магазина по адресу: Алматы, ул.Щепеткова, 122.</p>
+        <p>Также, Вы можете забрать товар самовывозом из магазина по адресу: Алматы, пр.Абая 145/г, бокс №15.</p>
         <p>Обратите внимание, что полноценную гарантию на материал Вы получаете только при установке выбранного Вами
           товара нашим квалифицированным специалистом!</p>
         <p class="modal__subtitle">ВОЗВРАТ ТОВАРА</p>

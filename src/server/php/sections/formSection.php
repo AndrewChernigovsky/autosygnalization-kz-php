@@ -9,6 +9,7 @@ function formSection()
   // Fetch brands data
   $brandsData = new BrandsData();
   $brands = $brandsData->getData();
+  $year_holder = date('Y');
 
   // Validate brands data
   if (empty($brands) || !is_array($brands)) {
@@ -43,8 +44,8 @@ function formSection()
           </li>
           <li class="form__item">
             <label class="form__subtitle">Год выпуска:
-              <input class="form__input" type="number" name="release-year" id="release-year" placeholder="2024"
-                pattern="\d{4}">
+              <input class="form__input" type="number" name="release-year" id="release-year"
+                placeholder="<?= htmlspecialchars($year_holder) ?>" pattern="\d{4}">
             </label>
           </li>
           <li class="form__item">

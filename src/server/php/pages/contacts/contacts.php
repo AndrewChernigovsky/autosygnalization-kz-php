@@ -53,7 +53,7 @@ echo $head->setHead();
           <li class=" contacts-section__item contacts-section__item--whatsap">
             <a href="https://wa.me/77077478212" target="_blank">
               <h3>Whatsapp:</h3>
-              <p>+77017478212</p>
+              <p>+77077478212</p>
             </a>
           </li>
           <li class="contacts-section__item contacts-section__item--email">
@@ -66,8 +66,8 @@ echo $head->setHead();
           </li>
           <li class="contacts-section__item contacts-section__item--schedule">
             <h3>График работы:</h3>
-            <p>Вс. - Чт.: 10:00 - 18:00 <br>
-              Пт.: 10:00-15:00 <br>
+            <p>Вс. - Чт.: 9:30 - 18:00 <br>
+              Пт.: 9:30-15:00 <br>
               <span>Сб.: Выходной</span>
             </p>
           </li>

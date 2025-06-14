@@ -72,6 +72,7 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
       <div class="container">
         <h2 class="autosygnals__title title__h2">Автосигнализации</h2>
         <div class="autosygnals__wrapper swiper swiper-autosygnals">
+          <ul class="autosygnals__pagination swiper-pagination"></ul>
           <ul class="autosygnals__list list-style-none swiper-wrapper">
             <?php foreach ($autosygnals as $index => $slide): ?>
               <li class="autosygnals__item swiper-slide">
@@ -102,7 +103,6 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
             <?php endforeach; ?>
 
           </ul>
-          <ul class="autosygnals__pagination swiper-pagination"></ul>
         </div>
       </div>
       </div>

@@ -12,9 +12,10 @@
 
 # Разрешение доступа к PDF-файлам
 <FilesMatch "\.pdf$">
-  Require all granted
+  <RequireAll>
+    Require all granted
+  </RequireAll>
 </FilesMatch>
-
 # MIME-типы
 AddType application/pdf .pdf
 AddType application/font-woff .woff

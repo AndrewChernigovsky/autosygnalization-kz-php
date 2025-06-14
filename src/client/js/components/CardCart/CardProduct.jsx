@@ -12,7 +12,9 @@ export class CardProduct extends Component {
     this.cartCounter = document.querySelector('.cart .counter');
     this.setModalCart = null;
   }
-
+  formatNumberWithSpaces(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
   componentDidMount() {
     const priceElement = document.querySelector('.product-card__price');
     if (priceElement) {
@@ -44,7 +46,7 @@ export class CardProduct extends Component {
       }).catch(error => {
         console.error('Ошибка при загрузке cart-modal.js:', error);
       });
-  
+
       addToCartButton.addEventListener('click', this.handleAddToCart);
     }
   }
@@ -186,7 +188,8 @@ export class CardProduct extends Component {
     const costTotalElement = document.querySelector('#cost-total');
 
     if (costTotalElement) {
-      costTotalElement.textContent = totalCost.toFixed(2) + ' ₸';
+      console.log(totalCost, 'TOTALCOST');
+      costTotalElement.textContent = this.formatNumberWithSpaces(totalCost) + ' ₸';
     }
   }
 

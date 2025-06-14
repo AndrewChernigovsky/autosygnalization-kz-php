@@ -93,7 +93,7 @@ echo $head->setHead();
       </div>
     </section>
     <div class="price-button">
-      <a class="button y-button-primary" href="<= '/files/docs/Auto_Security_price.pdf' ?>"
+      <a class="button y-button-primary" href="/client/docs/Auto_Security_price.pdf"
         download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
     </div>
   </main>
