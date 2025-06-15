@@ -107,9 +107,10 @@ export default class FormOrder {
       .then((data) => {
         console.log('Ответ от сервера:', data);
         if (data.success) {
-          alert('Заказ успешно отправлен!');
+          alert('Заказ успешно отправлен, наш менеджер свяжется с вами в ближайшее время!');
         } else {
-          alert('Ошибка при отправке заказа');
+          // alert('Ошибка при отправке заказа');
+          alert(data.message, 'Ошибка33')
           return Promise.reject('Ошибка на сервере');
         }
       });
