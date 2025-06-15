@@ -1,5 +1,4 @@
 import { html, Component } from 'htm/preact';
-import { CheckoutSelect } from './CheckoutSelect';
 import { CheckoutCompany } from './CheckoutCompany';
 import {
   createPolicyModal,
@@ -13,11 +12,8 @@ export class CheckoutForm extends Component {
       isCompany: false, // Состояние для отслеживания типа клиента
       selectedClientType: 'Физическое лицо', // Состояние для отслеживания выбранного типа клиента
     };
-    this.PRODUCTION = window.location.href.includes('/dist/');
-    this.path2Policy = `${
-      this.PRODUCTION ? '/dist/' : '/'
-    }files/docs/policy.txt`;
-    this.path2Deal = `${this.PRODUCTION ? '/dist/' : '/'}files/docs/deal.txt`;
+    this.path2Policy = `/client/docs/policy.txt`;
+    this.path2Deal = `/client/docs/deal.txt`;
   }
 
   openWindow = async (e, type) => {
@@ -49,8 +45,8 @@ export class CheckoutForm extends Component {
         <legend>Вы оформляете заказ как:</legend>
         <label
           class="${selectedClientType === 'Физическое лицо'
-            ? 'checkout-form__label-radio selected'
-            : 'checkout-form__label-radio'}"
+        ? 'checkout-form__label-radio selected'
+        : 'checkout-form__label-radio'}"
         >
           <input
             type="radio"
@@ -63,8 +59,8 @@ export class CheckoutForm extends Component {
         </label>
         <label
           class="${selectedClientType === 'Юридическое лицо'
-            ? 'checkout-form__label-radio selected'
-            : 'checkout-form__label-radio'}"
+        ? 'checkout-form__label-radio selected'
+        : 'checkout-form__label-radio'}"
         >
           <input
             type="radio"

@@ -200,6 +200,7 @@
     &.active {
       display: flex;
       padding: 10px 0 120px 0;
+      align-items: unset;
     }
 
     .nav-list {

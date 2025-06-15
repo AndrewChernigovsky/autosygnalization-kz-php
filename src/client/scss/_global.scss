@@ -1,5 +1,5 @@
-@use 'variables' as var;
-@use 'mixins' as mix;
+@use 'variables'as var;
+@use 'mixins'as mix;
 
 html {
   height: 100%;
@@ -141,6 +141,7 @@ p {
   @media screen and (min-width: var.$desktop-min) {
     display: none !important;
   }
+
   @media screen and (max-width: var.$desktop-min) {
     &.hidden {
       display: flex !important;
@@ -168,4 +169,12 @@ p {
     top: auto !important;
     bottom: 75px;
   }
+}
+
+.invisible {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: unset;
+  text-decoration: unset;
 }

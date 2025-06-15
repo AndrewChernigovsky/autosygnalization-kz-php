@@ -2,6 +2,7 @@
 
 namespace LAYOUT;
 
+use COMPONENTS\ModalDelivery;
 use DATA\ContactsData;
 use COMPONENTS\GEO;
 use COMPONENTS\Logo;
@@ -34,6 +35,7 @@ class Footer
     $navigationFooterLinks = new GenerateFooterLinks((new NavigationLinks())->getNavigationFooterLinks());
     $phones_footer = $insertPHONE->displayPhones($phones, $icon_phone);
     $date = date('Y');
+    $modalDelivery = (new ModalDelivery())->render();
 
     // Генерация HTML
     return <<<HTML
@@ -66,6 +68,7 @@ class Footer
     <p class="footer__copy">© {$date} Auto Security. Все права защищены</p>
   </div>
 </footer>
+{$modalDelivery}
 HTML;
   }
 

@@ -66,30 +66,32 @@ class CreateProductCards
         $price = formatPriceWithSpaces($item['price']);
         ?>
         <article class='product-card' id="<?php echo htmlspecialchars($item['id']); ?>">
-          <div class="product-card__bg">
-            <img src="<?php echo htmlspecialchars($item['gallery'][$random_bg]); ?>"
-              alt="<?php echo htmlspecialchars($item['description']); ?>" width="300" height="250">
-          </div>
-          <div class="product-card__body">
-            <div class="product-card__head">
-              <h3><?php echo htmlspecialchars($item['title']); ?></h3>
-              <?php if (isset($item['price'])): ?>
-                <p>
-                  <span>Цена:</span> <?php echo $price; ?>
-                  <span><?php echo htmlspecialchars($item['currency']); ?></span>
-                </p>
-              <?php endif; ?>
+          <a class="invisible" href="<?php echo htmlspecialchars($item['link']); ?>">
+            <div class="product-card__bg">
+              <img src="<?php echo htmlspecialchars($item['gallery'][$random_bg]); ?>"
+                alt="<?php echo htmlspecialchars($item['description']); ?>" width="300" height="250">
             </div>
-            <?php if (!$this->cart): ?>
-              <div class="product-card__buttons">
-                <a class="button y-button-secondary" href="<?php echo htmlspecialchars($item['link']); ?>">Подробнее</a>
-                <button type="button" class="button y-button-primary cart-button"
-                  data-id="<?php echo htmlspecialchars($item['id']); ?>" data-cost="<?= $item['price'] ?>">Купить</button>
+            <div class="product-card__body">
+              <div class="product-card__head">
+                <h3><?php echo htmlspecialchars($item['title']); ?></h3>
+                <?php if (isset($item['price'])): ?>
+                  <p>
+                    <span>Цена:</span> <?php echo $price; ?>
+                    <span><?php echo htmlspecialchars($item['currency']); ?></span>
+                  </p>
+                <?php endif; ?>
               </div>
-            <?php endif; ?>
-            <?php if (isset($item['quantity']) && $this->cart): ?>
-              <p>Количество: <?php echo htmlspecialchars($item['quantity']); ?></p>
-            <?php endif; ?>
+          </a>
+          <?php if (!$this->cart): ?>
+            <div class="product-card__buttons">
+              <a class="button y-button-secondary" href="<?php echo htmlspecialchars($item['link']); ?>">Подробнее</a>
+              <button type="button" class="button y-button-primary cart-button"
+                data-id="<?php echo htmlspecialchars($item['id']); ?>" data-cost="<?= $item['price'] ?>">Купить</button>
+            </div>
+          <?php endif; ?>
+          <?php if (isset($item['quantity']) && $this->cart): ?>
+            <p>Количество: <?php echo htmlspecialchars($item['quantity']); ?></p>
+          <?php endif; ?>
           </div>
         </article>
         <?php
