@@ -53,7 +53,7 @@ echo $head->setHead();
               <span>Товар/ов на сумму: </span>
               <span class="cost-total"></span>
             </p>
-            <button type="submit" class="button y-button-primary" id="checkout-button">Оформить заказ</button>
+            <button type="submit" class="button y-button-primary" id="checkout-button" disabled>Оформить заказ</button>
           </div>
         </form>
       </div>

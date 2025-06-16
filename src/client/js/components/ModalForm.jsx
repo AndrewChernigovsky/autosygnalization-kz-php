@@ -38,22 +38,19 @@ export class ModalForm extends Component {
               <li class="form__item">
                 <label class="form__subtitle">Имя*:
                   <input class="form__input" type="text" name="name" id="name" placeholder="Алексей"
-                   required onInput=${this.handleInputChange} value=${
-      this.state.name
-    }>
+                   required onInput=${this.handleInputChange} value=${this.state.name
+      }>
                 </label>
               </li>
               <li class="form__item">
                 <label class="form__subtitle">Телефон*:
                   <input class="form__input" type="tel" name="phone" id="phone" placeholder="+7 (777) 77 77 777"
-                  required onInput=${this.handleInputChange} value=${
-      this.state.phone
-    }>
+                  required onInput=${this.handleInputChange} value=${this.state.phone
+      }>
                 </label>
               </li>
-              ${
-                !this.props.fast &&
-                html`
+              ${!this.props.fast &&
+      html`
                   <li class="form__item form__item--textarea">
                     <label class="form__subtitle"
                       >Оставьте Комментарий:
@@ -68,9 +65,9 @@ export class ModalForm extends Component {
                     </label>
                   </li>
                 `
-              }
+      }
             </ul>
-            <button class="form__button y-button-primary" type="submit">Отправить заявку</button>
+            <button class="form__button y-button-primary" type="submit" disabled>Отправить заявку</button>
           </form>
         </div>
   </div>

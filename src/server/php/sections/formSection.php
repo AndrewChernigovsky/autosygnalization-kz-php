@@ -69,7 +69,7 @@ function formSection()
         </ul>
         <div class="g-recaptcha" data-callback="onReCaptchaSuccess" id="recaptcha-field1"></div>
         <!-- <button type="button" id="captcha-render">Капча!</button> -->
-        <button class="form__button y-button-primary" type="submit">Отправить заявку</button>
+        <button class="form__button y-button-primary" type="submit" disabled>Отправить заявку</button>
       </form>
     </div>
   </section>
