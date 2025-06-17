@@ -30,11 +30,29 @@ export default class FormReusable {
   setWork() {
     this.form.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      const cooldown = 15000; // 5 секунд
+      const now = Date.now();
+      const lastSubmitTime = localStorage.getItem('lastSubmitTime3');
+
+      if (lastSubmitTime && now - lastSubmitTime < cooldown) {
+        alert('Форму можно отправлять не чаще одного раза в 15 секунд.');
+        return;
+      }
+
+      // Сохраняем время последней отправки
+      localStorage.setItem('lastSubmitTime3', now);
+
+      // Собираем данные формы
       const url = "/server/php/process/process_form_reusable.php";
       const formData = new FormData(this.form);
+      this.sendObject = {};
+
       formData.forEach((value, key) => {
         this.sendObject[key] = value;
       });
+
+      // Отправляем данные на сервер
       fetch(url, {
         method: 'POST',
         headers: {
@@ -44,9 +62,7 @@ export default class FormReusable {
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error(
-              `Ошибка сервера: ${response.status} ${response.statusText}`
-            );
+            throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
           }
           return response.json();
         })
@@ -54,7 +70,7 @@ export default class FormReusable {
           console.log('Ответ от сервера:', data);
           if (data.success) {
             alert('Данные успешно отправлены, наш менеджер свяжется с вами в ближайшее время!');
-            this.closeModal()
+            this.closeModal();
           } else {
             alert('Ошибка при отправке данных, попробуйте позже');
           }

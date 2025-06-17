@@ -27,7 +27,6 @@ export default class FormOrder {
     }
 
     this.sendObject = {};
-    this.path = window.location.pathname.includes('/dist') ? '/dist' : '';
     this.init();
   }
 
@@ -40,6 +39,19 @@ export default class FormOrder {
     this.form.addEventListener('submit', (event) => {
       event.preventDefault();
 
+      const cooldown = 15000; // 15 секунд
+      const now = Date.now();
+      const lastSubmitTime = localStorage.getItem('lastSubmitTime2');
+
+      if (lastSubmitTime && now - lastSubmitTime < cooldown) {
+        alert('Форму можно отправлять не чаще одного раза в 15 секунд.');
+        return;
+      }
+
+      // Сохраняем время последней отправки
+      localStorage.setItem('lastSubmitTime2', now);
+
+      // Собираем данные формы
       const data = new FormData(this.form);
       this.sendObject = {
         form: {},
@@ -71,6 +83,7 @@ export default class FormOrder {
 
       console.log(this.sendObject);
 
+      // Отправляем данные на сервер
       this.sendDataToServer()
         .then(() => {
           this.destroy();
@@ -79,12 +92,10 @@ export default class FormOrder {
         .catch((error) => {
           console.error('Ошибка при отправке данных:', error);
         });
-
     }, { signal: this.abortController.signal });
   };
-
   sendDataToServer() {
-    const url = `${this.path}/server/php/process/process_form_order.php`;
+    const url = `/server/php/process/process_form_order.php`;
 
     if (!this.sendObject || Object.keys(this.sendObject).length === 0) {
       alert('Ошибка: данные заказа отсутствуют');
@@ -109,8 +120,7 @@ export default class FormOrder {
         if (data.success) {
           alert('Заказ успешно отправлен, наш менеджер свяжется с вами в ближайшее время!');
         } else {
-          // alert('Ошибка при отправке заказа');
-          alert(data.message, 'Ошибка33')
+          alert('Ошибка при отправке заказа');
           return Promise.reject('Ошибка на сервере');
         }
       });
@@ -190,7 +200,5 @@ export default class FormOrder {
     this.list = null;
     this.items = null;
     this.sendObject = null;
-    this.path = null;
-
   }
 }

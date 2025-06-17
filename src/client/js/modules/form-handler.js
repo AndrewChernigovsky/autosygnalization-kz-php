@@ -49,19 +49,31 @@ export default class ProcessForm {
     this.form.addEventListener('submit', (event) => {
       event.preventDefault();
 
+      const lastSubmitTime = localStorage.getItem('lastSubmitTime1');
+      const now = Date.now();
+      const cooldown = 15000; // 15 секунд
+
+      if (lastSubmitTime && now - lastSubmitTime < cooldown) {
+        // Если прошло меньше 5 секунд, показываем уведомление
+        alert('Форму можно отправлять не чаще одного раза в 15 секунд.');
+        return;
+      }
+
+      // Сохраняем время последней отправки
+      localStorage.setItem('lastSubmitTime1', now);
+
+      // Собираем данные формы
       const data = new FormData(this.form);
       this.sendObject = {};
-
 
       data.forEach((value, key) => {
         this.sendObject[key] = value;
       });
 
+      // Отправляем данные на сервер
       this.sendDataToServer();
-
-
     });
-  }
+  };
 
   sendDataToServer() {
     const url = "/server/php/process/process_form.php";
