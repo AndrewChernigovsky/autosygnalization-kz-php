@@ -1,9 +1,11 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .footer {
-  padding: 20px 0;
+  padding: 50px 0 20px 0;
+  margin-top: 20px;
   position: relative;
   min-height: 300px;
+  border-top: 1px solid var.$white;
 
   &__inner {
     display: grid;
@@ -257,7 +259,7 @@
         display: block;
       }
 
-      & > span {
+      &>span {
         position: relative;
       }
     }
@@ -300,21 +302,21 @@
         linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
     }
 
-    & + ul {
+    &+ul {
       display: none;
     }
 
-    &.active + ul {
+    &.active+ul {
       display: block;
     }
   }
 
   span {
-    &.toggle-list + ul {
+    &.toggle-list+ul {
       display: none;
     }
 
-    &.toggle-list.active + ul {
+    &.toggle-list.active+ul {
       display: grid;
     }
   }
@@ -394,6 +396,9 @@
   }
 
   @media screen and (min-width: var.$tablet) {
+    padding: 100px 0 50px 0;
+    margin-top: 100px;
+
     &__inner {
       max-width: 768px;
       justify-content: stretch;
@@ -481,7 +486,7 @@
         padding-left: 0;
         cursor: auto;
 
-        & > span {
+        &>span {
           cursor: auto;
         }
 
@@ -502,6 +507,7 @@
     }
 
     &__menu-title {
+
       &::before,
       &::after {
         display: none;
@@ -524,7 +530,7 @@
       max-width: 1440px;
     }
 
-    &__menu-list > li:not(:has(a:first-of-type)) .toggle-list {
+    &__menu-list>li:not(:has(a:first-of-type)) .toggle-list {
       cursor: auto;
 
       &:hover {
@@ -643,14 +649,18 @@
       border-bottom: 1px solid white;
       padding-bottom: 10px;
     }
+
     &__menu-list {
-      li > span:first-of-type:hover {
+      li>span:first-of-type:hover {
         opacity: 1;
       }
     }
   }
 
   @media screen and (min-width: var.$desktop) {
+    padding: 200px 0 50px 0;
+    margin-top: 200px;
+
     &__contacts {
       align-items: flex-start;
 

@@ -184,8 +184,10 @@ function getProductCardDescription($products, $id)
           <?php endif; ?>
           <?php if (isset($product['price'])): ?>
             <p class="product-card__price" data-price="<?php echo htmlspecialchars($product['price']); ?>"><span>Цена: </span>
-              <?php echo $price; ?>
-              <?php echo htmlspecialchars($product['currency']); ?>
+              <b>
+                <?php echo $price; ?>
+                <?php echo htmlspecialchars($product['currency']); ?>
+              </b>
             </p>
           <?php endif; ?>
         </div>

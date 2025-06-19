@@ -46,7 +46,6 @@ $contentDescription = getProductCardDescription($products, $id);
 $title = "$id | Auto Security";
 $head = new Head($title, [], []);
 $header = new Header();
-error_log(print_r($category, true) . 'Я YT ОТРАБОТАЛ');
 ?>
 
 <!DOCTYPE html>
@@ -70,10 +69,6 @@ echo $head->setHead();
         <a class="product-card__link product-card__link--mod" href="#">Наличие товара необходимо уточнить у
           менеджера.</a>
       </div>
-      <p class="card-more__text">
-        <span>Итоговая стоимость</span>
-        <span class="cost-total" id="cost-total"></span>
-      </p>
       <?php if (isset($products) && !empty($products)): ?>
         <?php
         $product = null;
@@ -88,16 +83,26 @@ echo $head->setHead();
         $price = formatPriceWithSpaces($product['price']);
         if ($product !== null): ?>
           <div class="card-more__wrapper">
-            <p>Количество</p>
-            <div class="card-more__button-cost" data-id="<?php echo htmlspecialchars($product['id']); ?>"
-              data-cost="<?= $product['price'] ?>"></div>
+            <div class="card-more__button-cost-wrapper">
+              <p>Количество</p>
+              <div class="card-more__button-cost" data-id="<?php echo htmlspecialchars($product['id']); ?>"
+                data-cost="<?= $product['price'] ?>"></div>
+            </div>
+            <div class="card-more__text">
+              <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
+              <p class="card-more__text--cost">
+                <span>Итоговая стоимость</span>
+                <b>
+                  <span class="cost-total" id="cost-total"></span>
+                </b>
+              </p>
+            </div>
           </div>
           <button type="button" class="button y-button-primary card-more__button-cart"
             data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В
             корзину</button>
         <?php endif; ?>
       <?php endif; ?>
-      <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
     </section>
     <?= cardTabsSection($_GET['id']) ?>
 
