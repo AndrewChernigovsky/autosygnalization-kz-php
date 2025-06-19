@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'COMPONENTS\\Article' => $baseDir . '/php/components/Article.php',
+    'COMPONENTS\\AutoCategory' => $baseDir . '/php/components/AutoCategory.php',
     'COMPONENTS\\Cart' => $baseDir . '/php/components/Cart.php',
     'COMPONENTS\\CreateProductCards' => $baseDir . '/php/components/CreateProductCards.php',
     'COMPONENTS\\FiltersRender' => $baseDir . '/php/components/FiltersRender.php',
@@ -15,6 +16,7 @@ return array(
     'COMPONENTS\\InsertSVG' => $baseDir . '/php/components/InsertSVG.php',
     'COMPONENTS\\Logo' => $baseDir . '/php/components/Logo.php',
     'COMPONENTS\\ModalCart' => $baseDir . '/php/components/ModalCart.php',
+    'COMPONENTS\\ModalDelivery' => $baseDir . '/php/components/ModalDelivery.php',
     'COMPONENTS\\ModalForm' => $baseDir . '/php/components/ModalForm.php',
     'COMPONENTS\\Pagination' => $baseDir . '/php/components/Pagination.php',
     'COMPONENTS\\PopularCard' => $baseDir . '/php/components/PopularCard.php',
@@ -31,6 +33,8 @@ return array(
     'DATA\\BrandsData' => $baseDir . '/php/data/BrandsData.php',
     'DATA\\ContactsData' => $baseDir . '/php/data/ContactsData.php',
     'DATA\\NavigationLinks' => $baseDir . '/php/data/NavigationLinks.php',
+    'DATA\\PricesData' => $baseDir . '/php/data/PricesData.php',
+    'DATA\\PricesServicesData' => $baseDir . '/php/data/PricesServicesData.php',
     'DATA\\Products' => $baseDir . '/php/data/Products.php',
     'DATA\\QualityVideos' => $baseDir . '/php/data/QualityVideos.php',
     'DATA\\SelectData' => $baseDir . '/php/data/SelectData.php',

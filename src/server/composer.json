@@ -21,6 +21,7 @@
       "API\\SOCIAL\\": "php/api/social/",
       "API\\AUTH\\": "php/api/auth/",
       "API\\PRODUCTS\\": "php/api/products/",
+      "API\\SERVICES\\": "php/api/services/",
       "API\\ARTICLES\\": "php/api/articles/",
       "MODELS\\": "php/models/",
       "MODELS\\CATEGORIES\\": "php/models/categories/",
