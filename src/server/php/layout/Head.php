@@ -32,6 +32,7 @@ class Head
             <meta property="og:url" content="https://autosecurity.kz/">
             <meta property="og:type" content="article">
             <meta property="og:title" content="Главная">
+            <meta name="robots" content="noindex, nofollow">
             <meta property="og:description" content="Auto Security - магазин автоэлектроники и установочный центр в г.Алматы. Авторизованный партнер Starline.">
         HTML;
 
