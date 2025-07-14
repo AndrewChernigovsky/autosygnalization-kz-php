@@ -23,6 +23,7 @@
       "API\\PRODUCTS\\": "php/api/products/",
       "API\\SERVICES\\": "php/api/services/",
       "API\\ARTICLES\\": "php/api/articles/",
+      "API\\ADMIN\\": "php/api/admin/",
       "MODELS\\": "php/models/",
       "MODELS\\CATEGORIES\\": "php/models/categories/",
       "MODELS\\NEWS\\": "php/models/news/",

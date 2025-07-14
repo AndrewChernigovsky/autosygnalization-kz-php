@@ -5,6 +5,7 @@ use LAYOUT\Head;
 use LAYOUT\Header;
 use LAYOUT\Footer;
 use COMPONENTS\ModalForm;
+use DATABASE\InitDataBase;
 
 use function SECTIONS\bankSection;
 use function SECTIONS\introSection;
@@ -27,6 +28,10 @@ $head = new Head($title, [], []);
 
 <head>
   <?= $head->setHead(); ?>
+  <?php
+  $initDataBase = new InitDataBase();
+  // $initDataBase->init();
+  ?>
 </head>
 
 <body>

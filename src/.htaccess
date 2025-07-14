@@ -38,6 +38,10 @@ AddType image/avif .avif
   Require all granted
 </FilesMatch>
 
+# Обработка OPTIONS запросов для CORS
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
+
 # Кэширование
 <IfModule mod_expires.c>
   ExpiresActive Off
@@ -58,6 +62,8 @@ AddType image/avif .avif
 # ЧПУ
 RewriteEngine On
 
+
+
 # Обработка ошибок
 ErrorDocument 404 /server/php/errors/404.php
 ErrorDocument 403 /server/php/errors/403.php
@@ -68,8 +74,6 @@ ErrorDocument 500 /server/php/errors/500.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^products/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ /server/php/pages/products/product.php?category=$1&id=$2 [L,QSA]
-
-
 
 
 RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]

@@ -2,31 +2,58 @@
 
 namespace DATA;
 
-class NavigationLinks
+use DATABASE\DataBase;
+
+class NavigationLinks extends DataBase
 {
   private $filters_products_count = [
     'vnedorojnik' => 10,
-  ]; // тут добавил
+  ];
 
-  public function __construct(array $filters_products_count = []) //тут изменил
+  protected $pdo;
+
+  public function __construct(array $filters_products_count = [])
   {
-
     $this->filters_products_count = !empty($filters_products_count) ? $filters_products_count : [
       'vnedorojnik' => 10,
-    ]; // тут добавил
+    ];
+
+    $db = DataBase::getInstance();
+    $this->pdo = $db->getPdo();
   }
 
   public function getNavlinks()
   {
-    $navigationLinks = [
-      ['name' => 'Главная', 'path' => "/"],
-      ['name' => 'Автосигнализации', 'path' => "/autosygnals"],
-      ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name"],
-      ['name' => 'Наши услуги', 'path' => "/services"],
-      ['name' => 'О нас', 'path' => "/about"],
-      ['name' => 'Контакты', 'path' => "/contacts"],
-    ];
-    return $navigationLinks;
+    try {
+      $query = "SELECT title as name, href as path FROM Navigation WHERE parent_id IS NULL AND is_active = 1 ORDER BY position ASC";
+      $stmt = $this->pdo->prepare($query);
+      $stmt->execute();
+
+      $navigationLinks = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+      if (empty($navigationLinks)) {
+        return [
+          ['name' => 'Главная', 'path' => "/"],
+          ['name' => 'Автосигнализации', 'path' => "/autosygnals"],
+          ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name"],
+          ['name' => 'Наши услуги', 'path' => "/services"],
+          ['name' => 'О нас', 'path' => "/about"],
+          ['name' => 'Контакты', 'path' => "/contacts"],
+        ];
+      }
+
+      return $navigationLinks;
+    } catch (\Exception $e) {
+      error_log("Ошибка получения навигации: " . $e->getMessage());
+      return [
+        ['name' => 'Главная', 'path' => "/"],
+        ['name' => 'Автосигнализации', 'path' => "/autosygnals"],
+        ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name"],
+        ['name' => 'Наши услуги', 'path' => "/services"],
+        ['name' => 'О нас', 'path' => "/about"],
+        ['name' => 'Контакты', 'path' => "/contacts"],
+      ];
+    }
   }
 
   public function getNavigationFooterLinks()

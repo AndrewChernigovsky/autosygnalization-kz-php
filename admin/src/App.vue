@@ -25,6 +25,7 @@ const isLoading = ref(false);
 const error = ref<string | null>(null);
 
 const API_BASE_URL = '/server/php/admin/api/navigation_tree.php';
+const API_CRUD_URL = '/server/php/admin/api/navigation.php';
 
 const fetchWithCors = async (url: string, options: RequestInit = {}) => {
   const response = await fetch(url, {
@@ -33,7 +34,7 @@ const fetchWithCors = async (url: string, options: RequestInit = {}) => {
       'Content-Type': 'application/json',
       ...options.headers,
     },
-    credentials: 'include', // если нужны куки
+    credentials: 'include',
   });
 
   if (!response.ok) {
@@ -171,6 +172,84 @@ const deleteNavigation = async (id: number): Promise<void> => {
   }
 };
 
+// --- Добавление новой ссылки ---
+const newNav = ref<Partial<NavigationItem>>({
+  title: '',
+  slug: '',
+  href: '',
+  parent_id: null,
+  position: 1,
+  is_active: true,
+  icon: '',
+  target: '_self',
+});
+
+const createNavigation = async (): Promise<void> => {
+  try {
+    if (!newNav.value.title || !newNav.value.slug || !newNav.value.href) {
+      await Swal.fire({
+        title: 'Ошибка!',
+        text: 'Все поля обязательны',
+        icon: 'error',
+      });
+      return;
+    }
+    Swal.fire({
+      title: 'Создание...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
+    const {
+      success,
+      data,
+      error: apiError,
+    } = await fetchWithCors(API_CRUD_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        title: newNav.value.title,
+        slug: newNav.value.slug,
+        href: newNav.value.href,
+        parent_id: newNav.value.parent_id,
+        position: newNav.value.position,
+        is_active: newNav.value.is_active,
+        icon: newNav.value.icon,
+        target: newNav.value.target,
+      }),
+    });
+    if (success) {
+      await Swal.fire({
+        title: 'Успешно!',
+        text: 'Ссылка добавлена',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+      newNav.value = {
+        title: '',
+        slug: '',
+        href: '',
+        parent_id: null,
+        position: 1,
+        is_active: true,
+        icon: '',
+        target: '_self',
+      };
+      await getNavigation();
+    } else {
+      throw new Error(apiError || 'Ошибка создания');
+    }
+  } catch (err) {
+    await Swal.fire({
+      title: 'Ошибка!',
+      text: err instanceof Error ? err.message : 'Не удалось добавить ссылку',
+      icon: 'error',
+    });
+  }
+};
+
 onMounted(() => {
   getNavigation();
 });
@@ -188,37 +267,61 @@ onMounted(() => {
       {{ error }}
     </div>
 
-    <div v-else class="navigation-grid">
-      <div
-        v-for="item in navigation"
-        :key="item.navigation_id"
-        class="nav-item"
-      >
+    <div>
+      <!-- Форма добавления новой ссылки -->
+      <div class="add-nav-form">
+        <h2>Добавить новую ссылку</h2>
         <div class="input-group">
           <label>Заголовок:</label>
-          <input type="text" v-model="item.title" />
+          <input type="text" v-model="newNav.title" />
         </div>
         <div class="input-group">
           <label>Slug:</label>
-          <input type="text" v-model="item.slug" />
+          <input type="text" v-model="newNav.slug" />
         </div>
         <div class="input-group">
           <label>Ссылка:</label>
-          <input type="text" v-model="item.href" />
+          <input type="text" v-model="newNav.href" />
         </div>
-        <div class="button-group">
-          <button
-            class="btn save"
-            @click="updateNavigation(item.navigation_id)"
-          >
-            Сохранить
-          </button>
-          <button
-            class="btn delete"
-            @click="deleteNavigation(item.navigation_id)"
-          >
-            Удалить
-          </button>
+        <div class="input-group">
+          <label>Активна:</label>
+          <input type="checkbox" v-model="newNav.is_active" />
+        </div>
+        <button class="btn save" @click="createNavigation">Добавить</button>
+      </div>
+
+      <div class="navigation-grid">
+        <div
+          v-for="item in navigation"
+          :key="item.navigation_id"
+          class="nav-item"
+        >
+          <div class="input-group">
+            <label>Заголовок:</label>
+            <input type="text" v-model="item.title" />
+          </div>
+          <div class="input-group">
+            <label>Slug:</label>
+            <input type="text" v-model="item.slug" />
+          </div>
+          <div class="input-group">
+            <label>Ссылка:</label>
+            <input type="text" v-model="item.href" />
+          </div>
+          <div class="button-group">
+            <button
+              class="btn save"
+              @click="updateNavigation(item.navigation_id)"
+            >
+              Сохранить
+            </button>
+            <button
+              class="btn delete"
+              @click="deleteNavigation(item.navigation_id)"
+            >
+              Удалить
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -278,6 +381,21 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 
+.add-nav-form {
+  background: #f9f9f9;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  max-width: 500px;
+}
+.add-nav-form h2 {
+  margin-bottom: 1rem;
+}
+.add-nav-form .input-group {
+  margin-bottom: 1rem;
+}
+
 .navigation-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -309,7 +427,8 @@ onMounted(() => {
   margin-bottom: 0.5rem;
 }
 
-.input-group input {
+.input-group input,
+.add-nav-form select {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -317,7 +436,8 @@ onMounted(() => {
   transition: border-color 0.2s;
 }
 
-.input-group input:focus {
+.input-group input:focus,
+.add-nav-form select:focus {
   border-color: #42b883;
   outline: none;
   box-shadow: 0 0 0 2px rgba(66, 184, 131, 0.2);

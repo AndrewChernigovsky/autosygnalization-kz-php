@@ -83,6 +83,7 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
             'API\\CATEGORIES\\' => 15,
             'API\\AUTH\\' => 9,
             'API\\ARTICLES\\' => 13,
+            'API\\ADMIN\\' => 10,
             'API\\' => 4,
         ),
     );
@@ -207,6 +208,10 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         'API\\ARTICLES\\' => 
         array (
             0 => __DIR__ . '/../..' . '/php/api/articles',
+        ),
+        'API\\ADMIN\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/php/api/admin',
         ),
         'API\\' => 
         array (

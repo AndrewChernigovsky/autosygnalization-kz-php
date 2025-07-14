@@ -36,5 +36,6 @@ return array(
     'API\\CATEGORIES\\' => array($baseDir . '/php/api/categories'),
     'API\\AUTH\\' => array($baseDir . '/php/api/auth'),
     'API\\ARTICLES\\' => array($baseDir . '/php/api/articles'),
+    'API\\ADMIN\\' => array($baseDir . '/php/api/admin'),
     'API\\' => array($baseDir . '/php/api'),
 );
