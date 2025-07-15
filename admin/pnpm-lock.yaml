@@ -21,6 +21,9 @@ importers:
       sweetalert:
         specifier: ^2.1.2
         version: 2.1.2
+      sweetalert2:
+        specifier: ^11.22.2
+        version: 11.22.2
       typescript:
         specifier: ~5.8.3
         version: 5.8.3
@@ -470,6 +473,9 @@ packages:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
 
+  sweetalert2@11.22.2:
+    resolution: {integrity: sha512-GFQGzw8ZXF23PO79WMAYXLl4zYmLiaKqYJwcp5eBF07wiI5BYPbZtKi2pcvVmfUQK+FqL1risJAMxugcPbGIyg==}
+
   sweetalert@2.1.2:
     resolution: {integrity: sha512-iWx7X4anRBNDa/a+AdTmvAzQtkN1+s4j/JJRWlHpYE8Qimkohs8/XnFcWeYHH2lMA8LRCa5tj2d244If3S/hzA==}
 
@@ -902,6 +908,8 @@ snapshots:
       fsevents: 2.3.3
 
   source-map-js@1.2.1: {}
+
+  sweetalert2@11.22.2: {}
 
   sweetalert@2.1.2:
     dependencies:
