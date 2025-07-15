@@ -30,7 +30,7 @@ class NavigationTreeAPI extends DataBase
   public function updateNavigation($id, $data)
   {
     try {
-      $query = "UPDATE Navigation SET 
+      $query = "UPDATE Navigation SET
                 title = :title,
                 slug = :slug,
                 href = :href,
@@ -62,6 +62,26 @@ class NavigationTreeAPI extends DataBase
     } catch (\Exception $e) {
       error_log("Ошибка обновления навигации: " . $e->getMessage());
       return $this->error("Ошибка обновления навигации", 500);
+    }
+  }
+
+  public function deleteNavigationItem($id)
+  {
+    try {
+      $query = "DELETE FROM Navigation WHERE navigation_id = :id";
+
+      $stmt = $this->pdo->prepare($query);
+      $stmt->execute([':id' => $id]);
+
+
+      if ($stmt->rowCount() === 0) {
+        return $this->error("Элемент навигации не найден", 404);
+      }
+
+      return $this->success(['message' => 'Элемент навигации удален']);
+    } catch (\Exception $e) {
+      error_log("Ошибка удаления навигации: " . $e->getMessage());
+      return $this->error("Ошибка удаления навигации", 500);
     }
   }
 
@@ -107,6 +127,9 @@ class NavigationTreeAPI extends DataBase
       return $this->error("Ошибка обновления позиций", 500);
     }
   }
+
+
+
 
   private function buildTree($items, $parentId = null)
   {
@@ -174,6 +197,15 @@ try {
         break;
       }
       echo $api->updateNavigation($id, $input);
+      break;
+
+    case 'DELETE':
+      $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
+      if (!$id) {
+          echo $api->error("ID не указан");
+          break;
+      }
+      echo $api->deleteNavigationItem($id);
       break;
 
     default:
