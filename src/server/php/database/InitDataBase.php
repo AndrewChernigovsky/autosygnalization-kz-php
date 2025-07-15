@@ -18,7 +18,7 @@ class InitDataBase extends DataBase
 
   public function __construct()
   {
-    $this->db = DataBase::getInstance();
+    $this->db = DataBase::getConnection();
 
     if (!$this->db->getPdo()) {
       $this->db->connect();
@@ -48,6 +48,16 @@ class InitDataBase extends DataBase
 
     error_log('Инициализация базовых данных завершена');
     $this->db->close();
+  }
+
+  public function prepare($query)
+  {
+    return $this->db->prepare($query);
+  }
+
+  public function getPdo(): \PDO
+  {
+    return $this->db->getPdo();
   }
 
   private function createCategories()
