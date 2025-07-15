@@ -5,14 +5,13 @@ use LAYOUT\Head;
 use LAYOUT\Header;
 use LAYOUT\Footer;
 use COMPONENTS\ModalForm;
+use DATABASE\InitDataBase;
 
 use function SECTIONS\bankSection;
-// use function SECTIONS\faqSection;
 use function SECTIONS\introSection;
 use function SECTIONS\marksSection;
 use function SECTIONS\popularSection;
 use function SECTIONS\qualitySection;
-// use function SECTIONS\reasonsSection;
 use function SECTIONS\sertificatesSection;
 use function SECTIONS\serviceSection;
 use function SECTIONS\worksSection;
@@ -22,8 +21,6 @@ use function FUNCTIONS\renderPhoneButton;
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
 
-error_log(123123 . ' : ');
-
 ?>
 
 <!DOCTYPE html>
@@ -31,6 +28,10 @@ error_log(123123 . ' : ');
 
 <head>
   <?= $head->setHead(); ?>
+  <?php
+  $initDataBase = new InitDataBase();
+  // $initDataBase->init();
+  ?>
 </head>
 
 <body>

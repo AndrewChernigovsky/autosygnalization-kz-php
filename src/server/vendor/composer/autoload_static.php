@@ -77,11 +77,13 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
             'AUTH\\SESSIONS\\' => 14,
             'AUTH\\' => 5,
             'API\\SOCIAL\\' => 11,
+            'API\\SERVICES\\' => 13,
             'API\\PRODUCTS\\' => 13,
             'API\\NEWS\\' => 9,
             'API\\CATEGORIES\\' => 15,
             'API\\AUTH\\' => 9,
             'API\\ARTICLES\\' => 13,
+            'API\\ADMIN\\' => 10,
             'API\\' => 4,
         ),
     );
@@ -183,6 +185,10 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         array (
             0 => __DIR__ . '/../..' . '/php/api/social',
         ),
+        'API\\SERVICES\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/php/api/services',
+        ),
         'API\\PRODUCTS\\' => 
         array (
             0 => __DIR__ . '/../..' . '/php/api/products',
@@ -203,6 +209,10 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         array (
             0 => __DIR__ . '/../..' . '/php/api/articles',
         ),
+        'API\\ADMIN\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/php/api/admin',
+        ),
         'API\\' => 
         array (
             0 => __DIR__ . '/../..' . '/php/api',
@@ -211,6 +221,7 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
 
     public static $classMap = array (
         'COMPONENTS\\Article' => __DIR__ . '/../..' . '/php/components/Article.php',
+        'COMPONENTS\\AutoCategory' => __DIR__ . '/../..' . '/php/components/AutoCategory.php',
         'COMPONENTS\\Cart' => __DIR__ . '/../..' . '/php/components/Cart.php',
         'COMPONENTS\\CreateProductCards' => __DIR__ . '/../..' . '/php/components/CreateProductCards.php',
         'COMPONENTS\\FiltersRender' => __DIR__ . '/../..' . '/php/components/FiltersRender.php',
@@ -219,6 +230,7 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         'COMPONENTS\\InsertSVG' => __DIR__ . '/../..' . '/php/components/InsertSVG.php',
         'COMPONENTS\\Logo' => __DIR__ . '/../..' . '/php/components/Logo.php',
         'COMPONENTS\\ModalCart' => __DIR__ . '/../..' . '/php/components/ModalCart.php',
+        'COMPONENTS\\ModalDelivery' => __DIR__ . '/../..' . '/php/components/ModalDelivery.php',
         'COMPONENTS\\ModalForm' => __DIR__ . '/../..' . '/php/components/ModalForm.php',
         'COMPONENTS\\Pagination' => __DIR__ . '/../..' . '/php/components/Pagination.php',
         'COMPONENTS\\PopularCard' => __DIR__ . '/../..' . '/php/components/PopularCard.php',
@@ -235,6 +247,8 @@ class ComposerStaticInit756303a4a47fe87338093be10799f679
         'DATA\\BrandsData' => __DIR__ . '/../..' . '/php/data/BrandsData.php',
         'DATA\\ContactsData' => __DIR__ . '/../..' . '/php/data/ContactsData.php',
         'DATA\\NavigationLinks' => __DIR__ . '/../..' . '/php/data/NavigationLinks.php',
+        'DATA\\PricesData' => __DIR__ . '/../..' . '/php/data/PricesData.php',
+        'DATA\\PricesServicesData' => __DIR__ . '/../..' . '/php/data/PricesServicesData.php',
         'DATA\\Products' => __DIR__ . '/../..' . '/php/data/Products.php',
         'DATA\\QualityVideos' => __DIR__ . '/../..' . '/php/data/QualityVideos.php',
         'DATA\\SelectData' => __DIR__ . '/../..' . '/php/data/SelectData.php',

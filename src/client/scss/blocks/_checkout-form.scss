@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .checkout-form {
   max-width: 1000px;
@@ -220,6 +220,7 @@
   input,
   textarea,
   input:not([type='radio']) {
+
     &:hover,
     &:focus-visible {
       border: 1px solid var.$green;
@@ -243,7 +244,7 @@
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
-      align-items: center;
+      align-items: baseline;
       font-family: var.$primary-font;
 
       @media screen and (min-width: var.$tablet) {
@@ -258,6 +259,7 @@
       font-weight: 700;
     }
   }
+
   .heading {
     padding: 10px;
     background-color: #b40036;

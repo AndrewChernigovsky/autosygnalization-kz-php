@@ -10,7 +10,7 @@ use COMPONENTS\ServiceCard;
 use COMPONENTS\ModalForm;
 use COMPONENTS\Share;
 use HELPERS\Services;
-
+use function FUNCTIONS\renderPhoneButton;
 use function FUNCTIONS\getShop;
 
 $header = new Header();
@@ -52,7 +52,7 @@ $share = new Share();
     <div class="service-setup__wrapper">
       <img class="service-setup__image" src="<?= htmlspecialchars($service['image']['src']) ?>"
         alt="<?= htmlspecialchars($service['image']['description']) ?>">
-      
+
       <div class="service-setup__description"><?= $service['description'] ?></div>
     </div>
     <h3 class="service-setup__subtitle">Мы предлагаем:</h3>
@@ -70,10 +70,12 @@ $share = new Share();
     </p>
     <button type="button" class="button y-button-primary" id="buy-btn">заказать</button>
   </section>
-  <?= getShop('setup'); ?>
+  <?= getShop('shop'); ?>
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalForm())->render(); ?>
+  <?php echo renderPhoneButton();
+  ?>
 </body>
 
 </html>

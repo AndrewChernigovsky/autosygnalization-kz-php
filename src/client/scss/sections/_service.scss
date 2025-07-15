@@ -1,4 +1,4 @@
-@use 'variables'as var;
+@use 'variables' as var;
 
 .service {
   padding: 50px 0;
@@ -6,7 +6,8 @@
   &__list {
     height: 100%;
     min-height: 400px;
-    padding-bottom: 20px;
+    padding-bottom: 60px;
+    width: 100%;
 
     li:has(.swiper-pagination) {
       display: none;
@@ -37,11 +38,11 @@
           transition: 0.3s ease-in-out;
           width: 20px;
           height: 20px;
-          background-color: var.$gray_413E3E;
+          background-color: red;
         }
 
         .swiper-pagination-bullet-active {
-          background-color: var.$gray_959090;
+          background-color: red;
         }
       }
     }
@@ -58,17 +59,31 @@
         height: auto;
       }
 
-
       .service__item .service-card {
         min-height: inherit;
       }
 
       .service__item .service-card__buttons {
-        bottom: 10px;
+        bottom: 20px;
+      }
+
+      @media screen and (min-width: var.$tablet) {
+        .service__item:nth-of-type(even) {
+          position: relative;
+
+          &:not(:last-child):not(:nth-last-child(2))::before {
+            content: '';
+            position: absolute;
+            left: 5%;
+            bottom: -50px;
+            background-color: white;
+            width: 200%;
+            height: 2px;
+          }
+        }
       }
 
       @media screen and (min-width: 768px) {
-
         .service__item .service-card__buttons a,
         .service__item .service-card__buttons button {
           min-width: 135px;
@@ -93,13 +108,13 @@
 
       &.component {
         @media screen and (max-width: 768px) {
-          li:has(.swiper-pagination) .swiper-pagination.swiper-service__pagination {
-            bottom: 60px;
+          li:has(.swiper-pagination)
+            .swiper-pagination.swiper-service__pagination {
+            bottom: 15px;
           }
         }
       }
     }
-
   }
 
   &__item {
@@ -109,21 +124,21 @@
   }
 
   &__title {
-      margin: 0;
-      padding-bottom: 22px;
-      text-align: center;        
-  
-      @media screen and (min-width: var.$desktop-min) {
-        font-size: 40px;
-        line-height: 44px;
-      }
-  
-      @media screen and (min-width: var.$desktop) {
-        padding-bottom: 40px;
-        font-size: 64px;
-        line-height: 88px;
-      }
+    margin: 0;
+    padding-bottom: 22px;
+    text-align: center;
+
+    @media screen and (min-width: var.$desktop-min) {
+      font-size: 40px;
+      line-height: 44px;
     }
+
+    @media screen and (min-width: var.$desktop) {
+      padding-bottom: 40px;
+      font-size: 64px;
+      line-height: 88px;
+    }
+  }
 
   @media screen and (min-width: var.$desktop-min) {
     padding: 60px 0;

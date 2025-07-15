@@ -30,10 +30,12 @@ return array(
     'AUTH\\SESSIONS\\' => array($baseDir . '/php/auth/sessions'),
     'AUTH\\' => array($baseDir . '/php/auth'),
     'API\\SOCIAL\\' => array($baseDir . '/php/api/social'),
+    'API\\SERVICES\\' => array($baseDir . '/php/api/services'),
     'API\\PRODUCTS\\' => array($baseDir . '/php/api/products'),
     'API\\NEWS\\' => array($baseDir . '/php/api/news'),
     'API\\CATEGORIES\\' => array($baseDir . '/php/api/categories'),
     'API\\AUTH\\' => array($baseDir . '/php/api/auth'),
     'API\\ARTICLES\\' => array($baseDir . '/php/api/articles'),
+    'API\\ADMIN\\' => array($baseDir . '/php/api/admin'),
     'API\\' => array($baseDir . '/php/api'),
 );

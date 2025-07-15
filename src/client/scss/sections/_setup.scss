@@ -1,6 +1,8 @@
-@use "../variables" as var;
+@use '../variables' as var;
 
 .setup {
+  border-top: 1px solid var.$white;
+
   &__container {
     display: flex;
     flex-direction: column-reverse;
@@ -109,9 +111,9 @@
     }
 
     @media screen and (min-width: var.$desktop) {
-      font-size: 64px;
-      line-height: 86px;
-      max-width: 540px;
+      font-size: 32px;
+      line-height: 38px;
+      max-width: 420px;
       margin-top: auto;
       align-self: start;
     }

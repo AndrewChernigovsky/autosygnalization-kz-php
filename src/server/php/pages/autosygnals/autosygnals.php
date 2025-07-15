@@ -7,7 +7,7 @@ use LAYOUT\Header;
 use LAYOUT\Head;
 use LAYOUT\Footer;
 use COMPONENTS\ModalCart;
-
+use function FUNCTIONS\renderPhoneButton;
 use function FUNCTIONS\getShop;
 
 $title = 'Автосигнализации';
@@ -72,10 +72,12 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
       <div class="container">
         <h2 class="autosygnals__title title__h2">Автосигнализации</h2>
         <div class="autosygnals__wrapper swiper swiper-autosygnals">
+          <ul class="autosygnals__pagination swiper-pagination"></ul>
           <ul class="autosygnals__list list-style-none swiper-wrapper">
             <?php foreach ($autosygnals as $index => $slide): ?>
               <li class="autosygnals__item swiper-slide">
-                <div class="autosygnals__item-card">
+                <a class="autosygnals__item-card"
+                  href="<?php echo htmlspecialchars($slide['link'], ENT_QUOTES, 'UTF-8'); ?>">
                   <h3 class="autosygnals__item-title"><?php echo htmlspecialchars($slide['name'], ENT_QUOTES, 'UTF-8'); ?>
                   </h3>
                   <img class="autosygnals__item-image"
@@ -94,15 +96,13 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
                         ?>
                       </span> товаров
                     </p>
-                    <a class="autosygnals__item-link link y-button-primary"
-                      href="<?php echo htmlspecialchars($slide['link'], ENT_QUOTES, 'UTF-8'); ?>">В РАЗДЕЛ</a>
+                    <p class="autosygnals__item-link link y-button-primary">В РАЗДЕЛ</p>
                   </div>
-                </div>
+                </a>
               </li>
             <?php endforeach; ?>
 
           </ul>
-          <ul class="autosygnals__pagination swiper-pagination"></ul>
         </div>
       </div>
       </div>
@@ -111,6 +111,7 @@ $autosygnals = $navigationLinks->getCategoriesAutoSygnals();
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalCart())->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
 
 </html>

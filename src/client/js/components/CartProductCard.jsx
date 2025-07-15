@@ -16,6 +16,10 @@ export class CartProductCard extends Component {
     this.props.onUpdateQuantity(this.props.id, newQuantity);
   };
 
+  formatNumberWithSpaces(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
+
   render({
     title,
     id,
@@ -37,7 +41,7 @@ export class CartProductCard extends Component {
             <div>
               <p>
                 Цена:
-                <span id="product-price">${price} </span>
+                <span id="product-price">${this.formatNumberWithSpaces(price)} </span>
                 <span>${currency} </span>
               </p>
             </div>
@@ -52,7 +56,7 @@ export class CartProductCard extends Component {
               <h3>${title}</h3>
               <div class="price">
                 <span>Цена: </span>
-                <span>${price} ${currency}</span>
+                <span>${this.formatNumberWithSpaces(price)} ${currency}</span>
               </div>
               <a class="button y-button-secondary" href=${this.props.link}
                 >Подробнее</a

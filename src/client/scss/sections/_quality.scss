@@ -1,9 +1,18 @@
-@use 'variables' as var;
+@use "variables"as var;
 
 .quality {
   position: relative;
   overflow: hidden;
   min-height: 600px;
+  border-top: 1px solid white;
+
+  @media screen and (max-width: var.$tablet) {
+    min-height: 200px;
+  }
+
+  @media screen and (max-width: var.$desktop-min) {
+    min-height: 200px;
+  }
 
   &__video {
     min-height: inherit;
@@ -52,7 +61,7 @@
       p {
         display: flex;
         max-width: 1440px;
-        padding: 0 20px 0 50px;
+        padding: 30px 20px 30px 50px;
         margin: 0 auto;
         justify-content: center;
         font-weight: 400;
@@ -60,19 +69,24 @@
 
         span {
           display: flex;
-          max-width: 380px;
-          text-align: left;
+          // max-width: 380px;
+          text-align: center;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
           position: relative;
 
           &::before {
-            content: '';
-            top: 50%;
-            left: -50px;
-            transform: translateY(-50%);
-            position: absolute;
-            width: 40px;
+            content: "";
+            // top: 50%;
+            // left: -260px;
+            // transform: translateY(-50%);
+            // position: absolute;
+            width: 240px;
             height: 40px;
-            background-image: url('/client/vectors/shield.svg');
+            margin: 15px auto;
+            background-image: url("/client/images/logo-starline.png");
             background-size: cover;
             background-position: center;
           }
@@ -106,25 +120,58 @@
     display: grid;
     justify-content: center;
     gap: 10px;
-    padding: 40px 0;
+    padding: 180px 0 40px 0;
+
+    @media screen and (max-width: var.$desktop-min) {
+      padding: 40px 0;
+    }
 
     li {
-      padding-left: 50px;
+      padding-left: 40px;
       text-align: left;
       font-size: 18px;
       position: relative;
 
+      @media screen and (min-width: var.$desktop-min) {
+        &:nth-of-type(1) {
+          &::before {
+            background-image: url("/client/vectors/economy-1.svg");
+          }
+        }
+
+        &:nth-of-type(2) {
+          &::before {
+            background-image: url("/client/vectors/economy-2.svg");
+          }
+        }
+
+        &:nth-of-type(3) {
+          &::before {
+            background-image: url("/client/vectors/economy-3.svg");
+          }
+        }
+
+      }
+
       &::before {
-        content: '';
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
+        content: "";
         position: absolute;
-        width: 40px;
-        height: 40px;
-        background-image: url('/client/vectors/aprove.svg');
+        width: 150px;
+        height: 150px;
         background-size: cover;
         background-position: center;
+        top: -155px;
+        left: 50%;
+        transform: translateX(-50%);
+
+        @media screen and (max-width: var.$desktop-min) {
+          top: 50%;
+          left: 0;
+          width: 30px;
+          height: 30px;
+          transform: translateY(-50%);
+          background-image: url("/client/vectors/aprove.svg");
+        }
       }
     }
   }
@@ -139,6 +186,11 @@
 
     @media screen and (min-width: var.$phone) {
       font-size: 20px;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      text-align: left;
+
     }
   }
 
@@ -168,15 +220,22 @@
         padding-left: 150px;
 
         span {
-          max-width: 750px;
+          // max-width: 750px;
           font-size: 32px;
+          line-height: 36px;
 
           &::before {
-            width: 150px;
-            height: 150px;
-            left: -150px;
+            // width: 150px;
+            // height: 150px;
+            // left: -150px;
           }
         }
+      }
+    }
+
+    &__item {
+      &--hidden {
+        display: none;
       }
     }
 
@@ -194,9 +253,9 @@
         flex-basis: 32%;
         padding: 0;
 
-        &::before {
-          display: none;
-        }
+        // &::before {
+        //   display: none;
+        // }
       }
     }
 

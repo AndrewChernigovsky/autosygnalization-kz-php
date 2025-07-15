@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .catalog {
   display: grid;
@@ -43,7 +43,7 @@
   &__products {
     padding-bottom: 10px;
     display: grid;
-    gap: 20px;
+    gap: 50px 20px;
     justify-items: center;
 
     @media screen and (min-width: var.$tablet) {
@@ -83,8 +83,7 @@
     p:not(.article__quantity) {
       margin: 0;
       margin-bottom: 20px;
-      font-size: 48px;
-      line-height: 66px;
+
       font-weight: 700;
       text-align: center;
 
@@ -94,13 +93,14 @@
 
       span:nth-child(2) {
         color: var.$red-B40036;
-        font-size: 62px;
+        font-size: 42px;
         line-height: 62px;
         font-weight: 400;
       }
     }
 
     .product-card__buttons {
+
       a,
       button {
         font-family: var.$secondary-font;

@@ -21,10 +21,10 @@ export default class PrintDocument {
         <p>Beeline: +77077478212</p>
         <p>Kcell: +77017478212</p>
         <p>Whatsapp: +77077478212</p>
-        <p>Сайт: www.autosecurity.kz</p>
+        <p>Сайт: www.starline-service.kz</p>
         <p>Почта: autosecurity.kz@mail.ru</p>
         <p>Адрес: Казахстан, г.Алматы, ул.Абая 145г, бокс №15</p>
-        <p>График работы: Вс. - Чт.: 10:00 - 18:00, Пт.: 10:00-15:00, Сб.: Выходной</p>
+        <p>График работы: Вс. - Чт.: 9:30 - 18:00, Пт.: 9:30-15:00, Сб.: Выходной</p>
         <h3>КАК К НАМ ДОБРАТЬСЯ</h3>
         <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, 
         перед речкой поворот направо, заезжаем на территорию СТО. Наш бокс №15.</p>
@@ -36,12 +36,12 @@ export default class PrintDocument {
   printIframe() {
     const iframe = document.createElement('iframe');
     document.body.appendChild(iframe);
-  
+
     const iframeDoc = iframe.contentWindow || iframe.contentDocument; //получаем возможность записывать HTML-код и стили в документ iframe
-    
+
     if (!iframe.contentWindow && !iframe.contentDocument) {
       console.error('Не удалось получить доступ к содержимому iframe.');
-    return;
+      return;
     }
 
     iframeDoc.document.write(`
@@ -90,7 +90,7 @@ export default class PrintDocument {
       </body>
       </html>
     `);
-  
+
     iframeDoc.print();
     document.body.removeChild(iframe);
   }

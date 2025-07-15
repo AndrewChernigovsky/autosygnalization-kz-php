@@ -72,15 +72,6 @@
     @media screen and (min-width: var.$desktop) {
       padding-top: 150px;
     }
-
-    .y-button {
-      position: absolute;
-      bottom: 25%;
-
-      @media screen and (min-width: var.$tablet) {
-        bottom: 30%;
-      }
-    }
   }
 
   .swiper-intro__slide {
@@ -120,6 +111,14 @@
     align-content: center;
     justify-items: flex-start;
     gap: 5px;
+
+    li:last-of-type {
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      margin-top: 50px;
+    }
 
     @media screen and (min-width: var.$desktop-min) {
       display: flex;

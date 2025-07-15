@@ -5,8 +5,10 @@ use DATA\ContactsData;
 use LAYOUT\Header;
 use LAYOUT\Head;
 use LAYOUT\Footer;
+use COMPONENTS\ModalForm;
 
 use function AUTH\SESSIONS\initSession;
+use function FUNCTIONS\renderPhoneButton;
 
 initSession();
 
@@ -30,7 +32,7 @@ echo $head->setHead();
 
 <body>
 
-<?= $header->getHeader(); ?>
+  <?= $header->getHeader(); ?>
   <main class="main">
     <section class="contacts-section">
       <div class="container">
@@ -51,7 +53,7 @@ echo $head->setHead();
           <li class=" contacts-section__item contacts-section__item--whatsap">
             <a href="https://wa.me/77077478212" target="_blank">
               <h3>Whatsapp:</h3>
-              <p>+77017478212</p>
+              <p>+77077478212</p>
             </a>
           </li>
           <li class="contacts-section__item contacts-section__item--email">
@@ -64,21 +66,21 @@ echo $head->setHead();
           </li>
           <li class="contacts-section__item contacts-section__item--schedule">
             <h3>График работы:</h3>
-              <p>Вс. - Чт.: 10:00 - 18:00 <br>
-                Пт.: 10:00-15:00 <br>
-                <span>Сб.: Выходной</span>
-              </p>
+            <p>Вс. - Чт.: 9:30 - 18:00 <br>
+              Пт.: 9:30-15:00 <br>
+              <span>Сб.: Выходной</span>
+            </p>
           </li>
           <li class="contacts-section__item contacts-section__item--social">
-            <h3>Соцсети:</h3>
+            <h3>Instagram:</h3>
             <ul class="contacts-section__item--social-icons">
               <?php
               foreach ($socialIcons as $social) {
-                  echo '<li>';
-                  echo $contacts->setSocial($social);
-                  echo '</li>';
+                echo '<li>';
+                echo $contacts->setSocial($social);
+                echo '</li>';
               }
-?>
+              ?>
             </ul>
           </li>
           <li class="contacts-section__item contacts-section__item--btn">
@@ -96,13 +98,14 @@ echo $head->setHead();
     <section class="contacts-location">
       <div class="container">
         <h2>КАК К НАМ ДОБРАТЬСЯ</h2>
-        <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
+        <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем
+          на
           территорию СТО. <br> Наш бокс №15.
         </p>
         <div class="contacts-location__phone">
           <p>По всем вопросам звоните:</p>
           <div class="contacts-location__box">
-            <?php foreach($phones as $phone): ?>
+            <?php foreach ($phones as $phone): ?>
               <a href="tel:<?php echo str_replace(' ', '', $phone['phone']); ?>">
                 <?php echo $phone['phone']; ?>
               </a>
@@ -114,5 +117,8 @@ echo $head->setHead();
     </section>
   </main>
   <?= $footer->getFooter(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
+
 </html>

@@ -19,7 +19,7 @@ const config = {
         css: false,
       },
     },
-  },
+  }
 };
 
 const __filename = fileURLToPath(import.meta.url);
@@ -267,11 +267,23 @@ const copyStatics = (cb) => {
 };
 
 const sprite = () => {
+  console.log('Starting sprite generation...');
   return src([
     "./src/client/vectors/icons/**/*.svg",
   ])
     .pipe(svgSprite(config))
-    .pipe(dest("./dist/client/vectors/"));
+    .on('error', function (error) {
+      console.error('Error in sprite generation:', error);
+    })
+    .pipe(dest("./dist/client/vectors/"))
+    .on('end', function () {
+      console.log('Sprite generation completed');
+    });
+};
+
+const copySprite = () => {
+  return src(['./dist/client/vectors/sprite.svg'])
+    .pipe(dest('./dist/client/vectors/'));
 };
 
 const fonts = (cb) => {
@@ -282,11 +294,11 @@ const fonts = (cb) => {
 
 const statics = series(() => cleanDist(['dist']), copyStatics, fonts, sprite, sassTaskLibs, esbuildLibsTask);
 
-const dev = series(() => cleanDist(['dist/client']), copyStatics, setConfig, sprite, phpTask, sassTask, sassTaskLibs, esbuildLibsTask, esbuildTask, watchTask);
+const dev = series(() => cleanDist(['dist/client']), copyStatics, setConfig, sprite, copySprite, phpTask, sassTask, sassTaskLibs, esbuildLibsTask, esbuildTask, watchTask);
 
-const build = series(() => cleanDist(['dist/client']), copyStatics, setConfig, phpTask, sassTask, sprite, sassTaskLibs, esbuildTask);
+const build = series(() => cleanDist(['dist/client']), copyStatics, setConfig, phpTask, sassTask, sprite, copySprite, sassTaskLibs, esbuildTask);
 
-const serve = series(() => cleanDist(['dist/client']), copyStatics, setConfigServe, phpTask, sassTask, sprite, sassTaskLibs, esbuildTask, watchTask);
+const serve = series(() => cleanDist(['dist/client']), copyStatics, setConfigServe, phpTask, sassTask, sprite, copySprite, sassTaskLibs, esbuildTask, watchTask);
 
 export { sassTask, sassTaskLibs, esbuildTask, esbuildLibsTask, phpTask, watchTask, build, statics, sprite, fonts, serve };
 export default dev;

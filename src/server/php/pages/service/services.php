@@ -9,7 +9,7 @@ use LAYOUT\Footer;
 use COMPONENTS\ServiceCard;
 use COMPONENTS\ModalForm;
 use HELPERS\Services;
-
+use function FUNCTIONS\renderPhoneButton;
 use function FUNCTIONS\getShop;
 
 $services_data = (new ServicesData())->getData();
@@ -53,10 +53,12 @@ $head = new Head($title, [], []);
         </div>
       </div>
     </section>
-    <?= getShop('setup'); ?>
+    <?= getShop('shop'); ?>
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalForm())->render(); ?>
+  <?php echo renderPhoneButton();
+  ?>
 </body>
 
 </html>

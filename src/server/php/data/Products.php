@@ -2,10 +2,12 @@
 
 namespace DATA;
 
-class Products {
+class Products
+{
 
-  public function getData(): array {
-    return  [
+  public function getData(): array
+  {
+    return [
       "category" => [
         "keychain" => [
           [
@@ -1078,7 +1080,7 @@ class Products {
             "id" => 'product_park-systems_number-plate-with-camera',
             "gallery" => [
               "/client/images/products/park-systems/number-plate-with-camera/number-plate-with-rear-view-camera-1.avif",
-              "/client/images/park-systems/products/number-plate-with-camera/number-plate-with-rear-view-camera-2.avif",
+              "/client/images/products/park-systems/number-plate-with-camera/number-plate-with-rear-view-camera-2.avif",
             ],
             'title' => 'Подномерник с камерой заднего вида',
             "description" => "Камера в номерной рамке завоевала большую популярность среди автомобилистов благодаря своей универсальности. Основное ее преимущество - это особенность установки. Ведь ее можно установить практически на любой автомобиль вместо рамки номерного знака. Камера в номерной рамке имеет центральное расположение камеры, что дает возможность максимально по центру получать изображение с камеры.",

@@ -6,6 +6,8 @@ use DATA\AboutusData;
 use LAYOUT\Footer;
 use LAYOUT\Head;
 use LAYOUT\Header;
+use COMPONENTS\ModalForm;
+use function FUNCTIONS\renderPhoneButton;
 
 initSession();
 
@@ -29,11 +31,12 @@ $aboutUs = new AboutusData();
         <div class="about-us__present present">
           <div class="present__block">
             <h2 class="present__main-title">О нас</h2>
-            <p class="present__main-slogan">“Auto Security” – установочный центр автоэлектроники.</p>
+            <p class="present__main-slogan">“Auto Security” – магазин и установочный центр автоэлектроники.</p>
             <p class="present__main-slogan">Мы предлагаем лучшее!</p>
             <div class="present__main-text">
               <p>Наша компания была основана в 2004&nbsp;году, в самый расцвет автосервисов.</p>
-              <p>Миссия нашей компании – предлагать качественные услуги в сфере установки и ремонта автоэлектроники.</p>
+              <p>Миссия нашей компании – осуществлять качественные услуги в сфере продаж, установки и ремонта
+                автоэлектроники.</p>
             </div>
           </div>
           <div class="present__block">
@@ -52,7 +55,7 @@ $aboutUs = new AboutusData();
             <div class="present__list-comment">
               <p class="present__comment-text">Дружная команда опытных установщиков с удовольствием воплотит ваши мечты
                 в реальность!</p>
-              <p class="present__comment-text">Обращайтесь к нам,будем рады Вам помочь!</p>
+              <p class="present__comment-text">Обращайтесь к нам, будем рады Вам помочь!</p>
             </div>
 
           </div>
@@ -116,6 +119,8 @@ $aboutUs = new AboutusData();
 
   </main>
   <?= $footer->getFooter(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
 
 </html>
