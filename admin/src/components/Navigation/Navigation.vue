@@ -141,7 +141,7 @@ const deleteNavigation = async (id: number): Promise<void> => {
       confirmButtonText: 'Да, удалить!',
       cancelButtonText: 'Отмена',
     });
-
+    console.log();
     if (!isConfirmed) return;
 
     const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
@@ -244,6 +244,7 @@ const createNavigation = async (): Promise<void> => {
       throw new Error(apiError || 'Ошибка создания');
     }
   } catch (err) {
+    console.error(err);
     await Swal.fire({
       title: 'Ошибка!',
       text: err instanceof Error ? err.message : 'Не удалось добавить ссылку',
