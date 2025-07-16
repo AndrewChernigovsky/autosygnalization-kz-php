@@ -1,71 +1,40 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
+import { ref, reactive, onMounted } from 'vue';
+import UploadButton from './UploadButton.vue';
+import DeleteButton from './DeleteButton.vue';
+import { Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/vue';
+// Импорты для Swiper стилей временно закомментированы для устранения ошибок линтера
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 
 // Состояние для видеофайла
-const videoFile = ref<File | null>(null);
 const videoPreview = ref<string | null>(null);
 const uploadStatus = ref<string>('');
 const uploadProgress = ref<number>(0);
+const currentVideoId = ref<number | null>(null);
+const currentSlideIndex = ref<number>(0);
 
-// Обработка загрузки видеофайла
-function handleVideoUpload(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files[0]) {
-    videoFile.value = input.files[0];
-    videoPreview.value = URL.createObjectURL(videoFile.value);
-    uploadVideo();
-  }
-}
-
-// Отправка видео на сервер
-function uploadVideo() {
-  if (!videoFile.value) return;
-
-  uploadStatus.value = 'Загрузка...';
-  uploadProgress.value = 0;
-
-  const formData = new FormData();
-  formData.append('video', videoFile.value);
-  formData.append('title', title.value);
-  formData.append('advantages', JSON.stringify(advantages));
-  formData.append('button_text', buttonText.value);
-  formData.append('button_link', buttonLink.value);
-
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/server/php/admin/api/upload-video.php', true);
-
-  xhr.upload.onprogress = function (event) {
-    if (event.lengthComputable) {
-      uploadProgress.value = Math.round((event.loaded * 100) / event.total);
-    }
-  };
-
-  xhr.onload = function () {
-    console.log('Response status:', xhr.status);
-    console.log('Response text:', xhr.responseText);
-
-    if (xhr.status === 200) {
-      try {
-        const response = JSON.parse(xhr.responseText);
-        uploadStatus.value = 'Загрузка завершена. ID записи: ' + response.id;
-      } catch (e: any) {
-        console.error('JSON parse error:', e);
-        uploadStatus.value = 'Ошибка обработки ответа сервера: ' + e.message;
-      }
-    } else {
-      uploadStatus.value = 'Ошибка загрузки: ' + xhr.statusText;
-    }
-  };
-
-  xhr.onerror = function () {
-    uploadStatus.value = 'Ошибка соединения с сервером';
-  };
-
-  xhr.send(formData);
-}
+// Ссылка на компонент UploadButton
+const uploadButtonRef = ref<InstanceType<typeof UploadButton> | null>(null);
+const formData = new FormData();
 
 // Состояние для заголовка
 const title = ref<string>('');
+const items = ref<
+  {
+    id?: number;
+    poster: string;
+    srcMob: string;
+    src: string[];
+    type: string[];
+    title: string;
+    advantages: string[];
+    link: string;
+    video_path?: string;
+  }[]
+>([]);
 
 // Состояние для списка преимуществ
 const advantages = reactive<string[]>([]);
@@ -81,96 +50,244 @@ function removeAdvantage(index: number) {
 // Состояние для кнопки "Подробнее"
 const buttonText = ref<string>('Подробнее');
 const buttonLink = ref<string>('#');
+
+// Обработчики событий от UploadButton
+function handleUploadSuccess(data: {
+  id: number;
+  filename: string;
+  path: string;
+}) {
+  currentVideoId.value = data.id;
+  if (items.value[currentSlideIndex.value]) {
+    items.value[currentSlideIndex.value].video_path = data.path;
+    videoPreview.value = data.path;
+    // Обновляем данные слайда после успешной загрузки
+    sendDataToServer();
+  }
+}
+
+function handleStatusUpdate(status: string) {
+  uploadStatus.value = status;
+}
+
+function handleProgressUpdate(progress: number) {
+  uploadProgress.value = progress;
+}
+
+function handleVideoPreview(preview: string) {
+  videoPreview.value = preview;
+}
+
+// Обработка удаления видео
+function handleVideoDeleted() {
+  // Очищаем состояние
+  videoPreview.value = null;
+  currentVideoId.value = null;
+  uploadProgress.value = 0;
+  if (items.value[currentSlideIndex.value]) {
+    items.value[currentSlideIndex.value].video_path = '';
+  }
+
+  // Очищаем input file в UploadButton
+  if (uploadButtonRef.value) {
+    uploadButtonRef.value.clearInput();
+  }
+}
+
+async function sendDataToServer() {
+  const slideData = {
+    id: items.value[currentSlideIndex.value].id,
+    title: title.value,
+    advantages: JSON.stringify(advantages),
+    button_text: buttonText.value,
+    button_link: buttonLink.value,
+  };
+
+  try {
+    const response = await fetch('/server/php/admin/api/update-slide.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(slideData),
+    });
+    if (response.ok) {
+      uploadStatus.value = 'Данные успешно сохранены';
+    } else {
+      uploadStatus.value = 'Ошибка сохранения данных';
+    }
+  } catch (error) {
+    console.error('Ошибка отправки данных:', error);
+    uploadStatus.value = 'Ошибка отправки данных';
+  }
+}
+
+function loadSlideData(index: number) {
+  if (items.value[index]) {
+    title.value = items.value[index].title;
+    // Очищаем и обновляем массив преимуществ
+    advantages.splice(0, advantages.length);
+    items.value[index].advantages.forEach((item) => advantages.push(item));
+    buttonLink.value = items.value[index].link;
+    buttonText.value = 'Подробнее';
+    videoPreview.value = items.value[index].video_path || null;
+  }
+}
+
+function handleSlideChange(swiper: any) {
+  currentSlideIndex.value = swiper.activeIndex;
+  loadSlideData(currentSlideIndex.value);
+}
+
+onMounted(async () => {
+  try {
+    const response = await fetch('/server/php/api/get-slides.php');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    items.value = data.map((video: any) => ({
+      id: video.id,
+      poster: video.video_path || '',
+      srcMob: video.video_path || '',
+      src: [video.video_path || ''],
+      type: ['video/mp4'],
+      title: video.title || '',
+      advantages: video.advantages || [],
+      link: video.button_link || '#',
+      video_path: video.video_path || '',
+    }));
+    loadSlideData(0);
+  } catch (error) {
+    console.error('Ошибка загрузки данных видео:', error);
+    uploadStatus.value = 'Ошибка загрузки данных видео';
+  }
+});
 </script>
 
 <template>
   <div class="slider-intro">
-    <h1>Slider Intro</h1>
+    <h1>Главный слайдер на главной странице</h1>
 
-    <!-- Загрузка видео -->
-    <div class="video-upload">
-      <label for="videoInput">Загрузить видео:</label>
-      <div class="preview-video">
-        <div v-if="videoPreview" class="video-preview">
-          <video :src="videoPreview" controls width="300" height="auto"></video>
+    <Swiper
+      :modules="[Navigation, Pagination]"
+      :slides-per-view="1"
+      :space-between="30"
+      :pagination="{ clickable: true }"
+      :navigation="true"
+      class="swiper-container"
+      @slide-change="handleSlideChange"
+    >
+      <SwiperSlide v-for="(item, index) in items" :key="index + item.title">
+        <!-- Загрузка видео -->
+        <div class="video-upload">
+          <label for="videoInput"
+            >Загрузить видео для слайда {{ index + 1 }}:</label
+          >
+          <div class="preview-video">
+            <div v-if="videoPreview" class="video-preview">
+              <video
+                :src="videoPreview"
+                controls
+                width="300"
+                height="auto"
+              ></video>
+              <DeleteButton
+                :video-id="item.id || currentVideoId"
+                @deleted="handleVideoDeleted"
+                @status-update="handleStatusUpdate"
+              />
+            </div>
+            <div v-else class="no-video">
+              <div class="no-video-placeholder"></div>
+            </div>
+          </div>
+          <UploadButton
+            ref="uploadButtonRef"
+            :title="title"
+            :advantages="advantages"
+            :button-text="buttonText"
+            :button-link="buttonLink"
+            :form-data="formData"
+            @upload-success="handleUploadSuccess"
+            @status-update="handleStatusUpdate"
+            @progress-update="handleProgressUpdate"
+            @video-preview="handleVideoPreview"
+          />
+          <div v-if="uploadStatus" class="upload-status">
+            <p>{{ uploadStatus }}</p>
+            <div
+              class="progress-bar"
+              v-if="uploadProgress > 0 && uploadProgress < 100"
+            >
+              <div
+                class="progress"
+                :style="{ width: uploadProgress + '%' }"
+              ></div>
+            </div>
+          </div>
         </div>
-        <div v-else class="no-video">
-          <div class="no-video-placeholder"></div>
-        </div>
-      </div>
-      <input
-        id="videoInput"
-        type="file"
-        accept="video/*"
-        @change="handleVideoUpload"
-      />
-      <div v-if="uploadStatus" class="upload-status">
-        <p>{{ uploadStatus }}</p>
-        <div
-          class="progress-bar"
-          v-if="uploadProgress > 0 && uploadProgress < 100"
-        >
-          <div class="progress" :style="{ width: uploadProgress + '%' }"></div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Поле для заголовка -->
-    <div class="title-input">
-      <label for="titleInput">Заголовок:</label>
-      <input
-        id="titleInput"
-        type="text"
-        v-model="title"
-        placeholder="Введите заголовок"
-      />
-      <h2 v-if="title">Предпросмотр: {{ title }}</h2>
-    </div>
+        <!-- Поле для заголовка -->
+        <div class="title-input">
+          <label for="titleInput">Заголовок слайда {{ index + 1 }}:</label>
+          <input
+            id="titleInput"
+            type="text"
+            v-model="title"
+            placeholder="Введите заголовок"
+          />
+        </div>
 
-    <!-- Список преимуществ -->
-    <div class="advantages-list">
-      <h3>Преимущества:</h3>
-      <div
-        v-for="(advantage, index) in advantages"
-        :key="index"
-        class="advantage-item"
-      >
-        <input
-          type="text"
-          v-model="advantages[index]"
-          placeholder="Введите преимущество"
-        />
-        <button @click="removeAdvantage(index)" class="remove-btn">
-          Удалить
+        <!-- Список преимуществ -->
+        <div class="advantages-list">
+          <h3>Преимущества слайда {{ index + 1 }}:</h3>
+          <div
+            v-for="(advantage, advIndex) in advantages"
+            :key="advIndex"
+            class="advantage-item"
+          >
+            <input
+              type="text"
+              v-model="advantages[advIndex]"
+              placeholder="Введите преимущество"
+            />
+            <button @click="removeAdvantage(advIndex)" class="remove-btn">
+              Удалить
+            </button>
+          </div>
+          <button @click="addAdvantage" class="add-btn">
+            Добавить преимущество
+          </button>
+        </div>
+
+        <!-- Кнопка Подробнее -->
+        <div class="button-config">
+          <div>
+            <label for="buttonText">Текст кнопки:</label>
+            <input
+              id="buttonText"
+              type="text"
+              v-model="buttonText"
+              placeholder="Введите текст кнопки"
+            />
+          </div>
+          <div>
+            <label for="buttonLink">Ссылка кнопки:</label>
+            <input
+              id="buttonLink"
+              type="text"
+              v-model="buttonLink"
+              placeholder="Введите ссылку"
+            />
+          </div>
+        </div>
+
+        <button @click="sendDataToServer" class="send-btn">
+          Отправить данные для слайда {{ index + 1 }}
         </button>
-      </div>
-      <button @click="addAdvantage" class="add-btn">
-        Добавить преимущество
-      </button>
-    </div>
-
-    <!-- Кнопка Подробнее -->
-    <div class="button-config">
-      <div>
-        <label for="buttonText">Текст кнопки:</label>
-        <input
-          id="buttonText"
-          type="text"
-          v-model="buttonText"
-          placeholder="Введите текст кнопки"
-        />
-      </div>
-      <div>
-        <label for="buttonLink">Ссылка кнопки:</label>
-        <input
-          id="buttonLink"
-          type="text"
-          v-model="buttonLink"
-          placeholder="Введите ссылку"
-        />
-      </div>
-      <a :href="buttonLink" class="details-btn">{{ buttonText }}</a>
-    </div>
+      </SwiperSlide>
+    </Swiper>
   </div>
 </template>
 
@@ -179,6 +296,18 @@ const buttonLink = ref<string>('#');
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+}
+
+.swiper-container {
+  width: 100%;
+  height: auto;
+}
+
+.swiper-slide {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .video-upload {
@@ -191,6 +320,7 @@ const buttonLink = ref<string>('#');
 
 .video-preview {
   margin-top: 10px;
+  position: relative;
 }
 
 .no-video {
@@ -242,9 +372,12 @@ const buttonLink = ref<string>('#');
 }
 
 .add-btn,
-.remove-btn {
+.remove-btn,
+.send-btn {
   padding: 5px 10px;
   cursor: pointer;
+  margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .button-config {
@@ -274,5 +407,19 @@ label {
   display: block;
   margin-bottom: 5px;
   font-weight: bold;
+}
+
+.swiper-pagination {
+  position: relative;
+  bottom: 10px;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  position: relative;
+  top: auto;
+  width: 40px;
+  height: 40px;
+  margin-top: 10px;
 }
 </style>

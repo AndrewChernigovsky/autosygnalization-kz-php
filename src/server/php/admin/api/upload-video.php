@@ -146,7 +146,7 @@ try {
   logMessage('Объект InitDataBase создан успешно');
 
   $stmt = $db->prepare("INSERT INTO Videos_intro_slider (video_filename, video_path, title, advantages, button_text, button_link) VALUES (?, ?, ?, ?, ?, ?)");
-  $videoPath = '/admin/uploads/slider-intro/' . $uniqueName;
+  $videoPath = '/server/uploads/slider-intro/' . $uniqueName;
 
   $stmt->execute([$uniqueName, $videoPath, $title, $advantages, $buttonText, $buttonLink]);
   $insertId = $db->getPdo()->lastInsertId();

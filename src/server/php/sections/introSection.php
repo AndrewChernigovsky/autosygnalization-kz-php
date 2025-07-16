@@ -2,13 +2,31 @@
 
 namespace SECTIONS;
 
-use DATA\SlidesData;
+use DATABASE\InitDataBase;
 
 function introSection()
 {
-  // Fetch slides data
-  $slidesData = new SlidesData();
-  $slides = $slidesData->getData();
+  // Fetch slides data from database
+  try {
+    $db = new InitDataBase();
+    $stmt = $db->prepare("SELECT id, video_filename, video_path, title, advantages, button_text, button_link FROM Videos_intro_slider WHERE is_active = TRUE ORDER BY created_at DESC");
+    $stmt->execute();
+    $videos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    $slides = array_map(function ($video) {
+      return [
+        'poster' => $video['video_path'],
+        'srcMob' => $video['video_path'],
+        'src' => [$video['video_path']],
+        'type' => ['video/mp4'],
+        'title' => $video['title'],
+        'list' => json_decode($video['advantages'], true) ?: [],
+        'link' => $video['button_link']
+      ];
+    }, $videos);
+  } catch (\Exception $e) {
+    error_log('Ошибка получения слайдов из базы данных: ' . $e->getMessage());
+    $slides = [];
+  }
 
   // Validate slides data
   if (empty($slides) || !is_array($slides)) {

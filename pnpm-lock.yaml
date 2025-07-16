@@ -88,7 +88,7 @@ importers:
         specifier: ^11.17.2
         version: 11.17.2
       swiper:
-        specifier: ^11.1.15
+        specifier: ^11.2.6
         version: 11.2.6
       terser:
         specifier: ^5.37.0
@@ -6096,17 +6096,19 @@ snapshots:
   gulp-autoprefixer@9.0.0(gulp@5.0.0):
     dependencies:
       autoprefixer: 10.4.21(postcss@8.5.3)
-      gulp: 5.0.0
       gulp-plugin-extras: 0.2.2
       postcss: 8.5.3
       vinyl-sourcemaps-apply: 0.2.1
+    optionalDependencies:
+      gulp: 5.0.0
 
   gulp-changed@5.0.2(gulp@5.0.0):
     dependencies:
       change-file-extension: 0.1.1
-      gulp: 5.0.0
       gulp-plugin-extras: 0.3.0
       touch: 3.1.1
+    optionalDependencies:
+      gulp: 5.0.0
 
   gulp-clean-css@4.3.0:
     dependencies:
