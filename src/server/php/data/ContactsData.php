@@ -8,10 +8,7 @@ use DATABASE\DataBase;
 class ContactsData extends DataBase
 {
   private $insertSVG;
-  private $phones = [
-    ['phone' => '+7 707 747 8212'],
-    ['phone' => '+7 701 747 8212'],
-  ];
+  private $phones;
 
   private $address = "Казахстан, г.Алматы,<br/> пр.Абая 145/г, бокс №15";
   private $email = "autosecurity.kz@mail.ru";
@@ -19,8 +16,15 @@ class ContactsData extends DataBase
 
   protected $pdo;
 
-  public function __construct()
+public function __construct(array $phones = [
+    ['phone' => '+7 707 747 8212'],
+    ['phone' => '+7 701 747 8212'],
+])
   {
+    $this->phones = !empty($phones) ? $phones : [
+          ['phone' => '+7 707 747 8212'],
+          ['phone' => '+7 701 747 8212'],
+    ];
     $this->insertSVG = new InsertSVG();
 
     $db = DataBase::getInstance();
@@ -50,15 +54,32 @@ class ContactsData extends DataBase
       return htmlspecialchars($this->email);
     }
   }
-  public function getPhones()
-  {
-    // try {
-    //   $query = "SELECT phone as name, href as path FROM Navigation WHERE parent_id IS NULL AND is_active = 1 ORDER BY position ASC";
-    // }
+public function getPhones()
+{
+    try {
+        $query = "SELECT phone as phone FROM Contacts ORDER BY contact_id ASC";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute();
+
+        $phonesArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        if (empty($phonesArr)) {
+            return [
+                ['phone' => '+7 707 747 8212'],
+                ['phone' => '+7 701 747 8212'],
+            ];
+        }
+        return $phonesArr; // <-- точка с запятой!
+    } catch (\Exception $e) {
+        error_log("Ошибка получения навигации: " . $e->getMessage());
+        return [
+            ['phone' => '+7 707 747 8212'],
+            ['phone' => '+7 7011 747 8212'],
+        ];
+    }
+}
 
 
-    return $this->phones;
-  }
   public function getWebsite($link = false)
   {
     if ($link) {
