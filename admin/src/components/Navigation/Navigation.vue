@@ -14,18 +14,11 @@ interface NavigationItem {
   target: string;
 }
 
-interface ApiResponse {
-  success: boolean;
-  data?: NavigationItem[];
-  error?: string;
-}
-
 const navigation = ref<NavigationItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 
 const API_BASE_URL = '/server/php/admin/api/navigation_tree.php';
-const API_CRUD_URL = '/server/php/admin/api/navigation.php';
 
 const fetchWithCors = async (url: string, options: RequestInit = {}) => {
   const response = await fetch(url, {
@@ -203,11 +196,7 @@ const createNavigation = async (): Promise<void> => {
       showConfirmButton: false,
       didOpen: () => Swal.showLoading(),
     });
-    const {
-      success,
-      data,
-      error: apiError,
-    } = await fetchWithCors(API_CRUD_URL, {
+    const { success, error: apiError } = await fetchWithCors(API_BASE_URL, {
       method: 'POST',
       body: JSON.stringify({
         title: newNav.value.title,
@@ -275,20 +264,16 @@ onMounted(() => {
       <div class="add-nav-form">
         <h2>Добавить новую ссылку</h2>
         <div class="input-group">
-          <label>Заголовок:</label>
-          <input type="text" v-model="newNav.title" />
+          <label :for="'title-create'">Заголовок:</label>
+          <input type="text" :id="'title-create'" v-model="newNav.title" />
         </div>
         <div class="input-group">
-          <label>Slug:</label>
-          <input type="text" v-model="newNav.slug" />
+          <label :for="'slug-create'">Slug:</label>
+          <input type="text" :id="'slug-create'" v-model="newNav.slug" />
         </div>
         <div class="input-group">
-          <label>Ссылка:</label>
-          <input type="text" v-model="newNav.href" />
-        </div>
-        <div class="input-group">
-          <label>Активна:</label>
-          <input type="checkbox" v-model="newNav.is_active" />
+          <label :for="'href-create'">Ссылка:</label>
+          <input type="text" :id="'href-create'" v-model="newNav.href" />
         </div>
         <button class="btn save" @click="createNavigation">Добавить</button>
       </div>
@@ -300,16 +285,20 @@ onMounted(() => {
           class="nav-item"
         >
           <div class="input-group">
-            <label>Заголовок:</label>
-            <input type="text" v-model="item.title" />
+            <label :for="'title-' + item.navigation_id">Заголовок:</label>
+            <input
+              :id="'title-' + item.navigation_id"
+              type="text"
+              v-model="item.title"
+            />
           </div>
           <div class="input-group">
-            <label>Slug:</label>
-            <input type="text" v-model="item.slug" />
+            <label :for="'title-' + item.slug">Slug:</label>
+            <input type="text" :id="'title-' + item.slug" v-model="item.slug" />
           </div>
           <div class="input-group">
-            <label>Ссылка:</label>
-            <input type="text" v-model="item.href" />
+            <label :for="'title-' + item.href">Ссылка:</label>
+            <input type="text" :id="'title-' + item.href" v-model="item.href" />
           </div>
           <div class="button-group">
             <button

@@ -3,8 +3,9 @@
 namespace DATA;
 
 use COMPONENTS\InsertSVG;
+use DATABASE\DataBase;
 
-class ContactsData
+class ContactsData extends DataBase
 {
   private $insertSVG;
   private $phones = [
@@ -16,9 +17,14 @@ class ContactsData
   private $email = "autosecurity.kz@mail.ru";
   private $web_site = "www.autosecurity.kz";
 
+  protected $pdo;
+
   public function __construct()
   {
     $this->insertSVG = new InsertSVG();
+
+    $db = DataBase::getInstance();
+    $this->pdo = $db->getPdo();
   }
 
   public function getSocialIcons()
@@ -46,6 +52,11 @@ class ContactsData
   }
   public function getPhones()
   {
+    // try {
+    //   $query = "SELECT phone as name, href as path FROM Navigation WHERE parent_id IS NULL AND is_active = 1 ORDER BY position ASC";
+    // }
+
+
     return $this->phones;
   }
   public function getWebsite($link = false)

@@ -7,7 +7,6 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
-require_once __DIR__ . '/../../database/DataBase.php';
 
 use DATABASE\DataBase;
 
@@ -88,18 +87,16 @@ class NavigationTreeAPI extends DataBase
   public function getNavigationTree()
   {
     try {
-      $query = "SELECT * FROM Navigation WHERE is_active = 1 ORDER BY position ASC, navigation_id ASC";
+      $query = "SELECT * FROM Navigation ORDER BY position ASC, navigation_id ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
-      $allItems = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+      $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-      $tree = $this->buildTree($allItems);
-
-      error_log("Построено дерево навигации с " . count($tree) . " корневыми элементами");
-      return $this->success($tree);
+      error_log("Получены все элементы навигации: " . count($result));
+      return $this->success($result);
     } catch (\Exception $e) {
-      error_log("Ошибка построения дерева навигации: " . $e->getMessage());
-      return $this->error("Ошибка построения дерева навигации", 500);
+      error_log("Ошибка получения навигации: " . $e->getMessage());
+      return $this->error("Ошибка получения навигации", 500);
     }
   }
 
@@ -128,8 +125,35 @@ class NavigationTreeAPI extends DataBase
     }
   }
 
+  public function createNavigation($data)
+  {
+    try {
+      error_log(print_r($data, true));
 
+      $query = "INSERT INTO Navigation (title, slug, href, parent_id, position, is_active, icon, target)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
+      $stmt = $this->pdo->prepare($query);
+      $stmt->execute([
+        $data['title'],
+        $data['slug'],
+        $data['href'],
+        $data['parent_id'] ?? null,
+        $data['position'] ?? 0,
+        $data['is_active'] ?? true,
+        $data['icon'] ?? null,
+        $data['target'] ?? '_self'
+      ]);
+
+      $navigationId = $this->pdo->lastInsertId();
+      error_log("Создан элемент навигации ID: " . $navigationId);
+
+      return $this->success(['navigation_id' => $navigationId, 'message' => 'Элемент навигации создан'], 201);
+    } catch (\Exception $e) {
+      error_log("Ошибка создания элемента навигации: " . $e->getMessage());
+      return $this->error("Ошибка создания элемента навигации: " . $e->getMessage(), 400);
+    }
+  }
 
   private function buildTree($items, $parentId = null)
   {
@@ -183,7 +207,7 @@ try {
         echo $api->error("Данные не переданы");
         break;
       }
-      echo $api->updateNavigationPositions($input);
+      echo $api->createNavigation($input);
       break;
 
     case 'PUT':
