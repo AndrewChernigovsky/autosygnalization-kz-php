@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 
 interface Props {
+  slideId: number | undefined;
   title: string;
   advantages: string[];
   buttonText: string;
@@ -50,6 +51,9 @@ function uploadVideo() {
   props.formData.delete('button_link');
 
   // Добавляем новые данные
+  if (props.slideId) {
+    props.formData.append('slide_id', String(props.slideId));
+  }
   props.formData.append('video', videoFile.value);
   props.formData.append('title', props.title);
   // Гарантируем, что advantages всегда будет корректным JSON-массивом
