@@ -4,6 +4,8 @@ import Swal from 'sweetalert2';
 
 interface ContactItem {
   contact_id: number;
+  created_at: string;
+  updated_at: string;
   title: string;
   phone: string;
   link: string;
@@ -40,19 +42,178 @@ const getContacts = async (): Promise<void> => {
     const { success, data } = await fetchWithCors(API_BASE_URL);
 
     if (success && data) {
+      console.log(data);
       contacts.value = data;
+      console.log(contacts.value);
     } else {
-      throw new Error('Failed to load navigation');
+      throw new Error('Failed to load contacts');
     }
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Unknown error';
     await Swal.fire({
       title: 'Ошибка!',
-      text: 'Не удалось загрузить навигацию',
+      text: 'Не удалось загрузить контакты',
       icon: 'error',
     });
   } finally {
     isLoading.value = false;
+  }
+};
+
+const updateContact = async (id: number): Promise<void> => {
+  try {
+    const item = contacts.value.find((n) => n.contact_id === id);
+    if (!item) return;
+
+    const { isConfirmed } = await Swal.fire({
+      title: 'Обновить элемент?',
+      text: 'Вы уверены, что хотите сохранить изменения?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Да, обновить',
+      cancelButtonText: 'Отмена',
+    });
+
+    if (!isConfirmed) return;
+
+    Swal.fire({
+      title: 'Обновление...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        title: item.title,
+        phone: item.phone,
+        link: `tel:${item.phone}`,
+      }),
+    });
+
+    if (success) {
+      await Swal.fire({
+        title: 'Успешно!',
+        text: 'Навигация обновлена',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+    } else {
+      throw new Error('Ошибка обновления');
+    }
+  } catch (err) {
+    console.error('Error updating navigation:', err);
+    await Swal.fire({
+      title: 'Ошибка!',
+      text: 'Не удалось обновить навигацию',
+      icon: 'error',
+    });
+  }
+};
+
+const deleteContact = async (id: number): Promise<void> => {
+  try {
+    const { isConfirmed } = await Swal.fire({
+      title: 'Вы уверены?',
+      text: 'Это действие нельзя будет отменить!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Да, удалить!',
+      cancelButtonText: 'Отмена',
+    });
+    console.log();
+    if (!isConfirmed) return;
+
+    const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    if (success) {
+      contacts.value = contacts.value.filter((item) => item.contact_id !== id);
+      await Swal.fire({
+        title: 'Удалено!',
+        text: 'Элемент навигации был успешно удален',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+    } else {
+      throw new Error('Ошибка удаления');
+    }
+  } catch (err) {
+    console.log(err);
+    console.error('Error deleting navigation:', err);
+    await Swal.fire({
+      title: 'Ошибка!',
+      text: 'Не удалось удалить элемент навигации',
+      icon: 'error',
+    });
+  }
+};
+
+// --- Добавление новой ссылки ---
+const newContact = ref<Partial<ContactItem>>({
+  title: '',
+  phone: '',
+});
+
+const createContact = async (): Promise<void> => {
+  try {
+    if (!newContact.value.title || !newContact.value.phone) {
+      await Swal.fire({
+        title: 'Ошибка!',
+        text: 'Все поля обязательны',
+        icon: 'error',
+      });
+      return;
+    }
+    Swal.fire({
+      title: 'Создание...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
+    const { success, error: apiError } = await fetchWithCors(API_BASE_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        title: newContact.value.title,
+        phone: newContact.value.phone,
+        link: `tel:${newContact.value.phone}`,
+      }),
+    });
+    if (success) {
+      await Swal.fire({
+        title: 'Успешно!',
+        text: 'Ссылка добавлена',
+        icon: 'success',
+        timer: 1500,
+        showConfirmButton: false,
+        timerProgressBar: true,
+      });
+      newContact.value = {
+        title: '',
+        phone: '',
+        link: '',
+      };
+      await getContacts();
+    } else {
+      throw new Error(apiError || 'Ошибка создания');
+    }
+  } catch (err) {
+    console.error(err);
+    await Swal.fire({
+      title: 'Ошибка!',
+      text: err instanceof Error ? err.message : 'Не удалось добавить ссылку',
+      icon: 'error',
+    });
   }
 };
 
@@ -73,63 +234,52 @@ onMounted(() => {
       {{ error }}
     </div>
 
-    <!-- <div>
+    <div>
       <div class="add-nav-form">
         <h2 class="add-nav-form-title">Добавить новую ссылку</h2>
         <div class="input-group">
           <label :for="'title-create'">Заголовок:</label>
-          <input type="text" :id="'title-create'" v-model="newNav.title" />
+          <input type="text" :id="'title-create'" v-model="newContact.title" />
         </div>
         <div class="input-group">
-          <label :for="'slug-create'">Slug:</label>
-          <input type="text" :id="'slug-create'" v-model="newNav.slug" />
+          <label :for="'phone-create'">Телефон:</label>
+          <input type="text" :id="'phone-create'" v-model="newContact.phone" />
         </div>
-        <div class="input-group">
-          <label :for="'href-create'">Ссылка:</label>
-          <input type="text" :id="'href-create'" v-model="newNav.href" />
-        </div>
-        <button class="btn save" @click="createNavigation">Добавить</button>
+        <button class="btn save" @click="createContact">Добавить</button>
       </div>
 
       <div class="navigation-grid">
-        <div
-          v-for="item in navigation"
-          :key="item.navigation_id"
-          class="nav-item"
-        >
+        <div v-for="item in contacts" :key="item.contact_id" class="nav-item">
           <div class="input-group">
-            <label :for="'title-' + item.navigation_id">Заголовок:</label>
+            <label :for="'title-' + item.contact_id">Заголовок:</label>
             <input
-              :id="'title-' + item.navigation_id"
+              :id="'title-' + item.contact_id"
               type="text"
               v-model="item.title"
             />
           </div>
           <div class="input-group">
-            <label :for="'title-' + item.slug">Slug:</label>
-            <input type="text" :id="'title-' + item.slug" v-model="item.slug" />
-          </div>
-          <div class="input-group">
-            <label :for="'title-' + item.href">Ссылка:</label>
-            <input type="text" :id="'title-' + item.href" v-model="item.href" />
+            <label :for="'phone-' + item.phone">Телефон:</label>
+            <input
+              type="text"
+              :id="'phone-' + item.phone"
+              v-model="item.phone"
+            />
           </div>
           <div class="button-group">
-            <button
-              class="btn save"
-              @click="updateNavigation(item.navigation_id)"
-            >
+            <button class="btn save" @click="updateContact(item.contact_id)">
               Сохранить
             </button>
             <button
               class="btn delete"
-              @click="deleteNavigation(item.navigation_id)"
+              @click="deleteContact(item.contact_id)"
             >
               Удалить
             </button>
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
   </div>
 </template>
 
