@@ -1,5 +1,5 @@
-@use 'variables'as var;
-@use 'mixins'as mix;
+@use 'variables' as var;
+@use 'mixins' as mix;
 
 html {
   height: 100%;
@@ -7,6 +7,7 @@ html {
 }
 
 .container {
+  grid-column: 1 / 2;
   max-width: var.$desktop;
   margin: 0 auto;
   padding: 0 10px;
@@ -179,7 +180,7 @@ p {
   text-decoration: unset;
 }
 
-button[type="submit"]:disabled {
+button[type='submit']:disabled {
   opacity: 0.3;
   background: var.$black-opacity-0-5;
 }

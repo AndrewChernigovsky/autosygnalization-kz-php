@@ -2,23 +2,17 @@
 import { ref, onMounted } from 'vue';
 import Swal from 'sweetalert2';
 
-interface NavigationItem {
-  navigation_id: number;
+interface ContactItem {
+  contact_id: number;
   title: string;
-  slug: string;
-  href: string;
-  parent_id: number | null;
-  position: number;
-  is_active: boolean;
-  icon: string | null;
-  target: string;
+  phone: string;
+  link: string;
 }
-
-const navigation = ref<NavigationItem[]>([]);
+const contacts = ref<ContactItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 
-const API_BASE_URL = '/server/php/admin/api/navigation_tree.php';
+const API_BASE_URL = '/server/php/admin/api/contact.php';
 
 const fetchWithCors = async (url: string, options: RequestInit = {}) => {
   const response = await fetch(url, {
@@ -38,7 +32,7 @@ const fetchWithCors = async (url: string, options: RequestInit = {}) => {
   return response.json();
 };
 
-const getNavigation = async (): Promise<void> => {
+const getContacts = async (): Promise<void> => {
   try {
     isLoading.value = true;
     error.value = null;
@@ -46,7 +40,7 @@ const getNavigation = async (): Promise<void> => {
     const { success, data } = await fetchWithCors(API_BASE_URL);
 
     if (success && data) {
-      navigation.value = data;
+      contacts.value = data;
     } else {
       throw new Error('Failed to load navigation');
     }
@@ -62,194 +56,14 @@ const getNavigation = async (): Promise<void> => {
   }
 };
 
-const updateNavigation = async (id: number): Promise<void> => {
-  try {
-    const item = navigation.value.find((n) => n.navigation_id === id);
-    if (!item) return;
-
-    const { isConfirmed } = await Swal.fire({
-      title: 'Обновить элемент?',
-      text: 'Вы уверены, что хотите сохранить изменения?',
-      icon: 'question',
-      showCancelButton: true,
-      confirmButtonText: 'Да, обновить',
-      cancelButtonText: 'Отмена',
-    });
-
-    if (!isConfirmed) return;
-
-    Swal.fire({
-      title: 'Обновление...',
-      text: 'Пожалуйста, подождите',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      didOpen: () => Swal.showLoading(),
-    });
-
-    const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        title: item.title,
-        slug: item.slug,
-        href: item.href,
-        parent_id: item.parent_id,
-        position: item.position,
-        is_active: item.is_active,
-        icon: item.icon,
-        target: item.target,
-      }),
-    });
-
-    if (success) {
-      await Swal.fire({
-        title: 'Успешно!',
-        text: 'Навигация обновлена',
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        timerProgressBar: true,
-      });
-    } else {
-      throw new Error('Ошибка обновления');
-    }
-  } catch (err) {
-    console.error('Error updating navigation:', err);
-    await Swal.fire({
-      title: 'Ошибка!',
-      text: 'Не удалось обновить навигацию',
-      icon: 'error',
-    });
-  }
-};
-
-const deleteNavigation = async (id: number): Promise<void> => {
-  try {
-    const { isConfirmed } = await Swal.fire({
-      title: 'Вы уверены?',
-      text: 'Это действие нельзя будет отменить!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Да, удалить!',
-      cancelButtonText: 'Отмена',
-    });
-    console.log();
-    if (!isConfirmed) return;
-
-    const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
-      method: 'DELETE',
-    });
-
-    if (success) {
-      navigation.value = navigation.value.filter(
-        (item) => item.navigation_id !== id
-      );
-      await Swal.fire({
-        title: 'Удалено!',
-        text: 'Элемент навигации был успешно удален',
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        timerProgressBar: true,
-      });
-    } else {
-      throw new Error('Ошибка удаления');
-    }
-  } catch (err) {
-    console.log(err);
-    console.error('Error deleting navigation:', err);
-    await Swal.fire({
-      title: 'Ошибка!',
-      text: 'Не удалось удалить элемент навигации',
-      icon: 'error',
-    });
-  }
-};
-
-// --- Добавление новой ссылки ---
-const newNav = ref<Partial<NavigationItem>>({
-  title: '',
-  slug: '',
-  href: '',
-  parent_id: null,
-  position: 1,
-  is_active: true,
-  icon: '',
-  target: '_self',
-});
-
-const createNavigation = async (): Promise<void> => {
-  try {
-    if (!newNav.value.title || !newNav.value.slug || !newNav.value.href) {
-      await Swal.fire({
-        title: 'Ошибка!',
-        text: 'Все поля обязательны',
-        icon: 'error',
-      });
-      return;
-    }
-    Swal.fire({
-      title: 'Создание...',
-      text: 'Пожалуйста, подождите',
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      didOpen: () => Swal.showLoading(),
-    });
-    const { success, error: apiError } = await fetchWithCors(API_BASE_URL, {
-      method: 'POST',
-      body: JSON.stringify({
-        title: newNav.value.title,
-        slug: newNav.value.slug,
-        href: newNav.value.href,
-        parent_id: newNav.value.parent_id,
-        position: newNav.value.position,
-        is_active: newNav.value.is_active,
-        icon: newNav.value.icon,
-        target: newNav.value.target,
-      }),
-    });
-    if (success) {
-      await Swal.fire({
-        title: 'Успешно!',
-        text: 'Ссылка добавлена',
-        icon: 'success',
-        timer: 1500,
-        showConfirmButton: false,
-        timerProgressBar: true,
-      });
-      newNav.value = {
-        title: '',
-        slug: '',
-        href: '',
-        parent_id: null,
-        position: 1,
-        is_active: true,
-        icon: '',
-        target: '_self',
-      };
-      await getNavigation();
-    } else {
-      throw new Error(apiError || 'Ошибка создания');
-    }
-  } catch (err) {
-    console.error(err);
-    await Swal.fire({
-      title: 'Ошибка!',
-      text: err instanceof Error ? err.message : 'Не удалось добавить ссылку',
-      icon: 'error',
-    });
-  }
-};
-
 onMounted(() => {
-  getNavigation();
+  getContacts();
 });
 </script>
 
 <template>
   <div class="container">
-    <h2 class="title">Навигация</h2>
+    <h2 class="title">Контакты</h2>
 
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
@@ -259,8 +73,7 @@ onMounted(() => {
       {{ error }}
     </div>
 
-    <div>
-      <!-- Форма добавления новой ссылки -->
+    <!-- <div>
       <div class="add-nav-form">
         <h2 class="add-nav-form-title">Добавить новую ссылку</h2>
         <div class="input-group">
@@ -316,12 +129,13 @@ onMounted(() => {
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
+
 <style scoped>
 .container {
-  grid-column: 1 / 2;
+  grid-column: 2 / 3;
 }
 
 .loading-overlay {
