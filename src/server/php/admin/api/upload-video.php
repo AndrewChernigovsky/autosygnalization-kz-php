@@ -2,10 +2,11 @@
 namespace API\ADMIN;
 
 // Log function that uses the system's temp directory
-function logMessage($message) {
-    $logFile = sys_get_temp_dir() . '/autosygnalization-kz-php-debug.log';
-    $timestamp = date('Y-m-d H:i:s');
-    file_put_contents($logFile, "[$timestamp] [upload-video.php] " . $message . "\n", FILE_APPEND);
+function logMessage($message)
+{
+  $logFile = sys_get_temp_dir() . '/autosygnalization-kz-php-debug.log';
+  $timestamp = date('Y-m-d H:i:s');
+  file_put_contents($logFile, "[$timestamp] [upload-video.php] " . $message . "\n", FILE_APPEND);
 }
 
 logMessage("Script execution started.");
@@ -103,6 +104,23 @@ if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
   echo json_encode(['error' => 'Failed to save uploaded file']);
   exit;
 }
+
+// --- FFmpeg processing for mobile version ---
+$mobileExtension = 'webm';
+$mobileName = 'video-' . time() . '_mob.' . $mobileExtension;
+$mobileUploadPath = $uploadDir . $mobileName;
+
+// Prepare and execute the FFmpeg command
+$ffmpegCommand = 'ffmpeg -i ' . escapeshellarg($uploadPath) . ' -vf "scale=w=768:h=-2" -c:v libvpx-vp9 -crf 30 -b:v 1M -c:a libopus ' . escapeshellarg($mobileUploadPath);
+shell_exec($ffmpegCommand . ' 2>&1');
+
+$mobileVideoPath = '';
+if (file_exists($mobileUploadPath)) {
+  $mobileVideoPath = '/server/uploads/slider-intro/' . $mobileName;
+} else {
+  logMessage("FFmpeg failed to create mobile version for: " . $uploadPath);
+}
+
 // Обновление данных в базе данных
 try {
   $db = new InitDataBase();
@@ -118,10 +136,10 @@ try {
     }
   }
 
-  $stmt = $db->prepare("UPDATE Videos_intro_slider SET video_filename = ?, video_path = ?, title = ?, advantages = ?, button_text = ?, button_link = ? WHERE id = ?");
+  $stmt = $db->prepare("UPDATE Videos_intro_slider SET video_filename = ?, video_path = ?, video_path_mob = ?, title = ?, advantages = ?, button_text = ?, button_link = ? WHERE id = ?");
   $videoPath = '/server/uploads/slider-intro/' . $uniqueName;
 
-  $stmt->execute([$uniqueName, $videoPath, $title, $advantages, $buttonText, $buttonLink, $slideId]);
+  $stmt->execute([$uniqueName, $videoPath, $mobileVideoPath, $title, $advantages, $buttonText, $buttonLink, $slideId]);
 } catch (Exception $e) {
   logMessage("Database error: " . $e->getMessage());
   http_response_code(500);
@@ -137,6 +155,7 @@ echo json_encode([
   'message' => 'Video uploaded and slide updated successfully',
   'filename' => $uniqueName,
   'path' => $videoPath,
+  'path_mob' => $mobileVideoPath,
   'id' => (int) $slideId
 ]);
 ?>

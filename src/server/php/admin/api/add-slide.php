@@ -36,10 +36,10 @@ try {
   $newPosition = $maxPosition !== false ? (int) $maxPosition + 1 : 1;
 
   $stmt = $db->prepare(
-    "INSERT INTO Videos_intro_slider (video_filename, video_path, title, advantages, button_text, button_link, position) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    "INSERT INTO Videos_intro_slider (video_filename, video_path, video_path_mob, title, advantages, button_text, button_link, position, poster_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)"
   );
   // Insert a new slide with default empty values
-  $stmt->execute(['', '', 'Новый слайд', '[]', 'Подробнее', '#', $newPosition]);
+  $stmt->execute(['', '', '', 'Новый слайд', '[]', 'Подробнее', '#', $newPosition, '']);
   $newId = $db->getPdo()->lastInsertId();
 
   logMessage("--- New Slide Added ---");

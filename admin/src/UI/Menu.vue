@@ -65,7 +65,7 @@ function closeMenu() {
   &__line {
     width: 100%;
     height: 3px;
-    background-color: #333;
+    background-color: #ffffff;
     border-radius: 2px;
   }
 }

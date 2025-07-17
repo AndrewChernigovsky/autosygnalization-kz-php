@@ -27,17 +27,34 @@ if (!$id) {
 try {
   $db = new InitDataBase();
 
-  // First, get the video path to delete the file
-  $stmt = $db->prepare("SELECT video_path FROM Videos_intro_slider WHERE id = ?");
+  // First, get the video and poster paths to delete the files
+  $stmt = $db->prepare("SELECT video_path, video_path_mob, poster_path FROM Videos_intro_slider WHERE id = ?");
   $stmt->execute([$id]);
   $slide = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-  if ($slide && !empty($slide['video_path'])) {
-    // Warning: This assumes the path is relative to the document root.
-    // Adjust if the path stored is different.
-    $filePath = $_SERVER['DOCUMENT_ROOT'] . $slide['video_path'];
-    if (file_exists($filePath)) {
-      unlink($filePath);
+  if ($slide) {
+    // Delete video file
+    if (!empty($slide['video_path'])) {
+      $videoFilePath = $_SERVER['DOCUMENT_ROOT'] . $slide['video_path'];
+      if (file_exists($videoFilePath)) {
+        unlink($videoFilePath);
+      }
+    }
+
+    // Delete mobile video file
+    if (!empty($slide['video_path_mob'])) {
+      $mobileVideoFilePath = $_SERVER['DOCUMENT_ROOT'] . $slide['video_path_mob'];
+      if (file_exists($mobileVideoFilePath)) {
+        unlink($mobileVideoFilePath);
+      }
+    }
+
+    // Delete poster file
+    if (!empty($slide['poster_path'])) {
+      $posterFilePath = $_SERVER['DOCUMENT_ROOT'] . $slide['poster_path'];
+      if (file_exists($posterFilePath)) {
+        unlink($posterFilePath);
+      }
     }
   }
 

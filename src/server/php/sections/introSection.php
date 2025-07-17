@@ -9,14 +9,14 @@ function introSection()
   // Fetch slides data from database
   try {
     $db = new InitDataBase();
-    $stmt = $db->prepare("SELECT id, video_filename, video_path, title, advantages, button_text, button_link, position FROM Videos_intro_slider ORDER BY position ASC");
+    $stmt = $db->prepare("SELECT id, video_filename, video_path, title, advantages, button_text, button_link, position, poster_path FROM Videos_intro_slider ORDER BY position ASC");
     $stmt->execute();
     $videos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
     error_log("Raw videos from DB: " . print_r($videos, true));
 
     $slides = array_map(function ($video) {
       return [
-        'poster' => $video['video_path'],
+        'poster' => $video['poster_path'],
         'srcMob' => $video['video_path'],
         'src' => [$video['video_path']],
         'type' => ['video/mp4'],

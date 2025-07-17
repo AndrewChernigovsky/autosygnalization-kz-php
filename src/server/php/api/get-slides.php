@@ -22,7 +22,7 @@ logMessage('Запрос на получение данных о слайдах 
 
 try {
   $db = new InitDataBase();
-  $stmt = $db->prepare("SELECT id, video_filename, video_path, title, advantages, button_text, button_link, position FROM Videos_intro_slider ORDER BY position ASC");
+  $stmt = $db->prepare("SELECT id, video_filename, video_path, title, advantages, button_text, button_link, position, poster_path FROM Videos_intro_slider ORDER BY position ASC");
   $stmt->execute();
   $videos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
   $formattedVideos = array_map(function ($video) {
@@ -36,6 +36,7 @@ try {
       'advantages' => json_decode($video['advantages'], true) ?: [],
       'link' => $video['button_link'],
       'video_path' => $video['video_path'],
+      'poster_path' => $video['poster_path'],
       'position' => $video['position']
     ];
   }, $videos);

@@ -16,10 +16,12 @@ export function useVideo(
     id: number;
     filename: string;
     path: string;
+    path_mob: string;
   }) {
     const slide = items.value.find((item) => item.id === data.id);
     if (slide) {
       slide.video_path = data.path;
+      slide.video_path_mob = data.path_mob;
       if (items.value[currentSlideIndex.value]?.id === data.id) {
         videoPreview.value = data.path;
       }
@@ -58,6 +60,7 @@ export function useVideo(
     const slide = items.value.find((item) => item.id === videoId);
     if (slide) {
       slide.video_path = '';
+      slide.video_path_mob = '';
     }
     if (items.value[currentSlideIndex.value]?.id === videoId) {
       videoPreview.value = null;

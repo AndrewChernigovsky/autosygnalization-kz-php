@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import Swal from 'sweetalert2';
 
 interface Props {
@@ -13,17 +14,14 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-// Удаление видео
-function deleteVideo() {
-  if (!props.videoId) {
-    emit('status-update', 'Нет видео для удаления');
-    return;
-  }
-  const idToDelete = props.videoId;
+const isDeleting = ref(false);
+
+function confirmDelete() {
+  if (!props.videoId) return;
 
   Swal.fire({
     title: 'Вы уверены?',
-    text: 'Вы не сможете восстановить это видео!',
+    text: 'Вы не сможете отменить это действие!',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
@@ -32,61 +30,66 @@ function deleteVideo() {
     cancelButtonText: 'Отмена',
   }).then((result) => {
     if (result.isConfirmed) {
-      emit('status-update', 'Удаление...');
-
-      const xhr = new XMLHttpRequest();
-      xhr.open(
-        'DELETE',
-        `/server/php/admin/api/delete-video.php?id=${idToDelete}`,
-        true
-      );
-
-      xhr.onload = function () {
-        if (xhr.status === 200) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            emit('status-update', 'Видео успешно удалено');
-            emit('deleted', idToDelete);
-          } catch (e: any) {
-            console.error('JSON parse error:', e);
-            emit('status-update', 'Ошибка обработки ответа: ' + e.message);
-          }
-        } else {
-          emit('status-update', 'Ошибка удаления: ' + xhr.statusText);
-        }
-      };
-
-      xhr.onerror = function () {
-        emit('status-update', 'Ошибка соединения с сервером');
-      };
-
-      xhr.send();
+      deleteVideo();
     }
   });
+}
+
+async function deleteVideo() {
+  if (!props.videoId) return;
+
+  isDeleting.value = true;
+  emit('status-update', 'Удаление...');
+
+  try {
+    const response = await fetch('/server/php/admin/api/delete-video.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: props.videoId }),
+    });
+
+    if (response.ok) {
+      emit('deleted', props.videoId);
+      emit('status-update', 'Видео успешно удалено');
+    } else {
+      const errorData = await response.json();
+      emit('status-update', `Ошибка: ${errorData.error}`);
+    }
+  } catch (error: any) {
+    emit('status-update', 'Ошибка соединения: ' + error.message);
+  } finally {
+    isDeleting.value = false;
+  }
 }
 </script>
 
 <template>
-  <button v-if="videoId" @click="deleteVideo" class="delete-btn">
-    Удалить видео
+  <button
+    v-if="props.videoId"
+    @click="confirmDelete"
+    class="delete-btn"
+    :disabled="isDeleting"
+  >
+    {{ isDeleting ? 'Удаление...' : 'Удалить видео' }}
   </button>
 </template>
 
-<style scoped lang="scss">
+<style scoped>
 .delete-btn {
   position: absolute;
   top: 10px;
   right: 10px;
   background-color: #dc3545;
-  color: white;
+  color: #fff;
   border: none;
+  border-radius: 5px;
   padding: 5px 10px;
-  border-radius: 3px;
   cursor: pointer;
-  font-size: 12px;
+  z-index: 10;
 }
-
-.delete-btn:hover {
-  background-color: #c82333;
+.delete-btn:disabled {
+  background-color: #ccc;
 }
 </style>

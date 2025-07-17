@@ -17,6 +17,7 @@ import 'swiper/css/pagination';
 import { useSlides } from '../components/SliderIntro/functions/useSlides';
 import { useDnD } from '../components/SliderIntro/functions/useDnD';
 import { useVideo } from '../components/SliderIntro/functions/useVideo';
+import { usePoster } from '../components/SliderIntro/functions/usePoster';
 
 const {
   items,
@@ -48,6 +49,29 @@ const {
   handleVideoDeleted,
 } = useVideo(items, currentSlideIndex, uploadButtonRef);
 
+const {
+  handlePosterUpload: posterUploader,
+  handlePosterDeleted: posterDeleter,
+  isDeleting: isPosterDeleting,
+} = usePoster(items);
+
+const posterFileNames = ref<Record<string, string | null>>({});
+
+async function handlePosterUpload(event: Event, slideId: number | undefined) {
+  const input = event.target as HTMLInputElement;
+  if (slideId && input.files && input.files[0]) {
+    posterFileNames.value[slideId] = input.files[0].name;
+  }
+  await posterUploader(event, slideId);
+}
+
+async function handlePosterDeleted(slideId: number | undefined) {
+  if (slideId) {
+    posterFileNames.value[slideId] = null;
+  }
+  await posterDeleter(slideId);
+}
+
 function onSwiper(swiper: any) {
   swiperInstance.value = swiper;
 }
@@ -67,6 +91,12 @@ onMounted(async () => {
     if (slide) {
       videoPreview.value = slide.video_path || null;
     }
+    items.value.forEach((item) => {
+      if (item.id && item.poster_path) {
+        posterFileNames.value[item.id] =
+          item.poster_path.split('/').pop() || null;
+      }
+    });
   }
 });
 </script>
@@ -161,6 +191,48 @@ onMounted(async () => {
                 :style="{ width: uploadProgress + '%' }"
               ></div>
             </div>
+          </div>
+        </div>
+
+        <div class="poster-upload">
+          <label>Постер для слайда {{ index + 1 }}:</label>
+          <div class="preview-poster">
+            <img
+              v-if="item.poster_path"
+              :src="item.poster_path"
+              alt="Постер"
+              width="300"
+            />
+            <div v-else class="no-poster-placeholder"></div>
+          </div>
+          <span
+            v-if="item.id !== undefined && posterFileNames[item.id]"
+            class="file-name"
+            >{{ posterFileNames[item.id] }}</span
+          >
+          <div class="wrapper-upload">
+            <label class="upload-label">
+              <span class="upload-label-text">Выбрать постер</span>
+              <input
+                type="file"
+                accept="image/*"
+                @change="handlePosterUpload($event, item.id)"
+                class="upload-input"
+              />
+            </label>
+
+            <button
+              v-if="item.poster_path"
+              @click="handlePosterDeleted(item.id)"
+              class="remove-slide-btn poster-delete-btn"
+              :disabled="item.id !== undefined && isPosterDeleting[item.id]"
+            >
+              {{
+                item.id !== undefined && isPosterDeleting[item.id]
+                  ? 'Удаление...'
+                  : 'Удалить постер'
+              }}
+            </button>
           </div>
         </div>
 
@@ -371,6 +443,64 @@ onMounted(async () => {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+}
+
+.poster-delete-btn {
+  margin-top: 10px;
+}
+
+.wrapper-upload {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+
+  .upload-label,
+  .remove-slide-btn {
+    margin: 0;
+  }
+}
+
+.poster-upload {
+  margin-bottom: 20px;
+}
+
+.preview-poster {
+  margin-bottom: 10px;
+  width: 300px;
+  min-height: 150px;
+  border: 1px solid #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.no-poster-placeholder {
+  width: 100%;
+  height: 150px;
+  background-color: #e0e0e0;
+}
+
+.upload-input {
+  display: none;
+}
+
+.upload-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.file-name {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #333;
 }
 
 .button-config {
