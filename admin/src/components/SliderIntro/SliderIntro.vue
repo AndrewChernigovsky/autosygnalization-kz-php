@@ -1,203 +1,76 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import UploadButton from './UploadButton.vue';
-import DeleteButton from './DeleteButton.vue';
+import { ref, onMounted, onBeforeUpdate, defineAsyncComponent } from 'vue';
+
+const UploadButton = defineAsyncComponent(() => import('./UploadButton.vue'));
+const DeleteButton = defineAsyncComponent(() => import('./DeleteButton.vue'));
+import { Container, Draggable } from 'vue-dndrop';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-const videoPreview = ref<string | null>(null);
-const uploadStatus = ref<string>('');
-const uploadProgress = ref<number>(0);
-const currentVideoId = ref<number | null>(null);
+import { useSlides } from './functions/useSlides';
+import { useDnD } from './functions/useDnD';
+import { useVideo } from './functions/useVideo';
+
+const {
+  items,
+  title,
+  advantages,
+  buttonText,
+  buttonLink,
+  fetchSlides,
+  loadSlideData,
+  addSlide,
+  removeSlide,
+  updateSlide,
+  addAdvantage,
+  removeAdvantage,
+} = useSlides();
+
+const uploadButtonRef = ref<any[]>([]);
+onBeforeUpdate(() => {
+  uploadButtonRef.value = [];
+});
+
+const swiperInstance = ref<any>(null);
 const currentSlideIndex = ref<number>(0);
 
-const uploadButtonRef = ref<InstanceType<typeof UploadButton> | null>(null);
-const formData = new FormData();
+const { onDrop, saveOrder } = useDnD(items, swiperInstance);
+const {
+  videoPreview,
+  uploadProgress,
+  currentVideoId,
+  formData,
+  handleUploadSuccess,
+  handleStatusUpdate,
+  handleProgressUpdate,
+  handleVideoPreview,
+  handleVideoDeleted,
+} = useVideo(items, currentSlideIndex, uploadButtonRef);
 
-const title = ref<string>('');
-const items = ref<
-  {
-    id?: number;
-    poster: string;
-    srcMob: string;
-    src: string[];
-    type: string[];
-    title: string;
-    advantages: string[];
-    link: string;
-    video_path?: string;
-  }[]
->([]);
-
-const advantages = reactive<string[]>([]);
-
-function addAdvantage() {
-  advantages.push('');
-}
-
-function removeAdvantage(index: number) {
-  advantages.splice(index, 1);
-}
-
-const buttonText = ref<string>('Подробнее');
-const buttonLink = ref<string>('#');
-
-function handleUploadSuccess(data: {
-  id: number;
-  filename: string;
-  path: string;
-}) {
-  currentVideoId.value = data.id;
-  if (items.value[currentSlideIndex.value]) {
-    items.value[currentSlideIndex.value].video_path = data.path;
-    videoPreview.value = data.path;
-  }
-}
-
-function handleStatusUpdate(status: string) {
-  uploadStatus.value = status;
-}
-
-function handleProgressUpdate(progress: number) {
-  uploadProgress.value = progress;
-}
-
-function handleVideoPreview(preview: string) {
-  videoPreview.value = preview;
-}
-
-function handleVideoDeleted() {
-  videoPreview.value = null;
-  currentVideoId.value = null;
-  uploadProgress.value = 0;
-  if (items.value[currentSlideIndex.value]) {
-    items.value[currentSlideIndex.value].video_path = '';
-  }
-
-  if (uploadButtonRef.value) {
-    uploadButtonRef.value.clearInput();
-  }
-}
-
-async function sendDataToServer() {
-  if (!items.value[currentSlideIndex.value]?.id) return;
-  const slideData = {
-    id: items.value[currentSlideIndex.value].id,
-    title: title.value,
-    advantages: JSON.stringify(advantages),
-    button_text: buttonText.value,
-    button_link: buttonLink.value,
-  };
-
-  try {
-    const response = await fetch('/server/php/admin/api/update-slide.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(slideData),
-    });
-    if (response.ok) {
-      uploadStatus.value = 'Данные успешно сохранены';
-    } else {
-      uploadStatus.value = 'Ошибка сохранения данных';
-    }
-  } catch (error) {
-    console.error('Ошибка отправки данных:', error);
-    uploadStatus.value = 'Ошибка отправки данных';
-  }
-}
-
-async function addSlide() {
-  try {
-    const response = await fetch('/server/php/admin/api/add-slide.php', {
-      method: 'POST',
-    });
-    if (response.ok) {
-      const newSlide = await response.json();
-      items.value.push({
-        id: newSlide.id,
-        poster: '',
-        srcMob: '',
-        src: [],
-        type: [],
-        title: 'Новый слайд',
-        advantages: [],
-        link: '#',
-        video_path: '',
-      });
-      uploadStatus.value = 'Новый слайд добавлен';
-    } else {
-      uploadStatus.value = 'Ошибка добавления слайда';
-    }
-  } catch (error) {
-    console.error('Ошибка добавления слайда:', error);
-    uploadStatus.value = 'Ошибка добавления слайда';
-  }
-}
-
-async function removeSlide(id: number | undefined, index: number) {
-  if (!id) return;
-  try {
-    const response = await fetch('/server/php/admin/api/delete-slide.php', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id }),
-    });
-    if (response.ok) {
-      items.value.splice(index, 1);
-      uploadStatus.value = 'Слайд удален';
-    } else {
-      uploadStatus.value = 'Ошибка удаления слайда';
-    }
-  } catch (error) {
-    console.error('Ошибка удаления слайда:', error);
-    uploadStatus.value = 'Ошибка удаления слайда';
-  }
-}
-
-function loadSlideData(index: number) {
-  if (items.value[index]) {
-    title.value = items.value[index].title;
-    advantages.splice(0, advantages.length, ...items.value[index].advantages);
-    buttonLink.value = items.value[index].link;
-    buttonText.value = 'Подробнее';
-    videoPreview.value = items.value[index].video_path || null;
-  }
+function onSwiper(swiper: any) {
+  swiperInstance.value = swiper;
 }
 
 function handleSlideChange(swiper: any) {
   currentSlideIndex.value = swiper.activeIndex;
   loadSlideData(currentSlideIndex.value);
+  const slide = items.value[currentSlideIndex.value];
+  if (slide) {
+    videoPreview.value = slide.video_path || null;
+  }
 }
 
 onMounted(async () => {
-  try {
-    const response = await fetch('/server/php/api/get-slides.php');
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  await fetchSlides();
+  if (items.value.length > 0) {
+    loadSlideData(0);
+    const slide = items.value[0];
+    if (slide) {
+      videoPreview.value = slide.video_path || null;
     }
-    const data = await response.json();
-    items.value = data.map((video: any) => ({
-      id: video.id,
-      poster: video.video_path || '',
-      srcMob: video.video_path || '',
-      src: [video.video_path || ''],
-      type: ['video/mp4'],
-      title: video.title || '',
-      advantages: video.advantages || [],
-      link: video.button_link || '#',
-      video_path: video.video_path || '',
-    }));
-    if (items.value.length > 0) {
-      loadSlideData(0);
-    }
-  } catch (error) {
-    console.error('Ошибка загрузки данных видео:', error);
-    uploadStatus.value = 'Ошибка загрузки данных видео';
   }
 });
 </script>
@@ -205,6 +78,18 @@ onMounted(async () => {
 <template>
   <div class="slider-intro">
     <h1>Главный слайдер на главной странице</h1>
+
+    <h2>Порядок слайдов</h2>
+    <Container @drop="onDrop">
+      <Draggable v-for="item in items" :key="item.id">
+        <div class="slide-item">
+          <span class="drag-handle">☰</span>
+          <span>{{ item.title }} - Позиция: {{ item.position }}</span>
+        </div>
+      </Draggable>
+    </Container>
+    <button @click="saveOrder" class="save-order-btn">Сохранить порядок</button>
+    <hr />
 
     <Swiper
       :modules="[Navigation, Pagination]"
@@ -214,16 +99,31 @@ onMounted(async () => {
       :navigation="true"
       class="swiper-container"
       @slide-change="handleSlideChange"
+      @swiper="onSwiper"
     >
       <SwiperSlide v-for="(item, index) in items" :key="item.id || index">
         <div class="video-upload">
-          <label for="videoInput"
-            >Загрузить видео для слайда {{ index + 1 }}:</label
-          >
+          <label>Загрузить видео для слайда {{ index + 1 }}:</label>
           <div class="preview-video">
-            <div v-if="videoPreview" class="video-preview">
+            <div
+              v-if="videoPreview && currentSlideIndex === index"
+              class="video-preview"
+            >
               <video
                 :src="videoPreview"
+                controls
+                width="300"
+                height="auto"
+              ></video>
+              <DeleteButton
+                :video-id="item.id || currentVideoId"
+                @deleted="handleVideoDeleted"
+                @status-update="handleStatusUpdate"
+              />
+            </div>
+            <div v-else-if="item.video_path" class="video-preview">
+              <video
+                :src="item.video_path"
                 controls
                 width="300"
                 height="auto"
@@ -239,7 +139,11 @@ onMounted(async () => {
             </div>
           </div>
           <UploadButton
-            ref="uploadButtonRef"
+            :ref="
+              (el) => {
+                if (el) uploadButtonRef[index] = el;
+              }
+            "
             :slide-id="item.id"
             :title="title"
             :advantages="advantages"
@@ -251,8 +155,7 @@ onMounted(async () => {
             @progress-update="handleProgressUpdate"
             @video-preview="handleVideoPreview"
           />
-          <div v-if="uploadStatus" class="upload-status">
-            <p>{{ uploadStatus }}</p>
+          <div class="upload-status">
             <div
               class="progress-bar"
               v-if="uploadProgress > 0 && uploadProgress < 100"
@@ -266,13 +169,8 @@ onMounted(async () => {
         </div>
 
         <div class="title-input">
-          <label for="titleInput">Заголовок слайда {{ index + 1 }}:</label>
-          <input
-            id="titleInput"
-            type="text"
-            v-model="title"
-            placeholder="Введите заголовок"
-          />
+          <label>Заголовок слайда {{ index + 1 }}:</label>
+          <input type="text" v-model="title" placeholder="Введите заголовок" />
         </div>
 
         <div class="advantages-list">
@@ -298,18 +196,16 @@ onMounted(async () => {
 
         <div class="button-config">
           <div>
-            <label for="buttonText">Текст кнопки:</label>
+            <label>Текст кнопки:</label>
             <input
-              id="buttonText"
               type="text"
               v-model="buttonText"
               placeholder="Введите текст кнопки"
             />
           </div>
           <div>
-            <label for="buttonLink">Ссылка кнопки:</label>
+            <label>Ссылка кнопки:</label>
             <input
-              id="buttonLink"
               type="text"
               v-model="buttonLink"
               placeholder="Введите ссылку"
@@ -317,17 +213,25 @@ onMounted(async () => {
           </div>
         </div>
 
-        <button @click="sendDataToServer" class="send-btn">
-          Отправить данные для слайда {{ index + 1 }}
-        </button>
-        <button @click="removeSlide(item.id, index)" class="remove-slide-btn">
-          Удалить слайд {{ index + 1 }}
-        </button>
+        <div class="buttons-container">
+          <button
+            @click="item.id ? updateSlide(item.id) : () => {}"
+            class="send-btn"
+            :disabled="!item.id"
+          >
+            Обновить \ Сохранить
+          </button>
+          <button
+            @click="removeSlide(item.id, index)"
+            class="remove-slide-btn"
+            :disabled="items.length === 1"
+          >
+            Удалить
+          </button>
+        </div>
       </SwiperSlide>
     </Swiper>
-    <button @click="addSlide" class="add-slide-btn">
-      Добавить новый слайд
-    </button>
+    <button @click="addSlide" class="add-slide-btn">Добавить слайд</button>
   </div>
 </template>
 
@@ -336,6 +240,23 @@ onMounted(async () => {
   padding: 20px;
   max-width: 800px;
   margin: 0 auto;
+}
+
+.slide-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  color: #000;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  margin-bottom: 5px;
+  cursor: grab;
+}
+
+.drag-handle {
+  font-size: 20px;
+  cursor: grab;
 }
 
 .swiper-container {
@@ -414,32 +335,48 @@ onMounted(async () => {
   margin-bottom: 10px;
 }
 
-.add-btn,
-.remove-btn,
 .send-btn,
+.save-order-btn,
 .add-slide-btn,
-.remove-slide-btn {
-  padding: 5px 10px;
+.add-btn,
+.remove-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  margin-right: 10px;
-  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.remove-btn {
+  background-color: #6c757d;
+  font-size: 14px;
+  padding: 8px 12px;
+  margin-top: 0;
+}
+
+.buttons-container {
+  display: flex;
+  gap: 10px;
+}
+
+.remove-slide-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .button-config {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.details-btn {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 5px;
-  margin-top: 10px;
-  text-align: center;
 }
 
 input {
@@ -468,5 +405,10 @@ label {
   width: 40px;
   height: 40px;
   margin-top: 10px;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
 </style>

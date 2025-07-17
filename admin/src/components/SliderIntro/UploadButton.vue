@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import Swal from 'sweetalert2';
 
 interface Props {
   slideId: number | undefined;
@@ -24,15 +25,46 @@ const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
 const videoFile = ref<File | null>(null);
+const videoFileName = ref<string | null>(null);
+const inputRef = ref<HTMLInputElement | null>(null);
 
 // Обработка загрузки видеофайла
 function handleVideoUpload(event: Event) {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    videoFile.value = input.files[0];
+    const file = input.files[0];
+    const fileSize = file.size / 1024 / 1024; // в МБ
+    const fileType = file.type;
+
+    if (fileSize > 100) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Ошибка',
+        text: 'Размер файла не должен превышать 100 МБ.',
+      });
+      if (input) input.value = '';
+      videoFileName.value = null;
+      return;
+    }
+
+    if (!fileType.startsWith('video/')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Ошибка',
+        text: 'Разрешен только видео формат.',
+      });
+      if (input) input.value = '';
+      videoFileName.value = null;
+      return;
+    }
+
+    videoFile.value = file;
+    videoFileName.value = file.name;
     const preview = URL.createObjectURL(videoFile.value);
     emit('video-preview', preview);
     uploadVideo();
+  } else {
+    videoFileName.value = null;
   }
 }
 
@@ -105,35 +137,62 @@ function uploadVideo() {
 
 // Метод для очистки input file (вызывается извне)
 function clearInput() {
-  const input = document.getElementById('videoInput') as HTMLInputElement;
-  if (input) input.value = '';
+  if (inputRef.value) {
+    inputRef.value.value = '';
+  }
   videoFile.value = null;
+  videoFileName.value = null;
 }
 
 // Экспортируем методы для родительского компонента
 defineExpose({
   clearInput,
 });
-
-// Удаляю некорректный экспорт по умолчанию
-// export default {
-//   name: 'UploadButton'
-// };
 </script>
 
 <template>
-  <input
-    id="videoInput"
-    type="file"
-    accept="video/*"
-    @change="handleVideoUpload"
-  />
+  <div class="upload-container">
+    <label for="video-upload-input" class="upload-label">Выбрать видео</label>
+    <input
+      id="video-upload-input"
+      ref="inputRef"
+      type="file"
+      accept="video/*"
+      @change="handleVideoUpload"
+      class="upload-input"
+    />
+    <span v-if="videoFileName" class="file-name">{{ videoFileName }}</span>
+  </div>
 </template>
 
 <style scoped lang="scss">
-input {
-  padding: 8px;
-  width: 100%;
-  box-sizing: border-box;
+.upload-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.upload-label {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.upload-input {
+  display: none;
+}
+
+.file-name {
+  margin-top: 5px;
+  font-size: 14px;
+  color: #333;
 }
 </style>

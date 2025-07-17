@@ -17,11 +17,18 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 try {
   $db = new InitDataBase();
+
+  // Получаем максимальную текущую позицию
+  $posStmt = $db->prepare("SELECT MAX(position) as max_position FROM Videos_intro_slider");
+  $posStmt->execute();
+  $maxPosition = $posStmt->fetchColumn();
+  $newPosition = $maxPosition !== false ? (int) $maxPosition + 1 : 1;
+
   $stmt = $db->prepare(
-    "INSERT INTO Videos_intro_slider (video_filename, video_path, title, advantages, button_text, button_link, is_active) VALUES (?, ?, ?, ?, ?, ?, ?)"
+    "INSERT INTO Videos_intro_slider (video_filename, video_path, title, advantages, button_text, button_link, position) VALUES (?, ?, ?, ?, ?, ?, ?)"
   );
   // Insert a new slide with default empty values
-  $stmt->execute(['', '', 'Новый слайд', '[]', 'Подробнее', '#', TRUE]);
+  $stmt->execute(['', '', 'Новый слайd', '[]', 'Подробнее', '#', $newPosition]);
   $newId = $db->getPdo()->lastInsertId();
 
   http_response_code(200);
