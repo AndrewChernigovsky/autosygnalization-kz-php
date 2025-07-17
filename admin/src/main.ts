@@ -1,5 +1,30 @@
 import { createApp } from 'vue';
-import './style.css';
+import { createPinia } from 'pinia';
+import { createRouter, createWebHistory } from 'vue-router';
 import App from './App.vue';
+import Home from './views/Home.vue';
+import SliderIntro from './views/SliderIntro.vue';
+import Navigation from './views/Navigation.vue';
+import Contacts from './views/Contacts.vue';
+import './style.css';
 
-createApp(App).mount('#app');
+const app = createApp(App);
+const pinia = createPinia();
+
+// Создаем маршруты
+const routes = [
+  { path: '/', component: Home },
+  { path: '/slider-intro', component: SliderIntro },
+  { path: '/navigation', component: Navigation },
+  { path: '/contacts', component: Contacts },
+];
+
+// Создаем роутер
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+app.use(router);
+app.use(pinia);
+app.mount('#app');
