@@ -10,21 +10,20 @@ class ContactsData extends DataBase
   private $insertSVG;
   private $phones;
 
-  private $address = "Казахстан, г.Алматы,<br/> пр.Абая 145/г, бокс №15";
+  private $address;
   private $email = "autosecurity.kz@mail.ru";
-  private $web_site = "www.autosecurity.kz";
+  private $webSite = "www.autosecurity.kz";
+
 
   protected $pdo;
 
-public function __construct(array $phones = [
-    ['phone' => '+7 707 747 8212'],
-    ['phone' => '+7 701 747 8212'],
-])
+public function __construct(array $phones = [], array $address = [])
   {
     $this->phones = !empty($phones) ? $phones : [
           ['phone' => '+7 707 747 8212'],
           ['phone' => '+7 701 747 8212'],
     ];
+        $this->address = !empty($address) ? $address : [['address' => 'Казахстан, г.Алматы,<br/> пр.Абая 145/г, бокс №15', 'link' => 'https://2gis.kz/almaty/geo/70000001027313872', 'svg_path' => '/client/vectors/sprite.svg#geo']];
     $this->insertSVG = new InsertSVG();
 
     $db = DataBase::getInstance();
@@ -54,47 +53,65 @@ public function __construct(array $phones = [
       return htmlspecialchars($this->email);
     }
   }
-  // Обновленная функция получение телефонов
+  // Обновленная функция получение телефонов на шапки и футер
   public function getPhones()
   {
       try {
-          $query = "SELECT phone as phone FROM Contacts ORDER BY contact_id ASC";
+          $query = "SELECT content as phone FROM Contacts WHERE type = 'main-phone' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
           $phonesArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-
+          error_log(print_r($phonesArr, true));
           if (empty($phonesArr)) {
               return [
                   ['phone' => '+7 707 747 8212'],
                   ['phone' => '+7 701 747 8212'],
               ];
           }
-          return $phonesArr; // <-- точка с запятой!
+          return $phonesArr;
       } catch (\Exception $e) {
           error_log("Ошибка получения навигации: " . $e->getMessage());
           return [
-              ['phone' => '+7 707 747 8212'],
+              ['phone' => '+7 7071 747 8212'],
               ['phone' => '+7 7011 747 8212'],
           ];
       }
   }
+  // Обновленная функция получение адреса
+  public function getAddress()
+  {
+      try {
+          $query = "SELECT content as address, link as link, icon_path as svg_path FROM Contacts WHERE type = 'address' ORDER BY contact_id ASC";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute();
 
+          $addressArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+          error_log(print_r($addressArr, true));
+          if (empty($addressArr)) {
+              return [['address' => 'Казахстан, г.Алматы,<br/> пр.Абая 145/г, бокс №15', 'link' => 'https://2gis.kz/almaty/geo/70000001027313872', 'svg_path' => '/client/vectors/sprite.svg#geo']];
+          }
+          return $addressArr;
+      } catch (\Exception $e) {
+          error_log("Ошибка получения адресса: " . $e->getMessage());
+          return [['address' => 'Казахстан, г.Алматы,<br/> пр.Абая 145/г, бокс №15', 'link' => 'https://2gis.kz/almaty/geo/70000001027313872', 'svg_path' => '/client/vectors/sprite.svg#geo']];
+      }
+  }
 
   public function getWebsite($link = false)
   {
     if ($link) {
       $output = '';
-      $output .= "<a class='link link-site'href='http://autosecurity.site'>" . htmlspecialchars($this->web_site) . '</a>'; // Используйте экранирование для URL
+      $output .= "<a class='link link-site'href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>'; // Используйте экранирование для URL
       return $output;
     } else {
-      return htmlspecialchars($this->web_site);
+      return htmlspecialchars($this->webSite);
     }
   }
-  public function getAddress()
-  {
-    return $this->address;
-  }
+
+
+
+
   public function getLogo()
   {
     $logo = '/client/images/logo.avif';
@@ -111,7 +128,7 @@ public function __construct(array $phones = [
     return [
       "email" => $this->getEmail(),
       "phones" => $this->getPhones(),
-      "web_site" => $this->getWebsite(),
+      "webSite" => $this->getWebsite(),
       "address" => $this->getAddress(),
       "social" => $this->getSocialIcons(),
     ];

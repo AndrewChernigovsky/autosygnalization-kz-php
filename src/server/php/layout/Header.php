@@ -23,7 +23,11 @@ class Header
     $cart = new Cart();
     $contacts = new ContactsData();
     $phones = $contacts->getPhones();
-    $address = $contacts->getAddress();
+    $contactData = $contacts->getAddress();
+    $address = $contactData[0]['address'];
+    $addressLink = $contactData[0]['link'];
+    $addressSvgPath = $contactData[0]['svg_path'];
+
 
     $navigationLinks = new NavigationLinks();
 
@@ -79,10 +83,10 @@ class Header
                         {$this->generatePhoneLinks($phones)}
                     </ul>
                 </div>
-                <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address" id="geoAddress">
+                <a href="{$addressLink}" class="link geo-address" id="geoAddress">
                     <div class="header__image image">
                         <svg width="50" height="50">
-                            <use href="/client/vectors/sprite.svg#geo"></use>
+                            <use href="$addressSvgPath"></use>
                         </svg>
                     </div>
                     {$address}
