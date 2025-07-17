@@ -19,9 +19,12 @@ $footer = new Footer();
 
 $contacts = new ContactsData();
 $socialIcons = $contacts->getSocialIcons();
-$email = $contacts->getEmail(true);
+$email = $contacts->getEmail();
 $address = $contacts->getAddress();
 $phones = $contacts->getPhones();
+$contactPhones = $contacts->getContactPhones();
+$whatsap = $contacts->getWhatsap();
+$schedule = $contacts->getSchedule();
 ?>
 
 <!DOCTYPE html>
@@ -38,51 +41,57 @@ echo $head->setHead();
       <div class="container">
         <h2>Контакты</h2>
         <ul class="contacts-section__list">
-          <li class="contacts-section__item">
-            <a href="tel:+77077478212">
-              <svg width="25" height="25" aria-hidden="true"><use href="client/vectors/phone-no-border.svg" width="25" height="25" aria-hidden="true"></use></svg>
-              <h3>Beeline:</h3>
-              <p>+77077478212</p>
-            </a>
-          </li>
-          <li class="contacts-section__item">
-            <a href="tel:+77017478212">
-            <svg width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/phone-no-border.svg" ></use></svg>
-              <h3>Kcell:</h3>
-              <p>+77017478212</p>
-            </a>
-          </li>
-          <li class=" contacts-section__item contacts-section__item--whatsap">
-            <a href="https://wa.me/77077478212" target="_blank">
-            <svg width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/whatsapp.svg" ></use></svg>
-              <h3>Whatsapp:</h3>
-              <p>+77077478212</p>
-            </a>
-          </li>
-          <li class="contacts-section__item contacts-section__item--email">
-            <a href="mailto:#">
-            <svg width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/message-icon.svg" ></use></svg>
-              <h3>Почта:</h3>
-              <p>#</p>
-            </a>
-          </li>
-          <li class="contacts-section__item contacts-section__item--address">
-          <a href="#">
-            <svg  width="25" height="25" aria-hidden="true"><use width="25" height="25" href="/client/vectors/sprite.svg#geo" ></use></svg>
-              <h3>Адрес:</h3>
-              <p>#</p>
-            </a>
-          </li>
-          <li class="contacts-section__item contacts-section__item--schedule">
-            <div>
-              <svg  width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/clock.svg" ></use></svg>
-              <h3>График работы:</h3>
-            </div>
-            <p>Вс. - Чт.: 9:30 - 18:00 <br>
-              Пт.: 9:30-15:00 <br>
-              <span>Сб.: Выходной</span>
-            </p>
-          </li>
+            <?php foreach ($contactPhones as $phone): ?>
+              <li class="contacts-section__item">
+                  <a href="<?php echo str_replace(' ', '', $phone['link']) ?>">
+                    <svg width="25" height="25" aria-hidden="true"><use href="<?php echo str_replace(' ', '', $phone['svg_path']) ?>" width="25" height="25" aria-hidden="true"></use></svg>
+                    <h3><?php echo str_replace(' ', '', $phone['title']) ?></h3>
+                    <p><?php echo str_replace(' ', '', $phone['phone']) ?></p>
+                  </a>
+              </li>
+            <?php endforeach; ?>
+            <?php if (!empty($whatsap)): ?>
+              <li class="contacts-section__item contacts-section__item--whatsap">
+                <a href="<?php echo str_replace(' ', '', $whatsap[0]['link']) ?>">
+                  <svg width="25" height="25" aria-hidden="true">
+                    <use href="<?php echo str_replace(' ', '', $whatsap[0]['svg_path']) ?>"></use>
+                  </svg>
+                  <h3><?php echo htmlspecialchars($whatsap[0]['title']) ?></h3>
+                  <p><?php echo htmlspecialchars($whatsap[0]['phone']) ?></p>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (!empty($email)): ?>
+              <li class="contacts-section__item contacts-section__item--email">
+                <a href="<?php echo str_replace(' ', '', $email[0]['link']) ?>">
+                  <svg width="25" height="25" aria-hidden="true">
+                    <use width="25" height="25" href="<?php echo str_replace(' ', '', $email[0]['svg_path']) ?>"></use>
+                  </svg>
+                  <h3><?php echo htmlspecialchars($email[0]['title']) ?></h3>
+                  <p><?php echo htmlspecialchars($email[0]['email']) ?></p>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (!empty($address)): ?>
+              <li class="contacts-section__item contacts-section__item--address">
+                <a href="<?php echo str_replace(' ', '', $address[0]['link']) ?>">
+                  <svg width="25" height="25" aria-hidden="true">
+                    <use width="25" height="25" href="<?php echo str_replace(' ', '', $address[0]['svg_path']) ?>"></use>
+                  </svg>
+                  <h3><?php echo htmlspecialchars($address[0]['title']) ?></h3>
+                  <p><?php echo $address[0]['address'] ?></p>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (!empty($schedule)): ?>
+              <li class="contacts-section__item contacts-section__item--schedule">
+                  <svg width="25" height="25" aria-hidden="true">
+                    <use width="25" height="25" href="<?php echo str_replace(' ', '', $schedule[0]['svg_path']) ?>"></use>
+                  </svg>
+                  <h3><?php echo htmlspecialchars($schedule[0]['title']) ?></h3>
+                  <p><?php echo $schedule[0]['text'] ?></p>
+              </li>
+            <?php endif; ?>
           <li class="contacts-section__item contacts-section__item--social">
             <h3>Instagram:</h3>
             <ul class="contacts-section__item--social-icons">
