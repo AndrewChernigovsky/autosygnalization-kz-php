@@ -81,6 +81,7 @@ function uploadVideo() {
   props.formData.delete('advantages');
   props.formData.delete('button_text');
   props.formData.delete('button_link');
+  props.formData.delete('slide_id');
 
   // Добавляем новые данные
   if (props.slideId) {
@@ -152,15 +153,17 @@ defineExpose({
 
 <template>
   <div class="upload-container">
-    <label for="video-upload-input" class="upload-label">Выбрать видео</label>
-    <input
-      id="video-upload-input"
-      ref="inputRef"
-      type="file"
-      accept="video/*"
-      @change="handleVideoUpload"
-      class="upload-input"
-    />
+    <label class="upload-label">
+      <span class="upload-label-text">Выбрать видео</span>
+      <input
+        id="video-upload-input"
+        ref="inputRef"
+        type="file"
+        accept="video/*"
+        @change="handleVideoUpload"
+        class="upload-input"
+      />
+    </label>
     <span v-if="videoFileName" class="file-name">{{ videoFileName }}</span>
   </div>
 </template>

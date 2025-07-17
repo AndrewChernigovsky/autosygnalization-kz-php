@@ -6,10 +6,6 @@ import { useIframeStore } from '../../../stores/iframeStore';
 export function useSlides() {
   const iframeStore = useIframeStore();
   const items = ref<Slide[]>([]);
-  const title = ref<string>('');
-  const advantages = reactive<string[]>([]);
-  const buttonText = ref<string>('Подробнее');
-  const buttonLink = ref<string>('#');
 
   async function fetchSlides() {
     try {
@@ -22,23 +18,11 @@ export function useSlides() {
         ...video,
         advantages: video.advantages || [],
         button_text: video.button_text || 'Подробнее',
+        link: video.button_link || '#',
       }));
-      if (items.value.length > 0) {
-        loadSlideData(0);
-      }
     } catch (error) {
       console.error('Ошибка загрузки данных видео:', error);
       Swal.fire('Ошибка!', 'Произошла ошибка при загрузке данных.', 'error');
-    }
-  }
-
-  function loadSlideData(index: number) {
-    if (items.value[index]) {
-      const slide = items.value[index];
-      title.value = slide.title;
-      advantages.splice(0, advantages.length, ...(slide.advantages || []));
-      buttonLink.value = slide.link;
-      buttonText.value = slide.button_text;
     }
   }
 
@@ -115,21 +99,19 @@ export function useSlides() {
     });
   }
 
-  async function updateSlide(slideId: number) {
+  async function updateSlide(slide: Slide) {
     const slideData = {
-      id: slideId,
-      title: title.value,
-      advantages: JSON.stringify(advantages),
-      button_text: buttonText.value,
-      button_link: buttonLink.value,
+      id: slide.id,
+      title: slide.title,
+      advantages: JSON.stringify(slide.advantages),
+      button_text: slide.button_text,
+      button_link: slide.link,
     };
 
     try {
       const response = await fetch('/server/php/admin/api/update-slide.php', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(slideData),
       });
       if (response.ok) {
@@ -144,22 +126,17 @@ export function useSlides() {
     }
   }
 
-  function addAdvantage() {
-    advantages.push('');
+  function addAdvantage(slide: Slide) {
+    slide.advantages.push('');
   }
 
-  function removeAdvantage(index: number) {
-    advantages.splice(index, 1);
+  function removeAdvantage(slide: Slide, index: number) {
+    slide.advantages.splice(index, 1);
   }
 
   return {
     items,
-    title,
-    advantages,
-    buttonText,
-    buttonLink,
     fetchSlides,
-    loadSlideData,
     addSlide,
     removeSlide,
     updateSlide,

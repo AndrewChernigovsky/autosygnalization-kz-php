@@ -2,8 +2,11 @@ import { ref, nextTick } from 'vue';
 import type { Ref } from 'vue';
 import type { Slide } from '../interfaces/types';
 import Swal from 'sweetalert2';
+import { useIframeStore } from '../../../stores/iframeStore';
 
 export function useDnD(items: Ref<Slide[]>, swiperInstance: Ref<any>) {
+  const iframeStore = useIframeStore();
+
   function onDrop(dropResult: any) {
     const { removedIndex, addedIndex } = dropResult;
     if (removedIndex === null && addedIndex === null) return;
@@ -45,10 +48,11 @@ export function useDnD(items: Ref<Slide[]>, swiperInstance: Ref<any>) {
       );
       if (response.ok) {
         Swal.fire(
-          'Порядок сохранен!',
+          'Сохранено!',
           'Новый порядок слайдов успешно сохранен.',
           'success'
         );
+        iframeStore.triggerIframeRefresh();
       } else {
         Swal.fire('Ошибка!', 'Не удалось сохранить порядок слайдов.', 'error');
       }

@@ -1,6 +1,15 @@
 <?php
 namespace API\ADMIN;
 
+// Log function that uses the system's temp directory
+function logMessage($message) {
+    $logFile = sys_get_temp_dir() . '/autosygnalization-kz-php-debug.log';
+    $timestamp = date('Y-m-d H:i:s');
+    file_put_contents($logFile, "[$timestamp] [upload-video.php] " . $message . "\n", FILE_APPEND);
+}
+
+logMessage("Script execution started.");
+
 // Подключение автозагрузчика Composer
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
@@ -11,6 +20,7 @@ use Exception;
 
 // Проверка метода запроса
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+  logMessage("Invalid request method: " . $_SERVER['REQUEST_METHOD']);
   http_response_code(405);
   echo json_encode(['error' => 'Method Not Allowed']);
   exit;
@@ -31,7 +41,16 @@ $advantages = $_POST['advantages'] ?? '[]';
 $buttonText = $_POST['button_text'] ?? 'Подробнее';
 $buttonLink = $_POST['button_link'] ?? '#';
 
+logMessage("--- Video Upload Request ---");
+logMessage("Received slide_id: " . ($slideId ?? 'null'));
+logMessage("Received title: " . $title);
+logMessage("Received advantages: " . $advantages);
+logMessage("Received button_text: " . $buttonText);
+logMessage("Received button_link: " . $buttonLink);
+logMessage("File info: " . print_r($file, true));
+
 if (!$slideId) {
+  logMessage("Error: Slide ID is required.");
   http_response_code(400);
   echo json_encode(['error' => 'Slide ID is required']);
   exit;
@@ -39,6 +58,7 @@ if (!$slideId) {
 
 // Проверка на ошибки при загрузке файла
 if ($file['error'] !== UPLOAD_ERR_OK) {
+  logMessage("File upload error code: " . $file['error']);
   http_response_code(400);
   echo json_encode(['error' => 'File upload error: ' . $file['error']]);
   exit;
@@ -103,12 +123,14 @@ try {
 
   $stmt->execute([$uniqueName, $videoPath, $title, $advantages, $buttonText, $buttonLink, $slideId]);
 } catch (Exception $e) {
+  logMessage("Database error: " . $e->getMessage());
   http_response_code(500);
   echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
   exit;
 }
 
 // Успешная загрузка
+logMessage("Successfully uploaded video for slide ID: " . $slideId . ". Path: " . $videoPath);
 http_response_code(200);
 echo json_encode([
   'success' => true,

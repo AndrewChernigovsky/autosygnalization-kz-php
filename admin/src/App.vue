@@ -1,10 +1,7 @@
 <script setup lang="ts">
-import { ref, defineAsyncComponent, computed } from 'vue';
+import { ref, computed } from 'vue';
 import { useIframeStore } from './stores/iframeStore';
-
-const SliderIntro = defineAsyncComponent(
-  () => import('./components/SliderIntro/SliderIntro.vue')
-);
+import Menu from './UI/Menu.vue';
 
 const isSidebarOpen = ref(false);
 const iframeStore = useIframeStore();
@@ -18,6 +15,7 @@ function toggleSidebar() {
 
 <template>
   <div class="app-container">
+    <Menu />
     <aside :class="{ 'sidebar-open': isSidebarOpen }">
       <button @click="toggleSidebar" class="toggle-btn">
         {{ isSidebarOpen ? '◀' : '▶' }}
@@ -33,7 +31,7 @@ function toggleSidebar() {
       </div>
     </aside>
     <main class="main-content">
-      <SliderIntro />
+      <router-view />
     </main>
   </div>
 </template>

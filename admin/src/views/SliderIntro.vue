@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUpdate, defineAsyncComponent } from 'vue';
 
-const UploadButton = defineAsyncComponent(() => import('./UploadButton.vue'));
-const DeleteButton = defineAsyncComponent(() => import('./DeleteButton.vue'));
+const UploadButton = defineAsyncComponent(
+  () => import('../components/SliderIntro/UploadButton.vue')
+);
+const DeleteButton = defineAsyncComponent(
+  () => import('../components/SliderIntro/DeleteButton.vue')
+);
 import { Container, Draggable } from 'vue-dndrop';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/vue';
@@ -10,18 +14,13 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-import { useSlides } from './functions/useSlides';
-import { useDnD } from './functions/useDnD';
-import { useVideo } from './functions/useVideo';
+import { useSlides } from '../components/SliderIntro/functions/useSlides';
+import { useDnD } from '../components/SliderIntro/functions/useDnD';
+import { useVideo } from '../components/SliderIntro/functions/useVideo';
 
 const {
   items,
-  title,
-  advantages,
-  buttonText,
-  buttonLink,
   fetchSlides,
-  loadSlideData,
   addSlide,
   removeSlide,
   updateSlide,
@@ -41,7 +40,6 @@ const { onDrop, saveOrder } = useDnD(items, swiperInstance);
 const {
   videoPreview,
   uploadProgress,
-  currentVideoId,
   formData,
   handleUploadSuccess,
   handleStatusUpdate,
@@ -56,7 +54,6 @@ function onSwiper(swiper: any) {
 
 function handleSlideChange(swiper: any) {
   currentSlideIndex.value = swiper.activeIndex;
-  loadSlideData(currentSlideIndex.value);
   const slide = items.value[currentSlideIndex.value];
   if (slide) {
     videoPreview.value = slide.video_path || null;
@@ -66,7 +63,6 @@ function handleSlideChange(swiper: any) {
 onMounted(async () => {
   await fetchSlides();
   if (items.value.length > 0) {
-    loadSlideData(0);
     const slide = items.value[0];
     if (slide) {
       videoPreview.value = slide.video_path || null;
@@ -116,7 +112,7 @@ onMounted(async () => {
                 height="auto"
               ></video>
               <DeleteButton
-                :video-id="item.id || currentVideoId"
+                :video-id="item.id"
                 @deleted="handleVideoDeleted"
                 @status-update="handleStatusUpdate"
               />
@@ -129,7 +125,7 @@ onMounted(async () => {
                 height="auto"
               ></video>
               <DeleteButton
-                :video-id="item.id || currentVideoId"
+                :video-id="item.id"
                 @deleted="handleVideoDeleted"
                 @status-update="handleStatusUpdate"
               />
@@ -145,10 +141,10 @@ onMounted(async () => {
               }
             "
             :slide-id="item.id"
-            :title="title"
-            :advantages="advantages"
-            :button-text="buttonText"
-            :button-link="buttonLink"
+            :title="item.title"
+            :advantages="item.advantages"
+            :button-text="item.button_text"
+            :button-link="item.link"
             :form-data="formData"
             @upload-success="handleUploadSuccess"
             @status-update="handleStatusUpdate"
@@ -170,26 +166,30 @@ onMounted(async () => {
 
         <div class="title-input">
           <label>Заголовок слайда {{ index + 1 }}:</label>
-          <input type="text" v-model="title" placeholder="Введите заголовок" />
+          <input
+            type="text"
+            v-model="item.title"
+            placeholder="Введите заголовок"
+          />
         </div>
 
         <div class="advantages-list">
           <h3>Преимущества слайда {{ index + 1 }}:</h3>
           <div
-            v-for="(advantage, advIndex) in advantages"
+            v-for="(advantage, advIndex) in item.advantages"
             :key="advIndex"
             class="advantage-item"
           >
             <input
               type="text"
-              v-model="advantages[advIndex]"
+              v-model="item.advantages[advIndex]"
               placeholder="Введите преимущество"
             />
-            <button @click="removeAdvantage(advIndex)" class="remove-btn">
+            <button @click="removeAdvantage(item, advIndex)" class="remove-btn">
               Удалить
             </button>
           </div>
-          <button @click="addAdvantage" class="add-btn">
+          <button @click="addAdvantage(item)" class="add-btn">
             Добавить преимущество
           </button>
         </div>
@@ -199,7 +199,7 @@ onMounted(async () => {
             <label>Текст кнопки:</label>
             <input
               type="text"
-              v-model="buttonText"
+              v-model="item.button_text"
               placeholder="Введите текст кнопки"
             />
           </div>
@@ -207,7 +207,7 @@ onMounted(async () => {
             <label>Ссылка кнопки:</label>
             <input
               type="text"
-              v-model="buttonLink"
+              v-model="item.link"
               placeholder="Введите ссылку"
             />
           </div>
@@ -215,7 +215,7 @@ onMounted(async () => {
 
         <div class="buttons-container">
           <button
-            @click="item.id ? updateSlide(item.id) : () => {}"
+            @click="item.id ? updateSlide(item) : () => {}"
             class="send-btn"
             :disabled="!item.id"
           >

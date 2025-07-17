@@ -1,16 +1,15 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import Swal from 'sweetalert2';
-import type { UploadButtonInstance } from '../interfaces/types';
+import type { UploadButtonInstance, Slide } from '../interfaces/types';
 
 export function useVideo(
-  items: Ref<any[]>,
+  items: Ref<Slide[]>,
   currentSlideIndex: Ref<number>,
   uploadButtonRef: Ref<UploadButtonInstance[]>
 ) {
   const videoPreview = ref<string | null>(null);
   const uploadProgress = ref<number>(0);
-  const currentVideoId = ref<number | null>(null);
   const formData = new FormData();
 
   function handleUploadSuccess(data: {
@@ -18,10 +17,12 @@ export function useVideo(
     filename: string;
     path: string;
   }) {
-    currentVideoId.value = data.id;
-    if (items.value[currentSlideIndex.value]) {
-      items.value[currentSlideIndex.value].video_path = data.path;
-      videoPreview.value = data.path;
+    const slide = items.value.find((item) => item.id === data.id);
+    if (slide) {
+      slide.video_path = data.path;
+      if (items.value[currentSlideIndex.value]?.id === data.id) {
+        videoPreview.value = data.path;
+      }
     }
   }
 
@@ -53,14 +54,15 @@ export function useVideo(
     videoPreview.value = preview;
   }
 
-  function handleVideoDeleted() {
-    videoPreview.value = null;
-    currentVideoId.value = null;
-    uploadProgress.value = 0;
-    if (items.value[currentSlideIndex.value]) {
-      items.value[currentSlideIndex.value].video_path = '';
+  function handleVideoDeleted(videoId: number) {
+    const slide = items.value.find((item) => item.id === videoId);
+    if (slide) {
+      slide.video_path = '';
     }
-
+    if (items.value[currentSlideIndex.value]?.id === videoId) {
+      videoPreview.value = null;
+    }
+    uploadProgress.value = 0;
     const currentUploadButton = uploadButtonRef.value[currentSlideIndex.value];
     if (currentUploadButton) {
       currentUploadButton.clearInput();
@@ -70,7 +72,6 @@ export function useVideo(
   return {
     videoPreview,
     uploadProgress,
-    currentVideoId,
     formData,
     handleUploadSuccess,
     handleStatusUpdate,

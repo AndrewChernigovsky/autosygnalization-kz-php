@@ -2,11 +2,11 @@
 import Swal from 'sweetalert2';
 
 interface Props {
-  videoId: number | null;
+  videoId: number | undefined;
 }
 
 interface Emits {
-  (event: 'deleted'): void;
+  (event: 'deleted', videoId: number): void;
   (event: 'status-update', status: string): void;
 }
 
@@ -19,6 +19,7 @@ function deleteVideo() {
     emit('status-update', 'Нет видео для удаления');
     return;
   }
+  const idToDelete = props.videoId;
 
   Swal.fire({
     title: 'Вы уверены?',
@@ -29,26 +30,23 @@ function deleteVideo() {
     cancelButtonColor: '#d33',
     confirmButtonText: 'Да, удалить!',
     cancelButtonText: 'Отмена',
-  }).then(result => {
+  }).then((result) => {
     if (result.isConfirmed) {
       emit('status-update', 'Удаление...');
 
       const xhr = new XMLHttpRequest();
       xhr.open(
         'DELETE',
-        `/server/php/admin/api/delete-video.php?id=${props.videoId}`,
+        `/server/php/admin/api/delete-video.php?id=${idToDelete}`,
         true
       );
 
       xhr.onload = function () {
-        console.log('Delete response status:', xhr.status);
-        console.log('Delete response text:', xhr.responseText);
-
         if (xhr.status === 200) {
           try {
             const response = JSON.parse(xhr.responseText);
             emit('status-update', 'Видео успешно удалено');
-            emit('deleted');
+            emit('deleted', idToDelete);
           } catch (e: any) {
             console.error('JSON parse error:', e);
             emit('status-update', 'Ошибка обработки ответа: ' + e.message);
