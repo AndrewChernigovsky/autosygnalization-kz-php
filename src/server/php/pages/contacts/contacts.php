@@ -40,32 +40,44 @@ echo $head->setHead();
         <ul class="contacts-section__list">
           <li class="contacts-section__item">
             <a href="tel:+77077478212">
+              <svg width="25" height="25" aria-hidden="true"><use href="client/vectors/phone-no-border.svg" width="25" height="25" aria-hidden="true"></use></svg>
               <h3>Beeline:</h3>
               <p>+77077478212</p>
             </a>
           </li>
           <li class="contacts-section__item">
             <a href="tel:+77017478212">
+            <svg width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/phone-no-border.svg" ></use></svg>
               <h3>Kcell:</h3>
               <p>+77017478212</p>
             </a>
           </li>
           <li class=" contacts-section__item contacts-section__item--whatsap">
             <a href="https://wa.me/77077478212" target="_blank">
+            <svg width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/whatsapp.svg" ></use></svg>
               <h3>Whatsapp:</h3>
               <p>+77077478212</p>
             </a>
           </li>
           <li class="contacts-section__item contacts-section__item--email">
-            <h3>Почта:</h3>
-            <p><?= $email ?></p>
+            <a href="mailto:#">
+            <svg width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/message-icon.svg" ></use></svg>
+              <h3>Почта:</h3>
+              <p>#</p>
+            </a>
           </li>
           <li class="contacts-section__item contacts-section__item--address">
-            <h3>Адрес:</h3>
-            <p><?= $address ?></p>
+          <a href="#">
+            <svg  width="25" height="25" aria-hidden="true"><use width="25" height="25" href="/client/vectors/sprite.svg#geo" ></use></svg>
+              <h3>Адрес:</h3>
+              <p>#</p>
+            </a>
           </li>
           <li class="contacts-section__item contacts-section__item--schedule">
-            <h3>График работы:</h3>
+            <div>
+              <svg  width="25" height="25" aria-hidden="true"><use width="25" height="25" href="client/vectors/clock.svg" ></use></svg>
+              <h3>График работы:</h3>
+            </div>
             <p>Вс. - Чт.: 9:30 - 18:00 <br>
               Пт.: 9:30-15:00 <br>
               <span>Сб.: Выходной</span>
