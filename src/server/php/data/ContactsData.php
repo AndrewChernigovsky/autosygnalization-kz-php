@@ -54,30 +54,31 @@ public function __construct(array $phones = [
       return htmlspecialchars($this->email);
     }
   }
-public function getPhones()
-{
-    try {
-        $query = "SELECT phone as phone FROM Contacts ORDER BY contact_id ASC";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
+  // Обновленная функция получение телефонов
+  public function getPhones()
+  {
+      try {
+          $query = "SELECT phone as phone FROM Contacts ORDER BY contact_id ASC";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute();
 
-        $phonesArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+          $phonesArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (empty($phonesArr)) {
-            return [
-                ['phone' => '+7 707 747 8212'],
-                ['phone' => '+7 701 747 8212'],
-            ];
-        }
-        return $phonesArr; // <-- точка с запятой!
-    } catch (\Exception $e) {
-        error_log("Ошибка получения навигации: " . $e->getMessage());
-        return [
-            ['phone' => '+7 707 747 8212'],
-            ['phone' => '+7 7011 747 8212'],
-        ];
-    }
-}
+          if (empty($phonesArr)) {
+              return [
+                  ['phone' => '+7 707 747 8212'],
+                  ['phone' => '+7 701 747 8212'],
+              ];
+          }
+          return $phonesArr; // <-- точка с запятой!
+      } catch (\Exception $e) {
+          error_log("Ошибка получения навигации: " . $e->getMessage());
+          return [
+              ['phone' => '+7 707 747 8212'],
+              ['phone' => '+7 7011 747 8212'],
+          ];
+      }
+  }
 
 
   public function getWebsite($link = false)
