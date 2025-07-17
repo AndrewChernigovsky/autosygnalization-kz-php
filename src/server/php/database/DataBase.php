@@ -35,6 +35,11 @@ class DataBase
     return self::$instance;
   }
 
+  public static function getConnection(): self
+  {
+    return self::getInstance();
+  }
+
   protected function connect()
   {
     try {
@@ -88,6 +93,7 @@ class DataBase
         'social_links.sql',
         'navigation.sql',
         'navigation_seed.sql',
+        'videos_intro_slider.sql',
       ];
 
       error_log("Начало выполнения миграций. Всего миграций: " . count($migrations));

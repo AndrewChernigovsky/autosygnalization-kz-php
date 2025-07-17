@@ -2,13 +2,37 @@
 
 namespace SECTIONS;
 
-use DATA\SlidesData;
+use DATABASE\InitDataBase;
 
 function introSection()
 {
-  // Fetch slides data
-  $slidesData = new SlidesData();
-  $slides = $slidesData->getData();
+  // Fetch slides data from database
+  try {
+    $db = new InitDataBase();
+    $stmt = $db->prepare("SELECT id, video_filename, video_path, title, advantages, button_text, button_link, position, poster_path FROM Videos_intro_slider ORDER BY position ASC");
+    $stmt->execute();
+    $videos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+    error_log("Raw videos from DB: " . print_r($videos, true));
+
+    $slides = array_map(function ($video) {
+      return [
+        'poster' => $video['poster_path'],
+        'srcMob' => $video['video_path'],
+        'src' => [$video['video_path']],
+        'type' => ['video/mp4'],
+        'title' => $video['title'],
+        'list' => json_decode($video['advantages'], true) ?: [],
+        'link' => $video['button_link'],
+        'position' => $video['position'],
+        'button_text' => $video['button_text']
+      ];
+    }, $videos);
+
+    error_log("Processed slides: " . print_r($slides, true));
+  } catch (\Exception $e) {
+    error_log('Ошибка получения слайдов из базы данных: ' . $e->getMessage());
+    $slides = [];
+  }
 
   // Validate slides data
   if (empty($slides) || !is_array($slides)) {
@@ -59,7 +83,7 @@ function introSection()
                   <?php endforeach; ?>
                   <li>
                     <a href="<?= htmlspecialchars($slide['link'] ?? '#') ?>" class="intro__link y-button button link">
-                      Подробнее
+                      <?= htmlspecialchars($slide['button_text'] ?? 'Подробнее') ?>
                     </a>
                   </li>
                 </ul>

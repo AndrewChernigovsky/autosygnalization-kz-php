@@ -1,6 +1,5 @@
 <?php
 require_once __DIR__ . '/server/vendor/autoload.php';
-
 use LAYOUT\Head;
 use LAYOUT\Header;
 use LAYOUT\Footer;
@@ -17,6 +16,11 @@ use function SECTIONS\serviceSection;
 use function SECTIONS\worksSection;
 use function SECTIONS\formSection;
 use function FUNCTIONS\renderPhoneButton;
+
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+// header('Content-Type: application/json');
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
