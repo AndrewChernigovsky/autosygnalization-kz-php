@@ -50,13 +50,15 @@ class ContactAPI extends DataBase
     try {
       error_log(print_r($data, true));
 
-      $query = "INSERT INTO Contacts (title, phone, link) VALUES (?, ?, ?)";
+      $query = "INSERT INTO Contacts (type,title,content,link,icon_path) VALUES (?, ?, ?, ?, ?)";
 
       $stmt = $this->pdo->prepare($query);
       $stmt->execute([
+        $data['type'],
         $data['title'],
-        $data['phone'],
+        $data['content'],
         $data['link'],
+        $data['icon_path'],
       ]);
 
       $contactId = $this->pdo->lastInsertId();
@@ -74,16 +76,20 @@ class ContactAPI extends DataBase
   {
     try {
       $query = "UPDATE Contacts SET
+                type = :type,
                 title = :title,
-                phone = :phone,
+                content = :content,
                 link = :link
+                svg_path = :svg_path
                 WHERE contact_id = :id";
 
       $stmt = $this->pdo->prepare($query);
       $stmt->execute([
+        ':type' => $data['type'],
         ':title' => $data['title'],
-        ':phone' => $data['phone'],
+        ':content' => $data['content'],
         ':link' => $data['link'],
+        ':svg_path' => $data['svg_path'],
         ':id' => $id
       ]);
 

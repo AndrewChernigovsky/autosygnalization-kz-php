@@ -23,8 +23,9 @@ $email = $contacts->getEmail();
 $address = $contacts->getAddress();
 $phones = $contacts->getPhones();
 $contactPhones = $contacts->getContactPhones();
-$whatsap = $contacts->getWhatsap();
+$social = $contacts->getSocial();
 $schedule = $contacts->getSchedule();
+$map = $contacts->getMap();
 ?>
 
 <!DOCTYPE html>
@@ -50,14 +51,14 @@ echo $head->setHead();
                   </a>
               </li>
             <?php endforeach; ?>
-            <?php if (!empty($whatsap)): ?>
+            <?php if (!empty($social)): ?>
               <li class="contacts-section__item contacts-section__item--whatsap">
-                <a href="<?php echo str_replace(' ', '', $whatsap[0]['link']) ?>">
+                <a href="<?php echo str_replace(' ', '', $social[0]['link']) ?>">
                   <svg width="25" height="25" aria-hidden="true">
-                    <use href="<?php echo str_replace(' ', '', $whatsap[0]['svg_path']) ?>"></use>
+                    <use href="<?php echo str_replace(' ', '', $social[0]['svg_path']) ?>"></use>
                   </svg>
-                  <h3><?php echo htmlspecialchars($whatsap[0]['title']) ?></h3>
-                  <p><?php echo htmlspecialchars($whatsap[0]['phone']) ?></p>
+                  <h3><?php echo htmlspecialchars($social[0]['title']) ?></h3>
+                  <p><?php echo htmlspecialchars($social[0]['content']) ?></p>
                 </a>
               </li>
             <?php endif; ?>
@@ -92,28 +93,29 @@ echo $head->setHead();
                   <p><?php echo $schedule[0]['text'] ?></p>
               </li>
             <?php endif; ?>
-          <li class="contacts-section__item contacts-section__item--social">
-            <h3>Instagram:</h3>
-            <ul class="contacts-section__item--social-icons">
-              <?php
-              foreach ($socialIcons as $social) {
-                echo '<li>';
-                echo $contacts->setSocial($social);
-                echo '</li>';
-              }
-              ?>
-            </ul>
-          </li>
-          <li class="contacts-section__item contacts-section__item--btn">
-            <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
-          </li>
+            <?php if (!empty($social)): ?>
+              <li class="contacts-section__item contacts-section__item--social">
+                <a class="contacts-section__item--social-icons" href="<?php echo str_replace(' ', '', $social[1]['link']) ?>">
+                  <svg width="25" height="25" aria-hidden="true">
+                    <use href="<?php echo str_replace(' ', '', $social[1]['svg_path']) ?>"></use>
+                  </svg>
+                  <h3><?php echo htmlspecialchars($social[1]['title']) ?></h3>
+                </a>
+              </li>
+            <?php endif; ?>
+            <li class="contacts-section__item contacts-section__item--btn">
+              <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
+            </li>
         </ul>
       </div>
       <div class="map" id="location">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru"
-          width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <?php if (!empty($map)): ?>
+                <iframe
+                  title='Map'
+                  src="<?php echo str_replace(' ', '', $map[0]['link']) ?>"
+                  width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <?php endif; ?>
       </div>
     </section>
     <section class="contacts-location">

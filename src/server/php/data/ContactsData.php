@@ -8,18 +8,12 @@ use DATABASE\DataBase;
 class ContactsData extends DataBase
 {
   private $insertSVG;
-  private $phones;
-  private $contactPhone;
-  private $whatsap;
-  private $address;
-  private $email;
-  private $schedule;
   private $webSite = "www.autosecurity.kz";
 
 
   protected $pdo;
 
-public function __construct(array $phones = [], array $address = [], array $contactPhone = [], array $whatsap = [], array $email = [], array $schedule = [])
+public function __construct()
   {
     
     $this->insertSVG = new InsertSVG();
@@ -59,6 +53,27 @@ public function __construct(array $phones = [], array $address = [], array $cont
       } catch (\Exception $e) {
           error_log("Ошибка получения email: " . $e->getMessage());
           return [['title' => 'График работы:','text' => 'Вс. - Чт.: 9:30 - 18:00 <br> Пт.: 9:30-15:00 <br> <span>Сб.: Выходной</span>','svg_path' => 'client/vectors/clock.sv']];
+      }
+  }
+
+    // Обновленная функция получение карты
+  public function getMap()
+  {
+      try {
+          $query = "SELECT link as link FROM Contacts WHERE type = 'map' ORDER BY contact_id ASC";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute();
+
+          $map = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+          error_log(print_r($map, true));
+          
+          if (empty($map)) {
+              return [['link' => 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru']];
+          }
+          return $map;
+      } catch (\Exception $e) {
+          error_log("Ошибка получения email: " . $e->getMessage());
+              return [['link' => 'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru']];
       }
   }
 
@@ -134,31 +149,39 @@ public function __construct(array $phones = [], array $address = [], array $cont
       }
   }
 
-  // Обновленная функция получение whatsap на странице контакты
-  public function getWhatsap()
+  // Обновленная функция получение Social на странице контакты
+  public function getSocial()
   {
       try {
-          $query = "SELECT content as phone, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'whatsap' ORDER BY contact_id ASC";
+          $query = "SELECT content as content, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'social' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
-          $contactWhatsap = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                    error_log(print_r($contactWhatsap, true));
-          if (empty($contactWhatsap)) {
+          $contactSocial = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+                    error_log(print_r($contactSocial, true));
+          if (empty($contactSocial)) {
               return [[
-                'phone' => '+77077478212',
+                'content' => '+77077478212',
                 'title' => 'Whatsapp:',
                 'link' => 'https://wa.me/77077478212',
-                'svg_path' => 'client/vectors/whatsapp.svg'],];
+                'svg_path' => 'client/vectors/whatsapp.svg'],
+                ['content' => '+77077478211',
+                'title' => 'Instagramm:',
+                'link' => 'https://www.instagram.com/autosecurity_kz',
+                'svg_path' => '/client/vectors/sprite.svg#instagramm-icon'],];
           }
-          return $contactWhatsap;
+          return $contactSocial;
       } catch (\Exception $e) {
           error_log("Ошибка получения навигации: " . $e->getMessage());
-          return [[
-            'phone' => '+77077478212',
-            'title' => 'Whatsapp:',
-            'link' => 'https://wa.me/77077478212',
-            'svg_path' => 'client/vectors/whatsapp.svg'],];
+              return [[
+                'content' => '+77077478212',
+                'title' => 'Whatsapp:',
+                'link' => 'https://wa.me/77077478212',
+                'svg_path' => 'client/vectors/whatsapp.svg'],
+                ['content' => '+77077478211',
+                'title' => 'Instagramm:',
+                'link' => 'https://www.instagram.com/autosecurity_kz',
+                'svg_path' => '/client/vectors/sprite.svg#instagramm-icon'],];
       }
   }
   // Обновленная функция получение адреса
