@@ -44,9 +44,12 @@ echo $head->setHead();
         <ul class="contacts-section__list">
             <?php foreach ($contactPhones as $phone): ?>
               <li class="contacts-section__item">
+
                   <a href="<?php echo str_replace(' ', '', $phone['link']) ?>">
+                  <div class="icon-container">                  
                     <svg width="25" height="25" aria-hidden="true"><use href="<?php echo str_replace(' ', '', $phone['svg_path']) ?>" width="25" height="25" aria-hidden="true"></use></svg>
                     <h3><?php echo str_replace(' ', '', $phone['title']) ?></h3>
+                  </div>                  
                     <p><?php echo str_replace(' ', '', $phone['phone']) ?></p>
                   </a>
               </li>
@@ -54,10 +57,12 @@ echo $head->setHead();
             <?php if (!empty($social)): ?>
               <li class="contacts-section__item contacts-section__item--whatsap">
                 <a href="<?php echo str_replace(' ', '', $social[0]['link']) ?>">
+                <div class="icon-container">       
                   <svg width="25" height="25" aria-hidden="true">
                     <use href="<?php echo str_replace(' ', '', $social[0]['svg_path']) ?>"></use>
                   </svg>
                   <h3><?php echo htmlspecialchars($social[0]['title']) ?></h3>
+                </div>     
                   <p><?php echo htmlspecialchars($social[0]['content']) ?></p>
                 </a>
               </li>
@@ -65,41 +70,48 @@ echo $head->setHead();
             <?php if (!empty($email)): ?>
               <li class="contacts-section__item contacts-section__item--email">
                 <a href="<?php echo str_replace(' ', '', $email[0]['link']) ?>">
+                <div class="icon-container">      
                   <svg width="25" height="25" aria-hidden="true">
                     <use width="25" height="25" href="<?php echo str_replace(' ', '', $email[0]['svg_path']) ?>"></use>
                   </svg>
                   <h3><?php echo htmlspecialchars($email[0]['title']) ?></h3>
+                </div>     
                   <p><?php echo htmlspecialchars($email[0]['email']) ?></p>
                 </a>
               </li>
             <?php endif; ?>
             <?php if (!empty($address)): ?>
               <li class="contacts-section__item contacts-section__item--address">
+
                 <a href="<?php echo str_replace(' ', '', $address[0]['link']) ?>">
+                <div class="icon-container">  
                   <svg width="25" height="25" aria-hidden="true">
                     <use width="25" height="25" href="<?php echo str_replace(' ', '', $address[0]['svg_path']) ?>"></use>
                   </svg>
                   <h3><?php echo htmlspecialchars($address[0]['title']) ?></h3>
+                </div>  
                   <p><?php echo $address[0]['address'] ?></p>
                 </a>
               </li>
             <?php endif; ?>
             <?php if (!empty($schedule)): ?>
               <li class="contacts-section__item contacts-section__item--schedule">
-                  <svg width="25" height="25" aria-hidden="true">
-                    <use width="25" height="25" href="<?php echo str_replace(' ', '', $schedule[0]['svg_path']) ?>"></use>
-                  </svg>
-                  <h3><?php echo htmlspecialchars($schedule[0]['title']) ?></h3>
+              <div class="icon-container">  
+                <svg width="25" height="25" aria-hidden="true">
+                  <use width="25" height="25" href="<?php echo str_replace(' ', '', $schedule[0]['svg_path']) ?>"></use>
+                </svg>
+                <h3><?php echo htmlspecialchars($schedule[0]['title']) ?></h3>
+              </div>  
                   <p><?php echo $schedule[0]['text'] ?></p>
               </li>
             <?php endif; ?>
             <?php if (!empty($social)): ?>
               <li class="contacts-section__item contacts-section__item--social">
                 <a class="contacts-section__item--social-icons" href="<?php echo str_replace(' ', '', $social[1]['link']) ?>">
+                  <h3><?php echo htmlspecialchars($social[1]['title']) ?></h3> 
                   <svg width="25" height="25" aria-hidden="true">
-                    <use href="<?php echo str_replace(' ', '', $social[1]['svg_path']) ?>"></use>
-                  </svg>
-                  <h3><?php echo htmlspecialchars($social[1]['title']) ?></h3>
+                      <use href="<?php echo str_replace(' ', '', $social[1]['svg_path']) ?>"></use>
+                    </svg>
                 </a>
               </li>
             <?php endif; ?>
