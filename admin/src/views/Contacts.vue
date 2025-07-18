@@ -1,17 +1,27 @@
+<script setup lang="ts">
+import ContactsSection from '../components/Contacts/ContactsSection.vue';
+import SocialSection from '../components/Contacts/SocialSection.vue';
+import ContactsMapSection from '../components/Contacts/ContactsMapSection.vue';
+import AdressSection from '../components/Contacts/AdressSection.vue';
+import ScheduleSecyion from '../components/Contacts/ScheduleSecyion.vue';
+import SecondaryContactsPhone from '../components/Contacts/SecondaryContactsPhone.vue';
+import EmailSection from '../components/Contacts/EmailSection.vue';
+</script>
+
 <template>
-  <div>
-    <h1>Контакты</h1>
+  <div class="container">
+    <ContactsSection />
+    <SecondaryContactsPhone />
+    <SocialSection />
+    <ContactsMapSection />
+    <AdressSection />
+    <ScheduleSecyion />
+    <EmailSection />
   </div>
 </template>
 
-<script setup lang="ts"></script>
-
 <style scoped>
-h1 {
-  text-align: center;
-  margin-top: 50px;
-}
-p {
-  text-align: center;
+.container {
+  grid-column: 2 / 3;
 }
 </style>

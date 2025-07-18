@@ -79,8 +79,8 @@ class ContactAPI extends DataBase
                 type = :type,
                 title = :title,
                 content = :content,
-                link = :link
-                svg_path = :svg_path
+                link = :link,
+                icon_path = :icon_path
                 WHERE contact_id = :id";
 
       $stmt = $this->pdo->prepare($query);
@@ -89,7 +89,7 @@ class ContactAPI extends DataBase
         ':title' => $data['title'],
         ':content' => $data['content'],
         ':link' => $data['link'],
-        ':svg_path' => $data['svg_path'],
+        ':icon_path' => $data['icon_path'],
         ':id' => $id
       ]);
 

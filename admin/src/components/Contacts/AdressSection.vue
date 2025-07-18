@@ -1,38 +1,28 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Swal from 'sweetalert2';
+import fetchWithCors from '../../utils/fetchWithCors';
 
 interface ContactItem {
   contact_id: number;
   created_at: string;
   updated_at: string;
   title: string;
-  phone: string;
-  link: string;
+  type: string;
+  icon_path: string | null;
+  link: string | null;
+  content: string | null;
 }
+
 const contacts = ref<ContactItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const newContact = ref<Partial<ContactItem>>({
+  title: 'Адреc:',
+  content: '',
+});
 
 const API_BASE_URL = '/server/php/admin/api/contact.php';
-
-const fetchWithCors = async (url: string, options: RequestInit = {}) => {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-    credentials: 'include',
-  });
-
-  if (!response.ok) {
-    console.log(response.json());
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return response.json();
-};
 
 const getContacts = async (): Promise<void> => {
   try {
@@ -42,9 +32,9 @@ const getContacts = async (): Promise<void> => {
     const { success, data } = await fetchWithCors(API_BASE_URL);
 
     if (success && data) {
-      console.log(data);
-      contacts.value = data;
-      console.log(contacts.value);
+      contacts.value = data.filter(
+        (item: ContactItem) => item.type === 'address'
+      );
     } else {
       throw new Error('Failed to load contacts');
     }
@@ -87,16 +77,18 @@ const updateContact = async (id: number): Promise<void> => {
     const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
       method: 'PUT',
       body: JSON.stringify({
-        title: item.title,
-        phone: item.phone,
-        link: `tel:${item.phone}`,
+        title: 'Адреc:',
+        content: item.content,
+        link: null,
+        type: 'address',
+        icon_path: null,
       }),
     });
 
     if (success) {
       await Swal.fire({
         title: 'Успешно!',
-        text: 'Навигация обновлена',
+        text: 'Контакты обновлены',
         icon: 'success',
         timer: 1500,
         showConfirmButton: false,
@@ -106,10 +98,10 @@ const updateContact = async (id: number): Promise<void> => {
       throw new Error('Ошибка обновления');
     }
   } catch (err) {
-    console.error('Error updating navigation:', err);
+    console.error('Error updating contacts:', err);
     await Swal.fire({
       title: 'Ошибка!',
-      text: 'Не удалось обновить навигацию',
+      text: 'Не удалось обновить контакты',
       icon: 'error',
     });
   }
@@ -127,7 +119,6 @@ const deleteContact = async (id: number): Promise<void> => {
       confirmButtonText: 'Да, удалить!',
       cancelButtonText: 'Отмена',
     });
-    console.log();
     if (!isConfirmed) return;
 
     const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
@@ -138,7 +129,7 @@ const deleteContact = async (id: number): Promise<void> => {
       contacts.value = contacts.value.filter((item) => item.contact_id !== id);
       await Swal.fire({
         title: 'Удалено!',
-        text: 'Элемент навигации был успешно удален',
+        text: 'Элемент контактов был успешно удален',
         icon: 'success',
         timer: 1500,
         showConfirmButton: false,
@@ -149,24 +140,18 @@ const deleteContact = async (id: number): Promise<void> => {
     }
   } catch (err) {
     console.log(err);
-    console.error('Error deleting navigation:', err);
+    console.error('Error deleting contacts:', err);
     await Swal.fire({
       title: 'Ошибка!',
-      text: 'Не удалось удалить элемент навигации',
+      text: 'Не удалось удалить элемент контактов',
       icon: 'error',
     });
   }
 };
 
-// --- Добавление новой ссылки ---
-const newContact = ref<Partial<ContactItem>>({
-  title: '',
-  phone: '',
-});
-
 const createContact = async (): Promise<void> => {
   try {
-    if (!newContact.value.title || !newContact.value.phone) {
+    if (!newContact.value.title || !newContact.value.content) {
       await Swal.fire({
         title: 'Ошибка!',
         text: 'Все поля обязательны',
@@ -184,9 +169,11 @@ const createContact = async (): Promise<void> => {
     const { success, error: apiError } = await fetchWithCors(API_BASE_URL, {
       method: 'POST',
       body: JSON.stringify({
-        title: newContact.value.title,
-        phone: newContact.value.phone,
-        link: `tel:${newContact.value.phone}`,
+        title: 'Адреc:',
+        content: newContact.value.content,
+        link: null,
+        type: 'address',
+        icon_path: null,
       }),
     });
     if (success) {
@@ -199,9 +186,9 @@ const createContact = async (): Promise<void> => {
         timerProgressBar: true,
       });
       newContact.value = {
-        title: '',
-        phone: '',
-        link: '',
+        title: 'Адреc:',
+        content: '',
+        link: null,
       };
       await getContacts();
     } else {
@@ -224,7 +211,22 @@ onMounted(() => {
 
 <template>
   <div class="container">
-    <h2 class="title">Контакты</h2>
+    <h2 class="contacts-title">Адреса</h2>
+
+    <div class="add-contact-wrapper">
+      <h2 class="add-contact-title">Добавить новый адрес</h2>
+      <div class="add-contact-form">
+        <div class="input-group">
+          <label :for="'phone-create'">Адрес:</label>
+          <input
+            type="text"
+            :id="'phone-create'"
+            v-model="newContact.content"
+          />
+        </div>
+        <button class="btn save add" @click="createContact">Добавить</button>
+      </div>
+    </div>
 
     <div v-if="isLoading" class="loading-overlay">
       <div class="spinner"></div>
@@ -235,45 +237,23 @@ onMounted(() => {
     </div>
 
     <div>
-      <div class="add-nav-form">
-        <h2 class="add-nav-form-title">Добавить новую ссылку</h2>
-        <div class="input-group">
-          <label :for="'title-create'">Заголовок:</label>
-          <input type="text" :id="'title-create'" v-model="newContact.title" />
-        </div>
-        <div class="input-group">
-          <label :for="'phone-create'">Телефон:</label>
-          <input type="text" :id="'phone-create'" v-model="newContact.phone" />
-        </div>
-        <button class="btn save" @click="createContact">Добавить</button>
-      </div>
-
-      <div class="navigation-grid">
+      <div class="contact-list">
         <div v-for="item in contacts" :key="item.contact_id" class="nav-item">
           <div class="input-group">
-            <label :for="'title-' + item.contact_id">Заголовок:</label>
-            <input
-              :id="'title-' + item.contact_id"
-              type="text"
-              v-model="item.title"
-            />
-          </div>
-          <div class="input-group">
-            <label :for="'phone-' + item.phone">Телефон:</label>
+            <label :for="'content-' + item.content?.replace(/[+\s]/g, '')"
+              >Адрес:</label
+            >
             <input
               type="text"
-              :id="'phone-' + item.phone"
-              v-model="item.phone"
+              :id="'content-' + item.content?.replace(/[+\s]/g, '')"
+              v-model="item.content"
             />
           </div>
           <div class="button-group">
             <button class="btn save" @click="updateContact(item.contact_id)">
               Сохранить
             </button>
-            <button
-              class="btn delete"
-              @click="deleteContact(item.contact_id)"
-            >
+            <button class="btn delete" @click="deleteContact(item.contact_id)">
               Удалить
             </button>
           </div>
@@ -286,6 +266,46 @@ onMounted(() => {
 <style scoped>
 .container {
   grid-column: 2 / 3;
+}
+
+.contacts-title {
+  font-size: 2rem;
+  margin: 0.4rem;
+}
+
+.add-contact-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  gap: 1rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.add-contact-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+}
+
+.add-contact-form .input-group {
+  width: 100%;
+  max-width: 500px;
+}
+
+.add-contact-title {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0;
+  margin-bottom: 1rem;
+}
+
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .loading-overlay {
@@ -340,9 +360,6 @@ onMounted(() => {
   margin-bottom: 1rem;
   color: #2c3e50;
 }
-.add-nav-form .input-group {
-  margin-bottom: 1rem;
-}
 
 .navigation-grid {
   display: grid;
@@ -351,6 +368,9 @@ onMounted(() => {
 }
 
 .nav-item {
+  display: flex;
+  gap: 1rem;
+  align-items: end;
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
@@ -366,7 +386,7 @@ onMounted(() => {
 .input-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .input-group label {
@@ -422,5 +442,9 @@ onMounted(() => {
 
 .btn.delete:hover {
   background: #c82333;
+}
+
+.btn.add {
+  margin-left: auto;
 }
 </style>
