@@ -56,7 +56,7 @@ public function __construct()
       }
   }
 
-    // Обновленная функция получение карты
+  // Обновленная функция получение карты
   public function getMap()
   {
       try {
@@ -214,9 +214,6 @@ public function __construct()
       return htmlspecialchars($this->webSite);
     }
   }
-
-
-
 
   public function getLogo()
   {
