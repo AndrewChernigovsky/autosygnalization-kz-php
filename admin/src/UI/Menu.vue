@@ -7,25 +7,14 @@
     </button>
     <div class="menu" :class="{ 'is-open': isOpen }">
       <ul class="menu__list">
-        <li class="menu__item">
-          <router-link to="/" class="menu__link" @click="closeMenu"
-            >Главная</router-link
-          >
-        </li>
-        <li class="menu__item">
-          <router-link to="/slider-intro" class="menu__link" @click="closeMenu"
-            >Слайдер</router-link
-          >
-        </li>
-        <li class="menu__item">
-          <router-link to="/navigation" class="menu__link" @click="closeMenu"
-            >Навигация</router-link
-          >
-        </li>
-        <li class="menu__item">
-          <router-link to="/contacts" class="menu__link" @click="closeMenu"
-            >Контакты</router-link
-          >
+        <li
+          v-for="route in navigationStore.navigationRoutes"
+          :key="route.path"
+          class="menu__item"
+        >
+          <router-link :to="route.path" class="menu__link" @click="closeMenu">
+            {{ route.name }}
+          </router-link>
         </li>
       </ul>
     </div>
@@ -34,8 +23,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useNavigationStore } from '../stores/navigationStore';
 
 const isOpen = ref(false);
+const navigationStore = useNavigationStore();
 
 function toggleMenu() {
   isOpen.value = !isOpen.value;

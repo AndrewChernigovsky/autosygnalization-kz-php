@@ -83,6 +83,7 @@ RewriteRule ^price$ /server/php/pages/price/price.php [L,QSA]
 RewriteRule ^special$ /server/php/pages/special/special.php [L,QSA]
 RewriteRule ^cart$ /server/php/pages/cart/cart.php [L,QSA]
 RewriteRule ^checkout$ /server/php/pages/checkout/checkout.php [L,QSA]
+RewriteRule ^api/products/get$ /server/php/api/products/get_all_products.php [L,QSA]
 
 RewriteRule ^/$ /index.php [L,QSA]
 
