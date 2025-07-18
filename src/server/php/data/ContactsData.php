@@ -204,6 +204,26 @@ public function __construct()
       }
   }
 
+  // Обновленная функция получение маршрута
+  public function getLocationDescription()
+  {
+      try {
+          $query = "SELECT content as path, title as title, FROM Contacts WHERE type = 'location-description' ORDER BY contact_id ASC";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute();
+
+          $locationDescription = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+          error_log(print_r($locationDescription, true));
+          if (empty($locationDescription)) {
+              return [['path' => 'Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на территорию СТО. <br> Наш бокс №15.', 'title' => 'КАК К НАМ ДОБРАТЬСЯ']];
+          }
+          return $locationDescription;
+      } catch (\Exception $e) {
+          error_log("Ошибка получения маршрута: " . $e->getMessage());
+              return [['path' => 'Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на территорию СТО. <br> Наш бокс №15.', 'title' => 'КАК К НАМ ДОБРАТЬСЯ']];
+      }
+  }
+
   public function getWebsite($link = false)
   {
     if ($link) {

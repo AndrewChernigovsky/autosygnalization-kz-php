@@ -26,5 +26,6 @@ INSERT INTO `Contacts` (`type`,`title`, `content`, `link`,`icon_path`) VALUES
 ('social','Instagramm:','+77077478212','https://www.instagram.com/autosecurity_kz','/client/vectors/sprite.svg#instagramm-icon'),
 ('email','Почта:','autosecurity.site@mail.ru','mailto:autosecurity.site@mail.ru','/client/vectors/message-icon.svg'),
 ('schedule','График работы:','Вс. - Чт.: 9:30 - 18:00 <br> Пт.: 9:30-15:00 <br> <span>Сб.: Выходной</span>',NULL,'/client/vectors/clock.svg'),
-('map','Карта',NULL,'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru',NULL);
+('map','Карта',NULL,'https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru',NULL),
+('location-description','КАК К НАМ ДОБРАТЬСЯ','Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на территорию СТО. <br> Наш бокс №15.',NULL,NULL);
 

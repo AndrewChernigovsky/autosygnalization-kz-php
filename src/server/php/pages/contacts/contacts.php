@@ -26,6 +26,7 @@ $contactPhones = $contacts->getContactPhones();
 $social = $contacts->getSocial();
 $schedule = $contacts->getSchedule();
 $map = $contacts->getMap();
+$locationDescription = $contacts->getLocationDescription();
 ?>
 
 <!DOCTYPE html>
@@ -120,11 +121,10 @@ echo $head->setHead();
     </section>
     <section class="contacts-location">
       <div class="container">
-        <h2>КАК К НАМ ДОБРАТЬСЯ</h2>
-        <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем
-          на
-          территорию СТО. <br> Наш бокс №15.
-        </p>
+            <?php if (!empty($locationDescription)): ?>
+                  <h2><?php echo htmlspecialchars($locationDescription[0]['title']) ?></h2>
+                  <p><?php echo $locationDescription[0]['path'] ?></p>
+            <?php endif; ?>
         <div class="contacts-location__phone">
           <p>По всем вопросам звоните:</p>
           <div class="contacts-location__box">
