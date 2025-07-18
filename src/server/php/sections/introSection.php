@@ -9,7 +9,7 @@ function introSection()
   // Fetch slides data from database
   try {
     $db = new InitDataBase();
-    $stmt = $db->prepare("SELECT id, video_filename, video_path, title, advantages, button_text, button_link, position, poster_path FROM Videos_intro_slider ORDER BY position ASC");
+    $stmt = $db->prepare("SELECT id, video_filename, video_path, video_path_mob, title, advantages, button_text, button_link, position, poster_path FROM Videos_intro_slider ORDER BY position ASC");
     $stmt->execute();
     $videos = $stmt->fetchAll(\PDO::FETCH_ASSOC);
     error_log("Raw videos from DB: " . print_r($videos, true));
@@ -17,9 +17,9 @@ function introSection()
     $slides = array_map(function ($video) {
       return [
         'poster' => $video['poster_path'],
-        'srcMob' => $video['video_path'],
+        'srcMob' => $video['video_path_mob'],
         'src' => [$video['video_path']],
-        'type' => ['video/mp4'],
+        'type' => ['video/mp4', 'video/webm'],
         'title' => $video['title'],
         'list' => json_decode($video['advantages'], true) ?: [],
         'link' => $video['button_link'],
@@ -63,7 +63,7 @@ function introSection()
                 poster="<?= htmlspecialchars($slide['poster'] ?? '') ?>">
                 <?php if (!empty($slide['srcMob'])): ?>
                   <source src="<?= htmlspecialchars($slide['srcMob']) ?>" data-src="<?= htmlspecialchars($slide['srcMob']) ?>"
-                    type="<?= htmlspecialchars($slide['type'][0] ?? '') ?>" media="(max-width:768px)" />
+                    type="<?= htmlspecialchars($slide['type'][1] ?? '') ?>" media="(max-width:768px)" />
                 <?php endif; ?>
                 <?php foreach ($slide['src'] ?? [] as $index => $source): ?>
                   <source src="<?= htmlspecialchars($source) ?>" data-src="<?= htmlspecialchars($source) ?>"
