@@ -1,113 +1,132 @@
 <template>
-  <div class="p-4 md:p-6 theme-dark">
-    <div v-if="loading" class="flex justify-center items-center h-64">
-      <div class="loader"></div>
-    </div>
-    <div v-if="error" class="text-red-500 text-center">
-      Ошибка при загрузке данных: {{ error }}
-    </div>
-    <div v-if="!loading && !error" class="space-y-2">
-      <div v-for="(group, category) in groupedProducts" :key="category">
-        <h2 class="text-2xl font-bold my-4">
-          {{ getCategoryName(category) }}
-        </h2>
-        <div class="space-y-2">
-          <details
-            v-for="product in group"
-            :key="product.id"
-            class="product-item"
-          >
-            <summary>
-              <strong>{{ product.title }}</strong>
-            </summary>
-            <div class="product-editor">
-              <div class="form-group" @click="startEditing(product, 'title')">
-                <label>Заголовок:</label>
-                <span
-                  v-if="
-                    editingProduct?.id !== product.id || fieldToEdit !== 'title'
-                  "
+  <div class="products-admin">
+    <h1>Товары</h1>
+    <div class="p-4 md:p-6 theme-dark">
+      <input
+        type="file"
+        ref="fileInput"
+        @change="handleFileSelected"
+        style="display: none"
+        accept="image/*"
+      />
+      <div v-if="loading" class="flex justify-center items-center h-64">
+        <div class="loader"></div>
+      </div>
+      <div v-if="error" class="text-red-500 text-center">
+        Ошибка при загрузке данных: {{ error }}
+      </div>
+      <div v-if="!loading && !error" class="space-y-2">
+        <div v-for="(group, category) in groupedProducts" :key="category">
+          <div class="category-header">
+            <h2 class="text-2xl font-bold my-4">
+              {{ getCategoryName(category) }}
+            </h2>
+            <button @click="addNewProduct(category)" class="btn-add">
+              Добавить товар
+            </button>
+          </div>
+          <div class="space-y-2">
+            <details
+              v-for="product in group"
+              :key="product.id"
+              class="product-item"
+              :open="product.is_new"
+              @toggle="(event) => handleToggle(event, product)"
+            >
+              <summary>
+                <strong>{{ product.title }}</strong>
+              </summary>
+              <div class="product-editor">
+                <div class="form-group" @click="startEditing(product, 'title')">
+                  <label>Заголовок:</label>
+                  <input
+                    v-if="
+                      editingProduct?.id === product.id &&
+                      fieldToEdit === 'title'
+                    "
+                    v-model="editingProduct.title"
+                    type="text"
+                  />
+                  <span v-else>{{ product.title }}</span>
+                </div>
+
+                <div
+                  class="form-group"
+                  @click="startEditing(product, 'description')"
                 >
-                  {{ product.title }}
-                </span>
-                <input
-                  v-else
-                  v-model="editingProduct.title"
-                  type="text"
-                  @blur="finishEditing"
-                  @keyup.enter="finishEditing"
-                />
-              </div>
+                  <label>Описание:</label>
+                  <textarea
+                    v-if="
+                      editingProduct?.id === product.id &&
+                      fieldToEdit === 'description'
+                    "
+                    v-model="editingProduct.description"
+                  ></textarea>
+                  <span v-else>{{ product.description }}</span>
+                </div>
 
-              <div
-                class="form-group"
-                @click="startEditing(product, 'description')"
-              >
-                <label>Описание:</label>
-                <span
-                  v-if="
-                    editingProduct?.id !== product.id ||
-                    fieldToEdit !== 'description'
-                  "
-                >
-                  {{ product.description }}
-                </span>
-                <textarea
-                  v-else
-                  v-model="editingProduct.description"
-                  @blur="finishEditing"
-                  @keyup.enter="finishEditing"
-                ></textarea>
-              </div>
+                <div class="form-group" @click="startEditing(product, 'price')">
+                  <label>Цена:</label>
+                  <input
+                    v-if="
+                      editingProduct?.id === product.id &&
+                      fieldToEdit === 'price'
+                    "
+                    v-model="editingProduct.price"
+                    type="number"
+                  />
+                  <span v-else>{{ product.price }}</span>
+                </div>
 
-              <div class="form-group" @click="startEditing(product, 'price')">
-                <label>Цена:</label>
-                <span
-                  v-if="
-                    editingProduct?.id !== product.id || fieldToEdit !== 'price'
-                  "
-                >
-                  {{ product.price }}
-                </span>
-                <input
-                  v-else
-                  v-model="editingProduct.price"
-                  type="number"
-                  @blur="finishEditing"
-                  @keyup.enter="finishEditing"
-                />
-              </div>
+                <div class="form-group-checkbox">
+                  <label :for="'popular-' + product.id">Популярный:</label>
+                  <input
+                    type="checkbox"
+                    :id="'popular-' + product.id"
+                    :checked="product.is_popular"
+                    @change="togglePopular(product)"
+                  />
+                </div>
 
-              <div class="form-group-checkbox">
-                <label :for="'popular-' + product.id">Популярный:</label>
-                <input
-                  type="checkbox"
-                  :id="'popular-' + product.id"
-                  :checked="product.is_popular"
-                  @change="togglePopular(product)"
-                />
-              </div>
-
-              <div class="gallery-manager">
-                <h4>Галерея:</h4>
-                <div class="gallery-images">
-                  <div
-                    v-for="(image, index) in product.gallery"
-                    :key="index"
-                    class="gallery-image"
-                  >
-                    <img :src="image" alt="Product image" />
-                    <button
-                      class="btn-delete-img"
-                      @click="deleteImage(product, index)"
+                <div class="gallery-manager">
+                  <h4>Галерея:</h4>
+                  <div class="gallery-images">
+                    <div
+                      v-for="(image, index) in product.gallery"
+                      :key="index"
+                      class="gallery-image"
+                      @click="triggerFileUpload(product, index)"
                     >
-                      X
-                    </button>
+                      <img :src="image" alt="Product image" />
+                      <button
+                        class="btn-delete-img"
+                        @click.stop="deleteImage(product, index)"
+                      >
+                        X
+                      </button>
+                    </div>
+                    <div
+                      class="gallery-upload-placeholder"
+                      @click="triggerFileUpload(product, null)"
+                    >
+                      <span class="plus-icon">+</span>
+                    </div>
                   </div>
                 </div>
+                <div class="product-actions">
+                  <button @click="saveChanges" class="btn-save">
+                    Сохранить
+                  </button>
+                  <button
+                    @click="deleteProductHandler(product.id)"
+                    class="btn-delete"
+                  >
+                    Удалить
+                  </button>
+                </div>
               </div>
-            </div>
-          </details>
+            </details>
+          </div>
         </div>
       </div>
     </div>
@@ -118,6 +137,7 @@
 import { onMounted, computed, ref } from 'vue';
 import { useProducts } from './functions/useProducts';
 import type { Product } from './interfaces/Products';
+import Swal from 'sweetalert2';
 
 const {
   products,
@@ -125,12 +145,111 @@ const {
   error,
   fetchProducts,
   updateProduct,
+  deleteProduct,
   togglePopular,
   deleteImage,
+  uploadImage,
+  addProduct,
 } = useProducts();
 
 const editingProduct = ref<Product | null>(null);
 const fieldToEdit = ref<string | null>(null);
+const fileInput = ref<HTMLInputElement | null>(null);
+const uploadContext = ref<{ product: Product; index: number | null } | null>(
+  null
+);
+const isCreatingNewProduct = ref(false);
+
+function startEditing(product: Product, field: string) {
+  if (!editingProduct.value || editingProduct.value.id !== product.id) {
+    editingProduct.value = { ...product };
+  }
+  fieldToEdit.value = field;
+}
+
+function saveChanges() {
+  if (editingProduct.value) {
+    updateProduct(editingProduct.value);
+    if (editingProduct.value.is_new) {
+      isCreatingNewProduct.value = false;
+    }
+    editingProduct.value = null;
+    fieldToEdit.value = null;
+  }
+}
+
+async function addNewProduct(categoryKey: string) {
+  console.log(
+    '[Products.vue] Нажата кнопка "Добавить товар". Вызывается addNewProduct.'
+  );
+  if (isCreatingNewProduct.value) {
+    Swal.fire({
+      title: 'Внимание!',
+      text: 'Сначала сохраните или удалите предыдущий новый товар.',
+      icon: 'warning',
+      background: '#333',
+      color: '#fff',
+    });
+    return;
+  }
+
+  const newProduct = await addProduct(categoryKey);
+  if (newProduct) {
+    isCreatingNewProduct.value = true;
+    editingProduct.value = { ...newProduct };
+    fieldToEdit.value = 'title';
+  }
+}
+
+async function deleteProductHandler(productId: string) {
+  const productToDelete = products.value.find((p) => p.id === productId);
+
+  if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+    const deleted = await deleteProduct(productId);
+    if (deleted && productToDelete?.is_new) {
+      isCreatingNewProduct.value = false;
+    }
+  }
+}
+
+async function handleToggle(event: Event, product: Product) {
+  const detailsElement = event.target as HTMLDetailsElement;
+  if (!detailsElement.open && product.is_new) {
+    event.preventDefault(); // Предотвращаем закрытие, пока пользователь не решит
+    const result = await Swal.fire({
+      title: 'Отменить создание?',
+      text: 'Новый товар не был сохранен и будет удален.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Да, удалить',
+      cancelButtonText: 'Нет, оставить',
+      background: '#333',
+      color: '#fff',
+    });
+
+    if (result.isConfirmed) {
+      await deleteProduct(product.id);
+      isCreatingNewProduct.value = false;
+    } else {
+      detailsElement.open = true; // Если отменили, оставляем открытым
+    }
+  }
+}
+
+function triggerFileUpload(product: Product, index: number | null) {
+  uploadContext.value = { product, index };
+  fileInput.value?.click();
+}
+
+function handleFileSelected(event: Event) {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0] && uploadContext.value) {
+    const { product, index } = uploadContext.value;
+    uploadImage(product, target.files[0], index);
+  }
+  // Reset file input
+  if (target) target.value = '';
+}
 
 const categoryTranslations: Record<string, string> = {
   keychain: 'Брелоки',
@@ -155,19 +274,6 @@ const getCategoryName = (categoryKey: string) => {
   return categoryTranslations[categoryKey] || categoryKey;
 };
 
-function startEditing(product: Product, field: string) {
-  editingProduct.value = { ...product };
-  fieldToEdit.value = field;
-}
-
-function finishEditing() {
-  if (editingProduct.value) {
-    updateProduct(editingProduct.value);
-    editingProduct.value = null;
-    fieldToEdit.value = null;
-  }
-}
-
 const groupedProducts = computed(() => {
   return products.value.reduce((acc, product) => {
     const category = product.category_key || 'uncategorized';
@@ -184,15 +290,38 @@ onMounted(() => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+.products-admin {
+  h1 {
+    text-align: center;
+  }
+}
 .theme-dark {
   background-color: #333;
   color: #f1f1f1;
   min-height: 100vh;
+  padding: 20px;
+  max-width: 1440px;
+  border-radius: 10px;
+  margin: 0 auto;
+}
+
+.space-y-2 {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
 .theme-dark h2 {
   color: #fff;
+  margin: 0; /* Reset margin */
 }
 
 .loader {
@@ -262,7 +391,8 @@ onMounted(() => {
 
 .form-group input[type='text'],
 .form-group input[type='number'],
-.form-group textarea {
+.form-group textarea,
+.form-group span {
   width: 100%;
   padding: 10px;
   border: 1px solid #666;
@@ -271,6 +401,7 @@ onMounted(() => {
   border-radius: 4px;
   box-sizing: border-box;
   font-size: 1rem;
+  min-height: 40px; /* Для span */
 }
 
 .form-group textarea {
@@ -295,10 +426,14 @@ onMounted(() => {
   margin-top: 10px;
 }
 
-.gallery-image {
+.gallery-image,
+.gallery-upload-placeholder {
   position: relative;
   width: 100px;
   height: 100px;
+  border: 1px dashed #666;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .gallery-image img {
@@ -306,7 +441,22 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
-  border: 1px solid #666;
+}
+
+.gallery-upload-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #555;
+}
+
+.gallery-upload-placeholder:hover {
+  background-color: #666;
+}
+
+.plus-icon {
+  font-size: 40px;
+  color: #888;
 }
 
 .btn-delete-img {
@@ -325,5 +475,54 @@ onMounted(() => {
   text-align: center;
   font-weight: bold;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+.product-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  border-top: 1px solid #555;
+  padding-top: 15px;
+  margin-top: 10px;
+}
+
+.btn-save,
+.btn-delete {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.btn-save {
+  background-color: #28a745;
+}
+.btn-save:hover {
+  background-color: #218838;
+}
+
+.btn-delete {
+  background-color: #dc3545;
+}
+.btn-delete:hover {
+  background-color: #c82333;
+}
+
+.btn-add {
+  background-color: #007bff;
+  padding: 8px 12px;
+  border-radius: 5px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-add:hover {
+  background-color: #0069d9;
 }
 </style>

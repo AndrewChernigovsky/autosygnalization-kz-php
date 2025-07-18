@@ -28,7 +28,13 @@ AddType image/avif .avif
 <IfModule mod_mime.c>
   AddType image/avif avif
 </IfModule>
-
+ 
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "http://localhost:5173
+  "
+  Header set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+  Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
 
 # Управление CORS для шрифтов
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">

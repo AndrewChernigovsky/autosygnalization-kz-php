@@ -18,4 +18,5 @@ export interface Product {
   autosygnals: string[];
   category: string;
   category_key: string;
+  is_new?: boolean;
 }

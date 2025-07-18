@@ -2,6 +2,41 @@ import { ref } from 'vue';
 import type { Ref } from 'vue';
 import type { Product } from '../interfaces/Products';
 
+const API_URL = '/server/php/admin/api/products/';
+
+async function apiCall(
+  endpoint: string,
+  method: string = 'POST',
+  body: any = null
+) {
+  const options: RequestInit = {
+    method,
+    headers: {},
+  };
+
+  if (body) {
+    if (body instanceof FormData) {
+      options.body = body;
+    } else {
+      options.headers = { 'Content-Type': 'application/json' };
+      options.body = JSON.stringify(body);
+    }
+  }
+
+  const response = await fetch(API_URL + endpoint, options);
+
+  if (!response.ok) {
+    const errorData = await response
+      .json()
+      .catch(() => ({ message: 'An unknown error occurred' }));
+    throw new Error(
+      errorData.message || `HTTP error! status: ${response.status}`
+    );
+  }
+
+  return response.json();
+}
+
 export function useProducts() {
   const products: Ref<Product[]> = ref([]);
   const loading = ref(false);
@@ -45,23 +80,141 @@ export function useProducts() {
   }
 
   async function updateProduct(product: Product) {
-    console.log('Updating product:', product);
-    // TODO: Implement server-side update logic
+    console.log('[useProducts] updateProduct вызван. Товар:', product);
+    if (product.is_new) {
+      console.log(
+        '[useProducts] Это НОВЫЙ товар. Выполняется API-запрос на создание...'
+      );
+      // Это новый товар, вызываем API создания
+      try {
+        // Формируем объект только с нужными для создания полями
+        const { title, description, price, is_popular, gallery, category_key } =
+          product;
+        const newProductData = {
+          title,
+          description,
+          price,
+          is_popular,
+          gallery,
+          category_key,
+        };
+
+        const createdProduct = await apiCall(
+          'create_product.php',
+          'POST',
+          newProductData
+        );
+
+        // Обновляем продукт в локальном состоянии с данными от сервера
+        const index = products.value.findIndex((p) => p.id === product.id);
+        if (index !== -1) {
+          products.value[index] = { ...createdProduct, is_new: false };
+        }
+      } catch (error) {
+        console.error('Failed to create product:', error);
+        // Можно добавить обработку ошибки, например, удалить временный продукт из списка
+      }
+    } else {
+      console.log(
+        '[useProducts] Это СУЩЕСТВУЮЩИЙ товар. Выполняется API-запрос на обновление...'
+      );
+      // Это существующий товар, вызываем API обновления
+      try {
+        await apiCall('update_product.php', 'POST', product);
+        const index = products.value.findIndex((p) => p.id === product.id);
+        if (index !== -1) {
+          products.value[index] = { ...product };
+        }
+      } catch (error) {
+        console.error('Failed to update product:', error);
+      }
+    }
+  }
+
+  async function deleteProduct(productId: string): Promise<boolean> {
+    try {
+      await apiCall('delete_product.php', 'POST', { id: productId });
+      products.value = products.value.filter((p) => p.id !== productId);
+      return true;
+    } catch (error) {
+      console.error('Failed to delete product:', error);
+      return false;
+    }
   }
 
   async function togglePopular(product: Product) {
-    console.log('Toggling popular for product:', product);
-    // TODO: Implement server-side toggle logic
+    const updatedProduct = { ...product, is_popular: !product.is_popular };
+    await updateProduct(updatedProduct);
   }
 
   async function deleteImage(product: Product, imageIndex: number) {
+    try {
+      const data = await apiCall('delete_image.php', 'POST', {
+        productId: product.id,
+        imageIndex,
+      });
+      const index = products.value.findIndex((p) => p.id === product.id);
+      if (index !== -1) {
+        products.value[index].gallery = data.gallery;
+      }
+    } catch (error) {
+      console.error('Failed to delete image:', error);
+    }
+  }
+
+  async function addProduct(category_key: string) {
     console.log(
-      'Deleting image for product:',
-      product,
-      'at index:',
-      imageIndex
+      '[useProducts] addProduct вызван. Только локальные изменения, без API-запроса.'
     );
-    // TODO: Implement server-side delete logic
+    // Эта функция теперь работает только на клиенте
+    const newProduct: Product = {
+      id: `new_${Date.now()}`, // Временный ID
+      is_new: true,
+      title: 'Новый товар',
+      description: 'Введите описание...',
+      price: 0,
+      is_popular: false,
+      gallery: [],
+      category_key: category_key,
+      category: category_key,
+      // Заполняем остальные поля значениями по умолчанию, чтобы избежать ошибок
+      model: '',
+      cart: false,
+      popular: false,
+      currency: '₸',
+      quantity: 0,
+      link: '#',
+      functions: [],
+      options: [],
+      'options-filters': [],
+      special: false,
+      autosygnals: [],
+    };
+    products.value.unshift(newProduct);
+    return newProduct;
+  }
+
+  async function uploadImage(
+    product: Product,
+    file: File,
+    imageIndex: number | null = null
+  ) {
+    const formData = new FormData();
+    formData.append('productId', product.id);
+    formData.append('image', file);
+    if (imageIndex !== null) {
+      formData.append('imageIndex', String(imageIndex));
+    }
+
+    try {
+      const data = await apiCall('upload_image.php', 'POST', formData);
+      const index = products.value.findIndex((p) => p.id === product.id);
+      if (index !== -1) {
+        products.value[index].gallery = data.gallery;
+      }
+    } catch (error) {
+      console.error('Failed to upload image:', error);
+    }
   }
 
   return {
@@ -70,7 +223,10 @@ export function useProducts() {
     error,
     fetchProducts,
     updateProduct,
+    deleteProduct,
     togglePopular,
     deleteImage,
+    uploadImage,
+    addProduct,
   };
 }
