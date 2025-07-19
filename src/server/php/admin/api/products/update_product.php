@@ -34,7 +34,8 @@ try {
             price = :price, 
             is_popular = :is_popular,
             gallery = :gallery,
-            link = :link
+            link = :link,
+            category = :category_key
         WHERE id = :id"
   );
 
@@ -47,6 +48,7 @@ try {
   $stmt->bindParam(':description', $data['description']);
   $stmt->bindParam(':price', $data['price']);
   $stmt->bindParam(':link', $link);
+  $stmt->bindParam(':category_key', $data['category_key']);
 
   // Преобразуем boolean в integer для БД
   $is_popular = $data['is_popular'] ? 1 : 0;

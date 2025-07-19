@@ -99,15 +99,37 @@
                       v-for="(image, index) in product.gallery"
                       :key="index"
                       class="gallery-image"
-                      @click="triggerFileUpload(product, index)"
+                      @click="
+                        !isImageUploading(product.id, index) &&
+                          triggerFileUpload(product, index)
+                      "
                     >
-                      <img :src="image" alt="Product image" />
+                      <div class="loader-overlay">
+                        <div class="loader-small"></div>
+                      </div>
+                      <img
+                        :src="image"
+                        alt="Product image"
+                        :class="{
+                          uploading: isImageUploading(product.id, index),
+                        }"
+                      />
                       <button
+                        v-if="!isImageUploading(product.id, index)"
                         class="btn-delete-img"
                         @click.stop="deleteImage(product, index)"
                       ></button>
                     </div>
                     <div
+                      v-if="isImageUploading(product.id, null)"
+                      class="gallery-image"
+                    >
+                      <div class="loader-overlay">
+                        <div class="loader-small"></div>
+                      </div>
+                    </div>
+                    <div
+                      v-if="!isImageUploading(product.id, null)"
                       class="gallery-upload-placeholder"
                       @click="triggerFileUpload(product, null)"
                     >
@@ -115,6 +137,32 @@
                     </div>
                   </div>
                 </div>
+                <div
+                  class="form-group"
+                  @click="startEditing(product, 'category_key')"
+                >
+                  <label>Категория:</label>
+                  <select
+                    v-if="
+                      editingProduct?.id === product.id &&
+                      fieldToEdit === 'category_key'
+                    "
+                    v-model="editingCategoryKey"
+                    @click.stop
+                  >
+                    <option
+                      v-for="category in allCategories"
+                      :value="category.key"
+                      :key="category.key"
+                    >
+                      {{ category.name }}
+                    </option>
+                  </select>
+                  <span v-else>{{
+                    getCategoryName(product.category_key)
+                  }}</span>
+                </div>
+
                 <div class="product-actions">
                   <button @click="saveChanges" class="btn-save">
                     Сохранить
@@ -136,7 +184,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed, ref, nextTick } from 'vue';
 import { useProducts } from './functions/useProducts';
 import type { Product } from './interfaces/Products';
 import Swal from 'sweetalert2';
@@ -161,6 +209,32 @@ const uploadContext = ref<{ product: Product; index: number | null } | null>(
   null
 );
 const isCreatingNewProduct = ref(false);
+const imageUploadStatus = ref<{
+  productId: string;
+  index: number | null;
+} | null>(null);
+
+const editingCategoryKey = computed({
+  get: () => editingProduct.value?.category_key || '',
+  set: (value) => {
+    if (editingProduct.value) {
+      editingProduct.value.category_key = value;
+    }
+  },
+});
+
+const isImageUploading = (productId: string, index: number | null) => {
+  if (!imageUploadStatus.value) return false;
+  const isUploading =
+    imageUploadStatus.value.productId === productId &&
+    imageUploadStatus.value.index === index;
+  if (isUploading) {
+    console.log(
+      `Loader should be visible for product ${productId}, index ${index}`
+    );
+  }
+  return isUploading;
+};
 
 function startEditing(product: Product, field: string) {
   if (!editingProduct.value || editingProduct.value.id !== product.id) {
@@ -350,21 +424,19 @@ function triggerFileUpload(product: Product, index: number | null) {
 
 async function handleFileSelected(event: Event) {
   const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0] && uploadContext.value) {
-    const { product, index } = uploadContext.value;
+  if (!target.files || !target.files[0] || !uploadContext.value) {
+    if (target) target.value = '';
+    return;
+  }
 
-    Swal.fire({
-      title: 'Загрузка изображения...',
-      text: 'Пожалуйста, подождите',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      background: '#333',
-      color: '#fff',
-    });
+  const { product, index } = uploadContext.value;
+  const file = target.files[0];
 
-    const newGallery = await uploadImage(product, target.files[0], index);
+  imageUploadStatus.value = { productId: product.id, index };
+  console.log('Set imageUploadStatus:', imageUploadStatus.value);
+
+  try {
+    const newGallery = await uploadImage(product, file, index);
 
     if (newGallery) {
       if (editingProduct.value && editingProduct.value.id === product.id) {
@@ -380,37 +452,42 @@ async function handleFileSelected(event: Event) {
         showConfirmButton: false,
       });
     } else {
-      Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось загрузить изображение.',
-        icon: 'error',
-        background: '#333',
-        color: '#fff',
-      });
+      throw new Error('Upload failed and returned no gallery.');
     }
+  } catch (err) {
+    console.error('Failed to upload image:', err);
+    Swal.fire({
+      title: 'Ошибка!',
+      text: 'Не удалось загрузить изображение.',
+      icon: 'error',
+      background: '#333',
+      color: '#fff',
+    });
+  } finally {
+    console.log('Resetting imageUploadStatus');
+    imageUploadStatus.value = null;
+    if (target) target.value = '';
   }
-  // Reset file input
-  if (target) target.value = '';
 }
 
 const categoryTranslations: Record<string, string> = {
   keychain: 'Брелоки',
   'park-systems': 'Парковочные системы',
   'remote-controls': 'Пульты управления',
-  starline_a60: 'StarLine A60',
-  starline_a63: 'StarLine A63',
-  starline_a90: 'StarLine A90',
-  starline_a91: 'StarLine A91',
-  starline_a93: 'StarLine A93',
-  starline_a96: 'StarLine A96',
-  starline_b96: 'StarLine B96',
-  starline_b97: 'StarLine B97',
-  starline_d96: 'StarLine D96',
-  starline_e96: 'StarLine E96',
-  starline_s96: 'StarLine S96',
-  starline_t94: 'StarLine T94',
-  uncategorized: 'Без категории',
 };
+
+const allCategories = computed(() => {
+  const keysFromProducts = Object.keys(groupedProducts.value);
+  const keysFromTranslations = Object.keys(categoryTranslations);
+  const allKeys = [...new Set([...keysFromProducts, ...keysFromTranslations])];
+
+  return allKeys
+    .map((key) => ({
+      key: key,
+      name: getCategoryName(key),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+});
 
 const getCategoryName = (categoryKey: string) => {
   return categoryTranslations[categoryKey] || categoryKey;
@@ -474,6 +551,15 @@ onMounted(() => {
   height: 40px;
   animation: spin 1s linear infinite;
   margin: auto auto;
+}
+
+.loader-small {
+  border: 3px solid #555;
+  border-top: 3px solid #3498db;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
@@ -589,6 +675,32 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
   border-radius: 4px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.gallery-image img.uploading {
+  opacity: 0.5;
+}
+
+.loader-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  z-index: 1;
 }
 
 .gallery-upload-placeholder {
