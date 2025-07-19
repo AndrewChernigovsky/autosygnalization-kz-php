@@ -6,38 +6,154 @@ export default class PrintDocument {
   }
 
   init() {
-    this.element.addEventListener('click', () => {
-      this.populateContainer(); // Заполняем контейнер данными
-      this.printIframe();  // Печатаем содержимое через временный iframe
+    this.element.addEventListener('click', async () => {
+      const data = await this.getData();
+
+      this.populateContainer(data.data); // Заполняем контейнер данными
+      this.printIframe(); // Печатаем содержимое через временный iframe
     });
   }
 
-  populateContainer() {
-    // Статическое содержимое для печати
+  async getData() {
+    try {
+      const response = await fetch('/server/php/admin/api/contact.php', {
+        method: 'GET',
+        headers: {
+          'Content-type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Ошибка сервера: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Данные полученны:', data);
+
+      return data;
+    } catch (error) {
+      console.error('Не удаолсь получить список контактов', error);
+      return null;
+    }
+  }
+  // populateContainer(data) {
+  //   const getByType = (type) => data.filter((item) => item.type === type);
+
+  //   const phones = getByType('contact-phone')
+  //     .map((item) => `<p>${item.title} ${item.content}</p>`)
+  //     .join('');
+
+  //   const socials = getByType('social')
+  //     .map((item) => `<p>${item.title} ${item.content}</p>`)
+  //     .join('');
+
+  //   const address = getByType('address')
+  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+  //     .join('');
+  //   const email = getByType('email')
+  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+  //     .join('');
+  //   const site = getByType('site')
+  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+  //     .join('');
+  //   const schedule = getByType('schedule')
+  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+  //     .join('');
+
+  //   const locationDescription = getByType('location-description')
+  //     .map((item) => `<h3>${item.title}</h3><br/><p>${item.content}</p>`)
+  //     .join('');
+
+  //   this.container.innerHTML = `
+  //   <div>
+  //     <h2>Auto Security - <span>продажа и установка автосигнализаций, диагностика и ремонт автоэлектрики.</span></h2>
+
+  //     ${phones}
+  //     ${socials}
+
+  //     ${site}
+  //     ${email}
+  //     ${address}
+  //     ${schedule}
+
+  //     ${locationDescription}
+
+  //     <p>БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
+  //   </div>
+  // `;
+  // }
+
+  populateContainer(data) {
+    const getByType = (type) => data.filter((item) => item.type === type);
+
+    const phones = getByType('contact-phone')
+      .map((item) => `<p>${item.title} ${item.content}</p>`)
+      .join('');
+
+    const socials = getByType('social')
+      .map((item) => `<p>${item.title} ${item.content}</p>`)
+      .join('');
+
+    const address = getByType('address')
+      .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+      .join('');
+
+    const email = getByType('email')
+      .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+      .join('');
+
+    const site = getByType('site')
+      .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+      .join('');
+
+    const schedule = getByType('schedule')
+      .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
+      .join('');
+
+    const locationDescription = getByType('location-description')
+      .map((item) => `<h3>${item.title}</h3><p>${item.content}</p>`)
+      .join('');
+
     this.container.innerHTML = `
-      <div>
-        <h2>Auto Security - <span>продажа и установка автосигнализаций, 
-        диагностика и ремонт автоэлектрики.</span></h2>
-        <p>Beeline: +77077478212</p>
-        <p>Kcell: +77017478212</p>
-        <p>Whatsapp: +77077478212</p>
-        <p>Сайт: www.starline-service.kz</p>
-        <p>Почта: autosecurity.kz@mail.ru</p>
-        <p>Адрес: Казахстан, г.Алматы, ул.Абая 145г, бокс №15</p>
-        <p>График работы: Вс. - Чт.: 9:30 - 18:00, Пт.: 9:30-15:00, Сб.: Выходной</p>
-        <h3>КАК К НАМ ДОБРАТЬСЯ</h3>
-        <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, 
-        перед речкой поворот направо, заезжаем на территорию СТО. Наш бокс №15.</p>
-        <p>БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
+    <div>
+      <h2>Auto Security <br/><span>Продажа и установка автосигнализаций, диагностика и ремонт автоэлектрики.</span></h2>
+
+      <div class="section">
+        <h3>Контактные телефоны</h3>
+        ${phones}
       </div>
-    `;
+
+      <div class="section">
+        <h3>Социальные сети</h3>
+        ${socials}
+      </div>
+
+      <div class="section">
+        <h3>Сайт и почта</h3>
+        ${site}
+        ${email}
+      </div>
+
+      <div class="section">
+        <h3>Адрес и график</h3>
+        ${address}
+        ${schedule}
+      </div>
+
+      <div class="section">
+        ${locationDescription}
+      </div>
+
+      <p class="footer">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
+    </div>
+  `;
   }
 
   printIframe() {
     const iframe = document.createElement('iframe');
     document.body.appendChild(iframe);
 
-    const iframeDoc = iframe.contentWindow || iframe.contentDocument; //получаем возможность записывать HTML-код и стили в документ iframe
+    const iframeDoc = iframe.contentWindow || iframe.contentDocument;
 
     if (!iframe.contentWindow && !iframe.contentDocument) {
       console.error('Не удалось получить доступ к содержимому iframe.');
@@ -45,53 +161,81 @@ export default class PrintDocument {
     }
 
     iframeDoc.document.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Печать</title>
-        <style>
-          body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-          }
+    <!DOCTYPE html>
+    <html lang="ru">
+    <head>
+      <meta charset="UTF-8">
+      <title>Печать</title>
+      <style>
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          margin: 40px;
+          padding: 20px;
+          background: #fff;
+          color: #222;
+        }
 
-          h2 {
-            text-align: center;
-            font-size: 24px;
-          }
+        h2 {
+          text-align: center;
+          font-size: 28px;
+          margin-bottom: 10px;
+          color: #2c3e50;
+        }
 
-          h3,
-          .print-slogan {
-            text-align: center;
-          }
+        h3 {
+          text-align: center;
+          font-size: 20px;
+          margin-top: 0;
+          color: #34495e;
+        }
 
-          p {
-            font-size: 16px;
-          }
+        p {
+          font-size: 16px;
+          margin: 6px 0;
+        }
 
-          span {
-            font-size: 16px;
-            font-weight: 400;
-          }
+        strong {
+          color: #2d3436;
+        }
 
-          .print-title {
-            font-weight: 600;
-          }
+        span {
+          font-size: 16px;
+          font-weight: 400;
+        }
 
-          .print-description {
-            font-size: 16px;
-            font-weight: 400;
-            margin-left: 10px;
-          }
-        </style>
-      </head>
-      <body>
+        .section {
+          margin-top: 20px;
+          padding: 15px;
+          padding-top: 0;
+          border: 1px solid #ccc;
+          border-radius: 6px;
+          background-color: #f9f9f9;
+          break-inside: avoid;
+          page-break-inside: avoid;
+          display: block;
+        }
+
+        .footer {
+          margin-top: 40px;
+          text-align: center;
+          font-weight: bold;
+          font-size: 17px;
+        }
+
+      </style>
+    </head>
+    <body>
       ${this.container.innerHTML}
-      </body>
-      </html>
-    `);
+    </body>
+    </html>
+  `);
 
-    iframeDoc.print();
-    document.body.removeChild(iframe);
+    iframeDoc.close();
+
+    setTimeout(() => {
+      iframe.contentWindow.focus();
+      iframe.contentWindow.print();
+      document.body.removeChild(iframe);
+    }, 500);
   }
-};
+}

@@ -56,6 +56,58 @@ public function __construct()
       }
   }
 
+public function getAllContact(array $types = [])
+{
+    try {
+        if (empty($types)) {
+            $query = "SELECT type, title, content, link, icon_path FROM Contacts ORDER BY contact_id ASC";
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute();
+        } else {
+            // Генерируем плейсхолдеры и параметры
+            $placeholders = [];
+            $params = [];
+            foreach ($types as $index => $type) {
+                $ph = ":type$index";
+                $placeholders[] = $ph;
+                $params[$ph] = $type;
+            }
+
+            $inClause = implode(', ', $placeholders);
+
+            // Строим FIELD-список прямо из типов (в безопасной форме)
+            $fieldList = implode(', ', array_map(function($t) {
+                return $this->pdo->quote($t);
+            }, $types));
+
+            $query = "
+                SELECT type, title, content, link, icon_path
+                FROM Contacts
+                WHERE type IN ($inClause)
+                ORDER BY FIELD(type, $fieldList)
+            ";
+
+            $stmt = $this->pdo->prepare($query);
+            $stmt->execute($params);
+        }
+
+        $itemArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        error_log(print_r($itemArr, true));
+
+        if (empty($itemArr)) {
+            return [['type' => 'none', 'title' => 'none', 'content' => 'none', 'link' => '/', 'icon_path' => '/']];
+        }
+
+        return $itemArr;
+
+    } catch (\Exception $e) {
+        error_log("Ошибка получения данных: " . $e->getMessage());
+        return [['type' => 'none', 'title' => 'none', 'content' => 'none', 'link' => '/', 'icon_path' => '/']];
+    }
+}
+
+
+
   // Обновленная функция получение карты
   public function getMap()
   {

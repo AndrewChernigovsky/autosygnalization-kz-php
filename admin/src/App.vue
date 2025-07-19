@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { useIframeStore } from './stores/iframeStore';
 import Menu from './UI/Menu.vue';
+import test from './views/test.vue';
 
 const isSidebarOpen = ref(false);
 const iframeStore = useIframeStore();
@@ -15,6 +16,7 @@ function toggleSidebar() {
 
 <template>
   <div class="app-container">
+    <test />
     <Menu />
     <aside :class="{ 'sidebar-open': isSidebarOpen }">
       <button @click="toggleSidebar" class="toggle-btn">
