@@ -10,8 +10,8 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit;
+  http_response_code(200);
+  exit;
 }
 
 header('Content-Type: application/json');
@@ -35,14 +35,36 @@ if ($imageFile['error'] !== UPLOAD_ERR_OK) {
   exit;
 }
 
+$isNewProduct = strpos($productId, 'new_') === 0;
+
 // Создаем уникальное имя файла
 $extension = pathinfo($imageFile['name'], PATHINFO_EXTENSION);
 $filename = Uuid::uuid4()->toString() . '.' . $extension;
-$uploadDir = '/statics/products/gallery/'; // Убедитесь, что эта директория существует и доступна для записи
-$uploadPath = $_SERVER['DOCUMENT_ROOT'] . $uploadDir . $filename;
-$uploadUrl = 'https://' . $_SERVER['HTTP_HOST'] . $uploadDir . $filename;
+$uploadDir = '/server/uploads/products/gallery/' . $productId . '/';
+$destinationDirectory = $_SERVER['DOCUMENT_ROOT'] . $uploadDir;
+
+// Создаем директорию, если она не существует
+if (!is_dir($destinationDirectory)) {
+  if (!mkdir($destinationDirectory, 0777, true)) {
+    http_response_code(500);
+    echo json_encode(['message' => 'Failed to create upload directory.']);
+    exit;
+  }
+}
+
+$uploadPath = $destinationDirectory . $filename;
+$uploadUrl = $uploadDir . $filename;
 
 if (move_uploaded_file($imageFile['tmp_name'], $uploadPath)) {
+  if ($isNewProduct) {
+    // Для нового продукта просто возвращаем URL, не трогая БД
+    // Галерею на клиенте нужно будет обновить и отправить при создании продукта
+    $tempGallery = json_decode($_POST['gallery'] ?? '[]', true);
+    $tempGallery[] = $uploadUrl;
+    echo json_encode(['gallery' => $tempGallery]);
+    exit;
+  }
+
   try {
     // Получаем текущую галерею
     $stmt = $db->prepare("SELECT gallery FROM Products WHERE id = :id");

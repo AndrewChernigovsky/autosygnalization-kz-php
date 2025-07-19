@@ -33,15 +33,20 @@ try {
             description = :description, 
             price = :price, 
             is_popular = :is_popular,
-            gallery = :gallery
+            gallery = :gallery,
+            link = :link
         WHERE id = :id"
   );
+
+  // Генерируем новую ссылку
+  $link = "/product?category={$data['category_key']}&id={$data['id']}";
 
   // Привязываем параметры
   $stmt->bindParam(':id', $data['id']);
   $stmt->bindParam(':title', $data['title']);
   $stmt->bindParam(':description', $data['description']);
   $stmt->bindParam(':price', $data['price']);
+  $stmt->bindParam(':link', $link);
 
   // Преобразуем boolean в integer для БД
   $is_popular = $data['is_popular'] ? 1 : 0;
@@ -52,7 +57,7 @@ try {
   $stmt->bindParam(':gallery', $galleryJson);
 
   if ($stmt->execute()) {
-    echo json_encode(['message' => 'Product updated successfully.']);
+    echo json_encode(['message' => 'Product updated successfully.', 'link' => $link]);
   } else {
     http_response_code(500);
     echo json_encode(['message' => 'Failed to update product.']);

@@ -79,15 +79,13 @@ export function useProducts() {
     }
   }
 
-  async function updateProduct(product: Product) {
+  async function updateProduct(product: Product): Promise<boolean> {
     console.log('[useProducts] updateProduct вызван. Товар:', product);
-    if (product.is_new) {
-      console.log(
-        '[useProducts] Это НОВЫЙ товар. Выполняется API-запрос на создание...'
-      );
-      // Это новый товар, вызываем API создания
-      try {
-        // Формируем объект только с нужными для создания полями
+    try {
+      if (product.is_new) {
+        console.log(
+          '[useProducts] Это НОВЫЙ товар. Выполняется API-запрос на создание...'
+        );
         const { title, description, price, is_popular, gallery, category_key } =
           product;
         const newProductData = {
@@ -105,29 +103,28 @@ export function useProducts() {
           newProductData
         );
 
-        // Обновляем продукт в локальном состоянии с данными от сервера
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index] = { ...createdProduct, is_new: false };
         }
-      } catch (error) {
-        console.error('Failed to create product:', error);
-        // Можно добавить обработку ошибки, например, удалить временный продукт из списка
-      }
-    } else {
-      console.log(
-        '[useProducts] Это СУЩЕСТВУЮЩИЙ товар. Выполняется API-запрос на обновление...'
-      );
-      // Это существующий товар, вызываем API обновления
-      try {
-        await apiCall('update_product.php', 'POST', product);
+      } else {
+        console.log(
+          '[useProducts] Это СУЩЕСТВУЮЩИЙ товар. Выполняется API-запрос на обновление...'
+        );
+        const updatedData = await apiCall(
+          'update_product.php',
+          'POST',
+          product
+        );
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
-          products.value[index] = { ...product };
+          products.value[index] = { ...product, link: updatedData.link };
         }
-      } catch (error) {
-        console.error('Failed to update product:', error);
       }
+      return true;
+    } catch (error) {
+      console.error('Failed to update product:', error);
+      return false;
     }
   }
 
@@ -198,12 +195,17 @@ export function useProducts() {
     product: Product,
     file: File,
     imageIndex: number | null = null
-  ) {
+  ): Promise<string[] | null> {
     const formData = new FormData();
     formData.append('productId', product.id);
     formData.append('image', file);
     if (imageIndex !== null) {
       formData.append('imageIndex', String(imageIndex));
+    }
+
+    // Если это новый продукт, отправляем текущую галерею, чтобы сервер мог её дополнить
+    if (product.is_new) {
+      formData.append('gallery', JSON.stringify(product.gallery));
     }
 
     try {
@@ -212,8 +214,10 @@ export function useProducts() {
       if (index !== -1) {
         products.value[index].gallery = data.gallery;
       }
+      return data.gallery;
     } catch (error) {
       console.error('Failed to upload image:', error);
+      return null;
     }
   }
 

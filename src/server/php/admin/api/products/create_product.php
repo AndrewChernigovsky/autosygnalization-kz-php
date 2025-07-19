@@ -36,6 +36,7 @@ try {
   );
 
   $uuid = Uuid::uuid4()->toString();
+  $link = "/product?category={$data['category_key']}&id={$uuid}";
   $galleryJson = json_encode($data['gallery'] ?? []);
   $is_popular = !empty($data['is_popular']) ? 1 : 0;
 
@@ -45,10 +46,10 @@ try {
   $stmt->bindValue(':price', $data['price'] ?? 0);
   $stmt->bindValue(':is_popular', $is_popular ?? 0);
   $stmt->bindValue(':gallery', $galleryJson);
-  $stmt->bindValue(':category', $data['category_key']); // category и category_key в данном случае одно и то же
+  $stmt->bindValue(':category', $data['category_key']);
   $stmt->bindValue(':model', $data['model'] ?? $data['title']);
   $stmt->bindValue(':currency', $data['currency'] ?? '₸');
-  $stmt->bindValue(':link', $data['link'] ?? '#');
+  $stmt->bindValue(':link', $link);
   $stmt->bindValue(':options_filters', json_encode($data['options-filters'] ?? []));
   $stmt->bindValue(':functions', json_encode($data['functions'] ?? []));
   $stmt->bindValue(':options', json_encode($data['options'] ?? []));
@@ -57,6 +58,7 @@ try {
 
   if ($stmt->execute()) {
     $data['id'] = $uuid;
+    $data['link'] = $link;
     echo json_encode($data);
   } else {
     http_response_code(500);

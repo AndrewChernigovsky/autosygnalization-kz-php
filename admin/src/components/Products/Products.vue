@@ -9,8 +9,12 @@
         style="display: none"
         accept="image/*"
       />
-      <div v-if="loading" class="flex justify-center items-center h-64">
+      <div
+        v-if="loading"
+        class="flex justify-center items-center h-64 flex-col"
+      >
         <div class="loader"></div>
+        <p class="mt-4">Идет загрузка товаров...</p>
       </div>
       <div v-if="error" class="text-red-500 text-center">
         Ошибка при загрузке данных: {{ error }}
@@ -101,9 +105,7 @@
                       <button
                         class="btn-delete-img"
                         @click.stop="deleteImage(product, index)"
-                      >
-                        X
-                      </button>
+                      ></button>
                     </div>
                     <div
                       class="gallery-upload-placeholder"
@@ -167,21 +169,55 @@ function startEditing(product: Product, field: string) {
   fieldToEdit.value = field;
 }
 
-function saveChanges() {
+async function saveChanges() {
   if (editingProduct.value) {
-    updateProduct(editingProduct.value);
-    if (editingProduct.value.is_new) {
-      isCreatingNewProduct.value = false;
+    Swal.fire({
+      title: 'Сохранение...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: '#333',
+      color: '#fff',
+    });
+
+    const updatedProduct = { ...editingProduct.value };
+    const updated: boolean = await updateProduct(updatedProduct);
+
+    if (updated) {
+      if (updatedProduct.is_new) {
+        isCreatingNewProduct.value = false;
+      }
+      editingProduct.value = null;
+      fieldToEdit.value = null;
+
+      // Manually update the product in the list to avoid full refresh
+      const index = products.value.findIndex((p) => p.id === updatedProduct.id);
+      if (index !== -1) {
+        products.value[index] = { ...products.value[index], ...updatedProduct };
+      }
+
+      Swal.fire({
+        title: 'Сохранено!',
+        text: 'Товар был успешно обновлен.',
+        icon: 'success',
+        background: '#333',
+        color: '#fff',
+      });
+    } else {
+      Swal.fire({
+        title: 'Ошибка!',
+        text: 'Не удалось сохранить товар.',
+        icon: 'error',
+        background: '#333',
+        color: '#fff',
+      });
     }
-    editingProduct.value = null;
-    fieldToEdit.value = null;
   }
 }
 
 async function addNewProduct(categoryKey: string) {
-  console.log(
-    '[Products.vue] Нажата кнопка "Добавить товар". Вызывается addNewProduct.'
-  );
   if (isCreatingNewProduct.value) {
     Swal.fire({
       title: 'Внимание!',
@@ -193,21 +229,92 @@ async function addNewProduct(categoryKey: string) {
     return;
   }
 
-  const newProduct = await addProduct(categoryKey);
-  if (newProduct) {
-    isCreatingNewProduct.value = true;
-    editingProduct.value = { ...newProduct };
-    fieldToEdit.value = 'title';
-  }
+  Swal.fire({
+    title: 'Добавление товара...',
+    text: 'Пожалуйста, подождите',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    background: '#333',
+    color: '#fff',
+  });
+
+  addProduct(categoryKey).then((newProduct) => {
+    if (newProduct) {
+      isCreatingNewProduct.value = true;
+      editingProduct.value = { ...newProduct };
+      fieldToEdit.value = 'title';
+      Swal.fire({
+        title: 'Товар добавлен!',
+        text: 'Теперь вы можете заполнить детали и сохранить.',
+        icon: 'success',
+        background: '#333',
+        color: '#fff',
+        timer: 1000,
+        showConfirmButton: false,
+      });
+    } else {
+      Swal.fire({
+        title: 'Ошибка!',
+        text: 'Не удалось добавить новый товар.',
+        icon: 'error',
+        background: '#333',
+        color: '#fff',
+      });
+    }
+  });
 }
 
 async function deleteProductHandler(productId: string) {
   const productToDelete = products.value.find((p) => p.id === productId);
 
-  if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+  const result = await Swal.fire({
+    title: 'Вы уверены?',
+    text: 'Вы не сможете восстановить этот товар!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Да, удалить!',
+    cancelButtonText: 'Отмена',
+    background: '#333',
+    color: '#fff',
+  });
+
+  if (result.isConfirmed) {
+    Swal.fire({
+      title: 'Удаление...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: '#333',
+      color: '#fff',
+    });
+
     const deleted = await deleteProduct(productId);
-    if (deleted && productToDelete?.is_new) {
-      isCreatingNewProduct.value = false;
+
+    if (deleted) {
+      if (productToDelete?.is_new) {
+        isCreatingNewProduct.value = false;
+      }
+      Swal.fire({
+        title: 'Удалено!',
+        text: 'Товар был успешно удален.',
+        icon: 'success',
+        background: '#333',
+        color: '#fff',
+      });
+    } else {
+      Swal.fire({
+        title: 'Ошибка!',
+        text: 'Не удалось удалить товар.',
+        icon: 'error',
+        background: '#333',
+        color: '#fff',
+      });
     }
   }
 }
@@ -241,11 +348,46 @@ function triggerFileUpload(product: Product, index: number | null) {
   fileInput.value?.click();
 }
 
-function handleFileSelected(event: Event) {
+async function handleFileSelected(event: Event) {
   const target = event.target as HTMLInputElement;
   if (target.files && target.files[0] && uploadContext.value) {
     const { product, index } = uploadContext.value;
-    uploadImage(product, target.files[0], index);
+
+    Swal.fire({
+      title: 'Загрузка изображения...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: '#333',
+      color: '#fff',
+    });
+
+    const newGallery = await uploadImage(product, target.files[0], index);
+
+    if (newGallery) {
+      if (editingProduct.value && editingProduct.value.id === product.id) {
+        editingProduct.value.gallery = newGallery;
+      }
+      Swal.fire({
+        title: 'Успешно!',
+        text: 'Изображение загружено.',
+        icon: 'success',
+        background: '#333',
+        color: '#fff',
+        timer: 1500,
+        showConfirmButton: false,
+      });
+    } else {
+      Swal.fire({
+        title: 'Ошибка!',
+        text: 'Не удалось загрузить изображение.',
+        icon: 'error',
+        background: '#333',
+        color: '#fff',
+      });
+    }
   }
   // Reset file input
   if (target) target.value = '';
@@ -331,6 +473,7 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   animation: spin 1s linear infinite;
+  margin: auto auto;
 }
 
 @keyframes spin {
@@ -414,6 +557,11 @@ onMounted(() => {
   padding-top: 15px;
 }
 
+.mt-4 {
+  margin: 0 auto;
+  text-align: center;
+}
+
 .gallery-manager h4 {
   margin-top: 0;
   font-weight: bold;
@@ -470,12 +618,30 @@ onMounted(() => {
   cursor: pointer;
   width: 24px;
   height: 24px;
-  font-size: 12px;
-  line-height: 24px;
-  text-align: center;
-  font-weight: bold;
+  padding: 0;
+  box-sizing: border-box;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-delete-img::before,
+.btn-delete-img::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 2px;
+  background-color: white;
+}
+
+.btn-delete-img::before {
+  transform: rotate(45deg);
+}
+
+.btn-delete-img::after {
+  transform: rotate(-45deg);
 }
 
 .product-actions {
