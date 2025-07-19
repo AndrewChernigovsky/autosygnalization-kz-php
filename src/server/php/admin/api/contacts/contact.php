@@ -259,35 +259,38 @@ class ContactAPI extends DataBase
 try {
   $api = new ContactAPI();
   $method = $_SERVER['REQUEST_METHOD'];
-  $contentType = $_SERVER['CONTENT_TYPE'];
+  
+  // Устанавливаем Content-Type только если он реально существует
+  $contentType = isset($_SERVER['CONTENT_TYPE']) ? trim($_SERVER['CONTENT_TYPE']) : '';
+
   $input = [];
   $icon = null;
 
+  // Для GET и DELETE запросов нам не нужен Content-Type, пропускаем проверку
+  if ($method !== 'GET' && $method !== 'DELETE') {
+      if (strpos($contentType, 'application/json') !== false) {
+        $input = json_decode(file_get_contents('php://input'), true);
 
-  if (strpos($contentType, 'application/json') !== false) {
-    $input = json_decode(file_get_contents('php://input'), true);
-
-    error_log( print_r(JSON_ERROR_NONE, true) . 'zalupa');
-    error_log( print_r(json_last_error(), true) . 'zalupa2');
-
-    if (json_last_error() === JSON_ERROR_NONE) {
-      http_response_code(400);
-      echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
-      exit;
-    }
-  } elseif (strpos($contentType,'multipart/form-data') !== false) {
-    $input = $_POST;
+        if (json_last_error() !== JSON_ERROR_NONE) {
+          http_response_code(400);
+          echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
+          exit;
+        }
+      } elseif (strpos($contentType, 'multipart/form-data') !== false) {
+        $input = $_POST;
 
         if (isset($_FILES['icon_path']) && $_FILES['icon_path']['error'] === UPLOAD_ERR_OK) {
           $icon = $_FILES['icon_path'];
-      } else {
+        } else {
           $icon = null;
+        }
+      } else {
+        // Если Content-Type не задан или не поддерживается для POST/PUT, выдаем ошибку
+        http_response_code(415);
+        echo json_encode(['success' => false, 'error' => 'Unsupported Media Type: ' . $contentType]);
+        exit;
       }
-  } else {
-    http_response_code(415);
-    echo json_encode(['success' => false, 'error' => 'Unsupported Media Type: ' . $contentType]);
-    exit;
-}
+  }
 
 
   switch ($method) {
@@ -296,22 +299,31 @@ try {
       break;
 
     case 'POST':
-      if ($input && strpos($contentType, 'application/json') !== false) {
-          echo $api->createContact($input);
-        break;
-      } elseif ($input && $icon && strpos($contentType,'multipart/form-data') !== false) {
-          echo $api->createContact($input, $icon);
-        break;
-      } elseif ($input && strpos($contentType,'multipart/form-data') !== false) {
-         echo $api->createContact($input);
-        break;
-      } else {
-          echo $api->error("Данные не переданы");
-        break;
-      }
-      
-      
+      // Проверяем, есть ли ID в запросе, чтобы определить, обновление это или создание
+      $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
 
+      if ($id) {
+        // --- Это обновление (метод PUT через POST) ---
+        if (!$input && !$icon) {
+            echo $api->error("Данные для обновления не переданы");
+            break;
+        }
+        // Вызываем updateContact, передавая ID, данные и, возможно, иконку
+        echo $api->updateContact($id, $input, $icon);
+
+      } else {
+        // --- Это создание ---
+        if ($input && strpos($contentType, 'application/json') !== false) {
+            echo $api->createContact($input);
+        } elseif ($input && strpos($contentType,'multipart/form-data') !== false) {
+            // Эта ветка обработает и создание с иконкой, и без нее
+            echo $api->createContact($input, $icon);
+        } else {
+            echo $api->error("Данные для создания не переданы");
+        }
+      }
+      break;
+      
     case 'PUT':
       if (!$input) {
       echo $api->error("Данные не переданы");
