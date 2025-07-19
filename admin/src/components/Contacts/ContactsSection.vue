@@ -17,25 +17,27 @@ interface ContactItem {
 const contacts = ref<ContactItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const newContact = ref<Partial<ContactItem>>({
+const newContact = ref({
   title: '',
+  content: '',
 });
+const newIconFile = ref<File | null>(null);
 
-const API_BASE_URL = '/server/php/admin/api/contact.php';
+const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
 
 const getContacts = async (): Promise<void> => {
   try {
     isLoading.value = true;
     error.value = null;
 
-    const { success, data } = await fetchWithCors(API_BASE_URL);
+    const response = await fetchWithCors(API_BASE_URL);
 
-    if (success && data) {
-      contacts.value = data.filter(
+    if (response.success && response.data) {
+      contacts.value = response.data.filter(
         (item: ContactItem) => item.type === 'main-phone'
       );
     } else {
-      throw new Error('Failed to load contacts');
+      throw new Error(response.error || 'Failed to load contacts');
     }
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Unknown error';
@@ -46,6 +48,21 @@ const getContacts = async (): Promise<void> => {
     });
   } finally {
     isLoading.value = false;
+  }
+};
+
+const handleFileChange = (event: Event, id: number | 'new') => {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    if (id === 'new') {
+      newIconFile.value = target.files[0];
+    } else {
+      const contact = contacts.value.find((c) => c.contact_id === id);
+      if (contact) {
+        // Для существующих контактов можно хранить файл временно, если нужно
+        // Например, в отдельном ref-объекте, сопоставленном с ID
+      }
+    }
   }
 };
 
@@ -73,18 +90,23 @@ const updateContact = async (id: number): Promise<void> => {
       didOpen: () => Swal.showLoading(),
     });
 
-    const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        title: item.title,
-        content: item.content,
-        link: `tel:${item.content?.replace(/\s+/g, '').trim()}`,
-        type: 'main-phone',
-        icon_path: null,
-      }),
+    const formData = new FormData();
+    formData.append('type', 'main-phone');
+    formData.append('title', item.title);
+    formData.append('content', item.content || '');
+    formData.append('link', `tel:${item.content?.replace(/\s+/g, '').trim()}`);
+
+    const fileInput = document.getElementById(`icon-${id}`) as HTMLInputElement;
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+      formData.append('icon_path', fileInput.files[0]);
+    }
+
+    const response = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
+      method: 'POST', // Используем POST для обновления с файлом
+      body: formData,
     });
 
-    if (success) {
+    if (response.success) {
       await Swal.fire({
         title: 'Успешно!',
         text: 'Контакты обновлены',
@@ -93,8 +115,9 @@ const updateContact = async (id: number): Promise<void> => {
         showConfirmButton: false,
         timerProgressBar: true,
       });
+      await getContacts(); // Обновляем список
     } else {
-      throw new Error('Ошибка обновления');
+      throw new Error(response.error || 'Ошибка обновления');
     }
   } catch (err) {
     console.error('Error updating contacts:', err);
@@ -120,11 +143,11 @@ const deleteContact = async (id: number): Promise<void> => {
     });
     if (!isConfirmed) return;
 
-    const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
+    const response = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
       method: 'DELETE',
     });
 
-    if (success) {
+    if (response.success) {
       contacts.value = contacts.value.filter((item) => item.contact_id !== id);
       await Swal.fire({
         title: 'Удалено!',
@@ -135,7 +158,7 @@ const deleteContact = async (id: number): Promise<void> => {
         timerProgressBar: true,
       });
     } else {
-      throw new Error('Ошибка удаления');
+      throw new Error(response.error || 'Ошибка удаления');
     }
   } catch (err) {
     console.log(err);
@@ -165,17 +188,25 @@ const createContact = async (): Promise<void> => {
       showConfirmButton: false,
       didOpen: () => Swal.showLoading(),
     });
-    const { success, error: apiError } = await fetchWithCors(API_BASE_URL, {
+
+    const formData = new FormData();
+    formData.append('title', newContact.value.title);
+    formData.append('content', newContact.value.content);
+    formData.append(
+      'link',
+      `tel:${newContact.value.content.replace(/\s+/g, '').trim()}`
+    );
+    formData.append('type', 'main-phone');
+    if (newIconFile.value) {
+      formData.append('icon_path', newIconFile.value);
+    }
+
+    const response = await fetchWithCors(API_BASE_URL, {
       method: 'POST',
-      body: JSON.stringify({
-        title: newContact.value.title,
-        content: newContact.value.content,
-        link: `tel:${newContact.value.content?.replace(/\s+/g, '').trim()}`,
-        type: 'main-phone',
-        icon_path: null,
-      }),
+      body: formData,
     });
-    if (success) {
+
+    if (response.success) {
       await Swal.fire({
         title: 'Успешно!',
         text: 'Ссылка добавлена',
@@ -184,14 +215,14 @@ const createContact = async (): Promise<void> => {
         showConfirmButton: false,
         timerProgressBar: true,
       });
-      newContact.value = {
-        title: '',
-        content: '',
-        link: '',
-      };
+      newContact.value = { title: '', content: '' };
+      newIconFile.value = null;
+      const fileInput = document.getElementById('icon-new') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+
       await getContacts();
     } else {
-      throw new Error(apiError || 'Ошибка создания');
+      throw new Error(response.error || 'Ошибка создания');
     }
   } catch (err) {
     console.error(err);
@@ -203,6 +234,12 @@ const createContact = async (): Promise<void> => {
   }
 };
 
+const getImageUrl = (iconPath: string | null) => {
+  if (!iconPath) return '';
+  const baseUrl = 'http://' + window.location.host.split(':')[0]; // Используем основной домен без порта
+  return `${baseUrl}${iconPath}`;
+};
+
 onMounted(() => {
   getContacts();
 });
@@ -210,25 +247,30 @@ onMounted(() => {
 
 <template>
   <div class="container">
-    <h2 class="contacts-title">Контакты</h2>
+    <h2 class="contacts-title">Основные контакты</h2>
 
     <div class="add-contact-wrapper">
       <h2 class="add-contact-title">Добавить новый контакт</h2>
-      <div class="add-contact-form">
+      <form @submit.prevent="createContact" class="add-contact-form">
         <div class="input-group">
-          <label :for="'title-create'">Заголовок:</label>
-          <input type="text" :id="'title-create'" v-model="newContact.title" />
+          <label for="title-create">Заголовок:</label>
+          <input type="text" id="title-create" v-model="newContact.title" />
         </div>
         <div class="input-group">
-          <label :for="'phone-create'">Телефон:</label>
+          <label for="phone-create">Телефон:</label>
+          <input type="text" id="phone-create" v-model="newContact.content" />
+        </div>
+        <div class="input-group">
+          <label for="icon-new">Иконка (SVG):</label>
           <input
-            type="text"
-            :id="'phone-create'"
-            v-model="newContact.content"
+            type="file"
+            id="icon-new"
+            accept="image/svg+xml"
+            @change="handleFileChange($event, 'new')"
           />
         </div>
-        <button class="btn save add" @click="createContact">Добавить</button>
-      </div>
+        <button type="submit" class="btn save add">Добавить</button>
+      </form>
     </div>
 
     <div v-if="isLoading" class="loading-overlay">
@@ -239,9 +281,14 @@ onMounted(() => {
       {{ error }}
     </div>
 
-    <div>
+    <div v-else>
       <div class="contact-list">
-        <div v-for="item in contacts" :key="item.contact_id" class="nav-item">
+        <form
+          v-for="item in contacts"
+          :key="item.contact_id"
+          @submit.prevent="updateContact(item.contact_id)"
+          class="nav-item"
+        >
           <div class="input-group">
             <label :for="'title-' + item.contact_id">Заголовок:</label>
             <input
@@ -251,24 +298,40 @@ onMounted(() => {
             />
           </div>
           <div class="input-group">
-            <label :for="'content-' + item.content?.replace(/[+\s]/g, '')"
-              >Телефон:</label
-            >
+            <label :for="'content-' + item.contact_id">Телефон:</label>
             <input
               type="text"
-              :id="'content-' + item.content?.replace(/[+\s]/g, '')"
+              :id="'content-' + item.contact_id"
               v-model="item.content"
             />
           </div>
+          <div class="input-group">
+            <label :for="'icon-' + item.contact_id">Иконка:</label>
+            <div v-if="item.icon_path" class="icon-preview">
+              <img
+                :src="getImageUrl(item.icon_path)"
+                alt="icon"
+                width="24"
+                height="24"
+              />
+            </div>
+            <input
+              type="file"
+              :id="'icon-' + item.contact_id"
+              accept="image/svg+xml"
+            />
+          </div>
           <div class="button-group">
-            <button class="btn save" @click="updateContact(item.contact_id)">
-              Сохранить
-            </button>
-            <button class="btn delete" @click="deleteContact(item.contact_id)">
+            <button type="submit" class="btn save">Сохранить</button>
+            <button
+              type="button"
+              class="btn delete"
+              @click="deleteContact(item.contact_id)"
+            >
               Удалить
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -299,11 +362,12 @@ onMounted(() => {
   display: flex;
   align-items: flex-end;
   gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .add-contact-form .input-group {
   width: 100%;
-  max-width: 500px;
+  max-width: 300px;
 }
 
 .add-contact-title {
@@ -358,30 +422,11 @@ onMounted(() => {
   margin-bottom: 1rem;
 }
 
-.add-nav-form {
-  background: #f9f9f9;
-  border-radius: 8px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-  max-width: 500px;
-}
-
-.add-nav-form-title {
-  margin-bottom: 1rem;
-  color: #2c3e50;
-}
-
-.navigation-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
-}
-
 .nav-item {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
-  align-items: end;
+  align-items: flex-end;
   background: white;
   border-radius: 8px;
   padding: 1.5rem;
@@ -397,7 +442,7 @@ onMounted(() => {
 .input-group {
   display: flex;
   flex-direction: column;
-  width: 100%;
+  flex-grow: 1;
 }
 
 .input-group label {
@@ -406,8 +451,7 @@ onMounted(() => {
   margin-bottom: 0.5rem;
 }
 
-.input-group input,
-.add-nav-form select {
+.input-group input {
   padding: 0.5rem;
   border: 1px solid #ddd;
   border-radius: 4px;
@@ -415,8 +459,7 @@ onMounted(() => {
   transition: border-color 0.2s;
 }
 
-.input-group input:focus,
-.add-nav-form select:focus {
+.input-group input:focus {
   border-color: #42b883;
   outline: none;
   box-shadow: 0 0 0 2px rgba(66, 184, 131, 0.2);
@@ -426,6 +469,7 @@ onMounted(() => {
   display: flex;
   gap: 0.75rem;
   margin-top: 1rem;
+  align-self: flex-end;
 }
 
 .btn {
@@ -457,5 +501,9 @@ onMounted(() => {
 
 .btn.add {
   margin-left: auto;
+}
+
+.icon-preview {
+  margin-top: 5px;
 }
 </style>
