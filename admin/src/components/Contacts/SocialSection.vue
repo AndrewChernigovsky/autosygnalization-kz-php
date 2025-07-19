@@ -79,8 +79,8 @@ const updateContact = async (id: number): Promise<void> => {
       method: 'PUT',
       body: JSON.stringify({
         title: item.title,
-        content: item.content,
-        link: item.link?.trim(),
+        content: item.content ? item.content : item.link,
+        link: item.link ? item.content : item.link,
         type: 'social',
         icon_path: null,
       }),
@@ -171,8 +171,12 @@ const createContact = async (): Promise<void> => {
       method: 'POST',
       body: JSON.stringify({
         title: newContact.value.title,
-        content: newContact.value.content,
-        link: newContact.value.link,
+        content: newContact.value.content
+          ? newContact.value.content
+          : newContact.value.link,
+        link: newContact.value.link
+          ? newContact.value.link
+          : newContact.value.content,
         type: 'social',
         icon_path: null,
       }),
