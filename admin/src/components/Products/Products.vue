@@ -41,6 +41,19 @@
                 <strong>{{ product.title }}</strong>
               </summary>
               <div class="product-editor">
+                <div class="form-group" @click="startEditing(product, 'model')">
+                  <label>Модель:</label>
+                  <input
+                    v-if="
+                      editingProduct?.id === product.id &&
+                      fieldToEdit === 'model'
+                    "
+                    v-model="editingProduct.model"
+                    type="text"
+                  />
+                  <span v-else>{{ product.model }}</span>
+                </div>
+
                 <div class="form-group" @click="startEditing(product, 'title')">
                   <label>Заголовок:</label>
                   <input
@@ -90,6 +103,23 @@
                     :checked="product.is_popular"
                     @change="togglePopular(product)"
                   />
+                </div>
+
+                <div
+                  class="form-group-checkbox"
+                  @click="startEditing(product, 'is_special')"
+                >
+                  <label>Специальный:</label>
+                  <input
+                    v-if="
+                      editingProduct?.id === product.id &&
+                      fieldToEdit === 'is_special'
+                    "
+                    type="checkbox"
+                    v-model="editingProduct.is_special"
+                    @click.stop
+                  />
+                  <span v-else>{{ product.is_special ? 'Да' : 'Нет' }}</span>
                 </div>
 
                 <div class="gallery-manager">
@@ -161,6 +191,71 @@
                   <span v-else>{{
                     getCategoryName(product.category_key)
                   }}</span>
+                </div>
+
+                <div class="array-fields-editor">
+                  <div
+                    class="form-group"
+                    @click="startEditing(product, 'functions')"
+                  >
+                    <label>Функции (через запятую):</label>
+                    <textarea
+                      v-if="
+                        editingProduct?.id === product.id &&
+                        fieldToEdit === 'functions'
+                      "
+                      :value="getArrayAsCST(editingProduct.functions)"
+                      @input="updateArrayField($event, 'functions')"
+                    ></textarea>
+                    <span v-else>{{ getArrayAsCST(product.functions) }}</span>
+                  </div>
+                  <div
+                    class="form-group"
+                    @click="startEditing(product, 'options')"
+                  >
+                    <label>Опции (через запятую):</label>
+                    <textarea
+                      v-if="
+                        editingProduct?.id === product.id &&
+                        fieldToEdit === 'options'
+                      "
+                      :value="getArrayAsCST(editingProduct.options)"
+                      @input="updateArrayField($event, 'options')"
+                    ></textarea>
+                    <span v-else>{{ getArrayAsCST(product.options) }}</span>
+                  </div>
+                  <div
+                    class="form-group"
+                    @click="startEditing(product, 'options-filters')"
+                  >
+                    <label>Опции-фильтры (через запятую):</label>
+                    <textarea
+                      v-if="
+                        editingProduct?.id === product.id &&
+                        fieldToEdit === 'options-filters'
+                      "
+                      :value="getArrayAsCST(editingProduct['options-filters'])"
+                      @input="updateArrayField($event, 'options-filters')"
+                    ></textarea>
+                    <span v-else>{{
+                      getArrayAsCST(product['options-filters'])
+                    }}</span>
+                  </div>
+                  <div
+                    class="form-group"
+                    @click="startEditing(product, 'autosygnals')"
+                  >
+                    <label>Автосигнализации (через запятую):</label>
+                    <textarea
+                      v-if="
+                        editingProduct?.id === product.id &&
+                        fieldToEdit === 'autosygnals'
+                      "
+                      :value="getArrayAsCST(editingProduct.autosygnals)"
+                      @input="updateArrayField($event, 'autosygnals')"
+                    ></textarea>
+                    <span v-else>{{ getArrayAsCST(product.autosygnals) }}</span>
+                  </div>
                 </div>
 
                 <div class="product-actions">
@@ -422,6 +517,30 @@ function triggerFileUpload(product: Product, index: number | null) {
   fileInput.value?.click();
 }
 
+function getArrayAsCST(arr: string[] | undefined): string {
+  if (!arr || arr.length === 0) return 'Нет';
+  return arr.join(', ');
+}
+
+function updateArrayField(
+  event: Event,
+  fieldName: 'functions' | 'options' | 'options-filters' | 'autosygnals'
+) {
+  if (editingProduct.value) {
+    const target = event.target as HTMLTextAreaElement;
+    const value = target.value
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (fieldName === 'options-filters') {
+      (editingProduct.value as any)['options-filters'] = value;
+    } else {
+      (editingProduct.value as any)[fieldName] = value;
+    }
+  }
+}
+
 async function handleFileSelected(event: Event) {
   const target = event.target as HTMLInputElement;
   if (!target.files || !target.files[0] || !uploadContext.value) {
@@ -600,6 +719,14 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.array-fields-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-top: 1px solid #555;
+  padding-top: 15px;
 }
 
 .form-group,

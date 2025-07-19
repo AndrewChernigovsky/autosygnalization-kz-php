@@ -35,7 +35,7 @@ try {
             (:id, :title, :description, :price, :is_popular, :gallery, :category, :model, :currency, :link, :options_filters, :functions, :options, :autosygnals, :is_special)"
   );
 
-  $uuid = Uuid::uuid4()->toString();
+  $uuid = 'product_' . $data['category_key'] . '_' . Uuid::uuid4()->toString();
   $link = "/product?category={$data['category_key']}&id={$uuid}";
   $galleryJson = json_encode($data['gallery'] ?? []);
   $is_popular = !empty($data['is_popular']) ? 1 : 0;

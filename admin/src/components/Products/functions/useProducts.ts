@@ -82,30 +82,31 @@ export function useProducts() {
   async function updateProduct(product: Product): Promise<boolean> {
     console.log('[useProducts] updateProduct вызван. Товар:', product);
     try {
+      const productData = {
+        id: product.id,
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        is_popular: product.is_popular,
+        gallery: product.gallery,
+        category_key: product.category_key,
+        model: product.model,
+      };
+
       if (product.is_new) {
         console.log(
           '[useProducts] Это НОВЫЙ товар. Выполняется API-запрос на создание...'
         );
-        const { title, description, price, is_popular, gallery, category_key } =
-          product;
-        const newProductData = {
-          title,
-          description,
-          price,
-          is_popular,
-          gallery,
-          category_key,
-        };
-
         const createdProduct = await apiCall(
           'create_product.php',
           'POST',
-          newProductData
+          productData
         );
-
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
-          products.value[index] = { ...createdProduct, is_new: false };
+          products.value[index].id = createdProduct.id;
+          products.value[index].link = createdProduct.link;
+          products.value[index].is_new = false;
         }
       } else {
         console.log(
@@ -114,11 +115,11 @@ export function useProducts() {
         const updatedData = await apiCall(
           'update_product.php',
           'POST',
-          product
+          productData
         );
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
-          products.value[index] = { ...product, link: updatedData.link };
+          products.value[index].link = updatedData.link;
         }
       }
       return true;
@@ -184,7 +185,7 @@ export function useProducts() {
       functions: [],
       options: [],
       'options-filters': [],
-      special: false,
+      is_special: false,
       autosygnals: [],
     };
     products.value.unshift(newProduct);

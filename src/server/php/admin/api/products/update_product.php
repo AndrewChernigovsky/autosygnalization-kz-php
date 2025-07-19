@@ -30,33 +30,51 @@ try {
   $stmt = $db->prepare(
     "UPDATE Products SET 
             title = :title, 
+            model = :model,
             description = :description, 
             price = :price, 
             is_popular = :is_popular,
             gallery = :gallery,
             link = :link,
-            category = :category_key
+            category = :category_key,
+            is_special = :is_special,
+            `functions` = :functions,
+            `options` = :options,
+            `options_filters` = :options_filters,
+            `autosygnals` = :autosygnals
         WHERE id = :id"
   );
 
-  // Генерируем новую ссылку
   $link = "/product?category={$data['category_key']}&id={$data['id']}";
 
-  // Привязываем параметры
   $stmt->bindParam(':id', $data['id']);
   $stmt->bindParam(':title', $data['title']);
+  $stmt->bindParam(':model', $data['model']);
   $stmt->bindParam(':description', $data['description']);
   $stmt->bindParam(':price', $data['price']);
   $stmt->bindParam(':link', $link);
   $stmt->bindParam(':category_key', $data['category_key']);
 
-  // Преобразуем boolean в integer для БД
-  $is_popular = $data['is_popular'] ? 1 : 0;
+  $is_popular = !empty($data['is_popular']) ? 1 : 0;
   $stmt->bindParam(':is_popular', $is_popular);
 
-  // Преобразуем массив галереи в JSON
-  $galleryJson = json_encode($data['gallery']);
+  $is_special = !empty($data['special']) ? 1 : 0;
+  $stmt->bindParam(':is_special', $is_special);
+
+  $galleryJson = json_encode($data['gallery'] ?? []);
   $stmt->bindParam(':gallery', $galleryJson);
+
+  $functionsJson = json_encode($data['functions'] ?? []);
+  $stmt->bindParam(':functions', $functionsJson);
+
+  $optionsJson = json_encode($data['options'] ?? []);
+  $stmt->bindParam(':options', $optionsJson);
+
+  $optionsFiltersJson = json_encode($data['options-filters'] ?? []);
+  $stmt->bindParam(':options_filters', $optionsFiltersJson);
+
+  $autosygnalsJson = json_encode($data['autosygnals'] ?? []);
+  $stmt->bindParam(':autosygnals', $autosygnalsJson);
 
   if ($stmt->execute()) {
     echo json_encode(['message' => 'Product updated successfully.', 'link' => $link]);

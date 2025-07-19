@@ -14,7 +14,7 @@ export interface Product {
   functions: string[];
   options: string[];
   'options-filters': string[];
-  special: boolean;
+  is_special: boolean;
   autosygnals: string[];
   category: string;
   category_key: string;
