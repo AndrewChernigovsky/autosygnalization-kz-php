@@ -267,7 +267,10 @@ try {
   if (strpos($contentType, 'application/json') !== false) {
     $input = json_decode(file_get_contents('php://input'), true);
 
-    if (json_last_error() !== JSON_ERROR_NONE) {
+    error_log( print_r(JSON_ERROR_NONE, true) . 'zalupa');
+    error_log( print_r(json_last_error(), true) . 'zalupa2');
+
+    if (json_last_error() === JSON_ERROR_NONE) {
       http_response_code(400);
       echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
       exit;

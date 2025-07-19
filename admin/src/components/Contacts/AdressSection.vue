@@ -22,7 +22,7 @@ const newContact = ref<Partial<ContactItem>>({
   content: '',
 });
 
-const API_BASE_URL = '/server/php/admin/api/contact.php';
+const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
 
 const getContacts = async (): Promise<void> => {
   try {
@@ -32,6 +32,7 @@ const getContacts = async (): Promise<void> => {
     const { success, data } = await fetchWithCors(API_BASE_URL);
 
     if (success && data) {
+      console.log(data, 'data');
       contacts.value = data.filter(
         (item: ContactItem) => item.type === 'address'
       );
@@ -173,7 +174,7 @@ const createContact = async (): Promise<void> => {
         content: newContact.value.content,
         link: null,
         type: 'address',
-        icon_path: null,
+        icon_path: newContact.value.icon_path,
       }),
     });
     if (success) {

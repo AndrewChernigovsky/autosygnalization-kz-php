@@ -21,7 +21,7 @@ const newContact = ref<Partial<ContactItem>>({
   title: '',
 });
 
-const API_BASE_URL = '/server/php/admin/api/contact.php';
+const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
 
 const getContacts = async (): Promise<void> => {
   try {
