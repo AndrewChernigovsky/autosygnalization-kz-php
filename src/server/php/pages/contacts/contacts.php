@@ -49,53 +49,75 @@ echo $head->setHead();
               <?php if ($item['type'] === 'contact-phone'): ?>
                 <li class="contacts-section__item contacts-section__item--whatsap">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
-                    <svg width="25" height="25" aria-hidden="true">
-                      <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
-                    </svg>
-                    <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
                     <p><?php echo htmlspecialchars($item['content']) ?></p>
                   </a>
                 </li>
               <?php endif; ?>
               <?php if ($item['type'] === 'social'): ?>
+                <?php if ($item['type'] === 'social' && $item['title'] === 'Whatsapp:'): ?>
                 <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
-                    <svg width="25" height="25" aria-hidden="true">
-                      <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
-                    </svg>
-                    <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
                     <p><?php echo htmlspecialchars($item['content']) ?></p>
                   </a>
                 </li>
+                <?php endif; ?>
+                <?php if ($item['type'] === 'social' && $item['title'] === 'Instagramm:'): ?>
+                  <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
+                    <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                        <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                        <svg width="25" height="25" aria-hidden="true">
+                          <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        </svg>
+                    </a>
+                  </li>
+                <?php endif; ?>
               <?php endif; ?>
               <?php if ($item['type'] === 'email'): ?>
                 <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['type']) ?>">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
-                    <svg width="25" height="25" aria-hidden="true">
-                      <use width="25" height="25" href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
-                    </svg>
-                    <h3><?php echo htmlspecialchars($item['title']) ?></h3>
-                    <p><?php echo htmlspecialchars($item['content']) ?></p>
+                      <div class="icon-container">
+                        <svg width="25" height="25" aria-hidden="true">
+                          <use width="25" height="25" href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        </svg>
+                        <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                      </div>
+                      <p><?php echo htmlspecialchars($item['content']) ?></p>
                   </a>
                 </li>
               <?php endif; ?>
               <?php if ($item['type'] === 'address'): ?>
                 <li class="contacts-section__item contacts-section__item--address">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
-                    <svg width="25" height="25" aria-hidden="true">
-                      <use width="25" height="25" href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
-                    </svg>
-                    <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
                     <p><?php echo $item['content'] ?></p>
                   </a>
                 </li>
               <?php endif; ?>
               <?php if ($item['type'] === 'schedule'): ?>
                 <li class="contacts-section__item contacts-section__item--schedule">
-                    <svg width="25" height="25" aria-hidden="true">
-                      <use width="25" height="25" href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
-                    </svg>
-                    <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
                     <p><?php echo $item['content'] ?></p>
                 </li>
               <?php endif; ?>
