@@ -100,7 +100,6 @@ echo $head->setHead();
                 </li>
               <?php endif; ?>
             <?php endforeach; ?>
-
             <li class="contacts-section__item contacts-section__item--btn">
               <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
             </li>
