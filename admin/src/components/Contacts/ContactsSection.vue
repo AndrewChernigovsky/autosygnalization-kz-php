@@ -9,7 +9,8 @@ interface ContactItem {
   updated_at: string;
   title: string;
   type: string;
-  icon_path: string | null;
+  icon_path: File | string | null;
+  icon_path_url: string | null;
   link: string | null;
   content: string | null;
 }
@@ -20,6 +21,8 @@ const error = ref<string | null>(null);
 const newContact = ref({
   title: '',
   content: '',
+  icon_path: null,
+  icon_path_url: null,
 });
 const newIconFile = ref<File | null>(null);
 
@@ -53,9 +56,13 @@ const getContacts = async (): Promise<void> => {
 
 const handleFileChange = (event: Event, id: number | 'new') => {
   const target = event.target as HTMLInputElement;
+  console.log(target.files, 'target.files');
   if (target.files && target.files[0]) {
     if (id === 'new') {
-      newIconFile.value = target.files[0];
+      newContact.value.icon_path = target.files[0] as File;
+      newContact.value.icon_path_url = URL.createObjectURL(
+        target.files[0]
+      ) as string;
     } else {
       const contact = contacts.value.find((c) => c.contact_id === id);
       if (contact) {
@@ -194,11 +201,11 @@ const createContact = async (): Promise<void> => {
     formData.append('content', newContact.value.content);
     formData.append(
       'link',
-      `tel:${newContact.value.content.replace(/\s+/g, '').trim()}`
+      `${newContact.value.content.replace(/\s+/g, '').trim()}`
     );
     formData.append('type', 'main-phone');
-    if (newIconFile.value) {
-      formData.append('icon_path', newIconFile.value);
+    if (newContact.value.icon_path) {
+      formData.append('icon_path', newContact.value.icon_path);
     }
 
     const response = await fetchWithCors(API_BASE_URL, {
@@ -215,7 +222,12 @@ const createContact = async (): Promise<void> => {
         showConfirmButton: false,
         timerProgressBar: true,
       });
-      newContact.value = { title: '', content: '' };
+      newContact.value = {
+        title: '',
+        content: '',
+        icon_path: null,
+        icon_path_url: null,
+      };
       newIconFile.value = null;
       const fileInput = document.getElementById('icon-new') as HTMLInputElement;
       if (fileInput) fileInput.value = '';
@@ -232,12 +244,6 @@ const createContact = async (): Promise<void> => {
       icon: 'error',
     });
   }
-};
-
-const getImageUrl = (iconPath: string | null) => {
-  if (!iconPath) return '';
-  const baseUrl = 'http://' + window.location.host.split(':')[0]; // Используем основной домен без порта
-  return `${baseUrl}${iconPath}`;
 };
 
 onMounted(() => {
@@ -260,13 +266,20 @@ onMounted(() => {
           <label for="phone-create">Телефон:</label>
           <input type="text" id="phone-create" v-model="newContact.content" />
         </div>
-        <div class="input-group">
-          <label for="icon-new">Иконка (SVG):</label>
+        <div class="input-group icon-input-group">
+          <label for="icon-new">Добавить иконку</label>
           <input
+            class="icon-input"
             type="file"
             id="icon-new"
             accept="image/svg+xml"
             @change="handleFileChange($event, 'new')"
+          />
+          <img
+            class="icon-svg"
+            width="50"
+            height="50"
+            :src="newContact.icon_path_url as unknown as string"
           />
         </div>
         <button type="submit" class="btn save add">Добавить</button>
@@ -309,7 +322,7 @@ onMounted(() => {
             <label :for="'icon-' + item.contact_id">Иконка:</label>
             <div v-if="item.icon_path" class="icon-preview">
               <img
-                :src="getImageUrl(item.icon_path)"
+                :src="item.icon_path as string"
                 alt="icon"
                 width="24"
                 height="24"
@@ -505,5 +518,27 @@ onMounted(() => {
 
 .icon-preview {
   margin-top: 5px;
+}
+
+.icon-input-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+
+  & label {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+  }
+
+  & .icon-svg {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+  }
+
+  & input {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+    color: #2c3e50;
+  }
 }
 </style>

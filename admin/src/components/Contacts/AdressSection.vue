@@ -32,7 +32,6 @@ const getContacts = async (): Promise<void> => {
     const { success, data } = await fetchWithCors(API_BASE_URL);
 
     if (success && data) {
-      console.log(data, 'data');
       contacts.value = data.filter(
         (item: ContactItem) => item.type === 'address'
       );
