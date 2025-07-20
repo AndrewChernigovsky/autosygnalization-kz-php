@@ -35,6 +35,11 @@ const newContact = ref<NewContact>({
   icon_path_url: null,
 });
 
+// Добавляем ref для хранения превью файлов существующих контактов
+const existingContactPreviews = ref<
+  Record<number, { file: File; preview: string }>
+>({});
+
 const newIconFile = ref<File | null>(null);
 
 const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
@@ -77,10 +82,13 @@ const handleFileChange = (event: Event, id: number | 'new') => {
       newContact.value.icon_path = file;
       newContact.value.icon_path_url = URL.createObjectURL(file);
     } else {
+      // Обработка файлов для существующих контактов
       const contact = contacts.value.find((c) => c.contact_id === id);
       if (contact) {
-        // Для существующих контактов можно хранить файл временно, если нужно
-        // Например, в отдельном ref-объекте, сопоставленном с ID
+        existingContactPreviews.value[id] = {
+          file: file,
+          preview: URL.createObjectURL(file),
+        };
       }
     }
   }
@@ -116,9 +124,10 @@ const updateContact = async (id: number): Promise<void> => {
     formData.append('content', item.content || '');
     formData.append('link', `tel:${item.content?.replace(/\s+/g, '').trim()}`);
 
-    const fileInput = document.getElementById(`icon-${id}`) as HTMLInputElement;
-    if (fileInput && fileInput.files && fileInput.files[0]) {
-      formData.append('icon_path', fileInput.files[0]);
+    // Проверяем, есть ли новый файл для этого контакта
+    const contactPreview = existingContactPreviews.value[id];
+    if (contactPreview) {
+      formData.append('icon_path', contactPreview.file);
     }
 
     const response = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
@@ -135,6 +144,13 @@ const updateContact = async (id: number): Promise<void> => {
         showConfirmButton: false,
         timerProgressBar: true,
       });
+
+      // Очищаем превью после успешного обновления
+      if (existingContactPreviews.value[id]) {
+        URL.revokeObjectURL(existingContactPreviews.value[id].preview);
+        delete existingContactPreviews.value[id];
+      }
+
       await getContacts(); // Обновляем список
     } else {
       throw new Error(response.error || 'Ошибка обновления');
@@ -337,20 +353,45 @@ onMounted(() => {
               v-model="item.content"
             />
           </div>
-          <div class="input-group">
+          <div class="input-group icon-input-group">
             <label :for="'icon-' + item.contact_id">Иконка:</label>
-            <div v-if="item.icon_path" class="icon-preview">
-              <img
-                :src="item.icon_path as string"
-                alt="icon"
-                width="24"
-                height="24"
-              />
+
+            <div class="icons-container">
+              <!-- Существующая иконка -->
+              <div
+                v-if="item.icon_path && typeof item.icon_path === 'string'"
+                class="existing-icon"
+              >
+                <span class="icon-label">Текущая:</span>
+                <img
+                  :src="item.icon_path"
+                  alt="current icon"
+                  width="50"
+                  height="50"
+                />
+              </div>
+
+              <!-- Превью нового выбранного файла -->
+              <div
+                v-if="existingContactPreviews[item.contact_id]"
+                class="new-icon"
+              >
+                <span class="icon-label">Новая:</span>
+                <img
+                  :src="existingContactPreviews[item.contact_id].preview"
+                  alt="new icon preview"
+                  width="50"
+                  height="50"
+                  class="new-icon-preview"
+                />
+              </div>
             </div>
+
             <input
               type="file"
               :id="'icon-' + item.contact_id"
               accept="image/svg+xml"
+              @change="handleFileChange($event, item.contact_id)"
             />
           </div>
           <div class="button-group">
@@ -537,27 +578,64 @@ onMounted(() => {
 
 .icon-preview {
   margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.new-icon-preview {
+  border: 2px solid #42b883;
+  border-radius: 4px;
+}
+
+.icons-container {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin: 0.5rem 0;
+}
+
+.existing-icon,
+.new-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.icon-label {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.new-icon-preview {
+  border: 2px solid #42b883;
+  border-radius: 4px;
 }
 
 .icon-input-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-direction: column;
   gap: 0.5rem;
 
   & label {
-    grid-column: 1 / 2;
-    grid-row: 1 / 2;
-  }
-
-  & .icon-svg {
-    grid-column: 2 / 3;
-    grid-row: 1 / 2;
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
   }
 
   & input {
-    grid-column: 1 / 3;
-    grid-row: 2 / 3;
     color: #2c3e50;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  & input:focus {
+    border-color: #42b883;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 184, 131, 0.2);
   }
 }
 </style>

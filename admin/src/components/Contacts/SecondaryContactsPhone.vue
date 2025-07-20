@@ -9,17 +9,36 @@ interface ContactItem {
   updated_at: string;
   title: string;
   type: string;
-  icon_path: string | null;
+  icon_path: File | string | null;
+  icon_path_url: string | null;
   link: string | null;
   content: string | null;
+}
+
+// Интерфейс для нового контакта
+interface NewContact {
+  title: string;
+  content: string;
+  icon_path: File | null;
+  icon_path_url: string | null;
 }
 
 const contacts = ref<ContactItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const newContact = ref<Partial<ContactItem>>({
+
+// Типизированный объект для нового контакта
+const newContact = ref<NewContact>({
   title: '',
+  content: '',
+  icon_path: null,
+  icon_path_url: null,
 });
+
+// Добавляем ref для хранения превью файлов существующих контактов
+const existingContactPreviews = ref<
+  Record<number, { file: File; preview: string }>
+>({});
 
 const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
 
@@ -49,6 +68,30 @@ const getContacts = async (): Promise<void> => {
   }
 };
 
+const handleFileChange = (event: Event, id: number | 'new') => {
+  const target = event.target as HTMLInputElement;
+  console.log(target.files, 'target.files');
+
+  // Проверяем существование файлов
+  if (target.files && target.files[0]) {
+    const file = target.files[0];
+
+    if (id === 'new') {
+      newContact.value.icon_path = file;
+      newContact.value.icon_path_url = URL.createObjectURL(file);
+    } else {
+      // Обработка файлов для существующих контактов
+      const contact = contacts.value.find((c) => c.contact_id === id);
+      if (contact) {
+        existingContactPreviews.value[id] = {
+          file: file,
+          preview: URL.createObjectURL(file),
+        };
+      }
+    }
+  }
+};
+
 const updateContact = async (id: number): Promise<void> => {
   try {
     const item = contacts.value.find((n) => n.contact_id === id);
@@ -73,18 +116,24 @@ const updateContact = async (id: number): Promise<void> => {
       didOpen: () => Swal.showLoading(),
     });
 
-    const { success } = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-        title: item.title,
-        content: item.content,
-        link: `tel:${item.content?.replace(/\s+/g, '').trim()}`,
-        type: 'contact-phone',
-        icon_path: null,
-      }),
+    const formData = new FormData();
+    formData.append('type', 'contact-phone');
+    formData.append('title', item.title);
+    formData.append('content', item.content || '');
+    formData.append('link', `tel:${item.content?.replace(/\s+/g, '').trim()}`);
+
+    // Проверяем, есть ли новый файл для этого контакта
+    const contactPreview = existingContactPreviews.value[id];
+    if (contactPreview) {
+      formData.append('icon_path', contactPreview.file);
+    }
+
+    const response = await fetchWithCors(`${API_BASE_URL}?id=${id}`, {
+      method: 'POST',
+      body: formData,
     });
 
-    if (success) {
+    if (response.success) {
       await Swal.fire({
         title: 'Успешно!',
         text: 'Контакты обновлены',
@@ -93,8 +142,16 @@ const updateContact = async (id: number): Promise<void> => {
         showConfirmButton: false,
         timerProgressBar: true,
       });
+
+      // Очищаем превью после успешного обновления
+      if (existingContactPreviews.value[id]) {
+        URL.revokeObjectURL(existingContactPreviews.value[id].preview);
+        delete existingContactPreviews.value[id];
+      }
+
+      await getContacts();
     } else {
-      throw new Error('Ошибка обновления');
+      throw new Error(response.error || 'Ошибка обновления');
     }
   } catch (err) {
     console.error('Error updating contacts:', err);
@@ -158,6 +215,7 @@ const createContact = async (): Promise<void> => {
       });
       return;
     }
+
     Swal.fire({
       title: 'Создание...',
       text: 'Пожалуйста, подождите',
@@ -165,17 +223,27 @@ const createContact = async (): Promise<void> => {
       showConfirmButton: false,
       didOpen: () => Swal.showLoading(),
     });
-    const { success, error: apiError } = await fetchWithCors(API_BASE_URL, {
+
+    const formData = new FormData();
+    formData.append('title', newContact.value.title);
+    formData.append('content', newContact.value.content);
+    formData.append(
+      'link',
+      `tel:${newContact.value.content.replace(/\s+/g, '').trim()}`
+    );
+    formData.append('type', 'contact-phone');
+
+    // Безопасная проверка типа File
+    if (newContact.value.icon_path instanceof File) {
+      formData.append('icon_path', newContact.value.icon_path);
+    }
+
+    const response = await fetchWithCors(API_BASE_URL, {
       method: 'POST',
-      body: JSON.stringify({
-        title: newContact.value.title,
-        content: newContact.value.content,
-        link: `tel:${newContact.value.content?.replace(/\s+/g, '').trim()}`,
-        type: 'contact-phone',
-        icon_path: null,
-      }),
+      body: formData,
     });
-    if (success) {
+
+    if (response.success) {
       await Swal.fire({
         title: 'Успешно!',
         text: 'Ссылка добавлена',
@@ -184,14 +252,21 @@ const createContact = async (): Promise<void> => {
         showConfirmButton: false,
         timerProgressBar: true,
       });
+
+      // Сброс с правильными типами
       newContact.value = {
         title: '',
         content: '',
-        link: '',
+        icon_path: null,
+        icon_path_url: null,
       };
+
+      const fileInput = document.getElementById('icon-new') as HTMLInputElement;
+      if (fileInput) fileInput.value = '';
+
       await getContacts();
     } else {
-      throw new Error(apiError || 'Ошибка создания');
+      throw new Error(response.error || 'Ошибка создания');
     }
   } catch (err) {
     console.error(err);
@@ -214,21 +289,34 @@ onMounted(() => {
 
     <div class="add-contact-wrapper">
       <h2 class="add-contact-title">Добавить новый дополнительный контакт</h2>
-      <div class="add-contact-form">
+      <form @submit.prevent="createContact" class="add-contact-form">
         <div class="input-group">
-          <label :for="'title-create'">Заголовок:</label>
-          <input type="text" :id="'title-create'" v-model="newContact.title" />
+          <label for="title-create">Заголовок:</label>
+          <input type="text" id="title-create" v-model="newContact.title" />
         </div>
         <div class="input-group">
-          <label :for="'phone-create'">Телефон:</label>
+          <label for="content-create">Телефон:</label>
+          <input type="text" id="content-create" v-model="newContact.content" />
+        </div>
+        <div class="input-group icon-input-group">
+          <label for="icon-new">Добавить иконку</label>
           <input
-            type="text"
-            :id="'phone-create'"
-            v-model="newContact.content"
+            class="icon-input"
+            type="file"
+            id="icon-new"
+            accept="image/svg+xml"
+            @change="handleFileChange($event, 'new')"
+          />
+          <img
+            v-if="newContact.icon_path_url"
+            class="icon-svg"
+            width="50"
+            height="50"
+            :src="newContact.icon_path_url"
           />
         </div>
-        <button class="btn save add" @click="createContact">Добавить</button>
-      </div>
+        <button type="submit" class="btn save add">Добавить</button>
+      </form>
     </div>
 
     <div v-if="isLoading" class="loading-overlay">
@@ -241,7 +329,12 @@ onMounted(() => {
 
     <div>
       <div class="contact-list">
-        <div v-for="item in contacts" :key="item.contact_id" class="nav-item">
+        <form
+          v-for="item in contacts"
+          :key="item.contact_id"
+          @submit.prevent="updateContact(item.contact_id)"
+          class="nav-item"
+        >
           <div class="input-group">
             <label :for="'title-' + item.contact_id">Заголовок:</label>
             <input
@@ -251,24 +344,65 @@ onMounted(() => {
             />
           </div>
           <div class="input-group">
-            <label :for="'content-' + item.content?.replace(/[+\s]/g, '')"
-              >Телефон:</label
-            >
+            <label :for="'content-' + item.contact_id">Телефон:</label>
             <input
               type="text"
-              :id="'content-' + item.content?.replace(/[+\s]/g, '')"
+              :id="'content-' + item.contact_id"
               v-model="item.content"
             />
           </div>
+          <div class="input-group icon-input-group">
+            <label :for="'icon-' + item.contact_id">Иконка:</label>
+
+            <div class="icons-container">
+              <!-- Существующая иконка -->
+              <div
+                v-if="item.icon_path && typeof item.icon_path === 'string'"
+                class="existing-icon"
+              >
+                <span class="icon-label">Текущая:</span>
+                <img
+                  :src="item.icon_path"
+                  alt="current icon"
+                  width="50"
+                  height="50"
+                />
+              </div>
+
+              <!-- Превью нового выбранного файла -->
+              <div
+                v-if="existingContactPreviews[item.contact_id]"
+                class="new-icon"
+              >
+                <span class="icon-label">Новая:</span>
+                <img
+                  :src="existingContactPreviews[item.contact_id].preview"
+                  alt="new icon preview"
+                  width="50"
+                  height="50"
+                  class="new-icon-preview"
+                />
+              </div>
+            </div>
+
+            <input
+              type="file"
+              :id="'icon-' + item.contact_id"
+              accept="image/svg+xml"
+              @change="handleFileChange($event, item.contact_id)"
+            />
+          </div>
           <div class="button-group">
-            <button class="btn save" @click="updateContact(item.contact_id)">
-              Сохранить
-            </button>
-            <button class="btn delete" @click="deleteContact(item.contact_id)">
+            <button type="submit" class="btn save">Сохранить</button>
+            <button
+              type="button"
+              class="btn delete"
+              @click="deleteContact(item.contact_id)"
+            >
               Удалить
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
@@ -380,6 +514,7 @@ onMounted(() => {
 
 .nav-item {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   align-items: end;
   background: white;
@@ -457,5 +592,62 @@ onMounted(() => {
 
 .btn.add {
   margin-left: auto;
+}
+
+.icons-container {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin: 0.5rem 0;
+}
+
+.existing-icon,
+.new-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.icon-label {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.new-icon-preview {
+  border: 2px solid #42b883;
+  border-radius: 4px;
+}
+
+.icon-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  & label {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  & input {
+    color: #2c3e50;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+  }
+
+  & input:focus {
+    border-color: #42b883;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 184, 131, 0.2);
+  }
+}
+
+.icon-svg {
+  margin-top: 0.5rem;
 }
 </style>
