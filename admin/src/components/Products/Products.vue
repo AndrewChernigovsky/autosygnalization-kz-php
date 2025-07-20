@@ -9,12 +9,8 @@
         style="display: none"
         accept="image/*"
       />
-      <div
-        v-if="loading"
-        class="flex justify-center items-center h-64 flex-col"
-      >
-        <div class="loader"></div>
-        <p class="mt-4">Идет загрузка товаров...</p>
+      <div v-if="loading" class="flex justify-center items-center h-64">
+        <Loader message="Идет загрузка товаров..." />
       </div>
       <div v-if="error" class="text-red-500 text-center">
         Ошибка при загрузке данных: {{ error }}
@@ -25,252 +21,24 @@
             <h2 class="text-2xl font-bold my-4">
               {{ getCategoryName(category) }}
             </h2>
-            <button @click="addNewProduct(category)" class="btn-add">
+            <button @click="addProduct(category)" class="btn-add">
               Добавить товар
             </button>
           </div>
           <div class="space-y-2">
-            <details
+            <Product
               v-for="product in group"
               :key="product.id"
-              class="product-item"
-              :open="product.is_new"
-              @toggle="(event) => handleToggle(event, product)"
-            >
-              <summary>
-                <strong>{{ product.title }}</strong>
-              </summary>
-              <div class="product-editor">
-                <div class="form-group" @click="startEditing(product, 'model')">
-                  <label>Модель:</label>
-                  <input
-                    v-if="
-                      editingProduct?.id === product.id &&
-                      fieldToEdit === 'model'
-                    "
-                    v-model="editingProduct.model"
-                    type="text"
-                  />
-                  <span v-else>{{ product.model }}</span>
-                </div>
-
-                <div class="form-group" @click="startEditing(product, 'title')">
-                  <label>Заголовок:</label>
-                  <input
-                    v-if="
-                      editingProduct?.id === product.id &&
-                      fieldToEdit === 'title'
-                    "
-                    v-model="editingProduct.title"
-                    type="text"
-                  />
-                  <span v-else>{{ product.title }}</span>
-                </div>
-
-                <div
-                  class="form-group"
-                  @click="startEditing(product, 'description')"
-                >
-                  <label>Описание:</label>
-                  <textarea
-                    v-if="
-                      editingProduct?.id === product.id &&
-                      fieldToEdit === 'description'
-                    "
-                    v-model="editingProduct.description"
-                  ></textarea>
-                  <span v-else>{{ product.description }}</span>
-                </div>
-
-                <div class="form-group" @click="startEditing(product, 'price')">
-                  <label>Цена:</label>
-                  <input
-                    v-if="
-                      editingProduct?.id === product.id &&
-                      fieldToEdit === 'price'
-                    "
-                    v-model="editingProduct.price"
-                    type="number"
-                  />
-                  <span v-else>{{ product.price }}</span>
-                </div>
-
-                <div class="form-group-checkbox">
-                  <label :for="'popular-' + product.id">Популярный:</label>
-                  <input
-                    type="checkbox"
-                    :id="'popular-' + product.id"
-                    :checked="product.is_popular"
-                    @change="togglePopular(product)"
-                  />
-                </div>
-
-                <div
-                  class="form-group-checkbox"
-                  @click="startEditing(product, 'is_special')"
-                >
-                  <label>Специальный:</label>
-                  <input
-                    v-if="
-                      editingProduct?.id === product.id &&
-                      fieldToEdit === 'is_special'
-                    "
-                    type="checkbox"
-                    v-model="editingProduct.is_special"
-                    @click.stop
-                  />
-                  <span v-else>{{ product.is_special ? 'Да' : 'Нет' }}</span>
-                </div>
-
-                <div class="gallery-manager">
-                  <h4>Галерея:</h4>
-                  <div class="gallery-images">
-                    <div
-                      v-for="(image, index) in product.gallery"
-                      :key="index"
-                      class="gallery-image"
-                      @click="
-                        !isImageUploading(product.id, index) &&
-                          triggerFileUpload(product, index)
-                      "
-                    >
-                      <div class="loader-overlay">
-                        <div class="loader-small"></div>
-                      </div>
-                      <img
-                        :src="image"
-                        alt="Product image"
-                        :class="{
-                          uploading: isImageUploading(product.id, index),
-                        }"
-                      />
-                      <button
-                        v-if="!isImageUploading(product.id, index)"
-                        class="btn-delete-img"
-                        @click.stop="deleteImage(product, index)"
-                      ></button>
-                    </div>
-                    <div
-                      v-if="isImageUploading(product.id, null)"
-                      class="gallery-image"
-                    >
-                      <div class="loader-overlay">
-                        <div class="loader-small"></div>
-                      </div>
-                    </div>
-                    <div
-                      v-if="!isImageUploading(product.id, null)"
-                      class="gallery-upload-placeholder"
-                      @click="triggerFileUpload(product, null)"
-                    >
-                      <span class="plus-icon">+</span>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  class="form-group"
-                  @click="startEditing(product, 'category_key')"
-                >
-                  <label>Категория:</label>
-                  <select
-                    v-if="
-                      editingProduct?.id === product.id &&
-                      fieldToEdit === 'category_key'
-                    "
-                    v-model="editingCategoryKey"
-                    @click.stop
-                  >
-                    <option
-                      v-for="category in allCategories"
-                      :value="category.key"
-                      :key="category.key"
-                    >
-                      {{ category.name }}
-                    </option>
-                  </select>
-                  <span v-else>{{
-                    getCategoryName(product.category_key)
-                  }}</span>
-                </div>
-
-                <div class="array-fields-editor">
-                  <div
-                    class="form-group"
-                    @click="startEditing(product, 'functions')"
-                  >
-                    <label>Функции (через запятую):</label>
-                    <textarea
-                      v-if="
-                        editingProduct?.id === product.id &&
-                        fieldToEdit === 'functions'
-                      "
-                      :value="getArrayAsCST(editingProduct.functions)"
-                      @input="updateArrayField($event, 'functions')"
-                    ></textarea>
-                    <span v-else>{{ getArrayAsCST(product.functions) }}</span>
-                  </div>
-                  <div
-                    class="form-group"
-                    @click="startEditing(product, 'options')"
-                  >
-                    <label>Опции (через запятую):</label>
-                    <textarea
-                      v-if="
-                        editingProduct?.id === product.id &&
-                        fieldToEdit === 'options'
-                      "
-                      :value="getArrayAsCST(editingProduct.options)"
-                      @input="updateArrayField($event, 'options')"
-                    ></textarea>
-                    <span v-else>{{ getArrayAsCST(product.options) }}</span>
-                  </div>
-                  <div
-                    class="form-group"
-                    @click="startEditing(product, 'options-filters')"
-                  >
-                    <label>Опции-фильтры (через запятую):</label>
-                    <textarea
-                      v-if="
-                        editingProduct?.id === product.id &&
-                        fieldToEdit === 'options-filters'
-                      "
-                      :value="getArrayAsCST(editingProduct['options-filters'])"
-                      @input="updateArrayField($event, 'options-filters')"
-                    ></textarea>
-                    <span v-else>{{
-                      getArrayAsCST(product['options-filters'])
-                    }}</span>
-                  </div>
-                  <div
-                    class="form-group"
-                    @click="startEditing(product, 'autosygnals')"
-                  >
-                    <label>Автосигнализации (через запятую):</label>
-                    <textarea
-                      v-if="
-                        editingProduct?.id === product.id &&
-                        fieldToEdit === 'autosygnals'
-                      "
-                      :value="getArrayAsCST(editingProduct.autosygnals)"
-                      @input="updateArrayField($event, 'autosygnals')"
-                    ></textarea>
-                    <span v-else>{{ getArrayAsCST(product.autosygnals) }}</span>
-                  </div>
-                </div>
-
-                <div class="product-actions">
-                  <button @click="saveChanges" class="btn-save">
-                    Сохранить
-                  </button>
-                  <button
-                    @click="deleteProductHandler(product.id)"
-                    class="btn-delete"
-                  >
-                    Удалить
-                  </button>
-                </div>
-              </div>
-            </details>
+              :product="product"
+              :all-categories="allCategories"
+              :is-image-uploading="isImageUploading"
+              :get-category-name="getCategoryName"
+              @save-product="saveChanges"
+              @delete-product="deleteProductHandler"
+              @delete-image="deleteImage"
+              @trigger-file-upload="triggerFileUpload"
+              @handle-toggle="handleToggle"
+            />
           </div>
         </div>
       </div>
@@ -279,10 +47,12 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref, nextTick } from 'vue';
+import { onMounted, computed, ref } from 'vue';
 import { useProducts } from './functions/useProducts';
-import type { Product } from './interfaces/Products';
+import type { ProductI } from './interfaces/Products';
 import Swal from 'sweetalert2';
+import Loader from '../../UI/Loader.vue';
+import Product from './Product.vue';
 
 const {
   products,
@@ -291,16 +61,13 @@ const {
   fetchProducts,
   updateProduct,
   deleteProduct,
-  togglePopular,
   deleteImage,
   uploadImage,
   addProduct,
 } = useProducts();
 
-const editingProduct = ref<Product | null>(null);
-const fieldToEdit = ref<string | null>(null);
 const fileInput = ref<HTMLInputElement | null>(null);
-const uploadContext = ref<{ product: Product; index: number | null } | null>(
+const uploadContext = ref<{ product: ProductI; index: number | null } | null>(
   null
 );
 const isCreatingNewProduct = ref(false);
@@ -309,97 +76,17 @@ const imageUploadStatus = ref<{
   index: number | null;
 } | null>(null);
 
-const editingCategoryKey = computed({
-  get: () => editingProduct.value?.category_key || '',
-  set: (value) => {
-    if (editingProduct.value) {
-      editingProduct.value.category_key = value;
-    }
-  },
-});
-
 const isImageUploading = (productId: string, index: number | null) => {
   if (!imageUploadStatus.value) return false;
-  const isUploading =
+  return (
     imageUploadStatus.value.productId === productId &&
-    imageUploadStatus.value.index === index;
-  if (isUploading) {
-    console.log(
-      `Loader should be visible for product ${productId}, index ${index}`
-    );
-  }
-  return isUploading;
+    imageUploadStatus.value.index === index
+  );
 };
 
-function startEditing(product: Product, field: string) {
-  if (!editingProduct.value || editingProduct.value.id !== product.id) {
-    editingProduct.value = { ...product };
-  }
-  fieldToEdit.value = field;
-}
-
-async function saveChanges() {
-  if (editingProduct.value) {
-    Swal.fire({
-      title: 'Сохранение...',
-      text: 'Пожалуйста, подождите',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      background: '#333',
-      color: '#fff',
-    });
-
-    const updatedProduct = { ...editingProduct.value };
-    const updated: boolean = await updateProduct(updatedProduct);
-
-    if (updated) {
-      if (updatedProduct.is_new) {
-        isCreatingNewProduct.value = false;
-      }
-      editingProduct.value = null;
-      fieldToEdit.value = null;
-
-      // Manually update the product in the list to avoid full refresh
-      const index = products.value.findIndex((p) => p.id === updatedProduct.id);
-      if (index !== -1) {
-        products.value[index] = { ...products.value[index], ...updatedProduct };
-      }
-
-      Swal.fire({
-        title: 'Сохранено!',
-        text: 'Товар был успешно обновлен.',
-        icon: 'success',
-        background: '#333',
-        color: '#fff',
-      });
-    } else {
-      Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось сохранить товар.',
-        icon: 'error',
-        background: '#333',
-        color: '#fff',
-      });
-    }
-  }
-}
-
-async function addNewProduct(categoryKey: string) {
-  if (isCreatingNewProduct.value) {
-    Swal.fire({
-      title: 'Внимание!',
-      text: 'Сначала сохраните или удалите предыдущий новый товар.',
-      icon: 'warning',
-      background: '#333',
-      color: '#fff',
-    });
-    return;
-  }
-
+async function saveChanges(product: ProductI) {
   Swal.fire({
-    title: 'Добавление товара...',
+    title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
     allowOutsideClick: false,
     didOpen: () => {
@@ -409,30 +96,28 @@ async function addNewProduct(categoryKey: string) {
     color: '#fff',
   });
 
-  addProduct(categoryKey).then((newProduct) => {
-    if (newProduct) {
-      isCreatingNewProduct.value = true;
-      editingProduct.value = { ...newProduct };
-      fieldToEdit.value = 'title';
-      Swal.fire({
-        title: 'Товар добавлен!',
-        text: 'Теперь вы можете заполнить детали и сохранить.',
-        icon: 'success',
-        background: '#333',
-        color: '#fff',
-        timer: 1000,
-        showConfirmButton: false,
-      });
-    } else {
-      Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось добавить новый товар.',
-        icon: 'error',
-        background: '#333',
-        color: '#fff',
-      });
+  const updated: boolean = await updateProduct(product);
+
+  if (updated) {
+    if (product.is_new) {
+      isCreatingNewProduct.value = false;
     }
-  });
+    Swal.fire({
+      title: 'Сохранено!',
+      text: 'Товар был успешно обновлен.',
+      icon: 'success',
+      background: '#333',
+      color: '#fff',
+    });
+  } else {
+    Swal.fire({
+      title: 'Ошибка!',
+      text: 'Не удалось сохранить товар.',
+      icon: 'error',
+      background: '#333',
+      color: '#fff',
+    });
+  }
 }
 
 async function deleteProductHandler(productId: string) {
@@ -488,10 +173,10 @@ async function deleteProductHandler(productId: string) {
   }
 }
 
-async function handleToggle(event: Event, product: Product) {
+async function handleToggle(event: Event, product: ProductI) {
   const detailsElement = event.target as HTMLDetailsElement;
   if (!detailsElement.open && product.is_new) {
-    event.preventDefault(); // Предотвращаем закрытие, пока пользователь не решит
+    event.preventDefault();
     const result = await Swal.fire({
       title: 'Отменить создание?',
       text: 'Новый товар не был сохранен и будет удален.',
@@ -507,38 +192,14 @@ async function handleToggle(event: Event, product: Product) {
       await deleteProduct(product.id);
       isCreatingNewProduct.value = false;
     } else {
-      detailsElement.open = true; // Если отменили, оставляем открытым
+      detailsElement.open = true;
     }
   }
 }
 
-function triggerFileUpload(product: Product, index: number | null) {
+function triggerFileUpload(product: ProductI, index: number | null) {
   uploadContext.value = { product, index };
   fileInput.value?.click();
-}
-
-function getArrayAsCST(arr: string[] | undefined): string {
-  if (!arr || arr.length === 0) return 'Нет';
-  return arr.join(', ');
-}
-
-function updateArrayField(
-  event: Event,
-  fieldName: 'functions' | 'options' | 'options-filters' | 'autosygnals'
-) {
-  if (editingProduct.value) {
-    const target = event.target as HTMLTextAreaElement;
-    const value = target.value
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    if (fieldName === 'options-filters') {
-      (editingProduct.value as any)['options-filters'] = value;
-    } else {
-      (editingProduct.value as any)[fieldName] = value;
-    }
-  }
 }
 
 async function handleFileSelected(event: Event) {
@@ -552,15 +213,10 @@ async function handleFileSelected(event: Event) {
   const file = target.files[0];
 
   imageUploadStatus.value = { productId: product.id, index };
-  console.log('Set imageUploadStatus:', imageUploadStatus.value);
 
   try {
     const newGallery = await uploadImage(product, file, index);
-
     if (newGallery) {
-      if (editingProduct.value && editingProduct.value.id === product.id) {
-        editingProduct.value.gallery = newGallery;
-      }
       Swal.fire({
         title: 'Успешно!',
         text: 'Изображение загружено.',
@@ -583,7 +239,6 @@ async function handleFileSelected(event: Event) {
       color: '#fff',
     });
   } finally {
-    console.log('Resetting imageUploadStatus');
     imageUploadStatus.value = null;
     if (target) target.value = '';
   }
@@ -599,7 +254,6 @@ const allCategories = computed(() => {
   const keysFromProducts = Object.keys(groupedProducts.value);
   const keysFromTranslations = Object.keys(categoryTranslations);
   const allKeys = [...new Set([...keysFromProducts, ...keysFromTranslations])];
-
   return allKeys
     .map((key) => ({
       key: key,
@@ -620,7 +274,7 @@ const groupedProducts = computed(() => {
     }
     acc[category].push(product);
     return acc;
-  }, {} as Record<string, Product[]>);
+  }, {} as Record<string, ProductI[]>);
 });
 
 onMounted(() => {
@@ -655,266 +309,23 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+  padding: 15px;
+  padding-right: 60px;
+  background-color: #2a2a2a;
+  border-radius: 5px;
+  position: sticky;
+  top: -20px;
+  z-index: 100;
 }
 
 .theme-dark h2 {
   color: #fff;
-  margin: 0; /* Reset margin */
-}
-
-.loader {
-  border: 4px solid #555;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
-  margin: auto auto;
-}
-
-.loader-small {
-  border: 3px solid #555;
-  border-top: 3px solid #3498db;
-  border-radius: 50%;
-  width: 30px;
-  height: 30px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-.product-item {
-  border: 1px solid #555;
-  border-radius: 8px;
-  background-color: #444;
-}
-
-.product-item summary {
-  padding: 15px;
-  cursor: pointer;
-  background-color: #3a3a3a;
-  color: #fff;
-  border-radius: 8px;
-  transition: background-color 0.2s;
-}
-
-.product-item summary:hover {
-  background-color: #4f4f4f;
-}
-
-.product-item[open] > summary {
-  border-bottom: 1px solid #555;
-  border-radius: 8px 8px 0 0;
-}
-
-.product-editor {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.array-fields-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border-top: 1px solid #555;
-  padding-top: 15px;
-}
-
-.form-group,
-.form-group-checkbox {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.form-group-checkbox {
-  flex-direction: row;
-  align-items: center;
-}
-
-.form-group label {
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-
-.form-group input[type='text'],
-.form-group input[type='number'],
-.form-group textarea,
-.form-group span {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #666;
-  background-color: #555;
-  color: #fff;
-  border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 1rem;
-  min-height: 40px; /* Для span */
-}
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.gallery-manager {
-  border-top: 1px solid #555;
-  padding-top: 15px;
+  margin: 0;
 }
 
 .mt-4 {
   margin: 0 auto;
   text-align: center;
-}
-
-.gallery-manager h4 {
-  margin-top: 0;
-  font-weight: bold;
-}
-
-.gallery-images {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.gallery-image,
-.gallery-upload-placeholder {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  border: 1px dashed #666;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.gallery-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 4px;
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
-}
-
-.gallery-image img.uploading {
-  opacity: 0.5;
-}
-
-.loader-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 100%;
-  height: 100%;
-  background-color: transparent;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px;
-  z-index: 1;
-}
-
-.gallery-upload-placeholder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #555;
-}
-
-.gallery-upload-placeholder:hover {
-  background-color: #666;
-}
-
-.plus-icon {
-  font-size: 40px;
-  color: #888;
-}
-
-.btn-delete-img {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #dc3545;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  box-sizing: border-box;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-delete-img::before,
-.btn-delete-img::after {
-  content: '';
-  position: absolute;
-  width: 12px;
-  height: 2px;
-  background-color: white;
-}
-
-.btn-delete-img::before {
-  transform: rotate(45deg);
-}
-
-.btn-delete-img::after {
-  transform: rotate(-45deg);
-}
-
-.product-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: flex-end;
-  border-top: 1px solid #555;
-  padding-top: 15px;
-  margin-top: 10px;
-}
-
-.btn-save,
-.btn-delete {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: white;
-  font-size: 0.9rem;
-  transition: background-color 0.2s;
-}
-
-.btn-save {
-  background-color: #28a745;
-}
-.btn-save:hover {
-  background-color: #218838;
-}
-
-.btn-delete {
-  background-color: #dc3545;
-}
-.btn-delete:hover {
-  background-color: #c82333;
 }
 
 .btn-add {

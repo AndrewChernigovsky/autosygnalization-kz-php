@@ -1,22 +1,23 @@
 <?php
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
-require_once __DIR__ . '/../../../config/config.php';
 
 use DATABASE\Database;
+use DATA\TabsAdditionalData;
 
-header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-control-allow-origin: http://localhost:5173");
+header("Access-control-allow-headers: Content-Type, Authorization");
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-    http_response_code(200);
-    exit;
+  http_response_code(200);
+  exit;
 }
 
 header('Content-Type: application/json');
 
-$db = Database::getConnection();
+$dbConnection = Database::getConnection();
+$tabsData = new TabsAdditionalData();
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -27,7 +28,7 @@ if (!isset($data['id'])) {
 }
 
 try {
-  $stmt = $db->prepare(
+  $stmt = $dbConnection->prepare(
     "UPDATE Products SET 
             title = :title, 
             model = :model,
@@ -76,13 +77,18 @@ try {
   $autosygnalsJson = json_encode($data['autosygnals'] ?? []);
   $stmt->bindParam(':autosygnals', $autosygnalsJson);
 
-  if ($stmt->execute()) {
-    echo json_encode(['message' => 'Product updated successfully.', 'link' => $link]);
-  } else {
-    http_response_code(500);
-    echo json_encode(['message' => 'Failed to update product.']);
+  $stmt->execute();
+
+  if (isset($data['tabs'])) {
+    $tabsUpdated = $tabsData->updateTabsForProduct($data['id'], $data['tabs']);
+    if (!$tabsUpdated) {
+      throw new Exception('Failed to update product tabs.');
+    }
   }
-} catch (PDOException $e) {
+
+  echo json_encode(['message' => 'Product updated successfully.', 'link' => $link]);
+
+} catch (Exception $e) {
   http_response_code(500);
   echo json_encode(['message' => 'Database error: ' . $e->getMessage()]);
 }

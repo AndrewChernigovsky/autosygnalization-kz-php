@@ -40,9 +40,9 @@ function closeMenu() {
 <style scoped lang="scss">
 .burger-menu {
   position: fixed;
-  top: 30px;
-  right: 30px;
-  z-index: 1200;
+  top: 10px;
+  right: 40px;
+  z-index: 102;
   background: none;
   border: none;
   cursor: pointer;
@@ -50,8 +50,11 @@ function closeMenu() {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 30px;
-  height: 24px;
+  width: 50px;
+  height: 50px;
+  background-color: #2a2a2a;
+  padding: 10px;
+  border: 1px solid #ffffffff;
 
   &__line {
     width: 100%;
@@ -70,7 +73,7 @@ function closeMenu() {
   background-color: #1a1a1a;
   transform: translateX(100%);
   transition: transform 0.3s ease-in-out;
-  z-index: 10;
+  z-index: 101;
   padding-top: 60px;
 
   &.is-open {

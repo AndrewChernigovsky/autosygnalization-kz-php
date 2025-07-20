@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
-import type { Product } from '../interfaces/Products';
+import type { ProductI } from '../interfaces/Products';
 
 const API_URL = '/server/php/admin/api/products/';
 
@@ -38,7 +38,7 @@ async function apiCall(
 }
 
 export function useProducts() {
-  const products: Ref<Product[]> = ref([]);
+  const products: Ref<ProductI[]> = ref([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
 
@@ -54,7 +54,7 @@ export function useProducts() {
       }
       const data = await response.json();
 
-      const allProducts: Product[] = [];
+      const allProducts: ProductI[] = [];
       if (data && data.category) {
         for (const categoryKey in data.category) {
           if (
@@ -79,7 +79,7 @@ export function useProducts() {
     }
   }
 
-  async function updateProduct(product: Product): Promise<boolean> {
+  async function updateProduct(product: ProductI): Promise<boolean> {
     console.log('[useProducts] updateProduct вызван. Товар:', product);
     try {
       const productData = {
@@ -140,12 +140,12 @@ export function useProducts() {
     }
   }
 
-  async function togglePopular(product: Product) {
+  async function togglePopular(product: ProductI) {
     const updatedProduct = { ...product, is_popular: !product.is_popular };
     await updateProduct(updatedProduct);
   }
 
-  async function deleteImage(product: Product, imageIndex: number) {
+  async function deleteImage(product: ProductI, imageIndex: number) {
     try {
       const data = await apiCall('delete_image.php', 'POST', {
         productId: product.id,
@@ -165,7 +165,7 @@ export function useProducts() {
       '[useProducts] addProduct вызван. Только локальные изменения, без API-запроса.'
     );
     // Эта функция теперь работает только на клиенте
-    const newProduct: Product = {
+    const newProduct: ProductI = {
       id: `new_${Date.now()}`, // Временный ID
       is_new: true,
       title: 'Новый товар',
@@ -193,7 +193,7 @@ export function useProducts() {
   }
 
   async function uploadImage(
-    product: Product,
+    product: ProductI,
     file: File,
     imageIndex: number | null = null
   ): Promise<string[] | null> {

@@ -18,21 +18,18 @@ class Products
 
   public function getData(): array
   {
-    $stmt = $this->db->prepare("SELECT * FROM Products ORDER BY category, title");
+    $stmt = $this->db->prepare("
+        SELECT p.*, t.tabs_data 
+        FROM Products p
+        LEFT JOIN TabsAdditionalProductsData t ON p.id = t.product_id
+        ORDER BY p.category, p.title
+    ");
     $stmt->execute();
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    $structuredData = [
-      "category" => []
-    ];
+    $processedProducts = [];
 
     foreach ($products as $product) {
-      $category = $product['category'];
-
-      if (!isset($structuredData['category'][$category])) {
-        $structuredData['category'][$category] = [];
-      }
-
       // Преобразуем булевы значения из БД (0/1) в true/false
       $product['cart'] = false; // По умолчанию, или можно добавить поле в БД
       $product['popular'] = (bool)$product['is_popular'];
@@ -44,13 +41,15 @@ class Products
       $product['options'] = $product['options'] ? json_decode($product['options'], true) : [];
       $product['options-filters'] = $product['options_filters'] ? json_decode($product['options_filters'], true) : [];
       $product['autosygnals'] = $product['autosygnals'] ? json_decode($product['autosygnals'], true) : [];
+      $product['tabs'] = $product['tabs_data'] ? json_decode($product['tabs_data'], true) : [];
+
 
       // Удаляем служебные поля, которых нет в исходной структуре
-      unset($product['is_popular'], $product['is_special'], $product['created_at'], $product['updated_at']);
+      unset($product['is_popular'], $product['is_special'], $product['created_at'], $product['updated_at'], $product['tabs_data']);
 
-      $structuredData['category'][$category][] = $product;
+      $processedProducts[] = $product;
     }
 
-    return $structuredData;
+    return $processedProducts;
   }
 }

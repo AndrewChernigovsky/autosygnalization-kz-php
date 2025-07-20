@@ -41,6 +41,17 @@ class FiltersRender
         $this->filters_correct = $filters_correct;
 
         $this->products = $products;
+
+        foreach ($this->products as &$category) {
+            foreach ($category as &$productType) {
+                foreach ($productType as &$product) {
+                    if (isset($product['options-filters']) && is_string($product['options-filters'])) {
+                        $product['options-filters'] = json_decode($product['options-filters'], true);
+                    }
+                }
+            }
+        }
+        
         $this->filters_products_count = [];
         $this->filters_correct_arr = [];
         $this->filters_min_value = $this->get_params['min-value-cost'] ?? 100;

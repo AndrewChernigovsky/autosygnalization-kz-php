@@ -1,4 +1,10 @@
-export interface Product {
+export interface Tab {
+  title: string;
+  description: string;
+  'path-icon'?: string;
+}
+
+export interface ProductI {
   id: string;
   model: string;
   cart: boolean;
@@ -18,5 +24,6 @@ export interface Product {
   autosygnals: string[];
   category: string;
   category_key: string;
+  tabs?: Tab[];
   is_new?: boolean;
 }
