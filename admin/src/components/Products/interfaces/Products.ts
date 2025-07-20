@@ -6,24 +6,18 @@ export interface Tab {
 
 export interface ProductI {
   id: string;
+  is_new?: boolean;
   model: string;
-  cart: boolean;
-  popular: boolean;
-  is_popular: boolean;
-  gallery: string[];
   title: string;
   description: string;
   price: number;
-  currency: string;
-  quantity: number;
-  link: string;
+  is_popular: boolean;
+  is_special: boolean;
+  gallery: string[];
+  category_key: string;
   functions: string[];
   options: string[];
   'options-filters': string[];
-  is_special: boolean;
   autosygnals: string[];
-  category: string;
-  category_key: string;
   tabs?: Tab[];
-  is_new?: boolean;
 }

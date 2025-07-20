@@ -32,8 +32,8 @@ class Products
     foreach ($products as $product) {
       // Преобразуем булевы значения из БД (0/1) в true/false
       $product['cart'] = false; // По умолчанию, или можно добавить поле в БД
-      $product['popular'] = (bool)$product['is_popular'];
-      $product['special'] = (bool)$product['is_special'];
+      $product['popular'] = (bool) $product['is_popular'];
+      $product['special'] = (bool) $product['is_special'];
 
       // Декодируем JSON-строки в массивы, проверяя на null
       $product['gallery'] = $product['gallery'] ? json_decode($product['gallery'], true) : [];
@@ -42,7 +42,6 @@ class Products
       $product['options-filters'] = $product['options_filters'] ? json_decode($product['options_filters'], true) : [];
       $product['autosygnals'] = $product['autosygnals'] ? json_decode($product['autosygnals'], true) : [];
       $product['tabs'] = $product['tabs_data'] ? json_decode($product['tabs_data'], true) : [];
-
 
       // Удаляем служебные поля, которых нет в исходной структуре
       unset($product['is_popular'], $product['is_special'], $product['created_at'], $product['updated_at'], $product['tabs_data']);

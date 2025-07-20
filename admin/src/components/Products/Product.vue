@@ -156,9 +156,13 @@
 
       <Tabs
         v-if="product.tabs"
-        :tabs="editingProduct ? editingProduct.tabs : product.tabs"
-        :is-editing="!!editingProduct"
+        :tabs="product.tabs"
+        :is-icon-uploading="
+          (tabIndex) => isUploading[`tab-${tabIndex}`]
+        "
         @update:tabs="updateTabs"
+        @trigger-icon-upload="handleIconUpload"
+        @delete-icon="handleIconDelete"
       />
 
       <div class="product-actions">
@@ -176,8 +180,6 @@ import { ref, computed, watch } from 'vue';
 import type { ProductI, Tab } from './interfaces/Products';
 import Gallery from './Gallery.vue';
 import Tabs from './Tabs.vue';
-
-defineOptions({ name: 'ProductItem' });
 
 const props = defineProps<{
   product: ProductI;
@@ -214,6 +216,8 @@ const emit = defineEmits<{
 const editingProduct = ref<ProductI | null>(null);
 const fieldToEdit = ref<string | null>(null);
 
+const isUploading = ref<Record<string, boolean>>({});
+
 const editingCategoryKey = computed({
   get: () => editingProduct.value?.category_key || '',
   set: (value) => {
@@ -222,6 +226,14 @@ const editingCategoryKey = computed({
     }
   },
 });
+
+function ensureEditing() {
+  if (!editingProduct.value) {
+    editingProduct.value = JSON.parse(JSON.stringify(props.product));
+    fieldToEdit.value = 'title';
+  }
+  return editingProduct.value;
+}
 
 function handleCheckboxChange(field: 'is_popular' | 'is_special') {
   let productToEdit = editingProduct.value;
@@ -269,14 +281,32 @@ function updateArrayField(
 }
 
 function updateTabs(newTabs: Tab[]) {
-  if (editingProduct.value) {
-    editingProduct.value.tabs = newTabs;
+  const productToEdit = ensureEditing();
+  productToEdit.tabs = newTabs;
+}
+
+function handleIconUpload(tabIndex: number) {
+  const productToEdit = ensureEditing();
+  const key = `tab-${tabIndex}`;
+  isUploading.value[key] = true;
+  setTimeout(() => {
+    if (productToEdit && productToEdit.tabs) {
+      productToEdit.tabs[tabIndex]['path-icon'] =
+        '/client/vectors/thermometer.svg'; // Placeholder path
+    }
+    isUploading.value[key] = false;
+  }, 2000);
+}
+
+function handleIconDelete(tabIndex: number) {
+  const productToEdit = ensureEditing();
+  if (productToEdit && productToEdit.tabs) {
+    productToEdit.tabs[tabIndex]['path-icon'] = '';
   }
 }
 
 function saveChanges() {
   if (editingProduct.value) {
-    editingProduct.value.price = Math.round(editingProduct.value.price);
     emit('save-product', editingProduct.value);
     editingProduct.value = null;
     fieldToEdit.value = null;
@@ -284,115 +314,91 @@ function saveChanges() {
 }
 </script>
 
-<script lang="ts">
-export default {
-  name: 'Product',
-};
-</script>
-
 <style scoped>
 .product-item {
-  border: 1px solid #555;
-  border-radius: 8px;
-  background-color: #444;
+  border: 1px solid #444;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  background-color: #333;
 }
-
-.product-item summary {
+.product-item > summary {
   padding: 15px;
   cursor: pointer;
   background-color: #3a3a3a;
-  color: #fff;
-  border-radius: 8px;
-  transition: background-color 0.2s;
+  color: #eee;
+  border-radius: 5px 5px 0 0;
 }
-
-.product-item summary:hover {
-  background-color: #4f4f4f;
-}
-
-.product-item[open] > summary {
-  border-bottom: 1px solid #555;
-  border-radius: 8px 8px 0 0;
-}
-
 .product-editor {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 15px;
 }
-
-.array-fields-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  border-top: 1px solid #555;
-  padding-top: 15px;
-}
-
 .form-group,
 .form-group-checkbox {
   display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.form-group-checkbox {
-  flex-direction: row;
   align-items: center;
+  gap: 15px;
 }
-
-.form-group label {
+.form-group label,
+.form-group-checkbox label {
   font-weight: bold;
-  font-size: 0.9rem;
+  color: #ccc;
+  min-width: 150px;
 }
-
 .form-group input[type='text'],
 .form-group input[type='number'],
 .form-group textarea,
-.form-group span {
-  width: 100%;
+.form-group select {
+  flex-grow: 1;
   padding: 10px;
-  border: 1px solid #666;
-  background-color: #555;
+  background-color: #444;
+  border: 1px solid #555;
   color: #fff;
   border-radius: 4px;
-  box-sizing: border-box;
-  font-size: 1rem;
-  min-height: 40px; /* Для span */
 }
-
-.form-group textarea {
-  min-height: 120px;
-  resize: vertical;
+.form-group span {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #2c2c2c;
+  border-radius: 4px;
+  min-height: 40px;
 }
-
+.form-group-checkbox input[type='checkbox'] {
+  width: 20px;
+  height: 20px;
+}
+.array-fields-editor {
+  border-top: 1px solid #444;
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
 .product-actions {
   display: flex;
-  gap: 10px;
   justify-content: flex-end;
-  border-top: 1px solid #555;
-  padding-top: 15px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-top: 20px;
+  border-top: 1px solid #444;
+  padding-top: 20px;
 }
-
 .btn-save,
 .btn-delete {
-  padding: 8px 16px;
+  padding: 10px 15px;
   border: none;
   border-radius: 5px;
-  cursor: pointer;
   color: white;
-  font-size: 0.9rem;
+  cursor: pointer;
   transition: background-color 0.2s;
 }
-
 .btn-save {
   background-color: #28a745;
 }
 .btn-save:hover {
   background-color: #218838;
 }
-
 .btn-delete {
   background-color: #dc3545;
 }
