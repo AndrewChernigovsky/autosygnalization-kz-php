@@ -15,15 +15,26 @@ interface ContactItem {
   content: string | null;
 }
 
+// Интерфейс для нового контакта
+interface NewContact {
+  title: string;
+  content: string;
+  icon_path: File | null;
+  icon_path_url: string | null;
+}
+
 const contacts = ref<ContactItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const newContact = ref({
+
+// Типизированный объект для нового контакта
+const newContact = ref<NewContact>({
   title: '',
   content: '',
   icon_path: null,
   icon_path_url: null,
 });
+
 const newIconFile = ref<File | null>(null);
 
 const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
@@ -57,12 +68,14 @@ const getContacts = async (): Promise<void> => {
 const handleFileChange = (event: Event, id: number | 'new') => {
   const target = event.target as HTMLInputElement;
   console.log(target.files, 'target.files');
+
+  // Проверяем существование файлов
   if (target.files && target.files[0]) {
+    const file = target.files[0];
+
     if (id === 'new') {
-      newContact.value.icon_path = target.files[0] as File;
-      newContact.value.icon_path_url = URL.createObjectURL(
-        target.files[0]
-      ) as string;
+      newContact.value.icon_path = file;
+      newContact.value.icon_path_url = URL.createObjectURL(file);
     } else {
       const contact = contacts.value.find((c) => c.contact_id === id);
       if (contact) {
@@ -188,6 +201,7 @@ const createContact = async (): Promise<void> => {
       });
       return;
     }
+
     Swal.fire({
       title: 'Создание...',
       text: 'Пожалуйста, подождите',
@@ -204,7 +218,9 @@ const createContact = async (): Promise<void> => {
       `${newContact.value.content.replace(/\s+/g, '').trim()}`
     );
     formData.append('type', 'main-phone');
-    if (newContact.value.icon_path) {
+
+    // Безопасная проверка типа File
+    if (newContact.value.icon_path instanceof File) {
       formData.append('icon_path', newContact.value.icon_path);
     }
 
@@ -222,6 +238,8 @@ const createContact = async (): Promise<void> => {
         showConfirmButton: false,
         timerProgressBar: true,
       });
+
+      // Сброс с правильными типами
       newContact.value = {
         title: '',
         content: '',
@@ -276,10 +294,11 @@ onMounted(() => {
             @change="handleFileChange($event, 'new')"
           />
           <img
+            v-if="newContact.icon_path_url"
             class="icon-svg"
             width="50"
             height="50"
-            :src="newContact.icon_path_url as unknown as string"
+            :src="newContact.icon_path_url"
           />
         </div>
         <button type="submit" class="btn save add">Добавить</button>

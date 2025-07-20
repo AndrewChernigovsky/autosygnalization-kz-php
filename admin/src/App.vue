@@ -16,7 +16,6 @@ function toggleSidebar() {
 
 <template>
   <div class="app-container">
-    <!-- <test /> -->
     <Menu />
     <aside :class="{ 'sidebar-open': isSidebarOpen }">
       <button @click="toggleSidebar" class="toggle-btn">
