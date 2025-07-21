@@ -26,13 +26,15 @@ const isActive = (path: string) => {
 <template>
   <header class="my-header">
     <h1 class="my-title m-0">Админ-панель, здравствуйте Алексей!</h1>
-    <img
-      src="../../../assets/logo.png"
-      alt="logo"
-      class="my-logo"
-      width="250"
-      height="75"
-    />
+    <div class="my-header-logo">
+      <img
+        src="../../../assets/logo.png"
+        alt="logo"
+        class="my-logo"
+        width="250"
+        height="75"
+      />
+    </div>
     <nav class="my-nav">
       <ul class="list-style-none p-0 m-0">
         <li v-for="item in navItems" :key="item.path">

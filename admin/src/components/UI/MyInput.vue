@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue';
+import logo from '../../assets/input-file-plus.svg';
+
 interface Props {
   modelValue?: string;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'file';
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | '';
   placeholder?: string;
   disabled?: boolean;
   id?: string;
+  className?: string;
 }
 
 interface Emits {
@@ -18,14 +22,31 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   placeholder: '',
   disabled: false,
-  variant: 'primary',
+  variant: '',
+  className: '',
 });
+
+const imgPath = ref('');
+
+const inputClass = computed(() =>
+  [
+    'my-input',
+    props.variant ? props.variant : false,
+    props.className ? props.className : false,
+  ]
+    .filter(Boolean)
+    .join(' ')
+);
 
 const emit = defineEmits<Emits>();
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
   emit('update:modelValue', target.value);
+  if (props.type === 'file') {
+    imgPath.value = URL.createObjectURL(target.files?.[0] || new Blob());
+    console.log(imgPath.value);
+  }
 };
 
 const handleFocus = (event: FocusEvent) => {
@@ -38,63 +59,83 @@ const handleBlur = (event: FocusEvent) => {
 </script>
 
 <template>
-  <div>
-    <div class="my-input-wrapper">
-      <input
-        :id="props.id || 'my-input'"
-        :type="props.type"
-        :value="props.modelValue"
-        :placeholder="props.placeholder"
-        :disabled="props.disabled"
-        :class="[
-          'my-input',
-          {
-            'my-input-primary': props.variant === 'primary',
-            'my-input-secondary': props.variant === 'secondary',
-          },
-        ]"
-        @input="handleInput"
-        @focus="handleFocus"
-        @blur="handleBlur"
-      />
-      <img v-if="props.type === 'file'" src="" alt="" />
-    </div>
+  <div :class="['my-input-wrapper', props.type === 'file' ? 'file' : '']">
+    <input
+      :id="props.id || 'my-input'"
+      :type="props.type"
+      :value="props.modelValue"
+      :placeholder="props.placeholder"
+      :disabled="props.disabled"
+      :class="inputClass"
+      @input="handleInput"
+      @focus="handleFocus"
+      @blur="handleBlur"
+    />
+    <img v-if="props.type === 'file'" :src="imgPath || logo" alt="" />
   </div>
 </template>
 
 <style scoped>
-.my-input {
+.my-input-wrapper {
   width: 100%;
-  max-width: 100%;
-  padding: 10px;
-  border: 2px solid #363535;
-  border-radius: 10px;
   background-color: #141212;
-  color: #ffffff;
-  outline: none;
-  transition: all 0.3s ease;
-  font-size: 16px;
+  padding: 10px;
+  border-radius: 20%;
+
+  &.file {
+    position: relative;
+    max-width: 544px;
+    height: 100%;
+    max-height: 544px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 30%;
+
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+}
+
+.my-input {
+  padding: 8px;
+  border: none;
+
+  &.primary {
+    font-family: var(--font-family);
+    width: 100%;
+    padding: 10px;
+    border-radius: 10%;
+    color: #000000;
+    background-color: #363535;
+    font-size: 34px;
+  }
+
+  &:not(:placeholder-shown):not([value='']):not([type='file']).primary {
+    color: #000000;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 10px #363535;
+  }
+
+  &.secondary {
+    background-color: #363535;
+  }
+
+  &[type='file'] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+  }
 }
 
 .my-input::placeholder {
   color: #ffffff;
   opacity: 0.6;
-}
-
-/* Состояние с текстом */
-.my-input:not(:placeholder-shown) {
-  background-color: #363535;
-  border-color: #000000;
-  color: #ffffff;
-}
-
-.my-input:hover,
-.my-input:focus-visible {
-  opacity: 0.7;
-}
-
-.my-input:active {
-  opacity: 0.3;
 }
 
 .my-input:disabled {
