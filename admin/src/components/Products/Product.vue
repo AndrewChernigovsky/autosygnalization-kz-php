@@ -157,9 +157,7 @@
       <Tabs
         v-if="product.tabs"
         :tabs="product.tabs"
-        :is-icon-uploading="
-          (tabIndex) => isUploading[`tab-${tabIndex}`]
-        "
+        :is-icon-uploading="(tabIndex) => isUploading[`tab-${tabIndex}`]"
         @update:tabs="updateTabs"
         @trigger-icon-upload="handleIconUpload"
         @delete-icon="handleIconDelete"
@@ -177,7 +175,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import type { ProductI, Tab } from './interfaces/Products';
+import type { ProductI, Tab, DescriptionItem } from './interfaces/Products';
 import Gallery from './Gallery.vue';
 import Tabs from './Tabs.vue';
 
@@ -285,23 +283,39 @@ function updateTabs(newTabs: Tab[]) {
   productToEdit.tabs = newTabs;
 }
 
-function handleIconUpload(tabIndex: number) {
+function handleIconUpload(tabIndex: number, itemIndex: number) {
   const productToEdit = ensureEditing();
-  const key = `tab-${tabIndex}`;
+  if (!productToEdit) return;
+
+  const key = `tab-${tabIndex}-${itemIndex}`;
   isUploading.value[key] = true;
   setTimeout(() => {
-    if (productToEdit && productToEdit.tabs) {
-      productToEdit.tabs[tabIndex]['path-icon'] =
-        '/client/vectors/thermometer.svg'; // Placeholder path
+    if (
+      productToEdit.tabs &&
+      Array.isArray(productToEdit.tabs[tabIndex].description)
+    ) {
+      const desc = productToEdit.tabs[tabIndex]
+        .description as DescriptionItem[];
+      if (desc[itemIndex]) {
+        desc[itemIndex]['path-icon'] = '/client/vectors/thermometer.svg'; // Placeholder
+      }
     }
     isUploading.value[key] = false;
   }, 2000);
 }
 
-function handleIconDelete(tabIndex: number) {
+function handleIconDelete(tabIndex: number, itemIndex: number) {
   const productToEdit = ensureEditing();
-  if (productToEdit && productToEdit.tabs) {
-    productToEdit.tabs[tabIndex]['path-icon'] = '';
+  if (!productToEdit) return;
+
+  if (
+    productToEdit.tabs &&
+    Array.isArray(productToEdit.tabs[tabIndex].description)
+  ) {
+    const desc = productToEdit.tabs[tabIndex].description as DescriptionItem[];
+    if (desc[itemIndex]) {
+      desc[itemIndex]['path-icon'] = '';
+    }
   }
 }
 

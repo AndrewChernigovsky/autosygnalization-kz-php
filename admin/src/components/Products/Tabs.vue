@@ -1,13 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, toRefs } from 'vue';
-import type { Tab } from './interfaces/Products';
+import type { Tab, DescriptionItem } from './interfaces/Products';
 import Loader from '../../UI/Loader.vue';
-
-defineOptions({ name: 'TabsEditor' });
 
 const props = defineProps<{
   tabs: Tab[];
-  isIconUploading: (tabIndex: number) => boolean;
+  isIconUploading: (tabIndex: number, itemIndex: number) => boolean;
 }>();
 
 const { tabs } = toRefs(props);
@@ -17,8 +15,8 @@ const originalTab = ref<Tab | null>(null);
 
 const emit = defineEmits<{
   'update:tabs': [tabs: Tab[]];
-  triggerIconUpload: [tabIndex: number];
-  deleteIcon: [tabIndex: number];
+  triggerIconUpload: [tabIndex: number, itemIndex: number];
+  deleteIcon: [tabIndex: number, itemIndex: number];
 }>();
 
 watch(
@@ -31,23 +29,17 @@ watch(
   { deep: true }
 );
 
-watch(
-  localTabs,
-  (newTabs) => {
-    emit('update:tabs', newTabs);
-  },
-  { deep: true }
-);
+watch(localTabs, (newTabs) => {
+  emit('update:tabs', newTabs);
+});
 
 function addAndEditTab() {
   const newTab: Tab = {
     title: 'Новая вкладка',
-    description: 'Описание',
-    'path-icon': '',
+    description: [],
   };
   localTabs.value.push(newTab);
-  const newIndex = localTabs.value.length - 1;
-  editTab(newIndex);
+  editTab(localTabs.value.length - 1);
 }
 
 function editTab(index: number) {
@@ -63,16 +55,27 @@ function saveTab() {
 function cancelEdit(index: number) {
   if (originalTab.value) {
     localTabs.value[index] = originalTab.value;
-    originalTab.value = null;
   } else {
-    // If it was a new tab that was cancelled, remove it
     localTabs.value.splice(index, 1);
   }
   editingTabIndex.value = null;
+  originalTab.value = null;
 }
 
 function removeTab(index: number) {
   localTabs.value.splice(index, 1);
+}
+
+function addItem(tab: Tab) {
+  tab.description.push({
+    title: 'Новый заголовок',
+    description: 'Новое описание',
+    'path-icon': '',
+  });
+}
+
+function removeItem(tab: Tab, itemIndex: number) {
+  tab.description.splice(itemIndex, 1);
 }
 </script>
 
@@ -80,63 +83,97 @@ function removeTab(index: number) {
   <div class="tabs-editor">
     <h3>Редактор Вкладок</h3>
     <div v-for="(tab, index) in localTabs" :key="index" class="tab-item">
+      <!-- Editing State -->
       <div v-if="editingTabIndex === index">
         <div class="form-group">
-          <label>Заголовок:</label>
+          <label>Заголовок вкладки:</label>
           <input type="text" v-model="tab.title" />
         </div>
-        <div class="form-group">
-          <label>Описание:</label>
-          <textarea v-model="tab.description"></textarea>
-        </div>
-        <div class="form-group">
-          <label>Иконка:</label>
-          <div class="icon-uploader">
-            <div
-              v-if="tab['path-icon']"
-              class="icon-container"
-              @click="
-                !isIconUploading(index) && emit('triggerIconUpload', index)
-              "
-            >
-              <div v-if="isIconUploading(index)" class="loader-overlay">
-                <Loader size="small" />
-              </div>
-              <img
-                :src="tab['path-icon']"
-                alt="icon"
-                :class="{ uploading: isIconUploading(index) }"
-              />
-              <button
-                v-if="!isIconUploading(index)"
-                class="btn-delete-img"
-                @click.stop="emit('deleteIcon', index)"
-              ></button>
+
+        <div class="description-section-editor">
+          <h5>Содержимое вкладки</h5>
+          <div
+            v-for="(item, itemIndex) in tab.description"
+            :key="itemIndex"
+            class="description-item-editor"
+          >
+            <div class="form-group">
+              <label>Заголовок элемента:</label>
+              <input type="text" v-model="item.title" />
             </div>
-            <div
-              v-else
-              class="icon-placeholder"
-              @click="
-                !isIconUploading(index) && emit('triggerIconUpload', index)
-              "
-            >
-              <div v-if="isIconUploading(index)" class="loader-overlay">
-                <Loader size="small" />
+            <div class="form-group">
+              <label>Иконка:</label>
+              <div class="icon-uploader">
+                <div
+                  v-if="item['path-icon']"
+                  class="icon-container"
+                  @click="
+                    !isIconUploading(index, itemIndex) &&
+                      emit('triggerIconUpload', index, itemIndex)
+                  "
+                >
+                  <div
+                    v-if="isIconUploading(index, itemIndex)"
+                    class="loader-overlay"
+                  >
+                    <Loader size="small" />
+                  </div>
+                  <img
+                    :src="item['path-icon']"
+                    alt="icon"
+                    :class="{ uploading: isIconUploading(index, itemIndex) }"
+                  />
+                  <button
+                    v-if="!isIconUploading(index, itemIndex)"
+                    class="btn-delete-img"
+                    @click.stop="emit('deleteIcon', index, itemIndex)"
+                  ></button>
+                </div>
+                <div
+                  v-else
+                  class="icon-placeholder"
+                  @click="
+                    !isIconUploading(index, itemIndex) &&
+                      emit('triggerIconUpload', index, itemIndex)
+                  "
+                >
+                  <div
+                    v-if="isIconUploading(index, itemIndex)"
+                    class="loader-overlay"
+                  >
+                    <Loader size="small" />
+                  </div>
+                  <span v-else class="plus-icon">+</span>
+                </div>
               </div>
-              <span v-else class="plus-icon">+</span>
             </div>
+            <div class="form-group">
+              <label>Описание элемента:</label>
+              <textarea v-model="item.description"></textarea>
+            </div>
+            <button @click="removeItem(tab, itemIndex)" class="btn-delete">
+              Удалить элемент
+            </button>
           </div>
+          <button
+            @click="addItem(tab)"
+            class="btn-add"
+            style="margin-top: 10px"
+          >
+            Добавить элемент
+          </button>
         </div>
+
         <div class="edit-controls">
           <button @click="saveTab" class="btn-save">Сохранить</button>
           <button @click="cancelEdit(index)" class="btn-cancel">Отмена</button>
         </div>
       </div>
+
+      <!-- Display State -->
       <div v-else class="tab-display">
-        <img v-if="tab['path-icon']" :src="tab['path-icon']" class="icon" />
-        <div class="tab-content">
+        <div class="tab-main-content">
           <strong>{{ tab.title }}</strong>
-          <p>{{ tab.description }}</p>
         </div>
         <div class="tab-controls">
           <button @click="editTab(index)" class="btn-edit">
@@ -158,29 +195,29 @@ function removeTab(index: number) {
 }
 .tab-item,
 .tab-display {
-  border: 1px solid #666;
+  border: 1px solid #4a4a4a;
   padding: 15px;
   margin-bottom: 15px;
   border-radius: 5px;
-  background-color: #4a4a4a;
+  background-color: #3e3e3e;
 }
 .tab-display {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 15px;
 }
-.tab-content {
-  flex-grow: 1;
+.description-section-editor {
+  border: 1px solid #555;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 5px;
+  background-color: #4a4a4a;
 }
-.tab-content p {
-  margin: 5px 0 0;
-  color: #ccc;
-}
-.icon {
-  width: 50px;
-  height: 50px;
-  object-fit: cover;
-  border-radius: 4px;
+.description-item-editor {
+  border: 1px dashed #666;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
 }
 .form-group {
   margin-bottom: 10px;
@@ -219,6 +256,7 @@ function removeTab(index: number) {
 .btn-cancel {
   background-color: #6c757d;
 }
+/* Icon uploader styles */
 .icon-uploader {
   display: flex;
 }

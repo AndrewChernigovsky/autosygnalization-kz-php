@@ -1,7 +1,12 @@
+export interface DescriptionItem {
+  title: string;
+  'path-icon'?: string;
+  description: string;
+}
+
 export interface Tab {
   title: string;
-  description: string;
-  'path-icon'?: string;
+  description: DescriptionItem[];
 }
 
 export interface ProductI {
