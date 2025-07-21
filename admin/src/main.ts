@@ -14,11 +14,11 @@ const pinia = createPinia();
 
 // Создаем маршруты
 const routes = [
-  { path: '/', component: Home },
-  { path: '/slider-intro', component: SliderIntro },
-  { path: '/navigation', component: Navigation },
-  { path: '/contacts', component: Contacts },
-  { path: '/ui', component: UI },
+  { path: '/', component: Home, meta: { title: 'Главная' } },
+  { path: '/slider-intro', component: SliderIntro, meta: { title: 'Слайдер' } },
+  { path: '/navigation', component: Navigation, meta: { title: 'Навигация' } },
+  { path: '/contacts', component: Contacts, meta: { title: 'Контакты' } },
+  { path: '/ui', component: UI, meta: { title: 'UI элементы' } },
 ];
 
 // Создаем роутер

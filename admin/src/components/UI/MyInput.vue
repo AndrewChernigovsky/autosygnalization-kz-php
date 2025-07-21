@@ -1,7 +1,8 @@
 <script setup lang="ts">
 interface Props {
   modelValue?: string;
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'file';
+  variant?: 'primary' | 'secondary';
   placeholder?: string;
   disabled?: boolean;
   id?: string;
@@ -17,6 +18,7 @@ const props = withDefaults(defineProps<Props>(), {
   type: 'text',
   placeholder: '',
   disabled: false,
+  variant: 'primary',
 });
 
 const emit = defineEmits<Emits>();
@@ -44,11 +46,18 @@ const handleBlur = (event: FocusEvent) => {
         :value="props.modelValue"
         :placeholder="props.placeholder"
         :disabled="props.disabled"
-        class="my-input"
+        :class="[
+          'my-input',
+          {
+            'my-input-primary': props.variant === 'primary',
+            'my-input-secondary': props.variant === 'secondary',
+          },
+        ]"
         @input="handleInput"
         @focus="handleFocus"
         @blur="handleBlur"
       />
+      <img v-if="props.type === 'file'" src="" alt="" />
     </div>
   </div>
 </template>

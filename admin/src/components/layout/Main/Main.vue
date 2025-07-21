@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import Navigation from '../../Navigation/Navigation.vue';
-import Contact from '../../Contact/Contact.vue';
 </script>
 
 <template>
-  <div class="main">
-    <Navigation />
-    <Contact />
-  </div>
+  <main class="my-main">
+    <router-view />
+  </main>
 </template>
 
 <style scoped>
-.main {
+.my-main {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
+  width: 100%;
 }
 </style>
