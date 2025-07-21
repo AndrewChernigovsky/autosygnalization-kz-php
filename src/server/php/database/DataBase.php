@@ -140,7 +140,7 @@ class DataBase
     }
   }
 
-  protected function getPdo(): \PDO
+  public function getPdo(): \PDO
   {
     if (!$this->pdo) {
       $this->connect();

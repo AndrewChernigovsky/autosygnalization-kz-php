@@ -5,11 +5,15 @@ import Menu from './UI/Menu.vue';
 
 const isSidebarOpen = ref(false);
 const iframeStore = useIframeStore();
+const hasSidebarBeenOpened = ref(false);
 
 const iframeKey = computed(() => iframeStore.refreshKey);
 
 function toggleSidebar() {
   isSidebarOpen.value = !isSidebarOpen.value;
+  if (isSidebarOpen.value && !hasSidebarBeenOpened.value) {
+    hasSidebarBeenOpened.value = true;
+  }
 }
 </script>
 
@@ -22,6 +26,7 @@ function toggleSidebar() {
       </button>
       <div class="sidebar-content">
         <iframe
+          v-if="hasSidebarBeenOpened"
           :key="iframeKey"
           src="http://localhost:3000/"
           width="100%"

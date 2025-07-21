@@ -1,47 +1,46 @@
 <?php
-
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use LAYOUT\Header;
 use LAYOUT\Footer;
 use LAYOUT\Head;
+use HELPERS\Products AS ProductsHelper;
+use Components\CurrencyRuble;
+use SECTIONS\MainBanner;
+use SECTIONS\ProductCards;
+use SECTIONS\Contacts;
+use SECTIONS\Feedback;
+use SECTIONS\Services;
+use SECTIONS\Partners;
+use SECTIONS\About;
+use SECTIONS\Map;
 use DATA\Products;
-use COMPONENTS\ModalCart;
-use COMPONENTS\ModalForm;
-
-use function AUTH\SESSIONS\initSession;
-use function FUNCTIONS\getProductCardImage;
-use function FUNCTIONS\getProductCardDescription;
+use function FUNCTIONS\main;
+use function FUNCTIONS\get_header_and_styles;
+use function FUNCTIONS\get_footer;
+use function HELPERS\get_products_by_category;
+use function HELPERS\get_product_by_id;
+use function SECTIONS\render_breadcrumbs;
+use function HELPERS\getAutoContent;
+use function HELPERS\getProductCardDescription;
 use function SECTIONS\cardTabsSection;
 use function FUNCTIONS\renderPhoneButton;
+use DATA\TabsAdditionalData;
+
+use function AUTH\SESSIONS\initSession;
 
 initSession();
-
-$category = isset($_GET['category']) ? $_GET['category'] : null;
-$id = isset($_GET['id']) ? $_GET['id'] : null;
-
 $products = (new Products())->getData();
+$helper = new ProductsHelper($products);
+list($category, $id) = $helper->extractCategoryAndId();
 
 function formatPriceWithSpaces($price)
 {
-  return number_format((int) $price, 0, '', ' ');
-}
-function getAutoContent($products, $category, $id)
-{
-  $result = "";
-  switch ($category) {
-    case 'keychain':
-    case 'remote-controls':
-    case 'park-systems':
-      $result .= getProductCardImage($products, $id);
-      return $result;
-    default:
-      return 'Контент не найден.';
-  }
+    return number_format($price, 0, '', ' ');
 }
 
-$contentImage = getAutoContent($products, $category, $id);
-$contentDescription = getProductCardDescription($products, $id);
+$tabsData = new TabsAdditionalData();
+$tabs = $tabsData->getTabsByProductId($id);
 
 $title = "$id | Auto Security";
 $head = new Head($title, [], []);
@@ -58,63 +57,62 @@ echo $head->setHead();
   <?= $header->getHeader(); ?>
   <main class="main">
     <section class="card-more">
-      <?= $contentImage; ?>
-      <?= $contentDescription; ?>
-      <div class="product-card__wrapper">
-        <div class="product-card__container">
-          <!-- <p class="product-card__text">Доставка:</p>
-          <a class="product-card__link" href="#"
-            style="background-image: url(<?= $path . '/client/vectors/link-icon.svg'; ?>);">о доставке и оплате</a> -->
+      <?= getAutoContent($products, $category, $id); ?>
+      <?= getProductCardDescription($products, $id); ?>
+      
+      <?php if (!empty($tabs)): ?>
+        <div class="tabs-container">
+            <div class="tabs-buttons">
+                <?php foreach ($tabs as $index => $tab): ?>
+                    <button class="tab-button <?= $index === 0 ? 'active' : '' ?>" data-tab-target="#tab-<?= $index ?>">
+                        <?= htmlspecialchars($tab['title']) ?>
+                    </button>
+                <?php endforeach; ?>
+            </div>
+            <div class="tabs-content">
+                <?php foreach ($tabs as $index => $tab): ?>
+                    <div id="tab-<?= $index ?>" class="tab-pane <?= $index === 0 ? 'active' : '' ?>">
+                        <?php 
+                            $contentData = json_decode($tab['content'], true);
+                            if (json_last_error() === JSON_ERROR_NONE && is_array($contentData)) {
+                                echo '<ul>';
+                                foreach($contentData['items'] ?? [] as $item) {
+                                    echo '<li><strong>' . htmlspecialchars($item['title']) . ':</strong> ' . htmlspecialchars($item['description']) . '</li>';
+                                }
+                                echo '</ul>';
+                            } else {
+                                echo $tab['content'];
+                            }
+                        ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
-        <a class="product-card__link product-card__link--mod" href="#">Наличие товара необходимо уточнить у
-          менеджера.</a>
-      </div>
-      <?php if (isset($products) && !empty($products)): ?>
-        <?php
-        $product = null;
-        foreach ($products['category'] as $category) {
-          foreach ($category as $item) {
-            if ($item['id'] === $id) {
-              $product = $item;
-              break 2;
-            }
-          }
-        }
-        $price = formatPriceWithSpaces($product['price']);
-        if ($product !== null): ?>
-          <div class="card-more__wrapper">
-            <div class="card-more__button-cost-wrapper">
-              <p>Количество</p>
-              <div class="card-more__button-cost" data-id="<?php echo htmlspecialchars($product['id']); ?>"
-                data-cost="<?= $product['price'] ?>"></div>
-            </div>
-            <div class="card-more__text">
-              <p class="card-more__text card-more__text--info">Цена за материал указана без установки.</p>
-              <p class="card-more__text--cost">
-                <span>Итоговая стоимость</span>
-                <b>
-                  <span class="cost-total" id="cost-total"></span>
-                </b>
-              </p>
-            </div>
-          </div>
-          <button type="button" class="button y-button-primary card-more__button-cart"
-            data-id="<?php echo htmlspecialchars($product['id']); ?>" data-cost="<?= $product['price'] ?>">В
-            корзину</button>
-        <?php endif; ?>
       <?php endif; ?>
+
     </section>
-    <?= cardTabsSection($_GET['id']) ?>
-
   </main>
-  <?php
-  echo (new Footer())->getFooter();
-  echo (new ModalCart())->render();
-  echo (new ModalForm())->render();
-  echo renderPhoneButton();
 
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const tabsButtons = document.querySelectorAll('.tab-button');
+        const tabsPanes = document.querySelectorAll('.tab-pane');
 
-  ?>
+        tabsButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const target = document.querySelector(button.dataset.tabTarget);
+
+                tabsButtons.forEach(btn => btn.classList.remove('active'));
+                tabsPanes.forEach(pane => pane.classList.remove('active'));
+
+                button.classList.add('active');
+                if(target) target.classList.add('active');
+            });
+        });
+    });
+  </script>
+
+  <?= (new Footer())->getFooter(); ?>
 </body>
 
 </html>

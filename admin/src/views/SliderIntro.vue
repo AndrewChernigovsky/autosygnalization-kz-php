@@ -19,6 +19,9 @@ import { useDnD } from '../components/SliderIntro/functions/useDnD';
 import { useVideo } from '../components/SliderIntro/functions/useVideo';
 import { usePoster } from '../components/SliderIntro/functions/usePoster';
 
+const isLoading = ref(true);
+const isAddingSlide = ref(false);
+
 const {
   items,
   fetchSlides,
@@ -72,6 +75,27 @@ async function handlePosterDeleted(slideId: number | undefined) {
   await posterDeleter(slideId);
 }
 
+async function handleAddSlide() {
+  isAddingSlide.value = true;
+  try {
+    await addSlide();
+  } finally {
+    isAddingSlide.value = false;
+  }
+}
+
+function disableSwiper() {
+  if (swiperInstance.value) {
+    swiperInstance.value.allowTouchMove = false;
+  }
+}
+
+function enableSwiper() {
+  if (swiperInstance.value) {
+    swiperInstance.value.allowTouchMove = true;
+  }
+}
+
 function onSwiper(swiper: any) {
   swiperInstance.value = swiper;
 }
@@ -85,32 +109,43 @@ function handleSlideChange(swiper: any) {
 }
 
 onMounted(async () => {
-  await fetchSlides();
-  if (items.value.length > 0) {
-    const slide = items.value[0];
-    if (slide) {
-      videoPreview.value = slide.video_path || null;
-    }
-    items.value.forEach((item) => {
-      if (item.id && item.poster_path) {
-        posterFileNames.value[item.id] =
-          item.poster_path.split('/').pop() || null;
+  try {
+    await fetchSlides();
+    if (items.value.length > 0) {
+      const slide = items.value[0];
+      if (slide) {
+        videoPreview.value = slide.video_path || null;
       }
-    });
+      items.value.forEach((item) => {
+        if (item.id && item.poster_path) {
+          posterFileNames.value[item.id] =
+            item.poster_path.split('/').pop() || null;
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Ошибка загрузки слайдов:', error);
+  } finally {
+    isLoading.value = false;
   }
 });
 </script>
 
 <template>
-  <div class="slider-intro">
+  <div v-if="isLoading || isAddingSlide" class="loader-container">
+    <div class="loader"></div>
+    <p>{{ isLoading ? 'Загрузка данных...' : 'Добавление слайда...' }}</p>
+  </div>
+  <div v-else class="slider-intro">
     <h1>Главный слайдер на главной странице</h1>
 
     <h2>Порядок слайдов</h2>
     <Container @drop="onDrop">
       <Draggable v-for="item in items" :key="item.id">
         <div class="slide-item">
+          <span class="slide-position">{{ item.position }}</span>
           <span class="drag-handle">☰</span>
-          <span>{{ item.title }} - Позиция: {{ item.position }}</span>
+          <span>{{ item.title }} </span>
         </div>
       </Draggable>
     </Container>
@@ -128,125 +163,129 @@ onMounted(async () => {
       @swiper="onSwiper"
     >
       <SwiperSlide v-for="(item, index) in items" :key="item.id || index">
-        <div class="video-upload">
-          <label>Загрузить видео для слайда {{ index + 1 }}:</label>
-          <div class="preview-video">
-            <div
-              v-if="videoPreview && currentSlideIndex === index"
-              class="video-preview"
-            >
-              <video
-                :src="videoPreview"
-                controls
-                width="300"
-                height="auto"
-              ></video>
-              <DeleteButton
-                :video-id="item.id"
-                @deleted="handleVideoDeleted"
-                @status-update="handleStatusUpdate"
-              />
-            </div>
-            <div v-else-if="item.video_path" class="video-preview">
-              <video
-                :src="item.video_path"
-                controls
-                width="300"
-                height="auto"
-              ></video>
-              <DeleteButton
-                :video-id="item.id"
-                @deleted="handleVideoDeleted"
-                @status-update="handleStatusUpdate"
-              />
-            </div>
-            <div v-else class="no-video">
-              <div class="no-video-placeholder"></div>
-            </div>
-          </div>
-          <UploadButton
-            :ref="
-              (el) => {
-                if (el) uploadButtonRef[index] = el;
-              }
-            "
-            :slide-id="item.id"
-            :title="item.title"
-            :advantages="item.advantages"
-            :button-text="item.button_text"
-            :button-link="item.link"
-            :form-data="formData"
-            @upload-success="handleUploadSuccess"
-            @status-update="handleStatusUpdate"
-            @progress-update="handleProgressUpdate"
-            @video-preview="handleVideoPreview"
-          />
-          <div class="upload-status">
-            <div
-              class="progress-bar"
-              v-if="uploadProgress > 0 && uploadProgress < 100"
-            >
+        <div class="image-wrapper">
+          <div class="video-upload">
+            <label>Загрузить видео для слайда:</label>
+            <div class="preview-video">
               <div
-                class="progress"
-                :style="{ width: uploadProgress + '%' }"
-              ></div>
+                v-if="videoPreview && currentSlideIndex === index"
+                class="video-preview"
+              >
+                <video
+                  :src="videoPreview"
+                  controls
+                  width="300"
+                  height="auto"
+                ></video>
+                <DeleteButton
+                  :video-id="item.id"
+                  @deleted="handleVideoDeleted"
+                  @status-update="handleStatusUpdate"
+                />
+              </div>
+              <div v-else-if="item.video_path" class="video-preview">
+                <video
+                  :src="item.video_path"
+                  controls
+                  width="300"
+                  height="auto"
+                ></video>
+                <DeleteButton
+                  :video-id="item.id"
+                  @deleted="handleVideoDeleted"
+                  @status-update="handleStatusUpdate"
+                />
+              </div>
+              <div v-else class="no-video">
+                <div class="no-video-placeholder"></div>
+              </div>
+            </div>
+            <UploadButton
+              :ref="
+                (el) => {
+                  if (el) uploadButtonRef[index] = el;
+                }
+              "
+              :slide-id="item.id"
+              :title="item.title"
+              :advantages="item.advantages"
+              :button-text="item.button_text"
+              :button-link="item.button_link"
+              :form-data="formData"
+              @upload-success="handleUploadSuccess"
+              @status-update="handleStatusUpdate"
+              @progress-update="handleProgressUpdate"
+              @video-preview="handleVideoPreview"
+            />
+            <div class="upload-status">
+              <div
+                class="progress-bar"
+                v-if="uploadProgress > 0 && uploadProgress < 100"
+              >
+                <div
+                  class="progress"
+                  :style="{ width: uploadProgress + '%' }"
+                ></div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="poster-upload">
-          <label>Постер для слайда {{ index + 1 }}:</label>
-          <div class="preview-poster">
-            <img
-              v-if="item.poster_path"
-              :src="item.poster_path"
-              alt="Постер"
-              width="300"
-            />
-            <div v-else class="no-poster-placeholder"></div>
-          </div>
-          <span
-            v-if="item.id !== undefined && posterFileNames[item.id]"
-            class="file-name"
-            >{{ posterFileNames[item.id] }}</span
-          >
-          <div class="wrapper-upload">
-            <label class="upload-label">
-              <span class="upload-label-text">Выбрать постер</span>
-              <input
-                type="file"
-                accept="image/*"
-                @change="handlePosterUpload($event, item.id)"
-                class="upload-input"
+          <div class="poster-upload">
+            <label>Постер для слайда:</label>
+            <div class="preview-poster">
+              <img
+                v-if="item.poster_path"
+                :src="item.poster_path"
+                alt="Постер"
+                width="300"
               />
-            </label>
-
-            <button
-              v-if="item.poster_path"
-              @click="handlePosterDeleted(item.id)"
-              class="remove-slide-btn poster-delete-btn"
-              :disabled="item.id !== undefined && isPosterDeleting[item.id]"
+              <div v-else class="no-poster-placeholder"></div>
+            </div>
+            <span
+              v-if="item.id !== undefined && posterFileNames[item.id]"
+              class="file-name"
+              >{{ posterFileNames[item.id] }}</span
             >
-              {{
-                item.id !== undefined && isPosterDeleting[item.id]
-                  ? 'Удаление...'
-                  : 'Удалить постер'
-              }}
-            </button>
+            <div class="wrapper-upload">
+              <label class="upload-label">
+                <span class="upload-label-text">Выбрать постер</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  @change="handlePosterUpload($event, item.id)"
+                  class="upload-input"
+                />
+              </label>
+
+              <button
+                v-if="item.poster_path"
+                @click="handlePosterDeleted(item.id)"
+                class="remove-slide-btn poster-delete-btn"
+                :disabled="item.id !== undefined && isPosterDeleting[item.id]"
+              >
+                {{
+                  item.id !== undefined && isPosterDeleting[item.id]
+                    ? 'Удаление...'
+                    : 'Удалить постер'
+                }}
+              </button>
+            </div>
           </div>
         </div>
 
         <div class="title-input">
-          <label>Заголовок слайда {{ index + 1 }}:</label>
+          <label>Заголовок слайда:</label>
           <input
             type="text"
             v-model="item.title"
             placeholder="Введите заголовок"
+            @focus="disableSwiper"
+            @blur="enableSwiper"
           />
         </div>
 
         <div class="advantages-list">
-          <h3>Преимущества слайда {{ index + 1 }}:</h3>
+          <h3>Преимущества слайда:</h3>
           <div
             v-for="(advantage, advIndex) in item.advantages"
             :key="advIndex"
@@ -256,6 +295,8 @@ onMounted(async () => {
               type="text"
               v-model="item.advantages[advIndex]"
               placeholder="Введите преимущество"
+              @focus="disableSwiper"
+              @blur="enableSwiper"
             />
             <button @click="removeAdvantage(item, advIndex)" class="remove-btn">
               Удалить
@@ -273,14 +314,18 @@ onMounted(async () => {
               type="text"
               v-model="item.button_text"
               placeholder="Введите текст кнопки"
+              @focus="disableSwiper"
+              @blur="enableSwiper"
             />
           </div>
           <div>
             <label>Ссылка кнопки:</label>
             <input
               type="text"
-              v-model="item.link"
+              v-model="item.button_link"
               placeholder="Введите ссылку"
+              @focus="disableSwiper"
+              @blur="enableSwiper"
             />
           </div>
         </div>
@@ -291,23 +336,52 @@ onMounted(async () => {
             class="send-btn"
             :disabled="!item.id"
           >
-            Обновить \ Сохранить
+            Обновить \ Сохранить слайд
           </button>
           <button
             @click="removeSlide(item.id, index)"
             class="remove-slide-btn"
             :disabled="items.length === 1"
           >
-            Удалить
+            Удалить слайд
           </button>
         </div>
       </SwiperSlide>
     </Swiper>
-    <button @click="addSlide" class="add-slide-btn">Добавить слайд</button>
+    <button @click="handleAddSlide" class="add-slide-btn">
+      Добавить слайд
+    </button>
   </div>
 </template>
 
 <style scoped lang="scss">
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+.loader {
+  border: 8px solid #f3f3f3;
+  border-top: 8px solid #3498db;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 .slider-intro {
   padding: 20px;
   max-width: 800px;
@@ -324,6 +398,11 @@ onMounted(async () => {
   border: 1px solid #ccc;
   margin-bottom: 5px;
   cursor: grab;
+
+  .slide-position {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
 }
 
 .drag-handle {
@@ -405,6 +484,10 @@ onMounted(async () => {
   display: flex;
   gap: 10px;
   margin-bottom: 10px;
+
+  input {
+    text-transform: uppercase;
+  }
 }
 
 .send-btn,
@@ -518,7 +601,7 @@ input {
 label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  // font-weight: bold;
 }
 
 .swiper-pagination {
@@ -540,5 +623,13 @@ label {
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.image-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
 }
 </style>
