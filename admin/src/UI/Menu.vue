@@ -27,6 +27,11 @@
             >Контакты</router-link
           >
         </li>
+        <li class="menu__item">
+          <router-link to="/ui" class="menu__link" @click="closeMenu"
+            >UI</router-link
+          >
+        </li>
       </ul>
     </div>
   </div>
