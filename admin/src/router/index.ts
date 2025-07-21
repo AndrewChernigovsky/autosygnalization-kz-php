@@ -4,6 +4,7 @@ import SliderIntro from '../views/SliderIntro.vue';
 import Navigation from '../views/Navigation.vue';
 import Contacts from '../views/Contacts.vue';
 import Products from '../views/Products.vue';
+import Services from '../views/Services.vue';
 
 export const routes = [
   {
@@ -30,6 +31,11 @@ export const routes = [
     path: '/products',
     name: 'Продукты',
     component: Products,
+  },
+  {
+    path: '/services',
+    name: 'Услуги',
+    component: Services,
   },
 ];
 
