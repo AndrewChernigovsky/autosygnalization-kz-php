@@ -3,11 +3,10 @@
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use DATABASE\Database;
-use DATA\TabsAdditionalData;
 
 header("Access-control-allow-origin: http://localhost:5173");
 header("Access-control-allow-headers: Content-Type, Authorization");
-header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
+header('Access-Control-Allow-Methods: POST, OPTIONS, PUT');
 
 if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
   http_response_code(200);
@@ -17,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 header('Content-Type: application/json');
 
 $dbConnection = Database::getConnection();
-$tabsData = new TabsAdditionalData();
+$pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -27,68 +26,71 @@ if (!isset($data['id'])) {
   exit;
 }
 
+$productId = $data['id'];
+
 try {
-  $stmt = $dbConnection->prepare(
-    "UPDATE Products SET 
-            title = :title, 
-            model = :model,
-            description = :description, 
-            price = :price, 
-            is_popular = :is_popular,
-            gallery = :gallery,
-            link = :link,
-            category = :category_key,
-            is_special = :is_special,
-            `functions` = :functions,
-            `options` = :options,
-            `options_filters` = :options_filters,
-            `autosygnals` = :autosygnals
-        WHERE id = :id"
-  );
+  $pdo->beginTransaction();
+
+  // 1. Update Products table with all fields
+  $productStmt = $pdo->prepare("UPDATE Products SET 
+        model = :model, 
+        title = :title, 
+        description = :description, 
+        price = :price, 
+        is_popular = :is_popular, 
+        is_special = :is_special, 
+        gallery = :gallery, 
+        category = :category_key,
+        link = :link,
+        functions = :functions, 
+        options = :options, 
+        options_filters = :options_filters, 
+        autosygnals = :autosygnals
+        WHERE id = :id");
 
   $link = "/product?category={$data['category_key']}&id={$data['id']}";
 
-  $stmt->bindParam(':id', $data['id']);
-  $stmt->bindParam(':title', $data['title']);
-  $stmt->bindParam(':model', $data['model']);
-  $stmt->bindParam(':description', $data['description']);
-  $stmt->bindParam(':price', $data['price']);
-  $stmt->bindParam(':link', $link);
-  $stmt->bindParam(':category_key', $data['category_key']);
+  $productData = [
+    ':id' => $productId,
+    ':model' => $data['model'],
+    ':title' => $data['title'],
+    ':description' => $data['description'],
+    ':price' => $data['price'],
+    ':is_popular' => !empty($data['is_popular']) ? 1 : 0,
+    ':is_special' => !empty($data['is_special']) ? 1 : 0,
+    ':gallery' => json_encode($data['gallery'] ?? []),
+    ':category_key' => $data['category_key'],
+    ':link' => $link,
+    ':functions' => json_encode($data['functions'] ?? []),
+    ':options' => json_encode($data['options'] ?? []),
+    ':options_filters' => json_encode($data['options-filters'] ?? []),
+    ':autosygnals' => json_encode($data['autosygnals'] ?? []),
+  ];
 
-  $is_popular = !empty($data['is_popular']) ? 1 : 0;
-  $stmt->bindParam(':is_popular', $is_popular);
+  $productStmt->execute($productData);
 
-  $is_special = !empty($data['special']) ? 1 : 0;
-  $stmt->bindParam(':is_special', $is_special);
-
-  $galleryJson = json_encode($data['gallery'] ?? []);
-  $stmt->bindParam(':gallery', $galleryJson);
-
-  $functionsJson = json_encode($data['functions'] ?? []);
-  $stmt->bindParam(':functions', $functionsJson);
-
-  $optionsJson = json_encode($data['options'] ?? []);
-  $stmt->bindParam(':options', $optionsJson);
-
-  $optionsFiltersJson = json_encode($data['options-filters'] ?? []);
-  $stmt->bindParam(':options_filters', $optionsFiltersJson);
-
-  $autosygnalsJson = json_encode($data['autosygnals'] ?? []);
-  $stmt->bindParam(':autosygnals', $autosygnalsJson);
-
-  $stmt->execute();
-
+  // 2. Update or Insert into TabsAdditionalProductsData table
   if (isset($data['tabs'])) {
-    $tabsUpdated = $tabsData->updateTabsForProduct($data['id'], $data['tabs']);
-    if (!$tabsUpdated) {
-      throw new Exception('Failed to update product tabs.');
-    }
+    $tabsJson = json_encode($data['tabs']);
+    $tabsStmt = $pdo->prepare("
+            INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 
+            VALUES (:product_id, :tabs_data)
+            ON DUPLICATE KEY UPDATE tabs_data = :tabs_data
+        ");
+    $tabsStmt->execute([
+      ':product_id' => $productId,
+      ':tabs_data' => $tabsJson
+    ]);
   }
 
-  echo json_encode(['message' => 'Product updated successfully.', 'link' => $link]);
+  $pdo->commit();
 
+  http_response_code(200);
+  echo json_encode(['message' => 'Product updated successfully.']);
 } catch (Exception $e) {
+  if ($pdo && $pdo->inTransaction()) {
+    $pdo->rollBack();
+  }
   http_response_code(500);
-  echo json_encode(['message' => 'Database error: ' . $e->getMessage()]);
+  echo json_encode(['message' => 'Failed to update product: ' . $e->getMessage()]);
 }

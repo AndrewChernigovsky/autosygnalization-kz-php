@@ -3,9 +3,14 @@ import { ref, watch, toRefs } from 'vue';
 import type { Tab, DescriptionItem } from './interfaces/Products';
 import Loader from '../../UI/Loader.vue';
 
+defineOptions({
+  name: 'Tabs',
+});
+
 const props = defineProps<{
   tabs: Tab[];
   isIconUploading: (tabIndex: number, itemIndex: number) => boolean;
+  serverBaseUrl: string;
 }>();
 
 const { tabs } = toRefs(props);
@@ -77,6 +82,14 @@ function addItem(tab: Tab) {
 function removeItem(tab: Tab, itemIndex: number) {
   tab.description.splice(itemIndex, 1);
 }
+
+function getFullIconPath(path: string | undefined): string {
+  if (!path) return '';
+  if (path.startsWith('blob:') || path.startsWith('http')) {
+    return path;
+  }
+  return `${props.serverBaseUrl}${path}`;
+}
 </script>
 
 <template>
@@ -104,6 +117,7 @@ function removeItem(tab: Tab, itemIndex: number) {
             <div class="form-group">
               <label>Иконка:</label>
               <div class="icon-uploader">
+                <!-- Case 1: Icon exists (show image and potential replacement loader) -->
                 <div
                   v-if="item['path-icon']"
                   class="icon-container"
@@ -119,7 +133,7 @@ function removeItem(tab: Tab, itemIndex: number) {
                     <Loader size="small" />
                   </div>
                   <img
-                    :src="item['path-icon']"
+                    :src="getFullIconPath(item['path-icon'])"
                     alt="icon"
                     :class="{ uploading: isIconUploading(index, itemIndex) }"
                   />
@@ -129,22 +143,25 @@ function removeItem(tab: Tab, itemIndex: number) {
                     @click.stop="emit('deleteIcon', index, itemIndex)"
                   ></button>
                 </div>
-                <div
-                  v-else
-                  class="icon-placeholder"
-                  @click="
-                    !isIconUploading(index, itemIndex) &&
-                      emit('triggerIconUpload', index, itemIndex)
-                  "
-                >
+
+                <!-- Case 2: No icon exists -->
+                <template v-else>
+                  <!-- Show loader if uploading for this item -->
                   <div
                     v-if="isIconUploading(index, itemIndex)"
-                    class="loader-overlay"
+                    class="icon-placeholder"
                   >
                     <Loader size="small" />
                   </div>
-                  <span v-else class="plus-icon">+</span>
-                </div>
+                  <!-- Show '+' placeholder if not uploading -->
+                  <div
+                    v-else
+                    class="icon-placeholder"
+                    @click="emit('triggerIconUpload', index, itemIndex)"
+                  >
+                    <span class="plus-icon">+</span>
+                  </div>
+                </template>
               </div>
             </div>
             <div class="form-group">

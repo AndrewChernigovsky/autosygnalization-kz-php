@@ -1,176 +1,197 @@
 <template>
-  <details
-    class="product-item"
-    :open="product.is_new"
-    @toggle="(event) => emit('handle-toggle', event, product)"
-  >
-    <summary>
-      <strong>{{ product.title }}</strong>
-    </summary>
-    <div class="product-editor">
-      <div class="form-group" @click="startEditing(product, 'model')">
-        <label>Модель:</label>
-        <input
-          v-if="editingProduct?.id === product.id && fieldToEdit === 'model'"
-          v-model="editingProduct.model"
-          type="text"
-        />
-        <span v-else>{{ product.model }}</span>
-      </div>
+  <div>
+    <details
+      class="product-item"
+      :open="product.is_new"
+      @toggle="(event) => emit('handle-toggle', event, product)"
+    >
+      <summary>
+        <strong>{{ product.title }}</strong>
+      </summary>
+      <div class="product-editor">
+        <div class="form-group" @click="startEditing(product, 'model')">
+          <label>Модель:</label>
+          <input
+            v-if="editingProduct?.id === product.id && fieldToEdit === 'model'"
+            v-model="editingProduct.model"
+            type="text"
+          />
+          <span v-else>{{ product.model }}</span>
+        </div>
 
-      <div class="form-group" @click="startEditing(product, 'title')">
-        <label>Заголовок:</label>
-        <input
-          v-if="editingProduct?.id === product.id && fieldToEdit === 'title'"
-          v-model="editingProduct.title"
-          type="text"
-        />
-        <span v-else>{{ product.title }}</span>
-      </div>
+        <div class="form-group" @click="startEditing(product, 'title')">
+          <label>Заголовок:</label>
+          <input
+            v-if="editingProduct?.id === product.id && fieldToEdit === 'title'"
+            v-model="editingProduct.title"
+            type="text"
+          />
+          <span v-else>{{ product.title }}</span>
+        </div>
 
-      <div class="form-group" @click="startEditing(product, 'description')">
-        <label>Описание:</label>
-        <textarea
-          v-if="
-            editingProduct?.id === product.id && fieldToEdit === 'description'
-          "
-          v-model="editingProduct.description"
-        ></textarea>
-        <span v-else>{{ product.description }}</span>
-      </div>
-
-      <div class="form-group" @click="startEditing(product, 'price')">
-        <label>Цена:</label>
-        <input
-          v-if="editingProduct?.id === product.id && fieldToEdit === 'price'"
-          v-model="editingProduct.price"
-          type="number"
-        />
-        <span v-else>{{ product.price }}</span>
-      </div>
-
-      <div class="form-group-checkbox">
-        <label :for="'popular-' + product.id">Популярный:</label>
-        <input
-          type="checkbox"
-          :id="'popular-' + product.id"
-          :checked="
-            editingProduct && editingProduct.id === product.id
-              ? editingProduct.is_popular
-              : product.is_popular
-          "
-          @change="handleCheckboxChange('is_popular')"
-        />
-      </div>
-
-      <div class="form-group-checkbox">
-        <label>Специальный:</label>
-        <input
-          type="checkbox"
-          :checked="
-            editingProduct && editingProduct.id === product.id
-              ? editingProduct.is_special
-              : product.is_special
-          "
-          @change="handleCheckboxChange('is_special')"
-        />
-      </div>
-
-      <Gallery
-        :product="product"
-        :is-image-uploading="isImageUploading"
-        @delete-image="(p, i) => emit('delete-image', p, i)"
-        @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
-      />
-
-      <div class="form-group" @click="startEditing(product, 'category_key')">
-        <label>Категория:</label>
-        <select
-          v-if="
-            editingProduct?.id === product.id && fieldToEdit === 'category_key'
-          "
-          v-model="editingCategoryKey"
-          @click.stop
-        >
-          <option
-            v-for="category in allCategories"
-            :value="category.key"
-            :key="category.key"
-          >
-            {{ category.name }}
-          </option>
-        </select>
-        <span v-else>{{ getCategoryName(product.category_key) }}</span>
-      </div>
-
-      <div class="array-fields-editor">
-        <div class="form-group" @click="startEditing(product, 'functions')">
-          <label>Функции (через запятую):</label>
+        <div class="form-group" @click="startEditing(product, 'description')">
+          <label>Описание:</label>
           <textarea
             v-if="
-              editingProduct?.id === product.id && fieldToEdit === 'functions'
+              editingProduct?.id === product.id && fieldToEdit === 'description'
             "
-            :value="getArrayAsCST(editingProduct.functions)"
-            @input="updateArrayField($event, 'functions')"
+            v-model="editingProduct.description"
           ></textarea>
-          <span v-else>{{ getArrayAsCST(product.functions) }}</span>
+          <span v-else>{{ product.description }}</span>
         </div>
-        <div class="form-group" @click="startEditing(product, 'options')">
-          <label>Опции (через запятую):</label>
-          <textarea
-            v-if="
-              editingProduct?.id === product.id && fieldToEdit === 'options'
+
+        <div class="form-group" @click="startEditing(product, 'price')">
+          <label>Цена:</label>
+          <input
+            v-if="editingProduct?.id === product.id && fieldToEdit === 'price'"
+            v-model="editingProduct.price"
+            type="number"
+          />
+          <span v-else>{{ product.price }}</span>
+        </div>
+
+        <div class="form-group-checkbox">
+          <label :for="'popular-' + product.id">Популярный:</label>
+          <input
+            type="checkbox"
+            :id="'popular-' + product.id"
+            :checked="
+              editingProduct && editingProduct.id === product.id
+                ? editingProduct.is_popular
+                : product.is_popular
             "
-            :value="getArrayAsCST(editingProduct.options)"
-            @input="updateArrayField($event, 'options')"
-          ></textarea>
-          <span v-else>{{ getArrayAsCST(product.options) }}</span>
+            @change="handleCheckboxChange('is_popular')"
+          />
         </div>
-        <div
-          class="form-group"
-          @click="startEditing(product, 'options-filters')"
-        >
-          <label>Опции-фильтры (через запятую):</label>
-          <textarea
+
+        <div class="form-group-checkbox">
+          <label>Специальный:</label>
+          <input
+            type="checkbox"
+            :checked="
+              editingProduct && editingProduct.id === product.id
+                ? editingProduct.is_special
+                : product.is_special
+            "
+            @change="handleCheckboxChange('is_special')"
+          />
+        </div>
+
+        <Gallery
+          :product="product"
+          :is-image-uploading="isImageUploading"
+          @delete-image="(p, i) => emit('delete-image', p, i)"
+          @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
+        />
+
+        <div class="form-group" @click="startEditing(product, 'category_key')">
+          <label>Категория:</label>
+          <select
             v-if="
               editingProduct?.id === product.id &&
-              fieldToEdit === 'options-filters'
+              fieldToEdit === 'category_key'
             "
-            :value="getArrayAsCST(editingProduct['options-filters'])"
-            @input="updateArrayField($event, 'options-filters')"
-          ></textarea>
-          <span v-else>{{ getArrayAsCST(product['options-filters']) }}</span>
+            v-model="editingCategoryKey"
+            @click.stop
+          >
+            <option
+              v-for="category in allCategories"
+              :value="category.key"
+              :key="category.key"
+            >
+              {{ category.name }}
+            </option>
+          </select>
+          <span v-else>{{ getCategoryName(product.category_key) }}</span>
         </div>
-        <div class="form-group" @click="startEditing(product, 'autosygnals')">
-          <label>Раздел для автосигнализаций (через запятую):</label>
-          <textarea
-            v-if="
-              editingProduct?.id === product.id && fieldToEdit === 'autosygnals'
-            "
-            :value="getArrayAsCST(editingProduct.autosygnals)"
-            @input="updateArrayField($event, 'autosygnals')"
-          ></textarea>
-          <span v-else>{{ getArrayAsCST(product.autosygnals) }}</span>
+
+        <div class="array-fields-editor">
+          <div class="form-group" @click="startEditing(product, 'functions')">
+            <label>Функции (через запятую):</label>
+            <textarea
+              v-if="
+                editingProduct?.id === product.id && fieldToEdit === 'functions'
+              "
+              :value="getArrayAsCST(editingProduct.functions)"
+              @input="updateArrayField($event, 'functions')"
+            ></textarea>
+            <span v-else>{{ getArrayAsCST(product.functions) }}</span>
+          </div>
+          <div class="form-group" @click="startEditing(product, 'options')">
+            <label>Опции (через запятую):</label>
+            <textarea
+              v-if="
+                editingProduct?.id === product.id && fieldToEdit === 'options'
+              "
+              :value="getArrayAsCST(editingProduct.options)"
+              @input="updateArrayField($event, 'options')"
+            ></textarea>
+            <span v-else>{{ getArrayAsCST(product.options) }}</span>
+          </div>
+          <div
+            class="form-group"
+            @click="startEditing(product, 'options-filters')"
+          >
+            <label>Опции-фильтры (через запятую):</label>
+            <textarea
+              v-if="
+                editingProduct?.id === product.id &&
+                fieldToEdit === 'options-filters'
+              "
+              :value="getArrayAsCST(editingProduct['options-filters'])"
+              @input="updateArrayField($event, 'options-filters')"
+            ></textarea>
+            <span v-else>{{ getArrayAsCST(product['options-filters']) }}</span>
+          </div>
+          <div class="form-group" @click="startEditing(product, 'autosygnals')">
+            <label>Раздел для автосигнализаций (через запятую):</label>
+            <textarea
+              v-if="
+                editingProduct?.id === product.id &&
+                fieldToEdit === 'autosygnals'
+              "
+              :value="getArrayAsCST(editingProduct.autosygnals)"
+              @input="updateArrayField($event, 'autosygnals')"
+            ></textarea>
+            <span v-else>{{ getArrayAsCST(product.autosygnals) }}</span>
+          </div>
+        </div>
+
+        <Tabs
+          v-if="product.tabs"
+          :tabs="
+            editingProduct?.id === product.id && editingProduct.tabs
+              ? editingProduct.tabs
+              : product.tabs
+          "
+          :is-icon-uploading="
+            (tabIndex, itemIndex) => isUploading[`tab-${tabIndex}-${itemIndex}`]
+          "
+          @update:tabs="updateTabs"
+          @trigger-icon-upload="handleIconUpload"
+          @delete-icon="handleIconDelete"
+          :server-base-url="serverUrl"
+        />
+
+        <div class="product-actions">
+          <button @click="saveChanges" class="btn-save">Сохранить</button>
+          <button
+            @click="emit('delete-product', product.id)"
+            class="btn-delete"
+          >
+            Удалить
+          </button>
         </div>
       </div>
-
-      <Tabs
-        v-if="product.tabs"
-        :tabs="product.tabs"
-        :is-icon-uploading="(tabIndex) => isUploading[`tab-${tabIndex}`]"
-        @update:tabs="updateTabs"
-        @trigger-icon-upload="handleIconUpload"
-        @delete-icon="handleIconDelete"
-      />
-
-      <div class="product-actions">
-        <button @click="saveChanges" class="btn-save">Сохранить</button>
-        <button @click="emit('delete-product', product.id)" class="btn-delete">
-          Удалить
-        </button>
-      </div>
-    </div>
-  </details>
+    </details>
+    <input
+      type="file"
+      ref="iconUploader"
+      @change="onIconFileSelected"
+      style="display: none"
+      accept="image/*"
+    />
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -178,6 +199,7 @@ import { ref, computed, watch } from 'vue';
 import type { ProductI, Tab, DescriptionItem } from './interfaces/Products';
 import Gallery from './Gallery.vue';
 import Tabs from './Tabs.vue';
+import { API_URL } from '../../../config';
 
 const props = defineProps<{
   product: ProductI;
@@ -213,8 +235,14 @@ const emit = defineEmits<{
 
 const editingProduct = ref<ProductI | null>(null);
 const fieldToEdit = ref<string | null>(null);
+const iconUploader = ref<HTMLInputElement | null>(null);
+const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(
+  null
+);
 
 const isUploading = ref<Record<string, boolean>>({});
+
+const serverUrl = API_URL.replace('/src/server', '');
 
 const editingCategoryKey = computed({
   get: () => editingProduct.value?.category_key || '',
@@ -284,12 +312,87 @@ function updateTabs(newTabs: Tab[]) {
 }
 
 function handleIconUpload(tabIndex: number, itemIndex: number) {
+  ensureEditing();
+  currentIconTarget.value = { tabIndex, itemIndex };
+  iconUploader.value?.click();
+}
+
+async function onIconFileSelected(event: Event) {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+  if (!file || !currentIconTarget.value) return;
+
+  const { tabIndex, itemIndex } = currentIconTarget.value;
   const productToEdit = ensureEditing();
-  if (!productToEdit) return;
+  if (!productToEdit || !productToEdit.tabs) return;
+
+  const previewUrl = URL.createObjectURL(file);
+
+  // Re-construct tabs array for reactivity
+  const newTabs = JSON.parse(JSON.stringify(productToEdit.tabs));
+  newTabs[tabIndex].description[itemIndex]['path-icon'] = previewUrl;
+  productToEdit.tabs = newTabs;
 
   const key = `tab-${tabIndex}-${itemIndex}`;
   isUploading.value[key] = true;
-  setTimeout(() => {
+
+  const formData = new FormData();
+  formData.append('icon', file);
+  formData.append('productId', productToEdit.id);
+  formData.append('tabIndex', String(tabIndex));
+  formData.append('itemIndex', String(itemIndex));
+
+  try {
+    const response = await fetch(
+      `${API_URL}/php/admin/api/products/upload_tab_icon.php`,
+      {
+        method: 'POST',
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Server responded with an error');
+    }
+
+    const result = await response.json();
+    if (result.filePath && productToEdit.tabs) {
+      const finalTabs = JSON.parse(JSON.stringify(productToEdit.tabs));
+      finalTabs[tabIndex].description[itemIndex]['path-icon'] = result.filePath;
+      productToEdit.tabs = finalTabs;
+    }
+  } catch (error) {
+    console.error('Failed to upload icon:', error);
+  } finally {
+    isUploading.value[key] = false;
+    URL.revokeObjectURL(previewUrl);
+    target.value = ''; // Reset input
+    currentIconTarget.value = null;
+  }
+}
+
+async function handleIconDelete(tabIndex: number, itemIndex: number) {
+  const productToEdit = ensureEditing();
+  if (!productToEdit) return;
+
+  try {
+    const response = await fetch(
+      `${API_URL}/php/admin/api/products/delete_tab_icon.php`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: productToEdit.id,
+          tabIndex,
+          itemIndex,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error('Server responded with an error');
+    }
+
     if (
       productToEdit.tabs &&
       Array.isArray(productToEdit.tabs[tabIndex].description)
@@ -297,25 +400,11 @@ function handleIconUpload(tabIndex: number, itemIndex: number) {
       const desc = productToEdit.tabs[tabIndex]
         .description as DescriptionItem[];
       if (desc[itemIndex]) {
-        desc[itemIndex]['path-icon'] = '/client/vectors/thermometer.svg'; // Placeholder
+        desc[itemIndex]['path-icon'] = '';
       }
     }
-    isUploading.value[key] = false;
-  }, 2000);
-}
-
-function handleIconDelete(tabIndex: number, itemIndex: number) {
-  const productToEdit = ensureEditing();
-  if (!productToEdit) return;
-
-  if (
-    productToEdit.tabs &&
-    Array.isArray(productToEdit.tabs[tabIndex].description)
-  ) {
-    const desc = productToEdit.tabs[tabIndex].description as DescriptionItem[];
-    if (desc[itemIndex]) {
-      desc[itemIndex]['path-icon'] = '';
-    }
+  } catch (error) {
+    console.error('Failed to delete icon:', error);
   }
 }
 
