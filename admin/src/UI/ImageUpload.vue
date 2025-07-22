@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 
 interface Props {
@@ -18,6 +18,7 @@ interface Emits {
   (event: 'status-update', status: string): void;
   (event: 'progress-update', progress: number): void;
   (event: 'image-preview', preview: string): void;
+  (event: 'image-cleared'): void;
 }
 
 const props = defineProps<Props>();
@@ -27,6 +28,14 @@ const imageFile = ref<File | null>(null);
 const imageFileName = ref<string | null>(null);
 const inputRef = ref<HTMLInputElement | null>(null);
 const imagePreview = ref<string | null>(null);
+
+watchEffect(() => {
+  if (props.path) {
+    imagePreview.value = props.path;
+  } else {
+    imagePreview.value = null;
+  }
+});
 
 const endpointUrl = computed(() => {
   if (props.serviceImage) {
@@ -143,6 +152,7 @@ function clearInput() {
   imageFile.value = null;
   imageFileName.value = null;
   imagePreview.value = null;
+  emit('image-cleared');
 }
 
 // Экспортируем методы для родительского компонента

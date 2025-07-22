@@ -9,6 +9,7 @@
           :key="service.id"
           class="service-item"
         >
+        {{ console.log(service, 'service') }}
           <summary>{{ service.name }}</summary>
           <div class="service-details">
             <div class="form-group">
@@ -18,17 +19,19 @@
             <div class="form-group">
               <label>Описание:</label>
               <QuillEditor
+                :key="service.id + '-desc'"
                 theme="snow"
                 :toolbar="toolbarOptions"
                 contentType="html"
-                v-model="service.description"
+                v-model:content="service.description"
               />
             </div>
             <div class="form-group">
               <label>Изображение:</label>
               <ImageUpload
-                :path="service.image.src"
+                :path="getFullImagePath(service.image.src)"
                 @upload-success="(data) => handleImageUpload(data, service.id)"
+                @image-cleared="localServices[service.id].image.src = ''"
                 :extraData="{ serviceId: service.id }"
                 serviceImage
               />
@@ -36,10 +39,11 @@
             <div class="form-group">
               <label>Список услуг:</label>
               <QuillEditor
+                :key="service.id + '-serv'"
                 theme="snow"
                 :toolbar="toolbarOptions"
                 contentType="html"
-                v-model="service.services"
+                v-model:content="service.services"
               />
             </div>
             <div class="form-group">
@@ -139,12 +143,19 @@ async function saveService(serviceId: string) {
 
   try {
     const serviceToSave = localServices.value[serviceId];
+    const originalService = services.value[serviceId];
+
+    const payload = {
+      ...serviceToSave,
+      old_image_path: originalService.image.src,
+    };
+
     const response = await fetch(
       `/server/php/admin/api/services/update_service.php`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(serviceToSave),
+        body: JSON.stringify(payload),
       }
     );
     if (!response.ok) {

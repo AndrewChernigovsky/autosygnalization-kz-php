@@ -53,6 +53,19 @@ if (isset($data['image']) && is_array($data['image']) && isset($data['image']['s
   $image_src = $data['image']['src'];
 }
 
+// Handle old image deletion
+if (isset($data['old_image_path']) && $data['old_image_path'] !== $image_src) {
+  $oldImagePath = $data['old_image_path'];
+  $oldFileFullPath = realpath(__DIR__ . '/../../../../../' . ltrim($oldImagePath, '/'));
+  $baseDir = realpath(__DIR__ . '/../../../../../server/uploads');
+
+  // Security check to prevent deleting files outside the uploads directory
+  if ($oldFileFullPath && strpos($oldFileFullPath, $baseDir) === 0 && file_exists($oldFileFullPath)) {
+    unlink($oldFileFullPath);
+  }
+}
+
+
 try {
   $pdo->beginTransaction();
 
