@@ -7,25 +7,14 @@
     </button>
     <div class="menu" :class="{ 'is-open': isOpen }">
       <ul class="menu__list">
-        <li class="menu__item">
-          <router-link to="/" class="menu__link" @click="closeMenu"
-            >Главная</router-link
-          >
-        </li>
-        <li class="menu__item">
-          <router-link to="/slider-intro" class="menu__link" @click="closeMenu"
-            >Слайдер</router-link
-          >
-        </li>
-        <li class="menu__item">
-          <router-link to="/navigation" class="menu__link" @click="closeMenu"
-            >Навигация</router-link
-          >
-        </li>
-        <li class="menu__item">
-          <router-link to="/contacts" class="menu__link" @click="closeMenu"
-            >Контакты</router-link
-          >
+        <li
+          v-for="route in navigationStore.navigationRoutes"
+          :key="route.path"
+          class="menu__item"
+        >
+          <router-link :to="route.path" class="menu__link" @click="closeMenu">
+            {{ route.name }}
+          </router-link>
         </li>
         <li class="menu__item">
           <router-link to="/ui" class="menu__link" @click="closeMenu"
@@ -44,8 +33,10 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useNavigationStore } from '../stores/navigationStore';
 
 const isOpen = ref(false);
+const navigationStore = useNavigationStore();
 
 function toggleMenu() {
   isOpen.value = !isOpen.value;
@@ -59,9 +50,9 @@ function closeMenu() {
 <style scoped lang="scss">
 .burger-menu {
   position: fixed;
-  top: 30px;
-  right: 30px;
-  z-index: 1200;
+  top: 10px;
+  right: 40px;
+  z-index: 102;
   background: none;
   border: none;
   cursor: pointer;
@@ -69,8 +60,11 @@ function closeMenu() {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 30px;
-  height: 24px;
+  width: 50px;
+  height: 50px;
+  background-color: #2a2a2a;
+  padding: 10px;
+  border: 1px solid #ffffffff;
 
   &__line {
     width: 100%;
@@ -89,7 +83,7 @@ function closeMenu() {
   background-color: #1a1a1a;
   transform: translateX(100%);
   transition: transform 0.3s ease-in-out;
-  z-index: 10;
+  z-index: 101;
   padding-top: 60px;
 
   &.is-open {

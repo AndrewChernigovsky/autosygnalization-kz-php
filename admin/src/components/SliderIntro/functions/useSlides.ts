@@ -18,7 +18,7 @@ export function useSlides() {
         ...video,
         advantages: video.advantages || [],
         button_text: video.button_text || 'Подробнее',
-        link: video.button_link || '#',
+        button_link: video.button_link || '#',
       }));
     } catch (error) {
       console.error('Ошибка загрузки данных видео:', error);
@@ -35,16 +35,18 @@ export function useSlides() {
         const newSlide = await response.json();
         items.value.push({
           id: newSlide.id,
-          poster: '',
           srcMob: '',
           src: [],
           type: [],
           title: 'Новый слайд',
           advantages: [],
-          link: '#',
           position: items.value.length + 1,
           video_path: '',
           button_text: 'Подробнее',
+          video_path_mob: '',
+          poster_path: '',
+          video_filename: '',
+          button_link: '#',
         });
         Swal.fire('Добавлено!', 'Новый слайд был успешно добавлен.', 'success');
         iframeStore.triggerIframeRefresh();
@@ -105,7 +107,7 @@ export function useSlides() {
       title: slide.title,
       advantages: JSON.stringify(slide.advantages),
       button_text: slide.button_text,
-      button_link: slide.link,
+      button_link: slide.button_link,
     };
 
     try {
