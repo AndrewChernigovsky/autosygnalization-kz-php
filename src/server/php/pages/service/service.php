@@ -15,35 +15,32 @@ use function FUNCTIONS\getShop;
 
 $header = new Header();
 $footer = new Footer();
-
-$services_data = (new ServicesData())->getData();
-$service_data = new Services($services_data);
-$services = array_values($service_data->getServices());
+$services_data_manager = new ServicesData();
 $navigationLinks = new NavigationLinks();
-$card = new ServiceCard();
+$share = new Share();
 
 $type = isset($_GET['service']) ? $_GET['service'] : null;
 
 // Инициализируем массив service с базовыми значениями
-$service = [
-  'name' => 'Услуга не найдена',
-  'image' => [
-    'src' => '',
-    'description' => ''
-  ],
-  'description' => 'Описание услуги не доступно.',
-  'services' => '',
-  'cost' => '',
-  'currency' => ''
-];
-
-if ($type && isset($services_data[$type])) {
-  $service = array_merge($service, $services_data[$type]);
+$service = null;
+if ($type) {
+  $service = $services_data_manager->getServiceByType($type);
 }
 
-$title = isset($services_data[$type]['name']) ? $services_data[$type]['name'] . "| Auto Security" : "Услуга | Auto Security";
+if (!$service) {
+  $service = [
+    'name' => 'Услуга не найдена',
+    'image' => ['src' => '', 'description' => ''],
+    'description' => 'Описание услуги не доступно.',
+    'services' => '',
+    'cost' => '',
+    'currency' => ''
+  ];
+}
+
+$title = isset($service['name']) && $service['name'] !== 'Услуга не найдена' ? $service['name'] . " | Auto Security" : "Услуга | Auto Security";
 $head = new Head($title, [], []);
-$share = new Share();
+
 ?>
 
 <!DOCTYPE html>

@@ -36,11 +36,36 @@ class ServicesData
         ],
         'href' => $service['href'],
         'services' => $service['services'] ?? '', // Use 'services' field
-        'cost' => (int)$service['cost'],
+        'cost' => (int) $service['cost'],
         'currency' => $service['currency'],
       ];
     }
 
     return $structuredServices;
+  }
+
+  public function getServiceByType(string $type): ?array
+  {
+    $stmt = $this->db->prepare("SELECT * FROM Services WHERE type = :type LIMIT 1");
+    $stmt->execute([':type' => $type]);
+    $service = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$service) {
+      return null;
+    }
+
+    return [
+      'id' => $service['id'],
+      'name' => $service['name'],
+      'description' => $service['description'],
+      'image' => [
+        'src' => $service['image_src'],
+        'description' => $service['image_alt'],
+      ],
+      'href' => $service['href'],
+      'services' => $service['services'] ?? '',
+      'cost' => (int) $service['cost'],
+      'currency' => $service['currency'],
+    ];
   }
 }

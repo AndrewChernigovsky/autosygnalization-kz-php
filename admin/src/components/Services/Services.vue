@@ -1,6 +1,7 @@
 <template>
   <div class="services-admin">
     <h1>Редактор Услуг</h1>
+    <button @click="addService" type="button">Добавить услугу</button>
     <div class="theme-dark">
       <Loader v-if="isLoading" />
       <div v-else class="services-list space-y-2">
@@ -9,7 +10,7 @@
           :key="service.id"
           class="service-item"
         >
-        {{ console.log(service, 'service') }}
+          {{ console.log(service, 'servicew') }}
           <summary>{{ service.name }}</summary>
           <div class="service-details">
             <div class="form-group">
@@ -27,6 +28,7 @@
               />
             </div>
             <div class="form-group">
+              <p>Рекомендуемый размер: 1000x1000px</p>
               <label>Изображение:</label>
               <ImageUpload
                 :path="getFullImagePath(service.image.src)"
@@ -87,8 +89,6 @@ const services = ref<Record<string, Service>>({});
 const localServices = ref<Record<string, Service>>({});
 const isLoading = ref(true);
 
-const serverBaseUrl = API_URL.replace('/src/server', '');
-
 function handleImageUpload(
   data: { path: string; filename: string },
   serviceId: string
@@ -105,6 +105,21 @@ function handleImageUpload(
       showConfirmButton: false,
     });
   }
+}
+
+function addService() {
+  const newId = `new-${Date.now()}`;
+  const newService: Service = {
+    id: newId,
+    name: 'Новая услуга',
+    description: '',
+    image: { src: '', description: '' },
+    href: '',
+    services: '',
+    cost: 0,
+    currency: 'KZT',
+  };
+  localServices.value[newId] = newService;
 }
 
 async function fetchServices() {
@@ -143,26 +158,38 @@ async function saveService(serviceId: string) {
 
   try {
     const serviceToSave = localServices.value[serviceId];
-    const originalService = services.value[serviceId];
+    const isNew = serviceId.toString().startsWith('new-');
+    let endpoint = `/server/php/admin/api/services/update_service.php`;
+    let payload: any = { ...serviceToSave };
 
-    const payload = {
-      ...serviceToSave,
-      old_image_path: originalService.image.src,
-    };
+    if (isNew) {
+      endpoint = `/server/php/admin/api/services/create_service.php`;
+    } else {
+      const originalService = services.value[serviceId];
+      payload.old_image_path = originalService.image.src;
+    }
 
-    const response = await fetch(
-      `/server/php/admin/api/services/update_service.php`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      }
-    );
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
     if (!response.ok) {
       const errorData = await response.json();
       throw new Error(errorData.message || 'Failed to save service');
     }
-    services.value[serviceId] = JSON.parse(JSON.stringify(serviceToSave));
+
+    const savedService = await response.json();
+
+    if (isNew) {
+      delete localServices.value[serviceId];
+      localServices.value[savedService.id] = savedService;
+      services.value[savedService.id] = savedService;
+    } else {
+      services.value[serviceId] = JSON.parse(JSON.stringify(serviceToSave));
+    }
+
     Swal.fire({
       title: 'Сохранено!',
       text: 'Услуга была успешно обновлена.',

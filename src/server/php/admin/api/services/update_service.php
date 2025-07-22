@@ -54,8 +54,8 @@ if (isset($data['image']) && is_array($data['image']) && isset($data['image']['s
 }
 
 // Handle old image deletion
-if (isset($data['old_image_path']) && $data['old_image_path'] !== $image_src) {
-  $oldImagePath = $data['old_image_path'];
+$oldImagePath = $data['old_image_path'] ?? null;
+if ($oldImagePath && $oldImagePath !== $image_src) {
   $oldFileFullPath = realpath(__DIR__ . '/../../../../../' . ltrim($oldImagePath, '/'));
   $baseDir = realpath(__DIR__ . '/../../../../../server/uploads');
 
