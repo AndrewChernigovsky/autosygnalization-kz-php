@@ -19,6 +19,9 @@ const openAccordion = ref<string | null>(null);
 const imagePreviews = ref<Record<number, string>>({}); // Для превью существующих
 const newImagePreviews = ref<Record<string, string>>({}); // Для превью новых
 
+// Для отслеживания перетаскиваемого элемента
+const draggingItem = ref<number | null>(null);
+
 const API_URL = '/server/php/admin/api/aboutUs/aboutUs.php';
 
 const typeConfig: Record<
@@ -34,13 +37,20 @@ const typeConfig: Record<
 };
 
 const groupedItems = computed(() => {
-  return items.value.reduce((acc, item) => {
+  const groups = items.value.reduce((acc, item) => {
     if (!acc[item.type]) {
       acc[item.type] = [];
     }
     acc[item.type].push(item);
     return acc;
   }, {} as Record<string, AboutUsItem[]>);
+
+  // Сортировка каждой группы по position
+  for (const type in groups) {
+    groups[type].sort((a, b) => a.position - b.position);
+  }
+
+  return groups;
 });
 
 const onFileChange = (event: Event, itemId: number) => {
@@ -188,6 +198,58 @@ const handleDelete = async (id: number) => {
   }
 };
 
+const handleUpdatePositions = async (updatedGroup: AboutUsItem[]) => {
+  const itemsToUpdate = updatedGroup.map((item, index) => ({
+    about_us_id: item.about_us_id,
+    position: index + 1,
+  }));
+
+  try {
+    await fetchWithCors(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, // Важно для этого запроса
+      body: JSON.stringify({
+        action: 'update_positions',
+        items: itemsToUpdate,
+      }),
+    });
+  } catch (err) {
+    Swal.fire('Ошибка', 'Не удалось обновить порядок элементов.', 'error');
+    // Можно добавить логику отката изменений в UI, если нужно
+  }
+};
+
+// Drag and Drop Handlers
+const onDragStart = (id: number) => {
+  draggingItem.value = id;
+};
+
+const onDrop = (targetId: number, type: string) => {
+  if (draggingItem.value === null) return;
+
+  const group = groupedItems.value[type];
+  const fromIndex = group.findIndex(
+    (it) => it.about_us_id === draggingItem.value
+  );
+  const toIndex = group.findIndex((it) => it.about_us_id === targetId);
+
+  if (fromIndex !== -1 && toIndex !== -1) {
+    // 1. Перемещаем элемент в локальной копии группы
+    const [movedItem] = group.splice(fromIndex, 1);
+    group.splice(toIndex, 0, movedItem);
+
+    // 2. Обновляем позиции для всей группы
+    group.forEach((item, index) => {
+      item.position = index + 1;
+    });
+
+    // 3. Отправляем изменения на сервер
+    handleUpdatePositions(group);
+  }
+
+  draggingItem.value = null; // Сбрасываем
+};
+
 const toggleAccordion = (type: string) => {
   openAccordion.value = openAccordion.value === type ? null : type;
 };
@@ -222,43 +284,52 @@ onMounted(getAboutUsData);
           <form
             v-for="item in group"
             :key="item.about_us_id"
-            class="form-group"
+            class="form-group draggable"
+            draggable="true"
+            @dragstart="onDragStart(item.about_us_id)"
+            @dragover.prevent
+            @drop="onDrop(item.about_us_id, type)"
             @submit.prevent="handleUpdate($event, item)"
           >
-            <template v-if="typeConfig[type]?.fields.includes('content')">
-              <label>Содержимое:</label>
-              <textarea
-                v-model="item.content"
-                name="content"
-                rows="4"
-              ></textarea>
-            </template>
+            <div class="drag-handle">⠿</div>
+            <div class="content-wrapper">
+              <template v-if="typeConfig[type]?.fields.includes('content')">
+                <label>Содержимое:</label>
+                <textarea
+                  v-model="item.content"
+                  name="content"
+                  rows="4"
+                ></textarea>
+              </template>
 
-            <template v-if="typeConfig[type]?.fields.includes('image')">
-              <label>Изображение:</label>
-              <img
-                v-if="imagePreviews[item.about_us_id] || item.image_path"
-                :src="imagePreviews[item.about_us_id] || item.image_path || ''"
-                alt="preview"
-                class="image-preview"
-              />
-              <input
-                type="file"
-                name="image"
-                accept="image/*"
-                @change="onFileChange($event, item.about_us_id)"
-              />
-            </template>
+              <template v-if="typeConfig[type]?.fields.includes('image')">
+                <label>Изображение:</label>
+                <img
+                  v-if="imagePreviews[item.about_us_id] || item.image_path"
+                  :src="
+                    imagePreviews[item.about_us_id] || item.image_path || ''
+                  "
+                  alt="preview"
+                  class="image-preview"
+                />
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  @change="onFileChange($event, item.about_us_id)"
+                />
+              </template>
 
-            <div class="actions">
-              <button type="submit" class="btn-save">Сохранить</button>
-              <button
-                type="button"
-                @click="handleDelete(item.about_us_id)"
-                class="btn-delete"
-              >
-                Удалить
-              </button>
+              <div class="actions">
+                <button type="submit" class="btn-save">Сохранить</button>
+                <button
+                  type="button"
+                  @click="handleDelete(item.about_us_id)"
+                  class="btn-delete"
+                >
+                  Удалить
+                </button>
+              </div>
             </div>
           </form>
 
@@ -421,5 +492,28 @@ textarea {
 .btn-add {
   background-color: #007bff;
   margin-top: 1rem;
+}
+.draggable {
+  cursor: grab;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.draggable:active {
+  cursor: grabbing;
+}
+.drag-handle {
+  font-size: 24px;
+  color: #ccc;
+  padding-top: 20px; /* Выравнивание по центру */
+}
+.content-wrapper {
+  flex-grow: 1;
+}
+
+/* Визуальный эффект при перетаскивании */
+.form-group[draggable='true'] {
+  transition: opacity 0.2s, background-color 0.2s;
 }
 </style>

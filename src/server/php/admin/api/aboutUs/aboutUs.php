@@ -174,6 +174,36 @@ class AboutUsAPI extends DataBase
     }
   }
 
+  public function updatePositions($items)
+  {
+    if (empty($items) || !is_array($items)) {
+      return $this->error("Нет данных для обновления позиций", 400);
+    }
+
+    try {
+      $this->pdo->beginTransaction();
+
+      $query = "UPDATE AboutUs SET position = :position WHERE about_us_id = :id";
+      $stmt = $this->pdo->prepare($query);
+
+      foreach ($items as $item) {
+        if (isset($item['about_us_id']) && isset($item['position'])) {
+          $stmt->execute([
+            ':id' => $item['about_us_id'],
+            ':position' => $item['position'],
+          ]);
+        }
+      }
+
+      $this->pdo->commit();
+      return $this->success(['status' => 'Positions updated']);
+    } catch (\Exception $e) {
+      $this->pdo->rollBack();
+      error_log("Ошибка обновления позиций: " . $e->getMessage());
+      return $this->error("Ошибка обновления позиций", 500);
+    }
+  }
+
   /**
    * Удаляет запись из таблицы AboutUs
    */
@@ -223,34 +253,47 @@ class AboutUsAPI extends DataBase
 
 // Основная логика API
 try {
-  $api = new AboutUsAPI();
-  $method = $_SERVER['REQUEST_METHOD'];
+    $api = new AboutUsAPI();
+    $method = $_SERVER['REQUEST_METHOD'];
 
-  switch ($method) {
-    case 'GET':
-      echo $api->getAboutUs();
-      break;
+    switch ($method) {
+        case 'GET':
+            echo $api->getAboutUs();
+            break;
 
-    case 'POST':
-      if (isset($_POST['about_us_id'])) {
-        echo $api->updateAboutUs($_POST, $_FILES);
-      } else {
-        echo $api->createAboutUs($_POST, $_FILES);
-      }
-      break;
+        case 'POST':
+            $contentType = trim($_SERVER["CONTENT_TYPE"] ?? '');
 
-    case 'DELETE':
-      $id = $_GET['id'] ?? null;
-      echo $api->deleteAboutUs($id);
-      break;
+            if (strpos($contentType, 'application/json') !== false) {
+                // Обработка JSON-запроса для обновления позиций
+                $input = json_decode(file_get_contents('php://input'), true);
+                if (isset($input['action']) && $input['action'] === 'update_positions') {
+                    echo $api->updatePositions($input['items'] ?? []);
+                } else {
+                    echo $api->error("Неверный JSON-запрос", 400);
+                }
+            } else {
+                // Обработка form-data для создания или обновления
+                if (isset($_POST['about_us_id'])) {
+                    echo $api->updateAboutUs($_POST, $_FILES);
+                } else {
+                    echo $api->createAboutUs($_POST, $_FILES);
+                }
+            }
+            break;
 
-    default:
-      echo $api->error("Метод не поддерживается", 405);
-      break;
-  }
+        case 'DELETE':
+            $id = $_GET['id'] ?? null;
+            echo $api->deleteAboutUs($id);
+            break;
+
+        default:
+            echo $api->error("Метод не поддерживается", 405);
+            break;
+    }
 } catch (\Exception $e) {
-  error_log("Критическая ошибка API 'О нас': " . $e->getMessage());
-  http_response_code(500);
-  echo json_encode(['success' => false, 'error' => 'Внутренняя ошибка сервера']);
+    error_log("Критическая ошибка API 'О нас': " . $e->getMessage());
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => 'Внутренняя ошибка сервера']);
 }
 
