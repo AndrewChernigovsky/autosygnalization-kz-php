@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .service {
   padding: 50px 0;
@@ -84,6 +84,7 @@
       }
 
       @media screen and (min-width: 768px) {
+
         .service__item .service-card__buttons a,
         .service__item .service-card__buttons button {
           min-width: 135px;
@@ -108,8 +109,7 @@
 
       &.component {
         @media screen and (max-width: 768px) {
-          li:has(.swiper-pagination)
-            .swiper-pagination.swiper-service__pagination {
+          li:has(.swiper-pagination) .swiper-pagination.swiper-service__pagination {
             bottom: 15px;
           }
         }
@@ -121,6 +121,7 @@
     align-content: self-end;
     height: inherit;
     min-height: inherit;
+    height: 100%;
   }
 
   &__title {
