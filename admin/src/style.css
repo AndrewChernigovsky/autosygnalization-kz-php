@@ -105,7 +105,6 @@ button:focus-visible {
   display: flex;
   flex-direction: column;
   max-width: 1440px;
-  height: 100vh;
   margin: 0 auto;
   background-image: linear-gradient(90deg, #121010 0%, #0E0C0C 100%);
   font-family: var(--font-family), 'Inter', sans-serif;
