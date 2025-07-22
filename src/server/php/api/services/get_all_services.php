@@ -6,18 +6,18 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 
 use DATA\ServicesData;
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Access-Control-Allow-Methods: GET");
+// CORS headers are handled by .htaccess
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+  $servicesData = new ServicesData();
+  $services = $servicesData->getData(); // Assumes getData now returns the correct structure
 
-  $services = (new ServicesData())->getData();
   header('Content-Type: application/json');
   echo json_encode($services);
 } else {
-  echo json_encode(['message' => 'Данные не получены']);
+  header('Content-Type: application/json');
+  http_response_code(405); // Method Not Allowed
+  echo json_encode(['message' => 'Method Not Allowed']);
 }
-
 
 ?>

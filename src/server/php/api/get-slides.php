@@ -34,7 +34,7 @@ try {
       'type' => ['video/mp4'],
       'title' => $video['title'],
       'advantages' => json_decode($video['advantages'], true) ?: [],
-      'link' => $video['button_link'],
+      'button_link' => $video['button_link'],
       'video_path' => $video['video_path'],
       'poster_path' => $video['poster_path'],
       'position' => $video['position']

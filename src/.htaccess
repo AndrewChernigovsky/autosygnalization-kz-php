@@ -28,7 +28,13 @@ AddType image/avif .avif
 <IfModule mod_mime.c>
   AddType image/avif avif
 </IfModule>
-
+ 
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "http://localhost:5173
+  "
+  Header set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+  Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
 
 # Управление CORS для шрифтов
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
@@ -83,6 +89,7 @@ RewriteRule ^price$ /server/php/pages/price/price.php [L,QSA]
 RewriteRule ^special$ /server/php/pages/special/special.php [L,QSA]
 RewriteRule ^cart$ /server/php/pages/cart/cart.php [L,QSA]
 RewriteRule ^checkout$ /server/php/pages/checkout/checkout.php [L,QSA]
+RewriteRule ^api/products/get$ /server/php/api/products/get_all_products.php [L,QSA]
 
 RewriteRule ^/$ /index.php [L,QSA]
 

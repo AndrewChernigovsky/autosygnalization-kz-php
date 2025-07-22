@@ -6,6 +6,7 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'e39a8b23c42d4e1452234d762b03835a' => $vendorDir . '/ramsey/uuid/src/functions.php',
     'a9ce8fdb4a3f4a9598e4cf2cc7472519' => $baseDir . '/php/sections/introSection.php',
     '15d4f65003e931db08610190fe1776a2' => $baseDir . '/php/sections/faqSection.php',
     'df46a49cf2bfc006d6d1ef02bafc5032' => $baseDir . '/php/sections/formSection.php',

@@ -14,7 +14,7 @@ interface Props {
 interface Emits {
   (
     event: 'upload-success',
-    data: { id: number; filename: string; path: string }
+    data: { id: number; filename: string; path: string; path_mob: string }
   ): void;
   (event: 'status-update', status: string): void;
   (event: 'progress-update', progress: number): void;
@@ -118,6 +118,7 @@ function uploadVideo() {
           id: response.id,
           filename: response.filename,
           path: response.path,
+          path_mob: response.path_mob,
         });
         emit('status-update', 'Загрузка завершена. ID записи: ' + response.id);
       } catch (e: any) {

@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .service-setup {
   position: relative;
@@ -182,6 +182,26 @@
       margin-bottom: 40px;
       padding-bottom: 60px;
     }
+
+    li {
+      list-style-type: none;
+      background-image: url('/client/vectors/checkbox-mark-icon.svg');
+      min-height: 30px;
+      padding-left: 30px;
+      background-repeat: no-repeat;
+      background-position: top 5px left;
+      background-size: 20px 20px;
+      text-transform: none;
+
+
+      @media (min-width: var.$desktop) {
+        min-height: 50px;
+        padding-left: 50px;
+        font-size: 36px;
+        line-height: 46px;
+        background-size: 40px 40px;
+      }
+    }
   }
 
   &__item {
@@ -191,6 +211,7 @@
     background-position: top 5px left;
     background-size: 20px 20px;
     text-transform: none;
+
 
     @media (min-width: var.$desktop) {
       min-height: 50px;
