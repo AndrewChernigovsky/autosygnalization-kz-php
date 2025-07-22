@@ -2,23 +2,26 @@
 
 namespace API\SERVICES\ADMIN;
 
+// Set CORS headers
+header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
+header('Content-Type: application/json');
+
+// Handle preflight request
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use DATABASE\Database;
 use Exception;
 
-// CORS headers are handled by .htaccess in /src
-
-header('Content-Type: application/json');
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST' && $_SERVER['REQUEST_METHOD'] !== 'OPTIONS') {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   http_response_code(405);
   echo json_encode(['message' => 'Method Not Allowed']);
-  exit;
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-  http_response_code(200);
   exit;
 }
 
@@ -44,12 +47,19 @@ if (is_array($services_data)) {
   $services_data = json_encode($services_data, JSON_UNESCAPED_UNICODE);
 }
 
+// Extract image source
+$image_src = null;
+if (isset($data['image']) && is_array($data['image']) && isset($data['image']['src'])) {
+  $image_src = $data['image']['src'];
+}
+
 try {
   $pdo->beginTransaction();
 
   $stmt = $pdo->prepare("UPDATE Services SET
         name = :name,
         description = :description,
+        image_src = :image_src,
         services = :services,
         cost = :cost
         WHERE id = :id");
@@ -58,6 +68,7 @@ try {
     ':id' => $serviceId,
     ':name' => $data['name'],
     ':description' => $data['description'],
+    ':image_src' => $image_src,
     ':services' => $services_data,
     ':cost' => $data['cost']
   ]);

@@ -21,25 +21,17 @@
                 theme="snow"
                 :toolbar="toolbarOptions"
                 contentType="html"
-                v-model:content="service.description"
+                v-model="service.description"
               />
             </div>
             <div class="form-group">
               <label>Изображение:</label>
-              <div class="image-uploader">
-                <div
-                  class="image-container"
-                  @click="triggerImageUpload(service.id)"
-                >
-                  <div v-if="isUploading[service.id]" class="loader-overlay">
-                    <Loader size="small" />
-                  </div>
-                  <img
-                    :src="getFullImagePath(service.image.src)"
-                    :alt="service.image.description"
-                  />
-                </div>
-              </div>
+              <ImageUpload
+                :path="service.image.src"
+                @upload-success="(data) => handleImageUpload(data, service.id)"
+                :extraData="{ serviceId: service.id }"
+                serviceImage
+              />
             </div>
             <div class="form-group">
               <label>Список услуг:</label>
@@ -47,7 +39,7 @@
                 theme="snow"
                 :toolbar="toolbarOptions"
                 contentType="html"
-                v-model:content="service.services"
+                v-model="service.services"
               />
             </div>
             <div class="form-group">
@@ -65,13 +57,6 @@
           </div>
         </details>
       </div>
-      <input
-        type="file"
-        ref="imageUploader"
-        @change="onImageFileSelected"
-        style="display: none"
-        accept="image/*"
-      />
     </div>
   </div>
 </template>
@@ -85,10 +70,11 @@ import Swal from 'sweetalert2';
 // @ts-ignore
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import ImageUpload from '../../UI/ImageUpload.vue';
 
 const toolbarOptions = [
   [{ header: [1, 2, 3, false] }],
-  ['bold', 'italic', 'underline'],
+  ['bold', 'italic', 'underline', 'strike'],
   [{ list: 'ordered' }, { list: 'bullet' }],
   ['clean'],
 ];
@@ -96,11 +82,26 @@ const toolbarOptions = [
 const services = ref<Record<string, Service>>({});
 const localServices = ref<Record<string, Service>>({});
 const isLoading = ref(true);
-const imageUploader = ref<HTMLInputElement | null>(null);
-const currentServiceId = ref<string | null>(null);
-const isUploading = ref<Record<string, boolean>>({});
 
 const serverBaseUrl = API_URL.replace('/src/server', '');
+
+function handleImageUpload(
+  data: { path: string; filename: string },
+  serviceId: string
+) {
+  if (data.path && localServices.value[serviceId]) {
+    localServices.value[serviceId].image.src = data.path;
+    Swal.fire({
+      title: 'Успешно!',
+      text: `Изображение ${data.filename} загружено.`,
+      icon: 'success',
+      background: '#333',
+      color: '#fff',
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  }
+}
 
 async function fetchServices() {
   try {
@@ -121,71 +122,6 @@ async function fetchServices() {
     console.error(error);
   } finally {
     isLoading.value = false;
-  }
-}
-
-function triggerImageUpload(serviceId: string) {
-  currentServiceId.value = serviceId;
-  imageUploader.value?.click();
-}
-
-async function onImageFileSelected(event: Event) {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
-  if (!file || !currentServiceId.value) return;
-
-  const serviceId = currentServiceId.value;
-  isUploading.value[serviceId] = true;
-
-  const previewUrl = URL.createObjectURL(file);
-  localServices.value[serviceId].image.src = previewUrl;
-
-  const formData = new FormData();
-  formData.append('image', file);
-  formData.append('serviceId', serviceId);
-
-  try {
-    const response = await fetch(
-      `/server/php/admin/api/services/upload_service_image.php`,
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
-    const result = await response.json();
-    if (result.filePath) {
-      localServices.value[serviceId].image.src = result.filePath;
-      services.value[serviceId].image.src = result.filePath;
-      Swal.fire({
-        title: 'Успешно!',
-        text: 'Изображение загружено.',
-        icon: 'success',
-        background: '#333',
-        color: '#fff',
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } else {
-      throw new Error(
-        result.message || 'Upload failed and returned no file path.'
-      );
-    }
-  } catch (error: any) {
-    console.error('Failed to upload image:', error);
-    localServices.value[serviceId].image.src =
-      services.value[serviceId].image.src; // Revert on error
-    Swal.fire({
-      title: 'Ошибка!',
-      text: 'Не удалось загрузить изображение. ' + error.message,
-      icon: 'error',
-      background: '#333',
-      color: '#fff',
-    });
-  } finally {
-    isUploading.value[serviceId] = false;
-    URL.revokeObjectURL(previewUrl);
-    target.value = '';
-    currentServiceId.value = null;
   }
 }
 
