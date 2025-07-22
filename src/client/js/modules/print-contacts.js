@@ -16,12 +16,15 @@ export default class PrintDocument {
 
   async getData() {
     try {
-      const response = await fetch('/server/php/admin/api/contact.php', {
-        method: 'GET',
-        headers: {
-          'Content-type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        '/server/php/admin/api/contacts/contact.php',
+        {
+          method: 'GET',
+          headers: {
+            'Content-type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`Ошибка сервера: ${response.status}`);

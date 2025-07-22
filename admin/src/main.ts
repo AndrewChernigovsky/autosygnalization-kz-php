@@ -6,6 +6,7 @@ import Home from './views/Home.vue';
 import SliderIntro from './views/SliderIntro.vue';
 import Navigation from './views/Navigation.vue';
 import Contacts from './views/Contacts.vue';
+import AboutUs from './views/AboutUs.vue';
 import UI from './views/UI.vue';
 import './style.css';
 
@@ -18,6 +19,7 @@ const routes = [
   { path: '/slider-intro', component: SliderIntro, meta: { title: 'Слайдер' } },
   { path: '/navigation', component: Navigation, meta: { title: 'Навигация' } },
   { path: '/contacts', component: Contacts, meta: { title: 'Контакты' } },
+  { path: '/about-us', component: AboutUs, meta: { title: 'О нас' } },
   { path: '/ui', component: UI, meta: { title: 'UI элементы' } },
 ];
 

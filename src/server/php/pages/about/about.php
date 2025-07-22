@@ -16,6 +16,11 @@ $header = new Header();
 $footer = new Footer();
 $head = new Head($title, [], []);
 $aboutUs = new AboutusData();
+$data = $aboutUs->getAllAboutUs();
+$content = [];
+foreach ($data as $item) {
+    $content[$item['type']][] = $item;
+}
 ?>
 
 
@@ -31,31 +36,28 @@ $aboutUs = new AboutusData();
         <div class="about-us__present present">
           <div class="present__block">
             <h2 class="present__main-title">О нас</h2>
-            <p class="present__main-slogan">“Auto Security” – магазин и установочный центр автоэлектроники.</p>
-            <p class="present__main-slogan">Мы предлагаем лучшее!</p>
+            <div class="present__main-slogan-block">
+              <?php foreach ($content['present-slogan'] ?? [] as $item): ?>
+                <p class="present__main-slogan"><?= htmlspecialchars($item['content']) ?></p>
+              <?php endforeach; ?>
+            </div>
             <div class="present__main-text">
-              <p>Наша компания была основана в 2004&nbsp;году, в самый расцвет автосервисов.</p>
-              <p>Миссия нашей компании – осуществлять качественные услуги в сфере продаж, установки и ремонта
-                автоэлектроники.</p>
+              <?php foreach ($content['present-text'] ?? [] as $item): ?>
+                <p><?= htmlspecialchars($item['content']) ?></p>
+              <?php endforeach; ?>
             </div>
           </div>
           <div class="present__block">
             <h3 class="present__list-title">Наши преимущества</h3>
             <ul class="present__list list-style-none">
-              <li class="present__list-item">Наши мастера имеют богатый опыт по инсталляции разнообразного электронного
-                оборудования на различные автомобили.</li>
-              <li class="present__list-item">Мы постоянно повышаем свою квалификацию, участвуем в конференциях.</li>
-              <li class="present__list-item">Аккуратность и ответственность – именно это сегодня является важными
-                отличиями команды "Auto Security".</li>
-              <li class="present__list-item">Наш сервис укомплектован современным диагностическим оборудованием,
-                позволяющим нам корректно работать с абсолютно новыми автомобилями.</li>
-              <li class="present__list-item">Нашим клиентам мы предлагаем услугу выезда для экономии времени и
-                наибольшего комфорта.</li>
+              <?php foreach ($content['advantages-item'] ?? [] as $item): ?>
+                <li class="present__list-item"><?= htmlspecialchars($item['content']) ?></li>
+              <?php endforeach; ?>
             </ul>
             <div class="present__list-comment">
-              <p class="present__comment-text">Дружная команда опытных установщиков с удовольствием воплотит ваши мечты
-                в реальность!</p>
-              <p class="present__comment-text">Обращайтесь к нам, будем рады Вам помочь!</p>
+              <?php foreach ($content['comment'] ?? [] as $item): ?>
+                <p class="present__comment-text"><?= htmlspecialchars($item['content']) ?></p>
+              <?php endforeach; ?>
             </div>
 
           </div>
@@ -64,22 +66,19 @@ $aboutUs = new AboutusData();
           <h3 class="tech-photo__title">Фотографии тех центра</h3>
           <div class="tech-photo__swiper swiper swiper-tech-photo">
             <div class="tech-photo__swiper-wrapper swiper-wrapper">
-              <?php
-              foreach ($aboutUs->getDataImages() as $image) {
-                echo "<div class='tech-photo__swiper-slide swiper-slide'>
-                  <img src='{$image['src']}' alt='картинка' width='600' height='300'>
-                </div>";
-              }
-              ?>
+              <?php foreach ($content['tech-photo-image'] ?? [] as $item): ?>
+                <div class='tech-photo__swiper-slide swiper-slide'>
+                  <img src='<?= htmlspecialchars($item['image_path']) ?>' alt='картинка' width='600' height='300'>
+                </div>
+              <?php endforeach; ?>
             </div>
             <div class="tech-photo__swiper-pagination swiper-pagination"></div>
           </div>
           <div class="tech-photo__block">
             <h3 class="tech-photo__block-title">Обращайтесь в Auto Security</h3>
-            <p class="tech-photo__text">Вам будет оказана квалифицированная помощь по установке дополнительного
-              электронного оборудования на Ваш автомобиль!</p>
-            <p class="tech-photo__text">Мы продиагностируем Ваш авто, отремонтируем, установим, настроим Ваше
-              оборудование! Доверяйте профессионалам!</p>
+            <?php foreach ($content['appeal-text'] ?? [] as $item): ?>
+              <p class="tech-photo__text"><?= htmlspecialchars($item['content']) ?></p>
+            <?php endforeach; ?>
           </div>
 
         </div>
