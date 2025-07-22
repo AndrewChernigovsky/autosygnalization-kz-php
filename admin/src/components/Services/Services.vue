@@ -56,6 +56,9 @@
               <button @click="saveService(service.id)" class="btn-save">
                 Сохранить
               </button>
+              <button @click="deleteService(service.id)" class="btn-delete">
+                Удалить
+              </button>
               <button @click="cancelChanges(service.id)" class="btn-cancel">
                 Отменить
               </button>
@@ -209,6 +212,64 @@ async function saveService(serviceId: string) {
   }
 }
 
+async function deleteService(serviceId: string) {
+  const serviceToDelete = localServices.value[serviceId];
+  if (!serviceToDelete) return;
+
+  Swal.fire({
+    title: 'Вы уверены?',
+    text: `Вы действительно хотите удалить услугу "${serviceToDelete.name}"? Это действие необратимо.`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Да, удалить!',
+    cancelButtonText: 'Отмена',
+    background: '#333',
+    color: '#fff',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          `/server/php/admin/api/services/delete_service.php`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              id: serviceId,
+              image_path: serviceToDelete.image.src,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete service');
+        }
+
+        delete localServices.value[serviceId];
+        delete services.value[serviceId];
+
+        Swal.fire({
+          title: 'Удалено!',
+          text: 'Услуга была успешно удалена.',
+          icon: 'success',
+          background: '#333',
+          color: '#fff',
+        });
+      } catch (error: any) {
+        Swal.fire({
+          title: 'Ошибка!',
+          text: 'Не удалось удалить услугу. ' + error.message,
+          icon: 'error',
+          background: '#333',
+          color: '#fff',
+        });
+      }
+    }
+  });
+}
+
 function cancelChanges(serviceId: string) {
   localServices.value[serviceId] = JSON.parse(
     JSON.stringify(services.value[serviceId])
@@ -345,7 +406,8 @@ onMounted(fetchServices);
 }
 
 .btn-save,
-.btn-cancel {
+.btn-cancel,
+.btn-delete {
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
@@ -356,6 +418,10 @@ onMounted(fetchServices);
 
 .btn-save {
   background-color: #28a745;
+}
+
+.btn-delete {
+  background-color: #ff4d4f;
 }
 
 .btn-cancel {
