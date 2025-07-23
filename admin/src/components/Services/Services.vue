@@ -13,7 +13,7 @@
           }"
           :data-service-id="service.id"
         >
-          {{ console.log(service, 'servicew') }}
+          {{ console.log(service, 'service') }}
           <summary>{{ service.name }}</summary>
           <div class="service-details">
             <div class="form-group">
@@ -61,9 +61,6 @@
               </button>
               <button @click="deleteService(service.id)" class="btn-delete">
                 Удалить
-              </button>
-              <button @click="cancelChanges(service.id)" class="btn-cancel">
-                Отменить
               </button>
             </div>
           </div>
@@ -345,12 +342,6 @@ async function deleteService(serviceId: string) {
   });
 }
 
-function cancelChanges(serviceId: string) {
-  localServices.value[serviceId] = JSON.parse(
-    JSON.stringify(services.value[serviceId])
-  );
-}
-
 function getFullImagePath(path: string): string {
   if (!path) return '';
   if (path.startsWith('blob:') || path.startsWith('http')) {
@@ -511,7 +502,6 @@ onMounted(fetchServices);
 }
 
 .btn-save,
-.btn-cancel,
 .btn-delete {
   padding: 10px 15px;
   border: none;
@@ -527,10 +517,6 @@ onMounted(fetchServices);
 
 .btn-delete {
   background-color: #ff4d4f;
-}
-
-.btn-cancel {
-  background-color: #dc3545;
 }
 
 /* Add styles for Quill editor if needed */
