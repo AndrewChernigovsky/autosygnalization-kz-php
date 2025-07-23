@@ -5,13 +5,15 @@ import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyInput from '../components/UI/MyInput.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
 import Swal from 'sweetalert2';
+import { QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 interface IContacts {
   contact_id?: number;
   title: string;
   content: string;
-  icon_path: File | string | null; // При редактировании может быть File, из БД приходит string
-  icon_path_url?: string | null; // Для предпросмотра
+  icon_path: File | string | null;
+  icon_path_url?: string | null;
   link: string | null;
   type: string;
 }
@@ -25,9 +27,9 @@ const contacts = ref<IContacts[]>([]);
 const newContact = ref<IContacts>({
   title: '',
   content: '',
-  icon_path: null, // Изменено с '' на null
+  icon_path: null,
   icon_path_url: null,
-  link: '', // Изменить с null на пустую строку
+  link: '',
   type: '',
 });
 
@@ -40,6 +42,10 @@ const contactsType = ref<string[]>([]);
 const activeEditType = ref<string | null>(null);
 
 const activeEditItem = ref<IContacts | null>(null);
+
+const needsQuill = (type: string) => {
+  return ['Адрес', 'Расписание'].includes(type);
+};
 
 onMounted(async () => {
   await getContacts();
@@ -67,7 +73,6 @@ const updateContact = async (item: IContacts) => {
 };
 
 const deleteContact = async (item: IContacts) => {
-  // Показываем подтверждение перед удалением
   const result = await Swal.fire({
     title: 'Вы уверены?',
     text: 'Это действие нельзя отменить!',
@@ -92,9 +97,9 @@ const handleRetry = async () => {
 
 const toggleEditMode = (type: string) => {
   if (activeEditType.value === type) {
-    activeEditType.value = null; // Закрываем если уже открыт
+    activeEditType.value = null;
   } else {
-    activeEditType.value = type; // Открываем выбранный тип
+    activeEditType.value = type;
   }
 };
 
@@ -172,7 +177,25 @@ const getImageUrl = (item: IContacts): string => {
                 </label>
                 <label class="add-contact-label">
                   <span class="add-contact-label-text">Реквизиты</span>
+                  <div v-if="needsQuill(type)" class="quill-editor-wrapper">
+                    <QuillEditor
+                      v-model:content="newContact.content"
+                      contentType="html"
+                      theme="snow"
+                      :options="{
+                        placeholder: 'Введите текст...',
+                        modules: {
+                          toolbar: [
+                            ['bold', 'italic', 'underline'],
+                            [{ list: 'ordered' }, { list: 'bullet' }],
+                            ['link'],
+                          ],
+                        },
+                      }"
+                    />
+                  </div>
                   <MyInput
+                    v-else
                     type="text"
                     variant="primary"
                     v-model="newContact.content"
@@ -234,7 +257,25 @@ const getImageUrl = (item: IContacts): string => {
                     <div class="item-conent-inputs">
                       <label>
                         <span class="add-contact-label-text">Реквизиты</span>
+                        <div v-if="needsQuill(item.type)">
+                          <QuillEditor
+                            v-model:content="item.content"
+                            contentType="html"
+                            theme="snow"
+                            :options="{
+                              placeholder: 'Введите текст...',
+                              modules: {
+                                toolbar: [
+                                  ['bold', 'italic', 'underline'],
+                                  [{ list: 'ordered' }, { list: 'bullet' }],
+                                  ['link'],
+                                ],
+                              },
+                            }"
+                          />
+                        </div>
                         <MyInput
+                          v-else
                           type="text"
                           variant="primary"
                           v-model="item.content as string"
@@ -282,10 +323,15 @@ const getImageUrl = (item: IContacts): string => {
 </template>
 
 <style scoped>
+.contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .contacts-wrapper {
   padding: 16px;
   border-radius: 8px;
-  margin-bottom: 16px;
   overflow: hidden;
   box-shadow: inset 0 0 0 1px #ffffff;
 }
@@ -375,8 +421,6 @@ const getImageUrl = (item: IContacts): string => {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    align-items: flex-start;
-    justify-content: flex-start;
 
     &.file {
       max-width: 150px;
@@ -387,5 +431,25 @@ const getImageUrl = (item: IContacts): string => {
 .item-content-footer {
   display: flex;
   gap: 16px;
+}
+
+:deep(.ql-editor) {
+  min-height: 120px;
+  max-height: 200px;
+  font-size: 16px;
+  color: #000;
+  background-color: #ffffff;
+}
+
+:deep(.ql-container) {
+  max-height: 200px;
+  border-radius: 10px;
+  border: 1px solid #363535;
+}
+
+:deep(.ql-toolbar) {
+  border-radius: 10px 10px 0 0;
+  border: 1px solid #363535;
+  border-bottom: none;
 }
 </style>
