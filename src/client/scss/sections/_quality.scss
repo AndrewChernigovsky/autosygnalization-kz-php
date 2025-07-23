@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .quality {
   position: relative;
@@ -78,7 +78,7 @@
           position: relative;
 
           &::before {
-            content: "";
+            content: '';
             // top: 50%;
             // left: -260px;
             // transform: translateY(-50%);
@@ -86,7 +86,7 @@
             width: 240px;
             height: 40px;
             margin: 15px auto;
-            background-image: url("/client/images/logo-starline.png");
+            background-image: url('/client/images/logo-starline.png');
             background-size: cover;
             background-position: center;
           }
@@ -126,6 +126,15 @@
       padding: 40px 0;
     }
 
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      align-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
     li {
       padding-left: 40px;
       text-align: left;
@@ -133,28 +142,31 @@
       position: relative;
 
       @media screen and (min-width: var.$desktop-min) {
+        text-align: center;
+        font-size: 28px;
+        flex-basis: 32%;
+        padding: 0;
         &:nth-of-type(1) {
           &::before {
-            background-image: url("/client/vectors/economy-1.svg");
+            background-image: url('/client/vectors/economy-1.svg');
           }
         }
 
         &:nth-of-type(2) {
           &::before {
-            background-image: url("/client/vectors/economy-2.svg");
+            background-image: url('/client/vectors/economy-2.svg');
           }
         }
 
         &:nth-of-type(3) {
           &::before {
-            background-image: url("/client/vectors/economy-3.svg");
+            background-image: url('/client/vectors/economy-3.svg');
           }
         }
-
       }
 
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         width: 150px;
         height: 150px;
@@ -170,7 +182,7 @@
           width: 30px;
           height: 30px;
           transform: translateY(-50%);
-          background-image: url("/client/vectors/aprove.svg");
+          background-image: url('/client/vectors/aprove.svg');
         }
       }
     }
@@ -190,7 +202,6 @@
 
     @media screen and (min-width: var.$desktop-min) {
       text-align: left;
-
     }
   }
 
@@ -236,26 +247,6 @@
     &__item {
       &--hidden {
         display: none;
-      }
-    }
-
-    &__list {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      align-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-
-      li {
-        text-align: center;
-        font-size: 28px;
-        flex-basis: 32%;
-        padding: 0;
-
-        // &::before {
-        //   display: none;
-        // }
       }
     }
 
