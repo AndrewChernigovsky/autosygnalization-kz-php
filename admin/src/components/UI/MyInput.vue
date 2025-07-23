@@ -4,7 +4,7 @@ import MyBtn from './MyBtn.vue';
 import plus from '../../assets/input-file-plus.svg';
 
 interface Props {
-  modelValue?: string;
+  modelValue?: string | null;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'file';
   variant?: 'primary' | 'secondary' | '';
   placeholder?: string;
@@ -17,8 +17,8 @@ interface Props {
 }
 
 interface Emits {
-  (e: 'update:modelValue', value: string): void;
-  (e: 'fileChange', file: File | null): void; // ✅ Добавили новый эмит для файлов
+  (e: 'update:modelValue', value: string | null): void;
+  (e: 'fileChange', file: File | null): void;
   (e: 'focus', event: FocusEvent): void;
   (e: 'blur', event: FocusEvent): void;
 }
@@ -33,6 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const imgPath = ref(props.img);
+const isLoading = ref(false);
 
 const inputClass = computed(() =>
   [
@@ -46,15 +47,24 @@ const inputClass = computed(() =>
 
 const emit = defineEmits<Emits>();
 
-const handleInput = (event: Event) => {
+const handleInput = async (event: Event) => {
   const target = event.target as HTMLInputElement;
 
   if (props.type === 'file') {
     const file = target.files?.[0] || null;
-    imgPath.value = file ? URL.createObjectURL(file) : '';
-    emit('fileChange', file); // ✅ Эмитим сам файл
+
+    if (file) {
+      isLoading.value = true;
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      imgPath.value = URL.createObjectURL(file);
+      isLoading.value = false;
+      emit('fileChange', file);
+    } else {
+      imgPath.value = '';
+      emit('fileChange', null);
+    }
   } else {
-    emit('update:modelValue', target.value);
+    emit('update:modelValue', target.value || null);
   }
 };
 
@@ -75,7 +85,7 @@ const handleBlur = (event: FocusEvent) => {
     <input
       :id="props.id || undefined"
       :type="props.type"
-      :value="props.modelValue"
+      :value="props.modelValue || ''"
       :placeholder="props.placeholder"
       :disabled="props.disabled"
       :class="inputClass"
@@ -83,14 +93,27 @@ const handleBlur = (event: FocusEvent) => {
       @focus="handleFocus"
       @blur="handleBlur"
     />
+
+    <div v-if="props.type === 'file' && isLoading" class="file-loader">
+      <div class="spinner"></div>
+      <p>Загрузка файла...</p>
+    </div>
+
     <img
-      v-if="props.type === 'file'"
-      :src="imgPath || plus"
-      :alt="imgPath || plus"
+      v-if="props.type === 'file' && !isLoading && imgPath"
+      :src="imgPath"
+      :alt="imgPath"
     />
+
+    <img
+      v-if="props.type === 'file' && !isLoading && !imgPath"
+      :src="plus"
+      :alt="plus"
+    />
+
     <MyBtn
       class="my-input-delete"
-      v-if="props.type === 'file' && imgPath.length > 0"
+      v-if="props.type === 'file' && !isLoading && imgPath.length > 0"
       type="button"
       @click="imgPath = ''"
       >x
@@ -119,6 +142,41 @@ const handleBlur = (event: FocusEvent) => {
       height: 100%;
       object-fit: contain;
     }
+  }
+}
+
+.file-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+
+  p {
+    margin-top: 15px;
+    color: #666;
+    font-size: 16px;
+    font-weight: 500;
+  }
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
   }
 }
 

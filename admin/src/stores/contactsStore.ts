@@ -115,7 +115,46 @@ const contactsStore = defineStore('contactsStore', () => {
     }
   };
 
-  return { contacts, getContacts, addContact, updateContact, isLoading, error };
+  const deleteContact = async (url: string, id: number) => {
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      const response = await fetchWithCors(`${url}?id=${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.success) {
+        await Swal.fire({
+          title: 'Успех!',
+          text: 'Контакт удален',
+          icon: 'success',
+        });
+        getContacts(url);
+      } else {
+        throw new Error(response.error || 'Failed to delete contact');
+      }
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Unknown error';
+      await Swal.fire({
+        title: 'Ошибка!',
+        text: 'Не удалось удалить контакт',
+        icon: 'error',
+      });
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  return {
+    contacts,
+    getContacts,
+    addContact,
+    updateContact,
+    deleteContact,
+    isLoading,
+    error,
+  };
 });
 
 export default contactsStore;

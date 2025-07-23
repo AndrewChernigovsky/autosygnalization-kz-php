@@ -126,7 +126,7 @@ const resetNewContact = () => {
     content: '',
     icon_path: null,
     icon_path_url: null,
-    link: '', // Изменить с null на пустую строку
+    link: '',
     type: '',
   };
 };
@@ -248,7 +248,7 @@ const getImageUrl = (item: IContacts): string => {
                           v-model="item.link as string"
                         />
                       </label>
-                      <label>
+                      <label class="file">
                         <span class="add-contact-label-text">Иконка</span>
                         <MyInput
                           width="150px"
@@ -320,7 +320,12 @@ const getImageUrl = (item: IContacts): string => {
 }
 
 .add-contact-label.file {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  max-width: 150px;
 }
 
 .contacts-list {
@@ -341,6 +346,7 @@ const getImageUrl = (item: IContacts): string => {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 30px;
 }
 
 .item-content {
@@ -371,6 +377,10 @@ const getImageUrl = (item: IContacts): string => {
     gap: 16px;
     align-items: flex-start;
     justify-content: flex-start;
+
+    &.file {
+      max-width: 150px;
+    }
   }
 }
 

@@ -6,6 +6,7 @@ import Contacts from '../views/Contacts.vue';
 import Products from '../views/Products.vue';
 import Services from '../views/Services.vue';
 import UI from '../views/UI.vue';
+import MyContacts from '../views/MyContacts.vue';
 
 export const routes = [
   {
@@ -42,6 +43,11 @@ export const routes = [
     path: '/ui',
     name: 'UI',
     component: UI,
+  },
+  {
+    path: '/my-contacts',
+    name: 'Мои контакты',
+    component: MyContacts,
   },
 ];
 
