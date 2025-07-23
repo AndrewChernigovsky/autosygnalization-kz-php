@@ -37,29 +37,28 @@ foreach ($data as $item) {
           <div class="present__block">
             <h2 class="present__main-title">О нас</h2>
             <div class="present__main-slogan-block">
-              <?php foreach ($content['present-slogan'] ?? [] as $item): ?>
-                <p class="present__main-slogan"><?= htmlspecialchars($item['content']) ?></p>
-              <?php endforeach; ?>
+              <?php if (!empty($content['present-slogan-block'][0]['content'])): ?>
+                <?= $content['present-slogan-block'][0]['content'] ?>
+              <?php endif; ?>
             </div>
             <div class="present__main-text">
-              <?php foreach ($content['present-text'] ?? [] as $item): ?>
-                <p><?= htmlspecialchars($item['content']) ?></p>
-              <?php endforeach; ?>
+              <?php if (!empty($content['present-text-block'][0]['content'])): ?>
+                <?= $content['present-text-block'][0]['content'] ?>
+              <?php endif; ?>
             </div>
           </div>
           <div class="present__block">
             <h3 class="present__list-title">Наши преимущества</h3>
-            <ul class="present__list list-style-none">
-              <?php foreach ($content['adventages-list'] ?? [] as $item): ?>
-                <?= $item['content'] ?>
-              <?php endforeach; ?>
-            </ul>
-            <div class="present__list-comment">
-              <?php foreach ($content['comment'] ?? [] as $item): ?>
-                <p class="present__comment-text"><?= htmlspecialchars($item['content']) ?></p>
-              <?php endforeach; ?>
+            <div class="present__list list-style-none">
+                <?php if (!empty($content['advantages-list'][0]['content'])): ?>
+                  <?= $content['advantages-list'][0]['content'] ?>
+                <?php endif; ?>
             </div>
-
+            <div class="present__list-comment">
+              <?php if (!empty($content['comment-block'][0]['content'])): ?>
+                <?= $content['comment-block'][0]['content'] ?>
+              <?php endif; ?>
+            </div>
           </div>
         </div>
         <div class="about-us__tech-photo tech-photo">
@@ -76,9 +75,9 @@ foreach ($data as $item) {
           </div>
           <div class="tech-photo__block">
             <h3 class="tech-photo__block-title">Обращайтесь в Auto Security</h3>
-            <?php foreach ($content['appeal-text'] ?? [] as $item): ?>
-              <p class="tech-photo__text"><?= htmlspecialchars($item['content']) ?></p>
-            <?php endforeach; ?>
+            <?php if (!empty($content['appeal-text-block'][0]['content'])): ?>
+              <?= $content['appeal-text-block'][0]['content'] ?>
+            <?php endif; ?>
           </div>
 
         </div>

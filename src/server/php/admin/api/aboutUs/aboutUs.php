@@ -35,7 +35,7 @@ class AboutUsAPI extends DataBase
   public function getAboutUs()
   {
     try {
-      $query = "SELECT * FROM AboutUs ORDER BY FIELD(type, 'present-slogan', 'present-text', 'advantages-list', 'comment', 'tech-photo-image', 'appeal-text'), position ASC";
+      $query = "SELECT * FROM AboutUs ORDER BY FIELD(type, 'present-slogan-block', 'present-text-block', 'advantages-list', 'comment-block', 'appeal-text-block', 'tech-photo-image'), position ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
       return $this->success($stmt->fetchAll(\PDO::FETCH_ASSOC));
@@ -118,6 +118,12 @@ class AboutUsAPI extends DataBase
     $params = [':id' => $id];
     $new_image_path = null;
 
+    // Сначала получаем путь к старому изображению
+    $stmt_old = $this->pdo->prepare("SELECT image_path FROM AboutUs WHERE about_us_id = :id");
+    $stmt_old->execute([':id' => $id]);
+    $old_image_path = $stmt_old->fetchColumn();
+
+    // Проверяем, пришел ли новый файл
     if (isset($files['image']) && $files['image']['error'] === UPLOAD_ERR_OK) {
       $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/about_us/images/';
       if (!is_dir($upload_dir)) {
@@ -129,9 +135,7 @@ class AboutUsAPI extends DataBase
       $upload_file = $upload_dir . $new_filename;
 
       if (move_uploaded_file($files['image']['tmp_name'], $upload_file)) {
-        $stmt_old = $this->pdo->prepare("SELECT image_path FROM AboutUs WHERE about_us_id = :id");
-        $stmt_old->execute([':id' => $id]);
-        $old_image_path = $stmt_old->fetchColumn();
+        // Если есть старый файл, удаляем его
         if ($old_image_path && file_exists($_SERVER['DOCUMENT_ROOT'] . $old_image_path)) {
           unlink($_SERVER['DOCUMENT_ROOT'] . $old_image_path);
         }
@@ -142,6 +146,13 @@ class AboutUsAPI extends DataBase
       } else {
         return $this->error('Ошибка при перемещении загруженного файла.', 500);
       }
+    } 
+    // Если нового файла нет, но есть флаг на удаление старого
+    else if (isset($data['remove_image']) && $data['remove_image'] == '1') {
+      if ($old_image_path && file_exists($_SERVER['DOCUMENT_ROOT'] . $old_image_path)) {
+        unlink($_SERVER['DOCUMENT_ROOT'] . $old_image_path);
+      }
+      $update_fields[] = 'image_path = NULL';
     }
 
     if (isset($data['title'])) {

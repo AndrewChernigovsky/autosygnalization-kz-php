@@ -22,7 +22,7 @@ class AboutusData extends DataBase
                     SELECT type, title, content, image_path, position 
                     FROM AboutUs 
                     ORDER BY 
-                        FIELD(type, 'present-slogan', 'present-text', 'advantages-item', 'comment', 'tech-photo-image', 'appeal-text'), 
+                        FIELD(type, 'present-slogan-block', 'present-text-block', 'advantages-list', 'comment-block', 'appeal-text-block', 'tech-photo-image'), 
                         position ASC";
                 $stmt = $this->pdo->prepare($query);
                 $stmt->execute();
