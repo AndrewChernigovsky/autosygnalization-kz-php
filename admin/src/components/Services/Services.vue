@@ -1,7 +1,6 @@
 <template>
   <div class="services-admin">
     <h1>Редактор Услуг</h1>
-    <button @click="addService" type="button">Добавить услугу</button>
     <div class="theme-dark">
       <Loader v-if="isLoading" />
       <div v-else class="services-list space-y-2">
@@ -9,6 +8,10 @@
           v-for="service in localServices"
           :key="service.id"
           class="service-item"
+          :class="{
+            'new-service-highlight': service.id === highlightedServiceId,
+          }"
+          :data-service-id="service.id"
         >
           {{ console.log(service, 'servicew') }}
           <summary>{{ service.name }}</summary>
@@ -66,6 +69,13 @@
           </div>
         </details>
       </div>
+      <button
+        @click="addService"
+        type="button"
+        class="btn-save with-margin-bottom"
+      >
+        Добавить услугу
+      </button>
     </div>
   </div>
 </template>
@@ -80,6 +90,7 @@ import Swal from 'sweetalert2';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import ImageUpload from '../../UI/ImageUpload.vue';
+import { nextTick } from 'vue';
 
 const toolbarOptions = [
   [{ header: [1, 2, 3, false] }],
@@ -91,6 +102,7 @@ const toolbarOptions = [
 const services = ref<Record<string, Service>>({});
 const localServices = ref<Record<string, Service>>({});
 const isLoading = ref(true);
+const highlightedServiceId = ref<string | null>(null);
 
 function handleImageUpload(
   data: { path: string; filename: string },
@@ -111,6 +123,41 @@ function handleImageUpload(
 }
 
 function addService() {
+  const existingNewId = Object.keys(localServices.value).find((id) =>
+    id.startsWith('new-')
+  );
+
+  if (existingNewId) {
+    Swal.fire({
+      title: 'Услуга уже добавлена',
+      text: 'Необходимо сначала сохранить уже добавленную услугу.',
+      icon: 'warning',
+      background: '#333',
+      color: '#fff',
+    });
+
+    highlightedServiceId.value = null;
+    nextTick(() => {
+      highlightedServiceId.value = existingNewId;
+      setTimeout(() => {
+        if (highlightedServiceId.value === existingNewId) {
+          highlightedServiceId.value = null;
+        }
+      }, 5000);
+
+      const element = document.querySelector(
+        `[data-service-id="${existingNewId}"]`
+      );
+      if (element) {
+        const detailsElement = element as HTMLDetailsElement;
+        detailsElement.open = true;
+        detailsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    return;
+  }
+
   const newId = `new-${Date.now()}`;
   const newService: Service = {
     id: newId,
@@ -123,6 +170,32 @@ function addService() {
     currency: 'KZT',
   };
   localServices.value[newId] = newService;
+  highlightedServiceId.value = newId;
+
+  setTimeout(() => {
+    if (highlightedServiceId.value === newId) {
+      highlightedServiceId.value = null;
+    }
+  }, 5000);
+
+  Swal.fire({
+    title: 'Добавлена форма для новой услуги',
+    text: 'Заполните данные и нажмите "Сохранить".',
+    icon: 'info',
+    background: '#333',
+    color: '#fff',
+    timer: 3000,
+    showConfirmButton: false,
+  });
+
+  nextTick(() => {
+    const element = document.querySelector(`[data-service-id="${newId}"]`);
+    if (element) {
+      const detailsElement = element as HTMLDetailsElement;
+      detailsElement.open = true;
+      detailsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
 }
 
 async function fetchServices() {
@@ -148,8 +221,9 @@ async function fetchServices() {
 }
 
 async function saveService(serviceId: string) {
+  const isNew = serviceId.toString().startsWith('new-');
   Swal.fire({
-    title: 'Сохранение...',
+    title: isNew ? 'Добавление услуги...' : 'Сохранение...',
     text: 'Пожалуйста, подождите',
     allowOutsideClick: false,
     didOpen: () => {
@@ -161,7 +235,6 @@ async function saveService(serviceId: string) {
 
   try {
     const serviceToSave = localServices.value[serviceId];
-    const isNew = serviceId.toString().startsWith('new-');
     let endpoint = `/server/php/admin/api/services/update_service.php`;
     let payload: any = { ...serviceToSave };
 
@@ -194,8 +267,10 @@ async function saveService(serviceId: string) {
     }
 
     Swal.fire({
-      title: 'Сохранено!',
-      text: 'Услуга была успешно обновлена.',
+      title: isNew ? 'Добавлено!' : 'Сохранено!',
+      text: isNew
+        ? 'Новая услуга была успешно добавлена.'
+        : 'Услуга была успешно обновлена.',
       icon: 'success',
       background: '#333',
       color: '#fff',
@@ -288,6 +363,32 @@ onMounted(fetchServices);
 </script>
 
 <style scoped>
+@keyframes highlight-fade-item {
+  from {
+    background-color: #2f4835;
+  }
+  to {
+    background-color: #333;
+  }
+}
+
+@keyframes highlight-fade-summary {
+  from {
+    background-color: #35523d;
+  }
+  to {
+    background-color: #3a3a3a;
+  }
+}
+
+.service-item.new-service-highlight {
+  animation: highlight-fade-item 5s ease-out forwards;
+}
+
+.service-item.new-service-highlight > summary {
+  animation: highlight-fade-summary 5s ease-out forwards;
+}
+
 .services-admin h1 {
   text-align: center;
   color: #f1f1f1;
@@ -301,6 +402,10 @@ onMounted(fetchServices);
   max-width: 1440px;
   border-radius: 10px;
   margin: 0 auto;
+}
+
+.with-margin-bottom {
+  margin-top: 20px;
 }
 
 .space-y-2 {
