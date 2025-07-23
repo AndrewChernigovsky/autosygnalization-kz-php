@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
+import { QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 
@@ -12,12 +14,20 @@ interface AboutUsItem {
   position: number;
 }
 
+const toolbarOptions = [
+  [{ header: [1, 2, 3, false] }],
+  ['bold', 'italic', 'underline', 'strike'],
+  [{ list: 'ordered' }, { list: 'bullet' }],
+  ['clean'],
+];
+
 const items = ref<AboutUsItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const openAccordion = ref<string | null>(null);
 const imagePreviews = ref<Record<number, string>>({}); // Для превью существующих
 const newImagePreviews = ref<Record<string, string>>({}); // Для превью новых
+const newItemContent = ref<Record<string, string>>({}); // Для контента нового QuillEditor
 
 // Для отслеживания перетаскиваемого элемента
 const draggingItem = ref<number | null>(null);
@@ -26,24 +36,31 @@ const API_URL = '/server/php/admin/api/aboutUs/aboutUs.php';
 
 const typeConfig: Record<
   string,
-  { name: string; fields: ('title' | 'content' | 'image')[] }
+  { name: string; fields: ('title' | 'content' | 'image' | 'list')[] }
 > = {
   'present-slogan': { name: 'Слоганы в презентации', fields: ['content'] },
   'present-text': { name: 'Текст в презентации', fields: ['content'] },
-  'advantages-item': { name: 'Преимущества', fields: ['content'] },
+  'advantages-list': { name: 'Список преимуществ', fields: ['list'] },
   comment: { name: 'Комментарии', fields: ['content'] },
   'tech-photo-image': { name: 'Фотографии тех. центра', fields: ['image'] },
-  'appeal-text': { name: 'Призыв к действию', fields: ['content'] },
+  'appeal-text': { name: 'Обращение к клиентам', fields: ['content'] },
 };
 
 const groupedItems = computed(() => {
-  const groups = items.value.reduce((acc, item) => {
-    if (!acc[item.type]) {
-      acc[item.type] = [];
-    }
-    acc[item.type].push(item);
+  // Инициализируем группы всеми возможными типами из typeConfig,
+  // чтобы аккордеон отображался, даже если для типа нет данных.
+  const groups = Object.keys(typeConfig).reduce((acc, type) => {
+    acc[type] = [];
     return acc;
   }, {} as Record<string, AboutUsItem[]>);
+
+  // Заполняем группы элементами из базы данных.
+  items.value.forEach((item) => {
+    // Убеждаемся, что тип элемента существует в нашей конфигурации.
+    if (groups[item.type]) {
+      groups[item.type].push(item);
+    }
+  });
 
   // Сортировка каждой группы по position
   for (const type in groups) {
@@ -97,7 +114,15 @@ const handleCreate = async (event: Event, type: string) => {
   const config = typeConfig[type];
 
   // Валидация на стороне клиента
-  if (config.fields.includes('content')) {
+  if (config.fields.includes('list')) {
+    const content = newItemContent.value[type] || '';
+    // Проверяем, что контент не пустой, игнорируя HTML теги
+    if (!content.replace(/<(.|\n)*?>/g, '').trim()) {
+      Swal.fire('Ошибка', 'Поле "Содержимое" не может быть пустым.', 'error');
+      return;
+    }
+    formData.append('content', content);
+  } else if (config.fields.includes('content')) {
     const content = formData.get('content') as string;
     if (!content || content.trim() === '') {
       Swal.fire('Ошибка', 'Поле "Содержимое" не может быть пустым.', 'error');
@@ -126,6 +151,9 @@ const handleCreate = async (event: Event, type: string) => {
       Swal.fire('Создано!', 'Новый элемент успешно добавлен.', 'success');
       form.reset(); // Сбрасываем форму
       delete newImagePreviews.value[type]; // Очищаем превью
+      if (newItemContent.value[type]) {
+        newItemContent.value[type] = ''; // Очищаем редактор
+      }
     } else {
       throw new Error(response.error || 'Ошибка при создании элемента');
     }
@@ -302,6 +330,17 @@ onMounted(getAboutUsData);
                 ></textarea>
               </template>
 
+              <template v-if="typeConfig[type]?.fields.includes('list')">
+                <label>Содержимое:</label>
+                <QuillEditor
+                  :key="item.about_us_id + '-list'"
+                  theme="snow"
+                  :toolbar="toolbarOptions"
+                  contentType="html"
+                  v-model:content="item.content"
+                />
+              </template>
+
               <template v-if="typeConfig[type]?.fields.includes('image')">
                 <label>Изображение:</label>
                 <img
@@ -335,11 +374,19 @@ onMounted(getAboutUsData);
 
           <!-- Форма для добавления нового элемента -->
           <form class="form-add" @submit.prevent="handleCreate($event, type)">
-            <h4 class="form-add-title">Добавить новое содержимое</h4>
-
             <template v-if="typeConfig[type]?.fields.includes('content')">
               <label>Новое содержимое:</label>
               <textarea name="content" rows="4" required></textarea>
+            </template>
+
+            <template v-if="typeConfig[type]?.fields.includes('list')">
+              <label>Новое содержимое:</label>
+              <QuillEditor
+                theme="snow"
+                :toolbar="toolbarOptions"
+                contentType="html"
+                v-model:content="newItemContent[type]"
+              />
             </template>
 
             <template v-if="typeConfig[type]?.fields.includes('image')">
@@ -368,11 +415,17 @@ onMounted(getAboutUsData);
 </template>
 
 <style scoped>
+/* Общие стили контейнера */
 .container {
-  color: black;
+  background-color: #2d2d2d;
+  color: #e0e0e0;
   padding: 2rem;
-  font-family: 'Arial', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+  min-height: 100vh;
 }
+
+/* Стили загрузчика и ошибок */
 .loading-overlay {
   display: flex;
   justify-content: center;
@@ -380,8 +433,8 @@ onMounted(getAboutUsData);
   height: 100%;
 }
 .spinner {
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
+  border: 4px solid #444;
+  border-top: 4px solid #007bff;
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -396,79 +449,104 @@ onMounted(getAboutUsData);
   }
 }
 .error-message {
-  color: red;
+  color: #ff6b6b;
   text-align: center;
 }
+.error-message button {
+  margin-top: 1rem;
+}
+
+/* Стили аккордеона */
 .accordion {
   width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #444;
 }
 .accordion-item {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #444;
+}
+.accordion-item:last-child {
+  border-bottom: none;
 }
 .accordion-header {
   width: 100%;
-  background-color: black;
+  background-color: #3a3a3a;
   border: none;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   text-align: left;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+.accordion-header:hover {
+  background-color: #4a4a4a;
 }
 .accordion-arrow {
   width: 10px;
   height: 10px;
-  border-right: 2px solid #333;
-  border-bottom: 2px solid #333;
+  border-right: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
   transform: rotate(45deg);
   transition: transform 0.3s;
 }
 .accordion-arrow.is-open {
-  transform: rotate(-135deg);
+  transform: translateY(2px) rotate(-135deg);
 }
 .accordion-content {
-  padding: 1rem;
-  background-color: #fff;
+  padding: 1.5rem;
+  background-color: #333;
 }
+
+/* Стили форм */
 .form-group {
   margin-bottom: 1.5rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
-}
-.form-group:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-  padding-bottom: 0;
+  padding: 1.5rem;
+  border: 1px solid #444;
+  border-radius: 8px;
+  background-color: #3c3c3c;
 }
 .form-add {
   margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 2px dashed #ccc;
-}
-.form-add-title {
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+  padding: 1.5rem;
+  border: 2px dashed #555;
+  border-radius: 8px;
 }
 label {
   display: block;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   font-weight: 500;
+  color: #ccc;
 }
 input,
 textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
+  padding: 0.75rem;
+  border: 1px solid #555;
   border-radius: 4px;
+  background-color: #2c2c2c;
+  color: #e0e0e0;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 .image-preview {
   max-width: 200px;
-  margin-top: 0.5rem;
-  display: block;
+  margin: 1rem 0;
+  border-radius: 4px;
+  border: 1px solid #555;
 }
+
+/* Стили кнопок */
 .actions {
   margin-top: 1rem;
   display: flex;
@@ -477,43 +555,79 @@ textarea {
 .btn-save,
 .btn-delete,
 .btn-add {
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1.5rem;
   border: none;
   border-radius: 4px;
   color: white;
   cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s, filter 0.2s;
+}
+.btn-save:hover,
+.btn-delete:hover,
+.btn-add:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
 }
 .btn-save {
-  background-color: #28a745;
+  background-image: linear-gradient(45deg, #28a745, #218838);
 }
 .btn-delete {
-  background-color: #dc3545;
+  background-image: linear-gradient(45deg, #dc3545, #c82333);
 }
 .btn-add {
-  background-color: #007bff;
+  background-image: linear-gradient(45deg, #007bff, #0069d9);
   margin-top: 1rem;
 }
+
+/* Стили для Drag-n-Drop */
 .draggable {
   cursor: grab;
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 15px;
 }
 .draggable:active {
   cursor: grabbing;
 }
 .drag-handle {
   font-size: 24px;
+  color: #777;
+  padding-top: 2.5rem; /* Выравнивание по центру */
+  transition: color 0.3s;
+}
+.draggable:hover .drag-handle {
   color: #ccc;
-  padding-top: 20px; /* Выравнивание по центру */
 }
 .content-wrapper {
   flex-grow: 1;
 }
 
-/* Визуальный эффект при перетаскивании */
-.form-group[draggable='true'] {
-  transition: opacity 0.2s, background-color 0.2s;
+/* Стили для Quill Editor под темную тему */
+:deep(.ql-toolbar) {
+  background: #3c3c3c;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  border-color: #555 !important;
+}
+:deep(.ql-container) {
+  background: #2c2c2c;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  color: #e0e0e0;
+  border-color: #555 !important;
+}
+:deep(.ql-editor) {
+  min-height: 150px;
+}
+:deep(.ql-snow .ql-stroke) {
+  stroke: #ccc;
+}
+:deep(.ql-snow .ql-fill) {
+  fill: #ccc;
+}
+:deep(.ql-snow .ql-picker-label) {
+  color: #ccc;
 }
 </style>

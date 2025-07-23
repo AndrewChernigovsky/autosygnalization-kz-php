@@ -149,13 +149,14 @@
       }
     }
 
-    &__list {
+    ul {
       display: flex;
       flex-direction: column;
       gap: 20px;
       font-size: 12px;
       letter-spacing: 0.5px;
       margin-bottom: 45px;
+      list-style: none;
 
       @media screen and (min-width: var.$tablet) {
         gap: 15px;
@@ -173,7 +174,7 @@
       }
     }
 
-    &__list-item {
+    li {
       font-size: 14px;
       line-height: 21px;
       padding-left: 20px;

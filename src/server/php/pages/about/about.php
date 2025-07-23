@@ -50,8 +50,8 @@ foreach ($data as $item) {
           <div class="present__block">
             <h3 class="present__list-title">Наши преимущества</h3>
             <ul class="present__list list-style-none">
-              <?php foreach ($content['advantages-item'] ?? [] as $item): ?>
-                <li class="present__list-item"><?= htmlspecialchars($item['content']) ?></li>
+              <?php foreach ($content['adventages-list'] ?? [] as $item): ?>
+                <?= $item['content'] ?>
               <?php endforeach; ?>
             </ul>
             <div class="present__list-comment">

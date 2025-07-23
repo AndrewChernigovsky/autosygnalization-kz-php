@@ -35,7 +35,7 @@ class AboutUsAPI extends DataBase
   public function getAboutUs()
   {
     try {
-      $query = "SELECT * FROM AboutUs ORDER BY FIELD(type, 'present-slogan', 'present-text', 'advantages-item', 'comment', 'tech-photo-image', 'appeal-text'), position ASC";
+      $query = "SELECT * FROM AboutUs ORDER BY FIELD(type, 'present-slogan', 'present-text', 'advantages-list', 'comment', 'tech-photo-image', 'appeal-text'), position ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
       return $this->success($stmt->fetchAll(\PDO::FETCH_ASSOC));
