@@ -88,6 +88,7 @@ export function useProducts() {
         description: product.description,
         price: product.price,
         is_popular: product.is_popular,
+        is_special: product.is_special,
         gallery: product.gallery,
         category_key: product.category_key,
         model: product.model,
@@ -172,20 +173,20 @@ export function useProducts() {
       description: 'Введите описание...',
       price: 0,
       is_popular: false,
+      is_special: false,
       gallery: [],
       category_key: category_key,
       category: category_key,
       // Заполняем остальные поля значениями по умолчанию, чтобы избежать ошибок
       model: '',
-      cart: false,
-      popular: false,
-      currency: '₸',
-      quantity: 0,
+      // cart: false,
+      // currency: '₸',
+      // quantity: 0,
       link: '#',
       functions: [],
       options: [],
       'options-filters': [],
-      is_special: false,
+
       autosygnals: [],
     };
     products.value.unshift(newProduct);

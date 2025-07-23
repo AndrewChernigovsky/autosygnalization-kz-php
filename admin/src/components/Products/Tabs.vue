@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, toRefs } from 'vue';
-import type { Tab, DescriptionItem } from './interfaces/Products';
+import type { Tab } from './interfaces/Products';
 import Loader from '../../UI/Loader.vue';
 
 defineOptions({
@@ -90,6 +90,12 @@ function getFullIconPath(path: string | undefined): string {
   }
   return `${props.serverBaseUrl}${path}`;
 }
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Tabs',
+};
 </script>
 
 <template>

@@ -16,10 +16,12 @@ export interface ProductI {
   title: string;
   description: string;
   price: number;
+  link: string;
   is_popular: boolean;
   is_special: boolean;
   gallery: string[];
   category_key: string;
+  category: string;
   functions: string[];
   options: string[];
   'options-filters': string[];

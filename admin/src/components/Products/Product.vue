@@ -6,7 +6,7 @@
       @toggle="(event) => emit('handle-toggle', event, product)"
     >
       <summary>
-        <strong>{{ product.title }}</strong>
+        <strong>{{ displayProduct.title }}</strong>
       </summary>
       <div class="product-editor">
         <div class="form-group" @click="startEditing(product, 'model')">
@@ -16,7 +16,7 @@
             v-model="editingProduct.model"
             type="text"
           />
-          <span v-else>{{ product.model }}</span>
+          <span v-else>{{ displayProduct.model }}</span>
         </div>
 
         <div class="form-group" @click="startEditing(product, 'title')">
@@ -26,7 +26,7 @@
             v-model="editingProduct.title"
             type="text"
           />
-          <span v-else>{{ product.title }}</span>
+          <span v-else>{{ displayProduct.title }}</span>
         </div>
 
         <div class="form-group" @click="startEditing(product, 'description')">
@@ -37,7 +37,7 @@
             "
             v-model="editingProduct.description"
           ></textarea>
-          <span v-else>{{ product.description }}</span>
+          <span v-else>{{ displayProduct.description }}</span>
         </div>
 
         <div class="form-group" @click="startEditing(product, 'price')">
@@ -47,7 +47,7 @@
             v-model="editingProduct.price"
             type="number"
           />
-          <span v-else>{{ product.price }}</span>
+          <span v-else>{{ displayProduct.price }}</span>
         </div>
 
         <div class="form-group-checkbox">
@@ -55,11 +55,7 @@
           <input
             type="checkbox"
             :id="'popular-' + product.id"
-            :checked="
-              editingProduct && editingProduct.id === product.id
-                ? editingProduct.is_popular
-                : product.is_popular
-            "
+            :checked="displayProduct.is_popular"
             @change="handleCheckboxChange('is_popular')"
           />
         </div>
@@ -68,17 +64,13 @@
           <label>Специальный:</label>
           <input
             type="checkbox"
-            :checked="
-              editingProduct && editingProduct.id === product.id
-                ? editingProduct.is_special
-                : product.is_special
-            "
+            :checked="displayProduct.is_special"
             @change="handleCheckboxChange('is_special')"
           />
         </div>
 
         <Gallery
-          :product="product"
+          :product="displayProduct"
           :is-image-uploading="isImageUploading"
           @delete-image="(p, i) => emit('delete-image', p, i)"
           @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
@@ -102,7 +94,7 @@
               {{ category.name }}
             </option>
           </select>
-          <span v-else>{{ getCategoryName(product.category_key) }}</span>
+          <span v-else>{{ getCategoryName(displayProduct.category_key) }}</span>
         </div>
 
         <div class="array-fields-editor">
@@ -115,7 +107,7 @@
               :value="getArrayAsCST(editingProduct.functions)"
               @input="updateArrayField($event, 'functions')"
             ></textarea>
-            <span v-else>{{ getArrayAsCST(product.functions) }}</span>
+            <span v-else>{{ getArrayAsCST(displayProduct.functions) }}</span>
           </div>
           <div class="form-group" @click="startEditing(product, 'options')">
             <label>Опции (через запятую):</label>
@@ -126,7 +118,7 @@
               :value="getArrayAsCST(editingProduct.options)"
               @input="updateArrayField($event, 'options')"
             ></textarea>
-            <span v-else>{{ getArrayAsCST(product.options) }}</span>
+            <span v-else>{{ getArrayAsCST(displayProduct.options) }}</span>
           </div>
           <div
             class="form-group"
@@ -141,7 +133,9 @@
               :value="getArrayAsCST(editingProduct['options-filters'])"
               @input="updateArrayField($event, 'options-filters')"
             ></textarea>
-            <span v-else>{{ getArrayAsCST(product['options-filters']) }}</span>
+            <span v-else>{{
+              getArrayAsCST(displayProduct['options-filters'])
+            }}</span>
           </div>
           <div class="form-group" @click="startEditing(product, 'autosygnals')">
             <label>Раздел для автосигнализаций (через запятую):</label>
@@ -153,24 +147,20 @@
               :value="getArrayAsCST(editingProduct.autosygnals)"
               @input="updateArrayField($event, 'autosygnals')"
             ></textarea>
-            <span v-else>{{ getArrayAsCST(product.autosygnals) }}</span>
+            <span v-else>{{ getArrayAsCST(displayProduct.autosygnals) }}</span>
           </div>
         </div>
 
         <Tabs
-          v-if="product.tabs"
-          :tabs="
-            editingProduct?.id === product.id && editingProduct.tabs
-              ? editingProduct.tabs
-              : product.tabs
-          "
+          v-if="displayProduct.tabs"
+          :tabs="displayProduct.tabs"
           :is-icon-uploading="
             (tabIndex, itemIndex) => isUploading[`tab-${tabIndex}-${itemIndex}`]
           "
           @update:tabs="updateTabs"
           @trigger-icon-upload="handleIconUpload"
           @delete-icon="handleIconDelete"
-          :server-base-url="serverUrl"
+          :server-base-url="API_URL"
         />
 
         <div class="product-actions">
@@ -233,6 +223,13 @@ const emit = defineEmits<{
   (e: 'handle-toggle', event: Event, product: ProductI): void;
 }>();
 
+const displayProduct = computed(() => {
+  if (editingProduct.value && editingProduct.value.id === props.product.id) {
+    return editingProduct.value;
+  }
+  return props.product;
+});
+
 const editingProduct = ref<ProductI | null>(null);
 const fieldToEdit = ref<string | null>(null);
 const iconUploader = ref<HTMLInputElement | null>(null);
@@ -242,7 +239,7 @@ const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(
 
 const isUploading = ref<Record<string, boolean>>({});
 
-const serverUrl = API_URL.replace('/src/server', '');
+// const serverUrl = API_URL.replace('/src/server', '');
 
 const editingCategoryKey = computed({
   get: () => editingProduct.value?.category_key || '',
@@ -308,6 +305,7 @@ function updateArrayField(
 
 function updateTabs(newTabs: Tab[]) {
   const productToEdit = ensureEditing();
+  if (!productToEdit) return;
   productToEdit.tabs = newTabs;
 }
 
@@ -344,7 +342,7 @@ async function onIconFileSelected(event: Event) {
 
   try {
     const response = await fetch(
-      `${API_URL}/php/admin/api/products/upload_tab_icon.php`,
+      `server/php/admin/api/products/upload_tab_icon.php`,
       {
         method: 'POST',
         body: formData,
@@ -377,7 +375,7 @@ async function handleIconDelete(tabIndex: number, itemIndex: number) {
 
   try {
     const response = await fetch(
-      `${API_URL}/php/admin/api/products/delete_tab_icon.php`,
+      `server/php/admin/api/products/delete_tab_icon.php`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -415,6 +413,12 @@ function saveChanges() {
     fieldToEdit.value = null;
   }
 }
+</script>
+
+<script lang="ts">
+export default {
+  name: 'Product',
+};
 </script>
 
 <style scoped>

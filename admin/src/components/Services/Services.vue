@@ -27,7 +27,8 @@
                 theme="snow"
                 :toolbar="toolbarOptions"
                 contentType="html"
-                v-model:content="service.description"
+                :content="service.description"
+                @update:content="(val) => (service.description = val)"
               />
             </div>
             <div class="form-group">
@@ -48,7 +49,8 @@
                 theme="snow"
                 :toolbar="toolbarOptions"
                 contentType="html"
-                v-model:content="service.services"
+                :content="service.services"
+                @update:content="(val) => (service.services = val)"
               />
             </div>
             <div class="form-group">
