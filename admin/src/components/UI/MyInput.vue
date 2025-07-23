@@ -18,6 +18,7 @@ interface Props {
 
 interface Emits {
   (e: 'update:modelValue', value: string): void;
+  (e: 'fileChange', file: File | null): void; // ✅ Добавили новый эмит для файлов
   (e: 'focus', event: FocusEvent): void;
   (e: 'blur', event: FocusEvent): void;
 }
@@ -47,9 +48,13 @@ const emit = defineEmits<Emits>();
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  emit('update:modelValue', target.value);
+
   if (props.type === 'file') {
-    imgPath.value = URL.createObjectURL(target.files?.[0] || new Blob());
+    const file = target.files?.[0] || null;
+    imgPath.value = file ? URL.createObjectURL(file) : '';
+    emit('fileChange', file); // ✅ Эмитим сам файл
+  } else {
+    emit('update:modelValue', target.value);
   }
 };
 

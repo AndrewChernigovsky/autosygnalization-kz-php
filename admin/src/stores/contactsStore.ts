@@ -31,7 +31,91 @@ const contactsStore = defineStore('contactsStore', () => {
     }
   };
 
-  return { contacts, getContacts, isLoading, error };
+  const addContact = async (url: string, data: any, type: string) => {
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      const formData = new FormData();
+      formData.append('title', data.title || '');
+      formData.append('content', data.content || '');
+      formData.append('link', data.link || '');
+      formData.append('type', type);
+
+      if (data.icon_path instanceof File) {
+        formData.append('icon_path', data.icon_path);
+      }
+
+      const response = await fetchWithCors(url, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.success) {
+        await Swal.fire({
+          title: 'Успех!',
+          text: 'Контакт добавлен',
+          icon: 'success',
+        });
+        getContacts(url);
+      } else {
+        throw new Error(response.error || 'Failed to add contact');
+      }
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Unknown error';
+      await Swal.fire({
+        title: 'Ошибка!',
+        text: 'Не удалось добавить контакт',
+        icon: 'error',
+      });
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const updateContact = async (url: string, id: number, data: any) => {
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      const formData = new FormData();
+      formData.append('title', data.title || '');
+      formData.append('content', data.content || '');
+      formData.append('link', data.link || '');
+      formData.append('type', data.type || '');
+
+      if (data.icon_path instanceof File) {
+        formData.append('icon_path', data.icon_path);
+      }
+
+      const response = await fetchWithCors(`${url}?id=${id}`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.success) {
+        await Swal.fire({
+          title: 'Успех!',
+          text: 'Контакт обновлен',
+          icon: 'success',
+        });
+        getContacts(url);
+      } else {
+        throw new Error(response.error || 'Failed to update contact');
+      }
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Unknown error';
+      await Swal.fire({
+        title: 'Ошибка!',
+        text: 'Не удалось обновить контакт',
+        icon: 'error',
+      });
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  return { contacts, getContacts, addContact, updateContact, isLoading, error };
 });
 
 export default contactsStore;

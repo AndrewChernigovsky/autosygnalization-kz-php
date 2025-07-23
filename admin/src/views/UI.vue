@@ -9,8 +9,8 @@ interface IContacts {
   contact_id?: number;
   title: string;
   content: string;
-  icon_path: string | null;
-  icon_path_url: File | string | null;
+  icon_path: File | string | null;
+  icon_path_url: string | null;
   link: string | null;
   type: string;
 }
@@ -21,10 +21,12 @@ const store = contactsStore();
 
 const contacts = ref<IContacts[]>([]);
 
+const fileInput = ref(null);
+
 const newContact = ref<IContacts>({
   title: '',
   content: '',
-  icon_path: '',
+  icon_path: null, // Изменено с '' на null
   icon_path_url: null,
   link: '',
   type: '',
@@ -41,6 +43,10 @@ const activeEditType = ref<string | null>(null);
 const activeEditItem = ref<IContacts | null>(null);
 
 onMounted(async () => {
+  await getContacts();
+});
+
+const getContacts = async () => {
   isLoading.value = true;
   await store.getContacts(`${API_BASE_URL}`);
   contacts.value = store.contacts;
@@ -49,7 +55,13 @@ onMounted(async () => {
   if (contacts.value.length > 0) {
     isLoading.value = false;
   }
-});
+};
+
+const addContact = async (type: string) => {
+  await store.addContact(API_BASE_URL, newContact.value, type);
+  resetNewContact();
+  await getContacts();
+};
 
 const handleRetry = async () => {
   await store.getContacts(`${API_BASE_URL}`);
@@ -70,6 +82,42 @@ const toggleEditItem = (item: IContacts) => {
   } else {
     activeEditItem.value = item;
   }
+};
+
+const handleFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    const file = target.files[0];
+    newContact.value.icon_path = file;
+    newContact.value.icon_path_url = URL.createObjectURL(file);
+  }
+};
+
+// ✅ Новая функция для обработки файлов при редактировании
+const handleEditFileChange = (file: File | null, item: IContacts) => {
+  if (file) {
+    item.icon_path = file;
+    item.icon_path_url = URL.createObjectURL(file);
+  }
+};
+
+// ✅ Новая функция для обработки файлов при добавлении
+const handleNewFileChange = (file: File | null) => {
+  if (file) {
+    newContact.value.icon_path = file;
+    newContact.value.icon_path_url = URL.createObjectURL(file);
+  }
+};
+
+const resetNewContact = () => {
+  newContact.value = {
+    title: '',
+    content: '',
+    icon_path: null,
+    icon_path_url: null,
+    link: '',
+    type: '',
+  };
 };
 </script>
 
@@ -99,15 +147,27 @@ const toggleEditItem = (item: IContacts) => {
               <div class="add-contact-label-wrapper">
                 <label class="add-contact-label">
                   <span class="add-contact-label-text">Заголовок</span>
-                  <MyInput type="text" variant="primary" />
+                  <MyInput
+                    type="text"
+                    variant="primary"
+                    v-model="newContact.title"
+                  />
                 </label>
                 <label class="add-contact-label">
                   <span class="add-contact-label-text">Реквизиты</span>
-                  <MyInput type="text" variant="primary" />
+                  <MyInput
+                    type="text"
+                    variant="primary"
+                    v-model="newContact.content"
+                  />
                 </label>
                 <label class="add-contact-label">
                   <span class="add-contact-label-text">Ссылка</span>
-                  <MyInput type="text" variant="primary" />
+                  <MyInput
+                    type="text"
+                    variant="primary"
+                    v-model="newContact.link"
+                  />
                 </label>
                 <label class="add-contact-label file">
                   <span class="add-contact-label-text">Иконка</span>
@@ -116,10 +176,20 @@ const toggleEditItem = (item: IContacts) => {
                     height="150px"
                     type="file"
                     variant="primary"
+                    :img="newContact.icon_path_url || ''"
+                    @fileChange="handleNewFileChange"
                   />
                 </label>
               </div>
-              <MyBtn variant="primary">Добавить</MyBtn>
+              <MyBtn
+                variant="primary"
+                @click="
+                  async () => {
+                    addContact(type);
+                  }
+                "
+                >Добавить</MyBtn
+              >
             </div>
             <ul class="contacts-list list-style-none">
               <li
@@ -168,8 +238,10 @@ const toggleEditItem = (item: IContacts) => {
                           height="150px"
                           type="file"
                           variant="primary"
-                          v-model="item.icon_path_url as string"
-                          :img="item.icon_path || ''"
+                          :img="item.icon_path_url || ''"
+                          @fileChange="
+                            (file) => handleEditFileChange(file, item)
+                          "
                         />
                       </label>
                     </div>
