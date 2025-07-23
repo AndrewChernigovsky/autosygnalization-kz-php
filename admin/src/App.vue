@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { useIframeStore } from './stores/iframeStore';
 import Menu from './UI/Menu.vue';
+import Header from './components/layout/Header/Header.vue';
 // import test from './views/test.vue';
 
 const isSidebarOpen = ref(false);
@@ -36,7 +37,11 @@ function toggleSidebar() {
         ></iframe>
       </div>
     </aside>
-    <main class="main-content">
+    <main class="main-content my-page">
+      <h1 style="text-align: center; margin-bottom: 20px" class="my-title m-0">
+        Админ-панель, здравствуйте Алексей!
+      </h1>
+      <Header />
       <router-view />
     </main>
   </div>

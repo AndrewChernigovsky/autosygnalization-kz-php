@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import logo from '../../assets/input-file-plus.svg';
+import MyBtn from './MyBtn.vue';
+import plus from '../../assets/input-file-plus.svg';
 
 interface Props {
   modelValue?: string;
@@ -8,8 +9,11 @@ interface Props {
   variant?: 'primary' | 'secondary' | '';
   placeholder?: string;
   disabled?: boolean;
-  id?: string;
+  id?: string | undefined;
   className?: string;
+  width?: string;
+  height?: string;
+  img?: string;
 }
 
 interface Emits {
@@ -24,9 +28,10 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   variant: '',
   className: '',
+  img: '',
 });
 
-const imgPath = ref('');
+const imgPath = ref(props.img);
 
 const inputClass = computed(() =>
   [
@@ -45,7 +50,6 @@ const handleInput = (event: Event) => {
   emit('update:modelValue', target.value);
   if (props.type === 'file') {
     imgPath.value = URL.createObjectURL(target.files?.[0] || new Blob());
-    console.log(imgPath.value);
   }
 };
 
@@ -59,9 +63,12 @@ const handleBlur = (event: FocusEvent) => {
 </script>
 
 <template>
-  <div :class="['my-input-wrapper', props.type === 'file' ? 'file' : '']">
+  <div
+    :style="{ width: props.width, height: props.height }"
+    :class="['my-input-wrapper', props.type === 'file' ? 'file' : '']"
+  >
     <input
-      :id="props.id || 'my-input'"
+      :id="props.id || undefined"
       :type="props.type"
       :value="props.modelValue"
       :placeholder="props.placeholder"
@@ -71,7 +78,18 @@ const handleBlur = (event: FocusEvent) => {
       @focus="handleFocus"
       @blur="handleBlur"
     />
-    <img v-if="props.type === 'file'" :src="imgPath || logo" alt="" />
+    <img
+      v-if="props.type === 'file'"
+      :src="imgPath || plus"
+      :alt="imgPath || plus"
+    />
+    <MyBtn
+      class="my-input-delete"
+      v-if="props.type === 'file' && imgPath.length > 0"
+      type="button"
+      @click="imgPath = ''"
+      >x
+    </MyBtn>
   </div>
 </template>
 
@@ -80,16 +98,16 @@ const handleBlur = (event: FocusEvent) => {
   width: 100%;
   background-color: #141212;
   padding: 10px;
-  border-radius: 20%;
+  border-radius: 20px;
 
   &.file {
     position: relative;
     max-width: 544px;
     height: 100%;
     max-height: 544px;
-    padding: 20px;
+    padding: 10px;
     background-color: #ffffff;
-    border-radius: 30%;
+    border-radius: 30px;
 
     & img {
       width: 100%;
@@ -100,6 +118,7 @@ const handleBlur = (event: FocusEvent) => {
 }
 
 .my-input {
+  transition: all 0.3s ease;
   padding: 8px;
   border: none;
 
@@ -107,10 +126,17 @@ const handleBlur = (event: FocusEvent) => {
     font-family: var(--font-family);
     width: 100%;
     padding: 10px;
-    border-radius: 10%;
+    border-radius: 10px;
     color: #000000;
     background-color: #363535;
     font-size: 34px;
+
+    &:hover,
+    &:focus {
+      background-color: #ffffff;
+      box-shadow: 0 0 0 10px #363535;
+      outline: none;
+    }
   }
 
   &:not(:placeholder-shown):not([value='']):not([type='file']).primary {
@@ -130,6 +156,7 @@ const handleBlur = (event: FocusEvent) => {
     width: 100%;
     height: 100%;
     opacity: 0;
+    cursor: pointer;
   }
 }
 
@@ -144,5 +171,32 @@ const handleBlur = (event: FocusEvent) => {
   background-color: #cdcdcd;
   border-color: #999999;
   color: #666666;
+}
+
+.my-input-delete {
+  transition: all 0.3s ease;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  min-width: 30px;
+  max-width: 30px;
+  height: 30px;
+  background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  font-size: 15px;
+  line-height: 15px;
+  text-transform: uppercase;
+  color: #ffffff;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  &:active {
+    opacity: 0.3;
+  }
 }
 </style>
