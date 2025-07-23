@@ -2,8 +2,72 @@
 
 namespace DATA;
 
-class AboutusData
+use DATABASE\DataBase;
+
+class AboutusData extends DataBase
 {
+    protected $pdo;
+
+    public function __construct()
+    {
+        $db = DataBase::getInstance();
+        $this->pdo = $db->getPdo();
+    }
+
+    public function getAllAboutUs(array $types = [])
+    {
+        try {
+            if (empty($types)) {
+                $query = "
+                    SELECT type, title, content, image_path, position 
+                    FROM AboutUs 
+                    ORDER BY 
+                        FIELD(type, 'present-slogan-block', 'present-text-block', 'advantages-list', 'comment-block', 'appeal-text-block', 'tech-photo-image'), 
+                        position ASC";
+                $stmt = $this->pdo->prepare($query);
+                $stmt->execute();
+            } else {
+                $placeholders = [];
+                $params = [];
+                foreach ($types as $index => $type) {
+                    $ph = ":type$index";
+                    $placeholders[] = $ph;
+                    $params[$ph] = $type;
+                }
+
+                $inClause = implode(', ', $placeholders);
+
+                $fieldList = implode(', ', array_map(function($t) {
+                    return $this->pdo->quote($t);
+                }, $types));
+
+                $query = "
+                    SELECT type, title, content, image_path, position
+                    FROM AboutUs
+                    WHERE type IN ($inClause)
+                    ORDER BY FIELD(type, $fieldList)
+                ";
+
+                $stmt = $this->pdo->prepare($query);
+                $stmt->execute($params);
+            }
+
+            $itemArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            error_log(print_r($itemArr, true) . 'ДАННЫЕ ОБ О НАС');
+
+            if (empty($itemArr)) {
+                return [['type' => 'none', 'title' => 'none', 'content' => 'none', 'image_path' => '/', 'position' => 0]];
+            }
+
+            return $itemArr;
+
+        } catch (\Exception $e) {
+            error_log("Ошибка получения данных: " . $e->getMessage());
+            return [['type' => 'none', 'title' => 'none', 'content' => 'none', 'image_path' => '/', 'position' => 0]];
+        }
+    }
+
+
     public function getDataImages()
     {
         $imagesAboutUs = [
