@@ -3,12 +3,13 @@
 namespace SECTIONS;
 
 use DATA\QualityVideos;
+use DATA\AdvantageData;
 
 function qualitySection(): string
 {
   // Получаем данные
   $qualityVideos = (new QualityVideos())->getData();
-
+  $advantageData = (new AdvantageData())->getAllAdvantage();
   // Генерация HTML
   ob_start();
   ?>
@@ -55,8 +56,12 @@ function qualitySection(): string
       <div class="quality__list-wrapper">
         <div class="container">
           <ul class="quality__list list-style-none">
-            <?php foreach ($qualityVideos['qualities'] as $index => $item): ?>
-              <li class="quality__item<?= $index > 2 ? ' quality__item--hidden' : '' ?>"><?= htmlspecialchars($item); ?>
+            <?php foreach ($advantageData as $index => $item): ?>
+              <li class="quality__item<?= $index > 2 ? ' quality__item--hidden' : '' ?>">
+                <?php if ($item['image_path']): ?>
+                  <img src="<?= htmlspecialchars($item['image_path']); ?>" alt="<?= htmlspecialchars($item['content']); ?>">
+                <?php endif; ?>
+                <p><?= $item['content']; ?></p>
               </li>
             <?php endforeach; ?>
           </ul>

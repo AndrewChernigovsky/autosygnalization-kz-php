@@ -6,6 +6,7 @@ import Contacts from '../views/Contacts.vue';
 import Products from '../views/Products.vue';
 import Services from '../views/Services.vue';
 import AboutUs from '../views/AboutUs.vue';
+import Advantage from '../views/Advantage.vue';
 import UI from '../views/UI.vue';
 
 export const routes = [
@@ -43,6 +44,11 @@ export const routes = [
     path: '/about-us',
     name: 'О нас',
     component: AboutUs,
+  },
+  {
+    path: '/advantage',
+    name: 'Преимущества',
+    component: Advantage,
   },
   {
     path: '/ui',
