@@ -55,7 +55,104 @@ const activeEditType = ref<string | null>(null);
 const activeEditItem = ref<IContacts | null>(null);
 
 const needsQuill = (type: string) => {
-  return ['Адрес', 'Расписание'].includes(type);
+  return ['Адрес', 'Расписание', 'Как к нам добраться'].includes(type);
+};
+
+// Функция для определения, какие поля должны быть доступны для каждого типа
+const getAvailableFields = (type: string) => {
+  switch (type) {
+    case 'Основной телефон':
+    case 'Контактный телефон':
+    case 'Электронная почта':
+      return {
+        title: true,
+        content: false,
+        link: true,
+        icon_path: true,
+      };
+    case 'Адрес':
+    case 'Социальные сети':
+      return {
+        title: true,
+        content: true,
+        link: true,
+        icon_path: true,
+      };
+    case 'Расписание':
+      return {
+        title: true,
+        content: true,
+        link: false,
+        icon_path: true,
+      };
+    case 'Карта':
+    case 'Сайт':
+      return {
+        title: true,
+        content: false,
+        link: true,
+        icon_path: false,
+      };
+    case 'Как к нам добраться':
+      return {
+        title: true,
+        content: true,
+        link: false,
+        icon_path: false,
+      };
+    default:
+      return {
+        title: true,
+        content: true,
+        link: true,
+        icon_path: true,
+      };
+  }
+};
+
+// Функция для получения названия поля title в зависимости от типа
+const getTitleFieldLabel = (type: string) => {
+  switch (type) {
+    case 'Социальные сети':
+      return 'Название Соц сети';
+    default:
+      return 'Заголовок';
+  }
+};
+
+// Функция для получения названия поля ссылки в зависимости от типа
+const getLinkFieldLabel = (type: string) => {
+  switch (type) {
+    case 'Основной телефон':
+    case 'Контактный телефон':
+      return 'Телефон';
+    case 'Социальные сети':
+      return 'Ссылка (если есть)';
+    case 'Электронная почта':
+      return 'Электронная почта';
+    case 'Карта':
+      return 'Ссылка на google карты';
+    case 'Сайт':
+      return 'Адрес сайта';
+    default:
+      return 'Ссылка';
+  }
+};
+
+// Функция для получения названия поля content в зависимости от типа
+const getContentFieldLabel = (type: string) => {
+  switch (type) {
+    case 'Адрес':
+      return 'Адрес';
+    case 'Социальные сети':
+      return 'Номер телефона(если есть)';
+    case 'Расписание':
+      return 'График работы';
+    case 'Как к нам добраться':
+      return 'Как добратся';
+    default:
+      return 'Реквизиты';
+  }
 };
 
 onMounted(async () => {
@@ -176,16 +273,26 @@ const getImageUrl = (item: IContacts): string => {
           <div class="contacts-content-wrapper">
             <div class="add-contact">
               <div class="add-contact-label-wrapper">
-                <label class="add-contact-label">
-                  <span class="add-contact-label-text">Заголовок</span>
+                <label
+                  v-if="getAvailableFields(type).title"
+                  class="add-contact-label"
+                >
+                  <span class="add-contact-label-text">{{
+                    getTitleFieldLabel(type)
+                  }}</span>
                   <MyInput
                     type="text"
                     variant="primary"
                     v-model="newContact.title"
                   />
                 </label>
-                <label class="add-contact-label">
-                  <span class="add-contact-label-text">Реквизиты</span>
+                <label
+                  v-if="getAvailableFields(type).content"
+                  class="add-contact-label"
+                >
+                  <span class="add-contact-label-text">{{
+                    getContentFieldLabel(type)
+                  }}</span>
                   <div v-if="needsQuill(type)" class="quill-editor-wrapper">
                     <QuillEditor
                       v-model:content="newContact.content"
@@ -210,15 +317,23 @@ const getImageUrl = (item: IContacts): string => {
                     v-model="newContact.content"
                   />
                 </label>
-                <label class="add-contact-label">
-                  <span class="add-contact-label-text">Ссылка</span>
+                <label
+                  v-if="getAvailableFields(type).link"
+                  class="add-contact-label"
+                >
+                  <span class="add-contact-label-text">{{
+                    getLinkFieldLabel(type)
+                  }}</span>
                   <MyInput
                     type="text"
                     variant="primary"
                     v-model="newContact.link"
                   />
                 </label>
-                <label class="add-contact-label file">
+                <label
+                  v-if="getAvailableFields(type).icon_path"
+                  class="add-contact-label file"
+                >
                   <span class="add-contact-label-text">Иконка</span>
                   <MyInput
                     width="150px"
@@ -264,8 +379,10 @@ const getImageUrl = (item: IContacts): string => {
                 >
                   <div class="item-content-wrapper">
                     <div class="item-conent-inputs">
-                      <label>
-                        <span class="add-contact-label-text">Реквизиты</span>
+                      <label v-if="getAvailableFields(item.type).content">
+                        <span class="add-contact-label-text">{{
+                          getContentFieldLabel(item.type)
+                        }}</span>
                         <div v-if="needsQuill(item.type)">
                           <QuillEditor
                             v-model:content="item.content"
@@ -290,15 +407,20 @@ const getImageUrl = (item: IContacts): string => {
                           v-model="item.content as string"
                         />
                       </label>
-                      <label>
-                        <span class="add-contact-label-text">Ссылка</span>
+                      <label v-if="getAvailableFields(item.type).link">
+                        <span class="add-contact-label-text">{{
+                          getLinkFieldLabel(item.type)
+                        }}</span>
                         <MyInput
                           type="text"
                           variant="primary"
                           v-model="item.link as string"
                         />
                       </label>
-                      <label class="file">
+                      <label
+                        v-if="getAvailableFields(item.type).icon_path"
+                        class="file"
+                      >
                         <span class="add-contact-label-text">Иконка</span>
                         <MyInput
                           width="150px"

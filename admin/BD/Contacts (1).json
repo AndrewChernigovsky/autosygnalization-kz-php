@@ -1,0 +1,19 @@
+[
+{"type":"header","version":"5.2.0","comment":"Export to JSON plugin for PHPMyAdmin"},
+{"type":"database","name":"autosygnals"},
+{"type":"table","name":"Contacts","database":"autosygnals","data":
+[
+{"contact_id":"1","type":"Основной телефон","title":"Основной","content":"+7 707 747 8212","link":"+77077478212","icon_path":"\/server\/uploads\/contact\/icons\/icon-1753285392.svg","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:53:49","order":"1"},
+{"contact_id":"3","type":"Адрес","title":"Адрес:","content":"Казахстан, г.Алматы,<br\/> пр.Абая 145\/г, бокс №15","link":"https:\/\/2gis.kz\/almaty\/geo\/70000001027313872","icon_path":"\/server\/uploads\/contact\/icons\/icon-1753287049.svg","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:53:52","order":"1"},
+{"contact_id":"4","type":"Контактный телефон","title":"BEELINE:","content":"+770 774 8212","link":"+7707748212","icon_path":"\/client\/vectors\/phone-no-border.svg","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:53:55","order":"1"},
+{"contact_id":"5","type":"Контактный телефон","title":"KCELL:","content":"+770 174 8212","link":"+7701748212","icon_path":"\/client\/vectors\/phone-no-border.svg","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:53:56","order":"2"},
+{"contact_id":"6","type":"Социальные сети","title":"Whatsapp:","content":"+77077478212","link":"https:\/\/wa.me\/77077478212","icon_path":"\/client\/vectors\/whatsapp.svg","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:54:06","order":"1"},
+{"contact_id":"7","type":"Социальные сети","title":"Instagramm:","content":"+77077478212","link":"https:\/\/www.instagram.com\/autosecurity_kz","icon_path":"\/client\/vectors\/sprite.svg#instagramm-icon","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:54:10","order":"2"},
+{"contact_id":"8","type":"Электронная почта","title":"Почта:","content":"autosecurity.site@mail.ru","link":"autosecurity.site@mail.ru","icon_path":"\/client\/vectors\/message-icon.svg","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:54:15","order":"1"},
+{"contact_id":"9","type":"Расписание","title":"График работы:","content":"Вс. - Чт.: 9:30 - 18:00 <br> Пт.: 9:30-15:00 <br> <span>Сб.: Выходной<\/span>","link":null,"icon_path":"\/client\/vectors\/clock.svg","created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:54:18","order":"1"},
+{"contact_id":"10","type":"Карта","title":"Карта","content":null,"link":"https:\/\/www.google.com\/maps\/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru","icon_path":null,"created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:54:21","order":"1"},
+{"contact_id":"11","type":"Как к нам добраться","title":"КАК К НАМ ДОБРАТЬСЯ","content":"Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на территорию СТО. <br> Наш бокс №15.","link":null,"icon_path":null,"created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:54:30","order":"1"},
+{"contact_id":"12","type":"Сайт","title":"Сайт:","content":"www.starline-service.kz","link":"https:\/\/starline-service.kz\/","icon_path":null,"created_at":"2025-07-21 21:16:35","updated_at":"2025-07-24 16:54:33","order":"1"}
+]
+}
+]
