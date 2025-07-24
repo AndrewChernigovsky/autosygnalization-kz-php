@@ -22,6 +22,7 @@ const toolbarOptions = [
 const items = ref<AdvantageItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const openAccordion = ref<string | null>('advantages'); // Секция открыта по умолчанию
 const imagePreviews = ref<Record<number, string>>({}); // Для превью существующих
 const fileInputs = ref<Record<string, HTMLInputElement | null>>({}); // Для сброса инпутов
 
@@ -197,7 +198,7 @@ const handleUpdatePositions = async (updatedGroup: AdvantageItem[]) => {
   }));
 
   try {
-    await fetchWithCors(API_URL, {
+    const response = await fetchWithCors(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -205,8 +206,26 @@ const handleUpdatePositions = async (updatedGroup: AdvantageItem[]) => {
         items: itemsToUpdate,
       }),
     });
+    if (response.success) {
+      Swal.fire({
+        toast: true,
+        position: 'top',
+        icon: 'success',
+        title: 'Порядок изменен',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    } else {
+      throw new Error(response.error || 'Не удалось обновить порядок');
+    }
   } catch (err) {
-    Swal.fire('Ошибка', 'Не удалось обновить порядок элементов.', 'error');
+    const errorMessage =
+      err instanceof Error ? err.message : 'Неизвестная ошибка';
+    Swal.fire(
+      'Ошибка',
+      `Не удалось обновить порядок: ${errorMessage}`,
+      'error'
+    );
   }
 };
 
@@ -256,6 +275,14 @@ const clearNewImageInSlot = (slot: NewItemSlot) => {
   if (fileInputs.value[inputKey]) {
     fileInputs.value[inputKey]!.value = '';
   }
+  Swal.fire({
+    toast: true,
+    position: 'top',
+    icon: 'success',
+    title: 'Картинка удалена',
+    showConfirmButton: false,
+    timer: 1500,
+  });
 };
 
 const clearExistingImage = (item: AdvantageItem) => {
@@ -268,6 +295,14 @@ const clearExistingImage = (item: AdvantageItem) => {
   if (fileInputs.value[inputKey]) {
     fileInputs.value[inputKey]!.value = '';
   }
+  Swal.fire({
+    toast: true,
+    position: 'top',
+    icon: 'success',
+    title: 'Картинка удалена, добавьте новую',
+    showConfirmButton: false,
+    timer: 1500,
+  });
 };
 
 const onFileChange = (event: Event, itemId: number) => {
@@ -290,6 +325,50 @@ const onNewFileChangeInSlot = (event: Event, slot: NewItemSlot) => {
   }
 };
 
+const toggleAccordion = (section: string) => {
+  openAccordion.value = openAccordion.value === section ? null : section;
+};
+
+// Transition Hooks
+const beforeEnter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = '0';
+  htmlEl.style.paddingTop = '0';
+  htmlEl.style.paddingBottom = '0';
+  htmlEl.style.opacity = '0';
+};
+
+const enter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = `${htmlEl.scrollHeight}px`;
+  htmlEl.style.paddingTop = '1.5rem';
+  htmlEl.style.paddingBottom = '1.5rem';
+  htmlEl.style.opacity = '1';
+};
+
+const afterEnter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = ''; // Allow for dynamic content changes
+};
+
+const beforeLeave = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = `${htmlEl.scrollHeight}px`;
+};
+
+const leave = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  // This is needed to ensure the height is set before transition starts
+  getComputedStyle(htmlEl).height;
+
+  requestAnimationFrame(() => {
+    htmlEl.style.height = '0';
+    htmlEl.style.paddingTop = '0';
+    htmlEl.style.paddingBottom = '0';
+    htmlEl.style.opacity = '0';
+  });
+};
+
 onMounted(getAdvantageData);
 </script>
 
@@ -303,159 +382,202 @@ onMounted(getAdvantageData);
       <p>{{ error }}</p>
       <button @click="getAdvantageData">Попробовать снова</button>
     </div>
-    <div v-else class="advantages-list">
-      <!-- Рендеринг списка -->
-      <form
-        v-for="item in items"
-        :key="item.advantage_id"
-        class="form-group draggable"
-        draggable="true"
-        @dragstart="onDragStart(item.advantage_id)"
-        @dragover.prevent
-        @drop="onDrop(item.advantage_id)"
-        @submit.prevent="handleUpdate($event, item)"
-      >
-        <div class="drag-handle">⠿</div>
-        <div class="content-wrapper">
-          <label>Изображение:</label>
-          <div class="image-uploader">
-            <!-- The file input is always in the DOM but hidden -->
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              class="hidden-file-input"
-              :id="`file-input-existing-${item.advantage_id}`"
-              :ref="
-                (el) =>
-                  (fileInputs[`existing-${item.advantage_id}`] =
-                    el as HTMLInputElement)
-              "
-              @change="onFileChange($event, item.advantage_id)"
-            />
-            <!-- Preview with remove button, shown if an image exists -->
-            <div
-              v-if="imagePreviews[item.advantage_id] || item.image_path"
-              class="image-preview-wrapper"
-            >
-              <img
-                :src="imagePreviews[item.advantage_id] || item.image_path || ''"
-                alt="preview"
-                class="image-preview"
-              />
-              <button
-                type="button"
-                class="btn-remove-image"
-                @click="clearExistingImage(item)"
-              >
-                ×
-              </button>
-            </div>
-            <!-- Placeholder, shown if no image exists. It's a label for the input. -->
-            <label
-              v-else
-              :for="`file-input-existing-${item.advantage_id}`"
-              class="image-uploader-placeholder"
-            >
-              <span>+</span>
-            </label>
-          </div>
-
-          <label style="margin-top: 1rem">Описание:</label>
-          <QuillEditor
-            theme="snow"
-            :toolbar="toolbarOptions"
-            contentType="html"
-            v-model:content="item.content"
-          />
-
-          <div class="actions">
-            <button type="submit" class="btn-save">Сохранить</button>
-            <button
-              type="button"
-              @click="handleDelete(item.advantage_id)"
-              class="btn-delete"
-            >
-              Удалить
-            </button>
-          </div>
-        </div>
-      </form>
-
-      <!-- НОВЫЙ БЛОК: Рендеринг новых слотов для изображений -->
-      <form
-        v-for="(slot, index) in newItemSlots"
-        :key="slot.tempId"
-        class="form-add"
-        @submit.prevent="handleCreate($event, slot, index)"
-      >
-        <div class="content-wrapper">
-          <label>Новое изображение:</label>
-          <div class="image-uploader">
-            <!-- The file input is always in the DOM but hidden -->
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              class="hidden-file-input"
-              :id="`file-input-new-${slot.tempId}`"
-              :ref="
-                (el) =>
-                  (fileInputs[`new-${slot.tempId}`] = el as HTMLInputElement)
-              "
-              @change="onNewFileChangeInSlot($event, slot)"
-            />
-            <!-- Preview with remove button -->
-            <div v-if="slot.preview" class="image-preview-wrapper">
-              <img :src="slot.preview" alt="preview" class="image-preview" />
-              <button
-                type="button"
-                class="btn-remove-image"
-                @click="clearNewImageInSlot(slot)"
-              >
-                ×
-              </button>
-            </div>
-            <!-- Placeholder -->
-            <label
-              v-else
-              :for="`file-input-new-${slot.tempId}`"
-              class="image-uploader-placeholder"
-            >
-              <span>+</span>
-            </label>
-          </div>
-
-          <label style="margin-top: 1rem">Описание:</label>
-          <QuillEditor
-            theme="snow"
-            :toolbar="toolbarOptions"
-            contentType="html"
-            v-model:content="slot.content"
-          />
-
-          <div class="actions">
-            <button type="submit" class="btn-save">Сохранить</button>
-            <button
-              type="button"
-              @click="removeNewItemSlot(index)"
-              class="btn-delete"
-            >
-              Удалить слот
-            </button>
-          </div>
-        </div>
-      </form>
-
-      <!-- Кнопка для добавления нового слота -->
-      <div class="add-slot-wrapper">
-        <button
-          type="button"
-          class="btn-add btn-add-slot"
-          @click="addNewItemSlot"
-        >
-          Добавить преимущество
+    <div v-else class="accordion">
+      <div class="accordion-item">
+        <button class="accordion-header" @click="toggleAccordion('advantages')">
+          <span>Список преимуществ</span>
+          <span
+            class="accordion-arrow"
+            :class="{ 'is-open': openAccordion === 'advantages' }"
+          ></span>
         </button>
+        <Transition
+          name="accordion-transition"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @after-enter="afterEnter"
+          @before-leave="beforeLeave"
+          @leave="leave"
+        >
+          <div v-if="openAccordion === 'advantages'" class="accordion-content">
+            <div class="advantages-list">
+              <!-- Рендеринг списка -->
+              <form
+                v-for="item in items"
+                :key="item.advantage_id"
+                class="form-group draggable"
+                draggable="true"
+                @dragstart="onDragStart(item.advantage_id)"
+                @dragover.prevent
+                @drop="onDrop(item.advantage_id)"
+                @submit.prevent="handleUpdate($event, item)"
+              >
+                <div class="drag-handle">⠿</div>
+                <div class="content-wrapper">
+                  <div class="form-layout">
+                    <div class="form-column">
+                      <label>Изображение:</label>
+                      <div class="image-uploader">
+                        <!-- The file input is always in the DOM but hidden -->
+                        <input
+                          type="file"
+                          name="image"
+                          accept="image/*"
+                          class="hidden-file-input"
+                          :id="`file-input-existing-${item.advantage_id}`"
+                          :ref="
+                            (el) =>
+                              (fileInputs[`existing-${item.advantage_id}`] =
+                                el as HTMLInputElement)
+                          "
+                          @change="onFileChange($event, item.advantage_id)"
+                        />
+                        <!-- Preview with remove button, shown if an image exists -->
+                        <div
+                          v-if="
+                            imagePreviews[item.advantage_id] || item.image_path
+                          "
+                          class="image-preview-wrapper"
+                        >
+                          <img
+                            :src="
+                              imagePreviews[item.advantage_id] ||
+                              item.image_path ||
+                              ''
+                            "
+                            alt="preview"
+                            class="image-preview"
+                          />
+                          <button
+                            type="button"
+                            class="btn-remove-image"
+                            @click="clearExistingImage(item)"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <!-- Placeholder, shown if no image exists. It's a label for the input. -->
+                        <label
+                          v-else
+                          :for="`file-input-existing-${item.advantage_id}`"
+                          class="image-uploader-placeholder"
+                        >
+                          <span>+</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-column form-column--grow">
+                      <label>Описание:</label>
+                      <QuillEditor
+                        theme="snow"
+                        :toolbar="toolbarOptions"
+                        contentType="html"
+                        v-model:content="item.content"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="actions">
+                    <button type="submit" class="btn-save">Сохранить</button>
+                    <button
+                      type="button"
+                      @click="handleDelete(item.advantage_id)"
+                      class="btn-delete"
+                    >
+                      Удалить
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              <!-- НОВЫЙ БЛОК: Рендеринг новых слотов для изображений -->
+              <form
+                v-for="(slot, index) in newItemSlots"
+                :key="slot.tempId"
+                class="form-add"
+                @submit.prevent="handleCreate($event, slot, index)"
+              >
+                <div class="content-wrapper">
+                  <div class="form-layout">
+                    <div class="form-column">
+                      <label>Новое изображение:</label>
+                      <div class="image-uploader">
+                        <!-- The file input is always in the DOM but hidden -->
+                        <input
+                          type="file"
+                          name="image"
+                          accept="image/*"
+                          class="hidden-file-input"
+                          :id="`file-input-new-${slot.tempId}`"
+                          :ref="
+                            (el) =>
+                              (fileInputs[`new-${slot.tempId}`] =
+                                el as HTMLInputElement)
+                          "
+                          @change="onNewFileChangeInSlot($event, slot)"
+                        />
+                        <!-- Preview with remove button -->
+                        <div v-if="slot.preview" class="image-preview-wrapper">
+                          <img
+                            :src="slot.preview"
+                            alt="preview"
+                            class="image-preview"
+                          />
+                          <button
+                            type="button"
+                            class="btn-remove-image"
+                            @click="clearNewImageInSlot(slot)"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <!-- Placeholder -->
+                        <label
+                          v-else
+                          :for="`file-input-new-${slot.tempId}`"
+                          class="image-uploader-placeholder"
+                        >
+                          <span>+</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="form-column form-column--grow">
+                      <label>Описание:</label>
+                      <QuillEditor
+                        theme="snow"
+                        :toolbar="toolbarOptions"
+                        contentType="html"
+                        v-model:content="slot.content"
+                      />
+                    </div>
+                  </div>
+
+                  <div class="actions">
+                    <button type="submit" class="btn-save">Сохранить</button>
+                    <button
+                      type="button"
+                      @click="removeNewItemSlot(index)"
+                      class="btn-delete"
+                    >
+                      Удалить слот
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              <!-- Кнопка для добавления нового слота -->
+              <div class="add-slot-wrapper">
+                <button
+                  type="button"
+                  class="btn-add btn-add-slot"
+                  @click="addNewItemSlot"
+                >
+                  Добавить преимущество
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
       </div>
     </div>
   </div>
@@ -509,20 +631,19 @@ onMounted(getAdvantageData);
   margin-top: 1rem;
 }
 .advantages-list {
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   padding: 1.5rem;
   border: 1px solid #444;
   border-radius: 8px;
   background-color: #3c3c3c;
 }
 .form-add {
-  margin-top: 2rem;
+  margin-top: 0;
   padding: 1.5rem;
   border: 2px dashed #555;
   border-radius: 8px;
@@ -550,7 +671,7 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 .actions {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
   display: flex;
   gap: 1rem;
 }
@@ -584,7 +705,7 @@ textarea:focus {
 }
 .add-slot-wrapper {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 .btn-add-slot {
   padding: 0.8rem 2rem;
@@ -613,7 +734,68 @@ textarea:focus {
   flex-grow: 1;
 }
 
+.accordion {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #444;
+}
+.accordion-item {
+  border-bottom: 1px solid #444;
+}
+.accordion-item:last-child {
+  border-bottom: none;
+}
+.accordion-header {
+  width: 100%;
+  background-color: #3a3a3a;
+  border: none;
+  padding: 1rem 1.5rem;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  transition: background-color 0.3s;
+}
+.accordion-header:hover {
+  background-color: #4a4a4a;
+}
+.accordion-arrow {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  transform: rotate(45deg);
+  transition: transform 0.3s;
+}
+.accordion-arrow.is-open {
+  transform: translateY(2px) rotate(-135deg);
+}
+.accordion-content {
+  background-color: #333;
+  overflow: hidden;
+  transition: height 0.4s ease-out, padding 0.4s ease-out, opacity 0.4s ease-out;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+}
 /* --- НОВЫЕ СТИЛИ ДЛЯ ЗАГРУЗЧИКА ИЗОБРАЖЕНИЙ --- */
+.form-layout {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+}
+.form-column {
+  display: flex;
+  flex-direction: column;
+}
+.form-column--grow {
+  flex: 1;
+  min-width: 0;
+}
 .image-uploader {
   position: relative;
   width: 150px;
@@ -665,7 +847,7 @@ textarea:focus {
 
 .btn-remove-image {
   position: absolute;
-  top: 0px;
+  top: -10px;
   right: -10px;
   width: 28px;
   height: 28px;
@@ -676,7 +858,6 @@ textarea:focus {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 20px;
   line-height: 1;
   cursor: pointer;
   transition: transform 0.2s, background-color 0.2s;
