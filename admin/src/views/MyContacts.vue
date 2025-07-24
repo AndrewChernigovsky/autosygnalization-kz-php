@@ -16,6 +16,7 @@ interface IContacts {
   icon_path_url?: string | null;
   link: string | null;
   type: string;
+  order?: number;
 }
 
 const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
@@ -53,6 +54,10 @@ const contactsType = ref<string[]>([
 const activeEditType = ref<string | null>(null);
 
 const activeEditItem = ref<IContacts | null>(null);
+
+// Добавляем переменные для drag and drop
+const draggedItem = ref<IContacts | null>(null);
+const dragOverItem = ref<IContacts | null>(null);
 
 const needsQuill = (type: string) => {
   return ['Адрес', 'Расписание', 'Как к нам добраться'].includes(type);
@@ -196,6 +201,30 @@ const deleteContact = async (item: IContacts) => {
   }
 };
 
+const updateContactsOrder = async (
+  orderData: { contact_id: number; order: number }[]
+) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}?action=update-order`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(orderData),
+    });
+
+    const result = await response.json();
+
+    if (!result.success) {
+      console.error('Ошибка обновления порядка:', result.error);
+      Swal.fire('Ошибка!', 'Не удалось обновить порядок контактов', 'error');
+    }
+  } catch (error) {
+    console.error('Ошибка отправки запроса:', error);
+    Swal.fire('Ошибка!', 'Не удалось отправить запрос на сервер', 'error');
+  }
+};
+
 const handleRetry = async () => {
   await store.getContacts(`${API_BASE_URL}`);
   contacts.value = store.contacts;
@@ -246,6 +275,98 @@ const getImageUrl = (item: IContacts): string => {
   if (item.icon_path_url) return item.icon_path_url;
   if (typeof item.icon_path === 'string') return item.icon_path;
   return '';
+};
+
+// Методы для drag and drop
+const handleDragStart = (event: DragEvent, item: IContacts) => {
+  draggedItem.value = item;
+  if (event.dataTransfer) {
+    event.dataTransfer.effectAllowed = 'move';
+    event.dataTransfer.setData('text/plain', item.contact_id?.toString() || '');
+  }
+};
+
+const handleDragOver = (event: DragEvent) => {
+  event.preventDefault();
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'move';
+  }
+};
+
+const handleDragEnter = (event: DragEvent, item: IContacts) => {
+  event.preventDefault();
+  dragOverItem.value = item;
+};
+
+const handleDragLeave = (event: DragEvent) => {
+  // Проверяем, что мы действительно покидаем элемент, а не его дочерний элемент
+  if (
+    !(event.currentTarget as Element)?.contains(event.relatedTarget as Node)
+  ) {
+    dragOverItem.value = null;
+  }
+};
+
+const handleDrop = async (
+  event: DragEvent,
+  targetItem: IContacts,
+  type: string
+) => {
+  event.preventDefault();
+
+  if (
+    !draggedItem.value ||
+    draggedItem.value.contact_id === targetItem.contact_id
+  ) {
+    draggedItem.value = null;
+    dragOverItem.value = null;
+    return;
+  }
+
+  // Получаем элементы этого типа
+  const itemsOfType = contacts.value.filter((item) => item.type === type);
+  const draggedIndex = itemsOfType.findIndex(
+    (item) => item.contact_id === draggedItem.value?.contact_id
+  );
+  const targetIndex = itemsOfType.findIndex(
+    (item) => item.contact_id === targetItem.contact_id
+  );
+
+  if (draggedIndex !== -1 && targetIndex !== -1) {
+    // Создаем новый массив с измененным порядком
+    const reorderedItems = [...itemsOfType];
+    const [movedItem] = reorderedItems.splice(draggedIndex, 1);
+    reorderedItems.splice(targetIndex, 0, movedItem);
+
+    // Обновляем порядковые номера
+    const orderData: { contact_id: number; order: number }[] = [];
+    reorderedItems.forEach((item, index) => {
+      const newOrder = index + 1;
+      if (item.contact_id) {
+        orderData.push({
+          contact_id: item.contact_id,
+          order: newOrder,
+        });
+        // Обновляем локальные данные
+        item.order = newOrder;
+      }
+    });
+
+    // Обновляем основной массив contacts
+    const otherItems = contacts.value.filter((item) => item.type !== type);
+    contacts.value = [...otherItems, ...reorderedItems];
+
+    // Отправляем изменения на сервер
+    await updateContactsOrder(orderData);
+  }
+
+  draggedItem.value = null;
+  dragOverItem.value = null;
+};
+
+const handleDragEnd = () => {
+  draggedItem.value = null;
+  dragOverItem.value = null;
 };
 </script>
 
@@ -358,8 +479,19 @@ const getImageUrl = (item: IContacts): string => {
             <ul class="contacts-list list-style-none">
               <li
                 class="contacts-item"
+                :class="{
+                  dragging: draggedItem?.contact_id === item.contact_id,
+                  'drag-over': dragOverItem?.contact_id === item.contact_id,
+                }"
                 v-for="item in contacts.filter((item) => item.type === type)"
                 :key="item.contact_id"
+                draggable="true"
+                @dragstart="handleDragStart($event, item)"
+                @dragover="handleDragOver($event)"
+                @dragenter="handleDragEnter($event, item)"
+                @dragleave="handleDragLeave($event)"
+                @drop="handleDrop($event, item, type)"
+                @dragend="handleDragEnd"
               >
                 <div class="item-header">
                   <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
@@ -517,6 +649,25 @@ const getImageUrl = (item: IContacts): string => {
   box-shadow: inset 0 0 0 1px #ffffff;
   padding: 16px;
   border-radius: 8px;
+  cursor: move;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 0 0 1px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+    z-index: 1000;
+  }
+
+  &.drag-over {
+    transform: translateY(-4px);
+    box-shadow: inset 0 0 0 2px #007bff, 0 8px 16px rgba(0, 123, 255, 0.3);
+    background-color: rgba(0, 123, 255, 0.05);
+  }
 }
 
 .item-header {
