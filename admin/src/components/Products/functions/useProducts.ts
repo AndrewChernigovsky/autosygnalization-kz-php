@@ -63,7 +63,7 @@ export function useProducts() {
             const categoryProducts = data.category[categoryKey];
             const productsWithCategory = categoryProducts.map((p: any) => ({
               ...p,
-              category_key: categoryKey,
+              category: categoryKey,
               is_popular: p.popular ?? false,
             }));
             allProducts.push(...productsWithCategory);
@@ -84,15 +84,23 @@ export function useProducts() {
     try {
       const productData = {
         id: product.id,
+        model: product.model,
         title: product.title,
         description: product.description,
         price: product.price,
         is_popular: product.is_popular,
         is_special: product.is_special,
         gallery: product.gallery,
-        category_key: product.category_key,
-        model: product.model,
+        category: product.category,
+        link: product.link,
+        functions: product.functions,
+        options: product.options,
+        'options-filters': product['options-filters'],
+        autosygnals: product.autosygnals,
+        tabs: product.tabs,
       };
+
+      console.log('productData', productData);
 
       if (product.is_new) {
         console.log(
@@ -161,7 +169,7 @@ export function useProducts() {
     }
   }
 
-  async function addProduct(category_key: string) {
+  async function addProduct(category: string) {
     console.log(
       '[useProducts] addProduct вызван. Только локальные изменения, без API-запроса.'
     );
@@ -175,13 +183,13 @@ export function useProducts() {
       is_popular: false,
       is_special: false,
       gallery: [],
-      category_key: category_key,
-      category: category_key,
+      category: category,
       // Заполняем остальные поля значениями по умолчанию, чтобы избежать ошибок
       model: '',
       // cart: false,
       // currency: '₸',
       // quantity: 0,
+      tabs: [],
       link: '#',
       functions: [],
       options: [],

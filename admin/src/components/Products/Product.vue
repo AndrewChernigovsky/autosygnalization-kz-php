@@ -76,14 +76,13 @@
           @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
         />
 
-        <div class="form-group" @click="startEditing(product, 'category_key')">
+        <div class="form-group" @click="startEditing(product, 'category')">
           <label>Категория:</label>
           <select
             v-if="
-              editingProduct?.id === product.id &&
-              fieldToEdit === 'category_key'
+              editingProduct?.id === product.id && fieldToEdit === 'category'
             "
-            v-model="editingCategoryKey"
+            v-model="editingCategory"
             @click.stop
           >
             <option
@@ -94,7 +93,7 @@
               {{ category.name }}
             </option>
           </select>
-          <span v-else>{{ getCategoryName(displayProduct.category_key) }}</span>
+          <span v-else>{{ getCategoryName(displayProduct.category) }}</span>
         </div>
 
         <div class="array-fields-editor">
@@ -157,7 +156,6 @@
           :is-icon-uploading="
             (tabIndex, itemIndex) => isUploading[`tab-${tabIndex}-${itemIndex}`]
           "
-          @update:tabs="updateTabs"
           @trigger-icon-upload="handleIconUpload"
           @delete-icon="handleIconDelete"
           :server-base-url="API_URL"
@@ -241,11 +239,11 @@ const isUploading = ref<Record<string, boolean>>({});
 
 // const serverUrl = API_URL.replace('/src/server', '');
 
-const editingCategoryKey = computed({
-  get: () => editingProduct.value?.category_key || '',
+const editingCategory = computed({
+  get: () => editingProduct.value?.category || '',
   set: (value) => {
     if (editingProduct.value) {
-      editingProduct.value.category_key = value;
+      editingProduct.value.category = value;
     }
   },
 });
@@ -301,12 +299,6 @@ function updateArrayField(
       (editingProduct.value as any)[fieldName] = value;
     }
   }
-}
-
-function updateTabs(newTabs: Tab[]) {
-  const productToEdit = ensureEditing();
-  if (!productToEdit) return;
-  productToEdit.tabs = newTabs;
 }
 
 function handleIconUpload(tabIndex: number, itemIndex: number) {
@@ -407,6 +399,10 @@ async function handleIconDelete(tabIndex: number, itemIndex: number) {
 }
 
 function saveChanges() {
+  console.log(
+    'Product.vue: saveChanges called. editingProduct:',
+    editingProduct.value
+  );
   if (editingProduct.value) {
     emit('save-product', editingProduct.value);
     editingProduct.value = null;

@@ -39,9 +39,15 @@ class Products
       $product['gallery'] = $product['gallery'] ? json_decode($product['gallery'], true) : [];
       $product['functions'] = $product['functions'] ? json_decode($product['functions'], true) : [];
       $product['options'] = $product['options'] ? json_decode($product['options'], true) : [];
-      $product['options-filters'] = $product['options_filters'] ? json_decode($product['options_filters'], true) : [];
       $product['autosygnals'] = $product['autosygnals'] ? json_decode($product['autosygnals'], true) : [];
-      $product['tabs'] = $product['tabs_data'] ? json_decode($product['tabs_data'], true) : [];
+
+      // Handle keys with different names
+      $product['options-filters'] = !empty($product['options_filters']) ? json_decode($product['options_filters'], true) : [];
+      unset($product['options_filters']);
+
+      $product['tabs'] = !empty($product['tabs_data']) ? json_decode($product['tabs_data'], true) : [];
+      unset($product['tabs_data']);
+
 
       // Удаляем служебные поля, которых нет в исходной структуре
       unset($product['created_at'], $product['updated_at']);

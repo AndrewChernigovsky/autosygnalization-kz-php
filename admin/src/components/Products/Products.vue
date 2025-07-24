@@ -268,7 +268,7 @@ const getCategoryName = (categoryKey: string) => {
 
 const groupedProducts = computed(() => {
   return products.value.reduce((acc, product) => {
-    const category = product.category_key || 'uncategorized';
+    const category = product.category || 'uncategorized';
     if (!acc[category]) {
       acc[category] = [];
     }

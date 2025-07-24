@@ -20,7 +20,6 @@ export interface ProductI {
   is_popular: boolean;
   is_special: boolean;
   gallery: string[];
-  category_key: string;
   category: string;
   functions: string[];
   options: string[];

@@ -15,60 +15,21 @@ const props = defineProps<{
 
 const { tabs } = toRefs(props);
 const localTabs = ref<Tab[]>([]);
-const editingTabIndex = ref<number | null>(null);
-const originalTab = ref<Tab | null>(null);
 
 const emit = defineEmits<{
-  'update:tabs': [tabs: Tab[]];
   triggerIconUpload: [tabIndex: number, itemIndex: number];
   deleteIcon: [tabIndex: number, itemIndex: number];
 }>();
 
-watch(
-  tabs,
-  (newTabs) => {
-    if (editingTabIndex.value === null) {
-      localTabs.value = JSON.parse(JSON.stringify(newTabs || []));
-    }
-  },
-  { deep: true }
-);
-
-watch(localTabs, (newTabs) => {
-  emit('update:tabs', newTabs);
-});
-
 function addAndEditTab() {
-  const newTab: Tab = {
+  tabs.value.push({
     title: 'Новая вкладка',
     description: [],
-  };
-  localTabs.value.push(newTab);
-  editTab(localTabs.value.length - 1);
-}
-
-function editTab(index: number) {
-  originalTab.value = JSON.parse(JSON.stringify(localTabs.value[index]));
-  editingTabIndex.value = index;
-}
-
-function saveTab() {
-  editingTabIndex.value = null;
-  originalTab.value = null;
-}
-
-function cancelEdit(index: number) {
-  if (originalTab.value) {
-    localTabs.value[index] = originalTab.value;
-  } else {
-    localTabs.value.splice(index, 1);
-  }
-  editingTabIndex.value = null;
-  originalTab.value = null;
+  });
 }
 
 function removeTab(index: number) {
-  localTabs.value.splice(index, 1);
+  tabs.value.splice(index, 1);
 }
 
 function addItem(tab: Tab) {
@@ -101,109 +62,85 @@ export default {
 <template>
   <div class="tabs-editor">
     <h3>Редактор Вкладок</h3>
-    <div v-for="(tab, index) in localTabs" :key="index" class="tab-item">
-      <!-- Editing State -->
-      <div v-if="editingTabIndex === index">
-        <div class="form-group">
-          <label>Заголовок вкладки:</label>
-          <input type="text" v-model="tab.title" />
-        </div>
-
-        <div class="description-section-editor">
-          <h5>Содержимое вкладки</h5>
-          <div
-            v-for="(item, itemIndex) in tab.description"
-            :key="itemIndex"
-            class="description-item-editor"
-          >
-            <div class="form-group">
-              <label>Заголовок элемента:</label>
-              <input type="text" v-model="item.title" />
-            </div>
-            <div class="form-group">
-              <label>Иконка:</label>
-              <div class="icon-uploader">
-                <!-- Case 1: Icon exists (show image and potential replacement loader) -->
-                <div
-                  v-if="item['path-icon']"
-                  class="icon-container"
-                  @click="
-                    !isIconUploading(index, itemIndex) &&
-                      emit('triggerIconUpload', index, itemIndex)
-                  "
-                >
-                  <div
-                    v-if="isIconUploading(index, itemIndex)"
-                    class="loader-overlay"
-                  >
-                    <Loader size="small" />
-                  </div>
-                  <img
-                    :src="getFullIconPath(item['path-icon'])"
-                    alt="icon"
-                    :class="{ uploading: isIconUploading(index, itemIndex) }"
-                  />
-                  <button
-                    v-if="!isIconUploading(index, itemIndex)"
-                    class="btn-delete-img"
-                    @click.stop="emit('deleteIcon', index, itemIndex)"
-                  ></button>
-                </div>
-
-                <!-- Case 2: No icon exists -->
-                <template v-else>
-                  <!-- Show loader if uploading for this item -->
-                  <div
-                    v-if="isIconUploading(index, itemIndex)"
-                    class="icon-placeholder"
-                  >
-                    <Loader size="small" />
-                  </div>
-                  <!-- Show '+' placeholder if not uploading -->
-                  <div
-                    v-else
-                    class="icon-placeholder"
-                    @click="emit('triggerIconUpload', index, itemIndex)"
-                  >
-                    <span class="plus-icon">+</span>
-                  </div>
-                </template>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Описание элемента:</label>
-              <textarea v-model="item.description"></textarea>
-            </div>
-            <button @click="removeItem(tab, itemIndex)" class="btn-delete">
-              Удалить элемент
-            </button>
-          </div>
-          <button
-            @click="addItem(tab)"
-            class="btn-add"
-            style="margin-top: 10px"
-          >
-            Добавить элемент
-          </button>
-        </div>
-
-        <div class="edit-controls">
-          <button @click="saveTab" class="btn-save">Сохранить</button>
-          <button @click="cancelEdit(index)" class="btn-cancel">Отмена</button>
-        </div>
+    <div v-for="(tab, index) in tabs" :key="index" class="tab-item">
+      <div class="form-group">
+        <label>Заголовок вкладки:</label>
+        <input type="text" v-model="tab.title" />
       </div>
 
-      <!-- Display State -->
-      <div v-else class="tab-display">
-        <div class="tab-main-content">
-          <strong>{{ tab.title }}</strong>
-        </div>
-        <div class="tab-controls">
-          <button @click="editTab(index)" class="btn-edit">
-            Редактировать
+      <div class="description-section-editor">
+        <h5>Содержимое вкладки</h5>
+        <div
+          v-for="(item, itemIndex) in tab.description"
+          :key="itemIndex"
+          class="description-item-editor"
+        >
+          <div class="form-group">
+            <label>Заголовок элемента:</label>
+            <input type="text" v-model="item.title" />
+          </div>
+          <div class="form-group">
+            <label>Иконка:</label>
+            <div class="icon-uploader">
+              <div
+                v-if="item['path-icon']"
+                class="icon-container"
+                @click="
+                  !isIconUploading(index, itemIndex) &&
+                    emit('triggerIconUpload', index, itemIndex)
+                "
+              >
+                <div
+                  v-if="isIconUploading(index, itemIndex)"
+                  class="loader-overlay"
+                >
+                  <Loader size="small" />
+                </div>
+                <img
+                  :src="getFullIconPath(item['path-icon'])"
+                  alt="icon"
+                  :class="{ uploading: isIconUploading(index, itemIndex) }"
+                />
+                <button
+                  v-if="!isIconUploading(index, itemIndex)"
+                  class="btn-delete-img"
+                  @click.stop="emit('deleteIcon', index, itemIndex)"
+                ></button>
+              </div>
+
+              <template v-else>
+                <div
+                  v-if="isIconUploading(index, itemIndex)"
+                  class="icon-placeholder"
+                >
+                  <Loader size="small" />
+                </div>
+                <div
+                  v-else
+                  class="icon-placeholder"
+                  @click="emit('triggerIconUpload', index, itemIndex)"
+                >
+                  <span class="plus-icon">+</span>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Описание элемента:</label>
+            <textarea v-model="item.description"></textarea>
+          </div>
+          <button @click="removeItem(tab, itemIndex)" class="btn-delete">
+            Удалить элемент
           </button>
-          <button @click="removeTab(index)" class="btn-delete">Удалить</button>
         </div>
+        <button @click="addItem(tab)" class="btn-add" style="margin-top: 10px">
+          Добавить элемент
+        </button>
+      </div>
+      <div class="tab-controls">
+        <button @click="removeTab(index)" class="btn-delete">
+          Удалить вкладку
+        </button>
       </div>
     </div>
     <button @click="addAndEditTab" class="btn-add">Добавить вкладку</button>
