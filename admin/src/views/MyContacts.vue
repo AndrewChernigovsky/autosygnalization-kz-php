@@ -37,7 +37,18 @@ const isLoading = ref(false);
 
 const error = ref<string | null>(null);
 
-const contactsType = ref<string[]>([]);
+const contactsType = ref<string[]>([
+  'Основной телефон',
+  'Адрес',
+  'Расписание',
+  'Контактный телефон',
+  'Соц. сети',
+  'Электронная почта',
+  'Расписание',
+  'Карта',
+  'Как к нам добраться',
+  'Сайт',
+]);
 
 const activeEditType = ref<string | null>(null);
 
@@ -55,8 +66,6 @@ const getContacts = async () => {
   isLoading.value = true;
   await store.getContacts(`${API_BASE_URL}`);
   contacts.value = store.contacts;
-  contactsType.value = contacts.value.map((contact) => contact.type);
-  contactsType.value = [...new Set(contactsType.value)];
   if (contacts.value.length > 0) {
     isLoading.value = false;
   }

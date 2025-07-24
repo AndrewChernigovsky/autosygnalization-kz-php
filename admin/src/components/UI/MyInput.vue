@@ -33,7 +33,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const imgPath = ref(props.img);
-const isLoading = ref(false);
+const isLoading = ref<boolean>(false);
 
 const inputClass = computed(() =>
   [
@@ -75,6 +75,13 @@ const handleFocus = (event: FocusEvent) => {
 const handleBlur = (event: FocusEvent) => {
   emit('blur', event);
 };
+
+const handleDeleteClick = (event: Event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  imgPath.value = '';
+  emit('fileChange', null);
+};
 </script>
 
 <template>
@@ -96,7 +103,6 @@ const handleBlur = (event: FocusEvent) => {
 
     <div v-if="props.type === 'file' && isLoading" class="file-loader">
       <div class="spinner"></div>
-      <p>Загрузка файла...</p>
     </div>
 
     <img
@@ -115,7 +121,7 @@ const handleBlur = (event: FocusEvent) => {
       class="my-input-delete"
       v-if="props.type === 'file' && !isLoading && imgPath.length > 0"
       type="button"
-      @click="imgPath = ''"
+      @click="handleDeleteClick"
       >x
     </MyBtn>
   </div>
@@ -152,14 +158,6 @@ const handleBlur = (event: FocusEvent) => {
   justify-content: center;
   width: 100%;
   height: 100%;
-  min-height: 200px;
-
-  p {
-    margin-top: 15px;
-    color: #666;
-    font-size: 16px;
-    font-weight: 500;
-  }
 }
 
 .spinner {
@@ -253,6 +251,7 @@ const handleBlur = (event: FocusEvent) => {
   text-transform: uppercase;
   color: #ffffff;
   cursor: pointer;
+  z-index: 10; /* Добавляем z-index */
 
   &:hover {
     opacity: 0.7;
