@@ -64,6 +64,7 @@ class AdvantageVideoAPI extends DataBase {
     }
 
     public function update($post, $files) {
+        set_time_limit(300); // Устанавливаем лимит выполнения в 5 минут
         log_message("--- Update request received ---");
         log_message("POST data: " . print_r($post, true));
         log_message("FILES data: " . print_r($files, true));
@@ -81,7 +82,6 @@ class AdvantageVideoAPI extends DataBase {
             $update_fields = [];
             $params = [':id' => $id];
 
-            // Обновление заголовка
             if (isset($post['title'])) {
                 $update_fields[] = 'title = :title';
                 $params[':title'] = $post['title'];
@@ -89,7 +89,9 @@ class AdvantageVideoAPI extends DataBase {
             
             // Обработка иконки
             if (isset($post['remove_title_icon']) && $post['remove_title_icon'] == '1') {
-                $this->deleteFile($old_paths['title_icon']);
+                if ($old_paths['title_icon']) {
+                    $files_to_delete_on_success[] = $old_paths['title_icon'];
+                }
                 $update_fields[] = 'title_icon = NULL';
             } elseif (isset($files['title_icon'])) {
                 $new_path = $this->uploadFile($files['title_icon'], 'icon');

@@ -60,6 +60,7 @@ const draggingAdvantageItem = ref<number | null>(null);
 
 // Video State
 const videoItems = ref<VideoItem[]>([]);
+const originalVideoItem = ref<VideoItem | null>(null);
 const isLoadingVideos = ref(false);
 const errorVideos = ref<string | null>(null);
 const videoPreviews = ref<Record<string, string | null>>({}); // Для превью
@@ -108,6 +109,13 @@ const getVideosData = async () => {
       videoItems.value = response.data.sort(
         (a: VideoItem, b: VideoItem) => a.position - b.position
       );
+      if (videoItems.value.length > 0) {
+        originalVideoItem.value = JSON.parse(
+          JSON.stringify(videoItems.value[0])
+        );
+      } else {
+        originalVideoItem.value = null;
+      }
     } else {
       throw new Error(response.error || 'Не удалось загрузить данные видео');
     }
@@ -386,13 +394,63 @@ const onNewAdvantageFileChangeInSlot = (
 
 const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   const form = event.target as HTMLFormElement;
-  const formData = new FormData(form);
-  formData.append('video_id', video.video_id.toString());
+  const formData = new FormData();
+  let hasChanges = false;
 
-  // Добавляем флаг на удаление, если иконка была удалена
-  if (!video.title_icon && !videoPreviews.value.icon) {
-    formData.append('remove_title_icon', '1');
+  const originalVideo = originalVideoItem.value;
+
+  if (!originalVideo) {
+    Swal.fire(
+      'Ошибка',
+      'Не удалось найти исходные данные для сравнения.',
+      'error'
+    );
+    return;
   }
+
+  // 1. Проверка изменения заголовка
+  const titleInput = form.querySelector(
+    'input[name="title"]'
+  ) as HTMLInputElement;
+  if (titleInput && titleInput.value !== (originalVideo.title || '')) {
+    formData.append('title', titleInput.value);
+    hasChanges = true;
+  }
+
+  // 2. Проверка изменения иконки
+  const iconInput = form.querySelector(
+    'input[name="title_icon"]'
+  ) as HTMLInputElement;
+  if (iconInput && iconInput.files && iconInput.files.length > 0) {
+    formData.append('title_icon', iconInput.files[0]);
+    hasChanges = true;
+  } else if (video.title_icon === null && originalVideo.title_icon !== null) {
+    formData.append('remove_title_icon', '1');
+    hasChanges = true;
+  }
+
+  // 3. Проверка изменения основного видео
+  const videoInput = form.querySelector(
+    'input[name="main_video"]'
+  ) as HTMLInputElement;
+  if (videoInput && videoInput.files && videoInput.files.length > 0) {
+    formData.append('main_video', videoInput.files[0]);
+    hasChanges = true;
+  }
+
+  if (!hasChanges) {
+    Swal.fire({
+      toast: true,
+      position: 'top',
+      icon: 'info',
+      title: 'Нет изменений для сохранения',
+      showConfirmButton: false,
+      timer: 2000,
+    });
+    return;
+  }
+
+  formData.append('video_id', video.video_id.toString());
 
   try {
     isLoadingVideos.value = true;
@@ -402,9 +460,8 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
     });
     if (response.success) {
       Swal.fire('Сохранено!', 'Видео-блок успешно обновлен.', 'success');
-      // Перезагружаем данные, чтобы увидеть изменения
       await getVideosData();
-      videoPreviews.value = {}; // Сбрасываем превью
+      videoPreviews.value = {};
     } else {
       throw new Error(response.error || 'Ошибка при обновлении видео-блока');
     }
@@ -412,41 +469,9 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
     const errorMessage =
       err instanceof Error ? err.message : 'Неизвестная ошибка';
     Swal.fire('Ошибка', errorMessage, 'error');
+    await getVideosData();
   } finally {
     isLoadingVideos.value = false;
-  }
-};
-
-const handleVideoDelete = async (id: number) => {
-  const result = await Swal.fire({
-    title: 'Вы уверены, что хотите удалить этот видео-блок?',
-    text: 'Все связанные файлы будут удалены безвозвратно!',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Да, удалить!',
-    cancelButtonText: 'Отмена',
-  });
-
-  if (result.isConfirmed) {
-    try {
-      const response = await fetchWithCors(`${VIDEOS_API_URL}?id=${id}`, {
-        method: 'DELETE',
-      });
-      if (response.success) {
-        videoItems.value = videoItems.value.filter(
-          (video) => video.video_id !== id
-        );
-        Swal.fire('Удалено!', 'Видео-блок был успешно удален.', 'success');
-      } else {
-        throw new Error(response.error || 'Ошибка при удалении видео');
-      }
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Неизвестная ошибка';
-      Swal.fire('Ошибка', errorMessage, 'error');
-    }
   }
 };
 
@@ -674,49 +699,56 @@ const leave = (el: Element) => {
                     </div>
                     <!-- Правая колонка -->
                     <div class="form-column form-column--grow">
-                      <label>Текущее видео для мобильных:</label>
-                      <input
-                        type="text"
-                        :value="video.video_src_mob || ''"
-                        disabled
-                      />
-                      <label>Текущие источники для десктопа:</label>
-                      <div class="source-list">
-                        <div
-                          v-for="source in video.sources"
-                          :key="source.source_id"
-                          class="source-item"
-                        >
-                          <input
-                            type="text"
-                            :value="source.src_path"
-                            disabled
-                          />
-                          <input
-                            type="text"
-                            :value="source.src_type"
-                            class="source-type-input"
-                            disabled
-                          />
+                      <div class="video-previews">
+                        <div class="video-preview-item">
+                          <label>Превью для мобильных:</label>
+                          <video
+                            v-if="video.video_src_mob"
+                            :key="video.video_src_mob"
+                            :src="video.video_src_mob"
+                            controls
+                            muted
+                            playsinline
+                          >
+                            Ваш браузер не поддерживает тэг video.
+                          </video>
+                          <div v-else class="video-placeholder">
+                            <span>Нет видео</span>
+                          </div>
                         </div>
-                        <p class="source-note">
-                          Источники для десктопа (WebM и MP4) будут
-                          автоматически созданы из основного видео.
-                        </p>
+                        <div class="video-preview-item">
+                          <label>Превью для десктопа:</label>
+                          <video
+                            v-if="video.sources && video.sources.length > 0"
+                            :key="video.sources[0].src_path"
+                            controls
+                            muted
+                            playsinline
+                          >
+                            <source
+                              v-for="source in video.sources"
+                              :key="source.source_id"
+                              :src="source.src_path"
+                              :type="source.src_type"
+                            />
+                            Ваш браузер не поддерживает тэг video.
+                          </video>
+                          <div v-else class="video-placeholder">
+                            <span>Нет видео</span>
+                          </div>
+                        </div>
                       </div>
+                      <p class="source-note">
+                        Источники для десктопа (WebM и MP4) и мобильной версии
+                        будут автоматически созданы из основного загруженного
+                        видео.
+                      </p>
                     </div>
                   </div>
 
                   <div class="actions">
                     <button type="submit" class="btn-save">
                       Сохранить изменения
-                    </button>
-                    <button
-                      type="button"
-                      @click="handleVideoDelete(video.video_id)"
-                      class="btn-delete"
-                    >
-                      Удалить видео-блок
                     </button>
                   </div>
                 </div>
@@ -1275,6 +1307,31 @@ textarea:focus {
   font-size: 0.9rem;
   color: #888;
   text-align: center;
+}
+.video-previews {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+.video-preview-item video {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 8px;
+  border: 1px solid #555;
+  background-color: #2c2c2c;
+  display: block;
+}
+.video-preview-item .video-placeholder {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  border: 2px dashed #555;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #3a3a3a;
+  color: #888;
 }
 :deep(.ql-toolbar) {
   background: #3c3c3c;
