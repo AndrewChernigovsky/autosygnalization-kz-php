@@ -68,16 +68,16 @@ echo $head->setHead();
       <?php if (isset($products) && !empty($products)): ?>
         <?php
         $product = null;
-        foreach ($products['category'] as $category) {
-          foreach ($category as $item) {
-            if ($item['id'] === $id) {
-              $product = $item;
-              break 2;
-            }
+        foreach ($products as $item) {
+          if ($item['id'] === $id) {
+            $product = $item;
+            break;
           }
         }
-        $price = formatPriceWithSpaces($product['price']);
-        if ($product !== null): ?>
+
+        if ($product !== null):
+          $price = formatPriceWithSpaces($product['price']);
+          ?>
           <div class="card-more__wrapper">
             <div class="card-more__button-cost-wrapper">
               <p>Количество</p>

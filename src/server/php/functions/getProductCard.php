@@ -13,10 +13,9 @@ function getProductCard($products, $id)
 
   ob_start();
 
-  foreach ($products['category'] as $category) {
-    foreach ($category as $product) {
-      $price = formatPriceWithSpaces($product['price']);
+  foreach ($products as $product) {
       if ($product['id'] === $id) {
+        $price = formatPriceWithSpaces($product['price']);
         ?>
         <article class='product-card'>
           <img class="product-card__image" src="<?php echo htmlspecialchars($product['gallery'][0]); ?>"
@@ -33,8 +32,8 @@ function getProductCard($products, $id)
           <?php endif; ?>
         </article>
         <?php
+        break;
       }
-    }
   }
   return ob_get_clean();
 }
@@ -118,14 +117,14 @@ function getProductCardWModel(array $products, bool $cart = false, $page = 1)
 }
 function getProductCardImage($products, $id)
 {
+  error_log(print_r($products, true) . 'produc2222222ts11s');
   if (!is_array($products)) {
     return '';
   }
 
   ob_start();
 
-  foreach ($products['category'] as $category) {
-    foreach ($category as $product) {
+  foreach ($products as $product) {
       if ($product['id'] === $id) {
         ?>
         <article class='product-card'>
@@ -160,23 +159,23 @@ function getProductCardImage($products, $id)
         <?php
         return ob_get_clean();
       }
-    }
   }
   return '';
 }
 
 function getProductCardDescription($products, $id)
 {
+
+  error_log(print_r($products, true) . 'produ4444');
   if (!is_array($products)) {
     return '';
   }
 
   ob_start();
 
-  foreach ($products['category'] as $category) {
-    foreach ($category as $product) {
-      $price = formatPriceWithSpaces($product['price']);
+  foreach ($products as $product) {
       if ($product['id'] === $id) {
+        $price = formatPriceWithSpaces($product['price']);
         ?>
         <div class='product-card__content'>
           <?php if (isset($product['description'])): ?>
@@ -194,7 +193,6 @@ function getProductCardDescription($products, $id)
         <?php
         return ob_get_clean();
       }
-    }
   }
   return '';
 }
