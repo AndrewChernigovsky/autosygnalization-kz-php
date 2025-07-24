@@ -60,13 +60,17 @@
 
       p {
         display: flex;
+        gap: 10px;
         max-width: 1440px;
         padding: 30px 20px 30px 50px;
         margin: 0 auto;
         justify-content: center;
         font-weight: 400;
         font-family: var.$primary-font;
-
+        @media screen and (max-width: 768px) {
+          flex-direction: column;
+          gap: 25px;
+        }
         span {
           display: flex;
           // max-width: 380px;
@@ -76,20 +80,6 @@
           align-items: center;
           gap: 10px;
           position: relative;
-
-          &::before {
-            content: '';
-            // top: 50%;
-            // left: -260px;
-            // transform: translateY(-50%);
-            // position: absolute;
-            width: 240px;
-            height: 40px;
-            margin: 15px auto;
-            background-image: url('/client/images/logo-starline.png');
-            background-size: cover;
-            background-position: center;
-          }
         }
       }
     }
@@ -126,6 +116,7 @@
     p {
       margin: 0;
       text-align: center;
+      text-transform: uppercase;
     }
 
     @media screen and (max-width: var.$desktop-min) {

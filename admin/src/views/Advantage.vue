@@ -5,11 +5,36 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 
+// --- INTERFACES ---
+
 interface AdvantageItem {
   advantage_id: number;
   content: string | null;
   image_path: string | null;
   position: number;
+}
+
+interface NewAdvantageSlot {
+  tempId: number;
+  file: File | null;
+  preview: string | null;
+  content: string;
+}
+
+interface VideoSource {
+  source_id: number;
+  src_path: string;
+  src_type: string;
+}
+
+interface VideoItem {
+  video_id: number;
+  title: string | null;
+  title_icon: string | null;
+  video_poster: string | null;
+  video_src_mob: string | null;
+  position: number;
+  sources: VideoSource[];
 }
 
 const toolbarOptions = [
@@ -19,54 +44,88 @@ const toolbarOptions = [
   ['clean'],
 ];
 
-const items = ref<AdvantageItem[]>([]);
-const isLoading = ref(false);
-const error = ref<string | null>(null);
-const openAccordion = ref<string | null>('advantages'); // Секция открыта по умолчанию
-const imagePreviews = ref<Record<number, string>>({}); // Для превью существующих
-const fileInputs = ref<Record<string, HTMLInputElement | null>>({}); // Для сброса инпутов
+// --- STATE ---
 
-// НОВОЕ: Состояние для новых, еще не сохраненных слотов изображений
-interface NewItemSlot {
-  tempId: number;
-  file: File | null;
-  preview: string | null;
-  content: string;
-}
-const newItemSlots = ref<NewItemSlot[]>([]);
+// General
+const openAccordion = ref<string | null>('advantages');
+const fileInputs = ref<Record<string, HTMLInputElement | null>>({});
 
-// Для отслеживания перетаскиваемого элемента
-const draggingItem = ref<number | null>(null);
+// Advantages State
+const advantageItems = ref<AdvantageItem[]>([]);
+const newAdvantageSlots = ref<NewAdvantageSlot[]>([]);
+const isLoadingAdvantages = ref(false);
+const errorAdvantages = ref<string | null>(null);
+const advantageImagePreviews = ref<Record<number, string>>({});
+const draggingAdvantageItem = ref<number | null>(null);
 
-const API_URL = '/server/php/admin/api/advantage/advantage.php';
+// Video State
+const videoItems = ref<VideoItem[]>([]);
+const isLoadingVideos = ref(false);
+const errorVideos = ref<string | null>(null);
+const videoPreviews = ref<Record<string, string | null>>({}); // Для превью
+
+// --- API ---
+
+const ADVANTAGES_API_URL = '/server/php/admin/api/advantage/advantage.php';
+const VIDEOS_API_URL =
+  '/server/php/admin/api/advantage-video/advantage-video.php';
+
+// --- DATA FETCHING ---
 
 const getAdvantageData = async () => {
-  isLoading.value = true;
-  error.value = null;
+  isLoadingAdvantages.value = true;
+  errorAdvantages.value = null;
   try {
-    const response = await fetchWithCors(API_URL);
+    const response = await fetchWithCors(ADVANTAGES_API_URL);
     if (response.success) {
-      // Сортируем полученные данные по позиции сразу
-      items.value = response.data.sort(
+      advantageItems.value = response.data.sort(
         (a: AdvantageItem, b: AdvantageItem) => a.position - b.position
       );
-      newItemSlots.value = []; // Сбрасываем временные слоты при перезагрузке
+      newAdvantageSlots.value = [];
     } else {
-      throw new Error(response.error || 'Не удалось загрузить данные');
+      throw new Error(response.error || 'Не удалось загрузить преимущества');
     }
   } catch (err) {
     const errorMessage =
       err instanceof Error ? err.message : 'Неизвестная ошибка';
-    error.value = errorMessage;
-    Swal.fire('Ошибка', errorMessage, 'error');
+    errorAdvantages.value = errorMessage;
+    Swal.fire(
+      'Ошибка',
+      `Не удалось загрузить преимущества: ${errorMessage}`,
+      'error'
+    );
   } finally {
-    isLoading.value = false;
+    isLoadingAdvantages.value = false;
   }
 };
 
-const handleCreate = async (
+const getVideosData = async () => {
+  isLoadingVideos.value = true;
+  errorVideos.value = null;
+  try {
+    const response = await fetchWithCors(VIDEOS_API_URL);
+    if (response.success) {
+      videoItems.value = response.data.sort(
+        (a: VideoItem, b: VideoItem) => a.position - b.position
+      );
+    } else {
+      throw new Error(response.error || 'Не удалось загрузить данные видео');
+    }
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : 'Неизвестная ошибка';
+    errorVideos.value = errorMessage;
+    Swal.fire('Ошибка', `Не удалось загрузить видео: ${errorMessage}`, 'error');
+  } finally {
+    isLoadingVideos.value = false;
+  }
+};
+
+// --- ADVANTAGES LOGIC ---
+
+const handleAdvantageCreate = async (
   event: Event,
-  slot?: NewItemSlot,
+  slot?: NewAdvantageSlot,
   slotIndex?: number
 ) => {
   const form = event.target as HTMLFormElement;
@@ -87,17 +146,16 @@ const handleCreate = async (
   formData.append('image', slot.file);
 
   try {
-    const response = await fetchWithCors(API_URL, {
+    const response = await fetchWithCors(ADVANTAGES_API_URL, {
       method: 'POST',
       body: formData,
     });
 
     if (response.success && response.data) {
-      items.value.push(response.data);
+      advantageItems.value.push(response.data);
       Swal.fire('Создано!', 'Новый элемент успешно добавлен.', 'success');
-      // Удаляем использованный слот
       if (slotIndex !== undefined) {
-        newItemSlots.value.splice(slotIndex, 1);
+        newAdvantageSlots.value.splice(slotIndex, 1);
       }
     } else {
       throw new Error(response.error || 'Ошибка при создании элемента');
@@ -109,12 +167,11 @@ const handleCreate = async (
   }
 };
 
-const handleUpdate = async (event: Event, item: AdvantageItem) => {
+const handleAdvantageUpdate = async (event: Event, item: AdvantageItem) => {
   const form = event.target as HTMLFormElement;
   const formData = new FormData(form);
   formData.append('advantage_id', item.advantage_id.toString());
 
-  // Валидация: для элементов-изображений нельзя сохранять без картинки
   const inputFile = form.querySelector(
     'input[type="file"]'
   ) as HTMLInputElement;
@@ -122,7 +179,7 @@ const handleUpdate = async (event: Event, item: AdvantageItem) => {
 
   if (!item.image_path && !hasNewFile) {
     Swal.fire('Ошибка', 'Для этого элемента необходимо изображение.', 'error');
-    return; // Прерываем сохранение
+    return;
   }
 
   const editorContent = (form.querySelector('.ql-editor') as HTMLElement)
@@ -131,13 +188,12 @@ const handleUpdate = async (event: Event, item: AdvantageItem) => {
     formData.append('content', editorContent);
   }
 
-  // Если путь к изображению был сброшен, отправляем флаг на удаление
   if (item.image_path === null) {
     formData.append('remove_image', '1');
   }
 
   try {
-    const response = await fetchWithCors(API_URL, {
+    const response = await fetchWithCors(ADVANTAGES_API_URL, {
       method: 'POST',
       body: formData,
     });
@@ -145,7 +201,7 @@ const handleUpdate = async (event: Event, item: AdvantageItem) => {
     if (response.success) {
       if (response.data.image_path) {
         item.image_path = response.data.image_path;
-        delete imagePreviews.value[item.advantage_id];
+        delete advantageImagePreviews.value[item.advantage_id];
       }
       Swal.fire('Сохранено!', 'Данные успешно обновлены.', 'success');
     } else {
@@ -158,7 +214,7 @@ const handleUpdate = async (event: Event, item: AdvantageItem) => {
   }
 };
 
-const handleDelete = async (id: number) => {
+const handleAdvantageDelete = async (id: number) => {
   const result = await Swal.fire({
     title: 'Вы уверены?',
     text: 'Вы не сможете восстановить этот элемент!',
@@ -172,12 +228,14 @@ const handleDelete = async (id: number) => {
 
   if (result.isConfirmed) {
     try {
-      const response = await fetchWithCors(`${API_URL}?id=${id}`, {
+      const response = await fetchWithCors(`${ADVANTAGES_API_URL}?id=${id}`, {
         method: 'DELETE',
       });
 
       if (response.success) {
-        items.value = items.value.filter((item) => item.advantage_id !== id);
+        advantageItems.value = advantageItems.value.filter(
+          (item) => item.advantage_id !== id
+        );
         Swal.fire('Удалено!', 'Элемент был успешно удален.', 'success');
       } else {
         throw new Error(response.error || 'Ошибка при удалении');
@@ -190,15 +248,16 @@ const handleDelete = async (id: number) => {
   }
 };
 
-// Drag and Drop Handlers
-const handleUpdatePositions = async (updatedGroup: AdvantageItem[]) => {
+const handleAdvantageUpdatePositions = async (
+  updatedGroup: AdvantageItem[]
+) => {
   const itemsToUpdate = updatedGroup.map((item, index) => ({
     advantage_id: item.advantage_id,
     position: index + 1,
   }));
 
   try {
-    const response = await fetchWithCors(API_URL, {
+    const response = await fetchWithCors(ADVANTAGES_API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -229,16 +288,16 @@ const handleUpdatePositions = async (updatedGroup: AdvantageItem[]) => {
   }
 };
 
-const onDragStart = (id: number) => {
-  draggingItem.value = id;
+const onAdvantageDragStart = (id: number) => {
+  draggingAdvantageItem.value = id;
 };
 
-const onDrop = (targetId: number) => {
-  if (draggingItem.value === null) return;
+const onAdvantageDrop = (targetId: number) => {
+  if (draggingAdvantageItem.value === null) return;
 
-  const group = items.value;
+  const group = advantageItems.value;
   const fromIndex = group.findIndex(
-    (it) => it.advantage_id === draggingItem.value
+    (it) => it.advantage_id === draggingAdvantageItem.value
   );
   const toIndex = group.findIndex((it) => it.advantage_id === targetId);
 
@@ -248,14 +307,13 @@ const onDrop = (targetId: number) => {
     group.forEach((item, index) => {
       item.position = index + 1;
     });
-    handleUpdatePositions(group);
+    handleAdvantageUpdatePositions(group);
   }
-  draggingItem.value = null;
+  draggingAdvantageItem.value = null;
 };
 
-// НОВОЕ: Функции для управления слотами
-const addNewItemSlot = () => {
-  newItemSlots.value.push({
+const addNewAdvantageSlot = () => {
+  newAdvantageSlots.value.push({
     tempId: Date.now(),
     file: null,
     preview: null,
@@ -263,15 +321,14 @@ const addNewItemSlot = () => {
   });
 };
 
-const removeNewItemSlot = (index: number) => {
-  newItemSlots.value.splice(index, 1);
+const removeNewAdvantageSlot = (index: number) => {
+  newAdvantageSlots.value.splice(index, 1);
 };
 
-const clearNewImageInSlot = (slot: NewItemSlot) => {
+const clearNewAdvantageImageInSlot = (slot: NewAdvantageSlot) => {
   slot.file = null;
   slot.preview = null;
-  // Также сбрасываем значение в самом input-элементе
-  const inputKey = `new-${slot.tempId}`;
+  const inputKey = `new-advantage-${slot.tempId}`;
   if (fileInputs.value[inputKey]) {
     fileInputs.value[inputKey]!.value = '';
   }
@@ -285,13 +342,10 @@ const clearNewImageInSlot = (slot: NewItemSlot) => {
   });
 };
 
-const clearExistingImage = (item: AdvantageItem) => {
-  // Обнуляем путь и превью
+const clearExistingAdvantageImage = (item: AdvantageItem) => {
   item.image_path = null;
-  delete imagePreviews.value[item.advantage_id];
-
-  // Сбрасываем значение в самом input-элементе
-  const inputKey = `existing-${item.advantage_id}`;
+  delete advantageImagePreviews.value[item.advantage_id];
+  const inputKey = `existing-advantage-${item.advantage_id}`;
   if (fileInputs.value[inputKey]) {
     fileInputs.value[inputKey]!.value = '';
   }
@@ -305,16 +359,19 @@ const clearExistingImage = (item: AdvantageItem) => {
   });
 };
 
-const onFileChange = (event: Event, itemId: number) => {
+const onAdvantageFileChange = (event: Event, itemId: number) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    imagePreviews.value[itemId] = URL.createObjectURL(input.files[0]);
+    advantageImagePreviews.value[itemId] = URL.createObjectURL(input.files[0]);
   } else {
-    delete imagePreviews.value[itemId];
+    delete advantageImagePreviews.value[itemId];
   }
 };
 
-const onNewFileChangeInSlot = (event: Event, slot: NewItemSlot) => {
+const onNewAdvantageFileChangeInSlot = (
+  event: Event,
+  slot: NewAdvantageSlot
+) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     slot.file = input.files[0];
@@ -325,9 +382,141 @@ const onNewFileChangeInSlot = (event: Event, slot: NewItemSlot) => {
   }
 };
 
+// --- VIDEOS LOGIC ---
+
+const handleVideoUpdate = async (event: Event, video: VideoItem) => {
+  const form = event.target as HTMLFormElement;
+  const formData = new FormData(form);
+  formData.append('video_id', video.video_id.toString());
+
+  // Добавляем флаг на удаление, если иконка была удалена
+  if (!video.title_icon && !videoPreviews.value.icon) {
+    formData.append('remove_title_icon', '1');
+  }
+
+  try {
+    isLoadingVideos.value = true;
+    const response = await fetchWithCors(VIDEOS_API_URL, {
+      method: 'POST',
+      body: formData,
+    });
+    if (response.success) {
+      Swal.fire('Сохранено!', 'Видео-блок успешно обновлен.', 'success');
+      // Перезагружаем данные, чтобы увидеть изменения
+      await getVideosData();
+      videoPreviews.value = {}; // Сбрасываем превью
+    } else {
+      throw new Error(response.error || 'Ошибка при обновлении видео-блока');
+    }
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : 'Неизвестная ошибка';
+    Swal.fire('Ошибка', errorMessage, 'error');
+  } finally {
+    isLoadingVideos.value = false;
+  }
+};
+
+const handleVideoDelete = async (id: number) => {
+  const result = await Swal.fire({
+    title: 'Вы уверены, что хотите удалить этот видео-блок?',
+    text: 'Все связанные файлы будут удалены безвозвратно!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Да, удалить!',
+    cancelButtonText: 'Отмена',
+  });
+
+  if (result.isConfirmed) {
+    try {
+      const response = await fetchWithCors(`${VIDEOS_API_URL}?id=${id}`, {
+        method: 'DELETE',
+      });
+      if (response.success) {
+        videoItems.value = videoItems.value.filter(
+          (video) => video.video_id !== id
+        );
+        Swal.fire('Удалено!', 'Видео-блок был успешно удален.', 'success');
+      } else {
+        throw new Error(response.error || 'Ошибка при удалении видео');
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Неизвестная ошибка';
+      Swal.fire('Ошибка', errorMessage, 'error');
+    }
+  }
+};
+
+const onFileChange = (event: Event, type: 'icon' | 'video') => {
+  const input = event.target as HTMLInputElement;
+  const file = input.files?.[0];
+  if (!file) {
+    videoPreviews.value[type] = null;
+    return;
+  }
+
+  if (type === 'icon') {
+    videoPreviews.value.icon = URL.createObjectURL(file);
+  } else if (type === 'video') {
+    // Создаем превью постера из видео
+    const videoURL = URL.createObjectURL(file);
+    const videoElement = document.createElement('video');
+    videoElement.src = videoURL;
+    videoElement.currentTime = 1; // Берем кадр с 1 секунды
+    videoElement.addEventListener('loadeddata', () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+        videoPreviews.value.video = canvas.toDataURL('image/jpeg');
+      }
+      URL.revokeObjectURL(videoURL);
+    });
+  }
+};
+
+const clearVideoFile = (type: 'icon' | 'video') => {
+  // Для иконки - помечаем на удаление с сервера
+  if (type === 'icon' && videoItems.value.length > 0) {
+    videoItems.value[0].title_icon = null;
+  }
+  // В любом случае сбрасываем превью
+  videoPreviews.value[type] = null;
+
+  // Сбрасываем значение в инпуте
+  const inputId = type === 'icon' ? 'title-icon-input' : 'main-video-input';
+  const input = document.getElementById(inputId) as HTMLInputElement;
+  if (input) {
+    input.value = '';
+  }
+  Swal.fire({
+    toast: true,
+    position: 'top',
+    icon: 'success',
+    title:
+      type === 'icon'
+        ? 'Иконка будет удалена после сохранения'
+        : 'Выбор видео отменен',
+    showConfirmButton: false,
+    timer: 2000,
+  });
+};
+
+// --- GENERAL LOGIC ---
+
 const toggleAccordion = (section: string) => {
   openAccordion.value = openAccordion.value === section ? null : section;
 };
+
+onMounted(() => {
+  getAdvantageData();
+  getVideosData();
+});
 
 // Transition Hooks
 const beforeEnter = (el: Element) => {
@@ -348,7 +537,7 @@ const enter = (el: Element) => {
 
 const afterEnter = (el: Element) => {
   const htmlEl = el as HTMLElement;
-  htmlEl.style.height = ''; // Allow for dynamic content changes
+  htmlEl.style.height = '';
 };
 
 const beforeLeave = (el: Element) => {
@@ -358,9 +547,7 @@ const beforeLeave = (el: Element) => {
 
 const leave = (el: Element) => {
   const htmlEl = el as HTMLElement;
-  // This is needed to ensure the height is set before transition starts
   getComputedStyle(htmlEl).height;
-
   requestAnimationFrame(() => {
     htmlEl.style.height = '0';
     htmlEl.style.paddingTop = '0';
@@ -368,21 +555,184 @@ const leave = (el: Element) => {
     htmlEl.style.opacity = '0';
   });
 };
-
-onMounted(getAdvantageData);
 </script>
 
 <template>
   <div class="container">
-    <h1 class="main-title">Управление преимуществами</h1>
-    <div v-if="isLoading" class="loading-overlay">
+    <h1 class="main-title">Управление секцией 'Качество и преимущества'</h1>
+    <div v-if="isLoadingAdvantages || isLoadingVideos" class="loading-overlay">
       <div class="spinner"></div>
     </div>
-    <div v-else-if="error" class="error-message">
-      <p>{{ error }}</p>
+    <div v-else-if="errorAdvantages || errorVideos" class="error-message">
+      <p>{{ errorAdvantages || errorVideos }}</p>
       <button @click="getAdvantageData">Попробовать снова</button>
     </div>
     <div v-else class="accordion">
+      <!-- Секция Видео -->
+      <div class="accordion-item">
+        <button class="accordion-header" @click="toggleAccordion('videos')">
+          <span>Управление видео</span>
+          <span
+            class="accordion-arrow"
+            :class="{ 'is-open': openAccordion === 'videos' }"
+          ></span>
+        </button>
+        <Transition
+          name="accordion-transition"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @after-enter="afterEnter"
+          @before-leave="beforeLeave"
+          @leave="leave"
+        >
+          <div v-if="openAccordion === 'videos'" class="accordion-content">
+            <div class="video-list">
+              <form
+                v-for="video in videoItems"
+                :key="video.video_id"
+                class="form-group"
+                @submit.prevent="handleVideoUpdate($event, video)"
+              >
+                <div class="content-wrapper">
+                  <div class="form-layout">
+                    <!-- Левая колонка -->
+                    <div class="form-column">
+                      <label>Заголовок видео-блока:</label>
+                      <input
+                        type="text"
+                        name="title"
+                        :value="video.title || ''"
+                        placeholder="Например, Auto Security - Партнер Starline"
+                      />
+
+                      <label>Иконка заголовка (PNG/SVG):</label>
+                      <input
+                        type="file"
+                        name="title_icon"
+                        class="hidden-file-input"
+                        id="title-icon-input"
+                        accept="image/png, image/svg+xml"
+                        @change="onFileChange($event, 'icon')"
+                      />
+                      <label
+                        for="title-icon-input"
+                        class="image-uploader image-uploader--small"
+                      >
+                        <div
+                          v-if="videoPreviews.icon || video.title_icon"
+                          class="image-preview-wrapper"
+                        >
+                          <img
+                            :src="videoPreviews.icon || video.title_icon || ''"
+                            class="image-preview"
+                          />
+                          <button
+                            type="button"
+                            class="btn-remove-image"
+                            @click.prevent="clearVideoFile('icon')"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div v-else class="image-uploader-placeholder">
+                          <span>+</span>
+                        </div>
+                      </label>
+
+                      <label>Основное видео (для конвертации):</label>
+                      <input
+                        type="file"
+                        name="main_video"
+                        class="hidden-file-input"
+                        id="main-video-input"
+                        accept="video/*"
+                        @change="onFileChange($event, 'video')"
+                      />
+                      <label for="main-video-input" class="image-uploader">
+                        <div
+                          v-if="videoPreviews.video || video.video_poster"
+                          class="image-preview-wrapper"
+                        >
+                          <img
+                            :src="
+                              videoPreviews.video || video.video_poster || ''
+                            "
+                            class="image-preview"
+                          />
+                          <button
+                            type="button"
+                            class="btn-remove-image"
+                            @click.prevent="clearVideoFile('video')"
+                          >
+                            ×
+                          </button>
+                        </div>
+                        <div v-else class="image-uploader-placeholder">
+                          <span>+</span>
+                        </div>
+                      </label>
+                    </div>
+                    <!-- Правая колонка -->
+                    <div class="form-column form-column--grow">
+                      <label>Текущее видео для мобильных:</label>
+                      <input
+                        type="text"
+                        :value="video.video_src_mob || ''"
+                        disabled
+                      />
+                      <label>Текущие источники для десктопа:</label>
+                      <div class="source-list">
+                        <div
+                          v-for="source in video.sources"
+                          :key="source.source_id"
+                          class="source-item"
+                        >
+                          <input
+                            type="text"
+                            :value="source.src_path"
+                            disabled
+                          />
+                          <input
+                            type="text"
+                            :value="source.src_type"
+                            class="source-type-input"
+                            disabled
+                          />
+                        </div>
+                        <p class="source-note">
+                          Источники для десктопа (WebM и MP4) будут
+                          автоматически созданы из основного видео.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="actions">
+                    <button type="submit" class="btn-save">
+                      Сохранить изменения
+                    </button>
+                    <button
+                      type="button"
+                      @click="handleVideoDelete(video.video_id)"
+                      class="btn-delete"
+                    >
+                      Удалить видео-блок
+                    </button>
+                  </div>
+                </div>
+              </form>
+              <div class="add-slot-wrapper">
+                <p class="form-note">
+                  Так как на сайте используется только один видео-блок, вы
+                  можете только редактировать его.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </div>
+
+      <!-- Секция Преимуществ -->
       <div class="accordion-item">
         <button class="accordion-header" @click="toggleAccordion('advantages')">
           <span>Список преимуществ</span>
@@ -403,14 +753,14 @@ onMounted(getAdvantageData);
             <div class="advantages-list">
               <!-- Рендеринг списка -->
               <form
-                v-for="item in items"
+                v-for="item in advantageItems"
                 :key="item.advantage_id"
                 class="form-group draggable"
                 draggable="true"
-                @dragstart="onDragStart(item.advantage_id)"
+                @dragstart="onAdvantageDragStart(item.advantage_id)"
                 @dragover.prevent
-                @drop="onDrop(item.advantage_id)"
-                @submit.prevent="handleUpdate($event, item)"
+                @drop="onAdvantageDrop(item.advantage_id)"
+                @submit.prevent="handleAdvantageUpdate($event, item)"
               >
                 <div class="drag-handle">⠿</div>
                 <div class="content-wrapper">
@@ -418,30 +768,32 @@ onMounted(getAdvantageData);
                     <div class="form-column">
                       <label>Изображение:</label>
                       <div class="image-uploader">
-                        <!-- The file input is always in the DOM but hidden -->
                         <input
                           type="file"
                           name="image"
                           accept="image/*"
                           class="hidden-file-input"
-                          :id="`file-input-existing-${item.advantage_id}`"
+                          :id="`file-input-existing-advantage-${item.advantage_id}`"
                           :ref="
                             (el) =>
-                              (fileInputs[`existing-${item.advantage_id}`] =
-                                el as HTMLInputElement)
+                              (fileInputs[
+                                `existing-advantage-${item.advantage_id}`
+                              ] = el as HTMLInputElement)
                           "
-                          @change="onFileChange($event, item.advantage_id)"
+                          @change="
+                            onAdvantageFileChange($event, item.advantage_id)
+                          "
                         />
-                        <!-- Preview with remove button, shown if an image exists -->
                         <div
                           v-if="
-                            imagePreviews[item.advantage_id] || item.image_path
+                            advantageImagePreviews[item.advantage_id] ||
+                            item.image_path
                           "
                           class="image-preview-wrapper"
                         >
                           <img
                             :src="
-                              imagePreviews[item.advantage_id] ||
+                              advantageImagePreviews[item.advantage_id] ||
                               item.image_path ||
                               ''
                             "
@@ -451,15 +803,14 @@ onMounted(getAdvantageData);
                           <button
                             type="button"
                             class="btn-remove-image"
-                            @click="clearExistingImage(item)"
+                            @click="clearExistingAdvantageImage(item)"
                           >
                             ×
                           </button>
                         </div>
-                        <!-- Placeholder, shown if no image exists. It's a label for the input. -->
                         <label
                           v-else
-                          :for="`file-input-existing-${item.advantage_id}`"
+                          :for="`file-input-existing-advantage-${item.advantage_id}`"
                           class="image-uploader-placeholder"
                         >
                           <span>+</span>
@@ -481,7 +832,7 @@ onMounted(getAdvantageData);
                     <button type="submit" class="btn-save">Сохранить</button>
                     <button
                       type="button"
-                      @click="handleDelete(item.advantage_id)"
+                      @click="handleAdvantageDelete(item.advantage_id)"
                       class="btn-delete"
                     >
                       Удалить
@@ -490,33 +841,31 @@ onMounted(getAdvantageData);
                 </div>
               </form>
 
-              <!-- НОВЫЙ БЛОК: Рендеринг новых слотов для изображений -->
+              <!-- Создание нового преимущества -->
               <form
-                v-for="(slot, index) in newItemSlots"
+                v-for="(slot, index) in newAdvantageSlots"
                 :key="slot.tempId"
                 class="form-add"
-                @submit.prevent="handleCreate($event, slot, index)"
+                @submit.prevent="handleAdvantageCreate($event, slot, index)"
               >
                 <div class="content-wrapper">
                   <div class="form-layout">
                     <div class="form-column">
                       <label>Новое изображение:</label>
                       <div class="image-uploader">
-                        <!-- The file input is always in the DOM but hidden -->
                         <input
                           type="file"
                           name="image"
                           accept="image/*"
                           class="hidden-file-input"
-                          :id="`file-input-new-${slot.tempId}`"
+                          :id="`file-input-new-advantage-${slot.tempId}`"
                           :ref="
                             (el) =>
-                              (fileInputs[`new-${slot.tempId}`] =
+                              (fileInputs[`new-advantage-${slot.tempId}`] =
                                 el as HTMLInputElement)
                           "
-                          @change="onNewFileChangeInSlot($event, slot)"
+                          @change="onNewAdvantageFileChangeInSlot($event, slot)"
                         />
-                        <!-- Preview with remove button -->
                         <div v-if="slot.preview" class="image-preview-wrapper">
                           <img
                             :src="slot.preview"
@@ -526,15 +875,14 @@ onMounted(getAdvantageData);
                           <button
                             type="button"
                             class="btn-remove-image"
-                            @click="clearNewImageInSlot(slot)"
+                            @click="clearNewAdvantageImageInSlot(slot)"
                           >
                             ×
                           </button>
                         </div>
-                        <!-- Placeholder -->
                         <label
                           v-else
-                          :for="`file-input-new-${slot.tempId}`"
+                          :for="`file-input-new-advantage-${slot.tempId}`"
                           class="image-uploader-placeholder"
                         >
                           <span>+</span>
@@ -556,7 +904,7 @@ onMounted(getAdvantageData);
                     <button type="submit" class="btn-save">Сохранить</button>
                     <button
                       type="button"
-                      @click="removeNewItemSlot(index)"
+                      @click="removeNewAdvantageSlot(index)"
                       class="btn-delete"
                     >
                       Удалить слот
@@ -565,12 +913,11 @@ onMounted(getAdvantageData);
                 </div>
               </form>
 
-              <!-- Кнопка для добавления нового слота -->
               <div class="add-slot-wrapper">
                 <button
                   type="button"
                   class="btn-add btn-add-slot"
-                  @click="addNewItemSlot"
+                  @click="addNewAdvantageSlot"
                 >
                   Добавить преимущество
                 </button>
@@ -584,7 +931,6 @@ onMounted(getAdvantageData);
 </template>
 
 <style scoped>
-/* Стили остаются без изменений, т.к. они уже адаптированы под темную тему */
 .container {
   background-color: #2d2d2d;
   color: #e0e0e0;
@@ -594,7 +940,7 @@ onMounted(getAdvantageData);
   min-height: 100vh;
 }
 .main-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 600;
   color: #fff;
   margin-bottom: 2rem;
@@ -630,7 +976,8 @@ onMounted(getAdvantageData);
 .error-message button {
   margin-top: 1rem;
 }
-.advantages-list {
+.advantages-list,
+.video-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
@@ -663,6 +1010,11 @@ textarea {
   background-color: #2c2c2c;
   color: #e0e0e0;
   transition: border-color 0.3s, box-shadow 0.3s;
+  margin-bottom: 1rem;
+}
+input:disabled {
+  background-color: #333;
+  color: #888;
 }
 input:focus,
 textarea:focus {
@@ -685,6 +1037,14 @@ textarea:focus {
   cursor: pointer;
   font-weight: bold;
   transition: transform 0.2s, filter 0.2s;
+}
+.btn-save:disabled,
+.btn-add-link:disabled {
+  background-image: none;
+  background-color: #555;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
 }
 .btn-save:hover,
 .btn-delete:hover,
@@ -724,7 +1084,7 @@ textarea:focus {
 .drag-handle {
   font-size: 24px;
   color: #777;
-  padding-top: 2.5rem; /* Выравнивание по центру */
+  padding-top: 2.5rem;
   transition: color 0.3s;
 }
 .draggable:hover .drag-handle {
@@ -782,7 +1142,7 @@ textarea:focus {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
 }
-/* --- НОВЫЕ СТИЛИ ДЛЯ ЗАГРУЗЧИКА ИЗОБРАЖЕНИЙ --- */
+
 .form-layout {
   display: flex;
   gap: 1.5rem;
@@ -801,7 +1161,9 @@ textarea:focus {
   width: 150px;
   height: 150px;
 }
-
+.image-uploader--small {
+  height: 50px;
+}
 .image-uploader-placeholder {
   width: 100%;
   height: 100%;
@@ -840,7 +1202,7 @@ textarea:focus {
 .image-preview {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 8px;
   border: 1px solid #555;
 }
@@ -867,31 +1229,56 @@ textarea:focus {
   transform: scale(1.1);
   background-color: #c82333;
 }
-/* --- КОНЕЦ НОВЫХ СТИЛЕЙ --- */
 
+.source-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: #2c2c2c;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+.source-item {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.source-type-input {
+  flex-basis: 120px;
+  flex-shrink: 0;
+}
+.btn-delete-link {
+  background: #c82333;
+  border: none;
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.btn-add-link {
+  background: #218838;
+  border: none;
+  color: white;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+  margin-top: 0.5rem;
+}
+.source-note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.5rem;
+}
+.form-note {
+  font-size: 0.9rem;
+  color: #888;
+  text-align: center;
+}
 :deep(.ql-toolbar) {
   background: #3c3c3c;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
-  border-color: #555 !important;
-}
-:deep(.ql-container) {
-  background: #2c2c2c;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-  color: #e0e0e0;
-  border-color: #555 !important;
-}
-:deep(.ql-editor) {
-  min-height: 150px;
-}
-:deep(.ql-snow .ql-stroke) {
-  stroke: #ccc;
-}
-:deep(.ql-snow .ql-fill) {
-  fill: #ccc;
-}
-:deep(.ql-snow .ql-picker-label) {
-  color: #ccc;
 }
 </style>
