@@ -27,7 +27,7 @@ function sertificatesSection(): string
                   height="400" />
               </a>
               <a class="sertificates__download y-button-primary button" download
-                href="/client/docs/sertificates/sertificate-<?= $index + 1 ?>.pdf">Скачать</a>
+                href="<?= htmlspecialchars($certificate['image_path']); ?>">Скачать</a>
             </li>
           <?php endforeach; ?>
         </ul>
