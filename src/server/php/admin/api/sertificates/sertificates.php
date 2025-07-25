@@ -88,26 +88,26 @@ class SertificatesAPI extends DataBase
       $this->error("ID сертификата не указан", 400);
       return;
     }
-    $id = (int)$_GET['id'];
+    $id = (int) $_GET['id'];
     $this->deleteSertificate($id);
   }
 
   private function createSertificate()
   {
     if (!isset($_FILES['image'])) {
-        $this->error("Изображение не загружено", 400);
-        return;
+      $this->error("Изображение не загружено", 400);
+      return;
     }
 
     $file = $_FILES['image'];
     if ($file['error'] !== UPLOAD_ERR_OK) {
-        $this->error("Ошибка загрузки файла: " . $file['error'], 400);
-        return;
+      $this->error("Ошибка загрузки файла: " . $file['error'], 400);
+      return;
     }
 
     $uploadPath = $_SERVER['DOCUMENT_ROOT'] . self::UPLOAD_DIR;
     if (!is_dir($uploadPath)) {
-        mkdir($uploadPath, 0755, true);
+      mkdir($uploadPath, 0755, true);
     }
 
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
@@ -116,84 +116,88 @@ class SertificatesAPI extends DataBase
     $webPath = self::UPLOAD_DIR . $uniqueName;
 
     if (!move_uploaded_file($file['tmp_name'], $filePath)) {
-        $this->error("Не удалось сохранить файл", 500);
-        return;
+      $this->error("Не удалось сохранить файл", 500);
+      return;
     }
-    
+
     try {
-        $stmt = $this->pdo->prepare("INSERT INTO Sertificates (image_path, position) VALUES (?, (SELECT COALESCE(MAX(position), 0) + 1 FROM Sertificates as temp))");
-        $stmt->execute([$webPath]);
-        $newId = $this->pdo->lastInsertId();
+      $stmt = $this->pdo->prepare("INSERT INTO Sertificates (image_path, position) VALUES (?, (SELECT COALESCE(MAX(position), 0) + 1 FROM Sertificates as temp))");
+      $stmt->execute([$webPath]);
+      $newId = $this->pdo->lastInsertId();
 
-        $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
-        $selectStmt->execute([$newId]);
-        $newSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
+      $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
+      $selectStmt->execute([$newId]);
+      $newSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
 
-        $this->success($newSertificate);
+      $this->success($newSertificate);
     } catch (Exception $e) {
-        unlink($filePath); // Удаляем файл, если запись в БД не удалась
-        error_log("Ошибка создания сертификата: " . $e->getMessage());
-        $this->error("Ошибка базы данных при создании", 500);
+      unlink($filePath); // Удаляем файл, если запись в БД не удалась
+      error_log("Ошибка создания сертификата: " . $e->getMessage());
+      $this->error("Ошибка базы данных при создании", 500);
     }
   }
 
   private function updateSertificate()
   {
-      if (!isset($_POST['sertificate_id']) || !isset($_FILES['image'])) {
-          $this->error("Отсутствуют необходимые данные для обновления", 400);
-          return;
+    if (!isset($_POST['sertificate_id']) || !isset($_FILES['image'])) {
+      $this->error("Отсутствуют необходимые данные для обновления", 400);
+      return;
+    }
+
+    $id = (int) $_POST['sertificate_id'];
+    $file = $_FILES['image'];
+
+    // 1. Находим старую запись
+    $stmt = $this->pdo->prepare("SELECT image_path FROM Sertificates WHERE sertificate_id = ?");
+    $stmt->execute([$id]);
+    $oldSertificate = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+    if (!$oldSertificate) {
+      $this->error("Сертификат с ID {$id} не найден", 404);
+      return;
+    }
+    $oldFilePath = $_SERVER['DOCUMENT_ROOT'] . $oldSertificate['image_path'];
+
+    // 2. Загружаем новый файл
+    $uploadPath = $_SERVER['DOCUMENT_ROOT'] . self::UPLOAD_DIR;
+    if (!is_dir($uploadPath)) {
+      mkdir($uploadPath, 0755, true);
+    }
+
+    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $uniqueName = 'sertificate-' . uniqid() . '.' . $extension;
+    $newFilePath = $uploadPath . $uniqueName;
+    $newWebPath = self::UPLOAD_DIR . $uniqueName;
+
+    if (!move_uploaded_file($file['tmp_name'], $newFilePath)) {
+      $this->error("Не удалось сохранить новый файл", 500);
+      return;
+    }
+
+    // 3. Обновляем запись в БД
+    try {
+      $updateStmt = $this->pdo->prepare("UPDATE Sertificates SET image_path = ? WHERE sertificate_id = ?");
+      $updateStmt->execute([$newWebPath, $id]);
+
+      // 4. Удаляем старый файл, если обновление БД прошло успешно
+      if (file_exists($oldFilePath)) {
+        unlink($oldFilePath);
       }
 
-      $id = (int)$_POST['sertificate_id'];
-      $file = $_FILES['image'];
+      // Возвращаем обновленные данные
+      $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
+      $selectStmt->execute([$id]);
+      $updatedSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
+      $this->success($updatedSertificate);
 
-      // 1. Находим старую запись
-      $stmt = $this->pdo->prepare("SELECT image_path FROM Sertificates WHERE sertificate_id = ?");
-      $stmt->execute([$id]);
-      $oldSertificate = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-      if (!$oldSertificate) {
-          $this->error("Сертификат с ID {$id} не найден", 404);
-          return;
+    } catch (Exception $e) {
+      // Если обновление БД не удалось, удаляем новый загруженный файл
+      if (file_exists($newFilePath)) {
+        unlink($newFilePath);
       }
-      $oldFilePath = $_SERVER['DOCUMENT_ROOT'] . $oldSertificate['image_path'];
-
-      // 2. Загружаем новый файл
-      $uploadPath = $_SERVER['DOCUMENT_ROOT'] . self::UPLOAD_DIR;
-      $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-      $uniqueName = 'sertificate-' . uniqid() . '.' . $extension;
-      $newFilePath = $uploadPath . $uniqueName;
-      $newWebPath = self::UPLOAD_DIR . $uniqueName;
-
-      if (!move_uploaded_file($file['tmp_name'], $newFilePath)) {
-          $this->error("Не удалось сохранить новый файл", 500);
-          return;
-      }
-
-      // 3. Обновляем запись в БД
-      try {
-          $updateStmt = $this->pdo->prepare("UPDATE Sertificates SET image_path = ? WHERE sertificate_id = ?");
-          $updateStmt->execute([$newWebPath, $id]);
-
-          // 4. Удаляем старый файл, если обновление БД прошло успешно
-          if (file_exists($oldFilePath)) {
-              unlink($oldFilePath);
-          }
-
-          // Возвращаем обновленные данные
-          $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
-          $selectStmt->execute([$id]);
-          $updatedSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
-          $this->success($updatedSertificate);
-
-      } catch (Exception $e) {
-          // Если обновление БД не удалось, удаляем новый загруженный файл
-          if (file_exists($newFilePath)) {
-              unlink($newFilePath);
-          }
-          error_log("Ошибка обновления сертификата: " . $e->getMessage());
-          $this->error("Ошибка базы данных при обновлении", 500);
-      }
+      error_log("Ошибка обновления сертификата: " . $e->getMessage());
+      $this->error("Ошибка базы данных при обновлении", 500);
+    }
   }
 
   private function deleteSertificate($id)
@@ -205,10 +209,10 @@ class SertificatesAPI extends DataBase
       $sertificate = $stmt->fetch(\PDO::FETCH_ASSOC);
 
       if (!$sertificate) {
-          $this->error("Сертификат не найден", 404);
-          return;
+        $this->error("Сертификат не найден", 404);
+        return;
       }
-      
+
       // Удаляем запись из БД
       $deleteStmt = $this->pdo->prepare("DELETE FROM Sertificates WHERE sertificate_id = ?");
       $deleteStmt->execute([$id]);
@@ -216,7 +220,7 @@ class SertificatesAPI extends DataBase
       // Удаляем файл
       $filePath = $_SERVER['DOCUMENT_ROOT'] . $sertificate['image_path'];
       if (file_exists($filePath)) {
-          unlink($filePath);
+        unlink($filePath);
       }
 
       $this->success(['sertificate_id' => $id]);
@@ -225,36 +229,36 @@ class SertificatesAPI extends DataBase
       $this->error("Ошибка базы данных при удалении", 500);
     }
   }
-  
+
   private function updatePositions($items)
   {
-      try {
-          $this->pdo->beginTransaction();
-          $stmt = $this->pdo->prepare("UPDATE Sertificates SET position = ? WHERE sertificate_id = ?");
-          foreach ($items as $item) {
-              $stmt->execute([(int)$item['position'], (int)$item['sertificate_id']]);
-          }
-          $this->pdo->commit();
-          $this->success(['message' => 'Порядок обновлен']);
-      } catch (Exception $e) {
-          $this->pdo->rollBack();
-          error_log("Ошибка обновления порядка сертификатов: " . $e->getMessage());
-          $this->error("Ошибка базы данных при обновлении порядка", 500);
+    try {
+      $this->pdo->beginTransaction();
+      $stmt = $this->pdo->prepare("UPDATE Sertificates SET position = ? WHERE sertificate_id = ?");
+      foreach ($items as $item) {
+        $stmt->execute([(int) $item['position'], (int) $item['sertificate_id']]);
       }
+      $this->pdo->commit();
+      $this->success(['message' => 'Порядок обновлен']);
+    } catch (Exception $e) {
+      $this->pdo->rollBack();
+      error_log("Ошибка обновления порядка сертификатов: " . $e->getMessage());
+      $this->error("Ошибка базы данных при обновлении порядка", 500);
+    }
   }
 
   // --- Вспомогательные методы для ответа ---
 
   private function success($data)
   {
-      http_response_code(200);
-      echo json_encode(['success' => true, 'data' => $data]);
+    http_response_code(200);
+    echo json_encode(['success' => true, 'data' => $data]);
   }
 
   private function error($message, $code)
   {
-      http_response_code($code);
-      echo json_encode(['success' => false, 'error' => $message]);
+    http_response_code($code);
+    echo json_encode(['success' => false, 'error' => $message]);
   }
 }
 
