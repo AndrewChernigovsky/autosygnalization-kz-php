@@ -47,7 +47,7 @@ const toolbarOptions = [
 // --- STATE ---
 
 // General
-const openAccordion = ref<string | null>('advantages');
+const openAccordion = ref<string | null>(null);
 const fileInputs = ref<Record<string, HTMLInputElement | null>>({});
 
 // Advantages State
@@ -1337,5 +1337,34 @@ textarea:focus {
   background: #3c3c3c;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
+  border-color: #555;
+  border-bottom: 0;
+}
+:deep(.ql-container.ql-snow) {
+  border-color: #555;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  color: #e0e0e0;
+}
+:deep(.ql-editor) {
+  min-height: 250px;
+  background-color: #2c2c2c;
+}
+:deep(.ql-snow .ql-stroke) {
+  stroke: #e0e0e0;
+}
+:deep(.ql-snow .ql-picker-label::before) {
+  color: #e0e0e0;
+}
+:deep(.ql-snow .ql-picker-options) {
+  background-color: #3c3c3c;
+  border-color: #555;
+  color: #e0e0e0;
+}
+:deep(.ql-snow .ql-picker-item:hover) {
+  background-color: #4a4a4a;
+}
+:deep(.ql-snow .ql-picker-item.ql-selected) {
+  background-color: #5a5a5a;
 }
 </style>

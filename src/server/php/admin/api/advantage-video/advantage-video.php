@@ -243,24 +243,40 @@ class AdvantageVideoAPI extends DataBase {
 
         $escaped_temp_path = escapeshellarg($temp_path);
 
-        // Команды FFmpeg
-        $commands = [
-            "poster" => "{$this->ffmpeg_path} -i {$escaped_temp_path} -ss 00:00:01.000 -vframes 1 " . escapeshellarg($server_paths['poster']),
-            "mob" => "{$this->ffmpeg_path} -i {$escaped_temp_path} -c:v libvpx-vp9 -crf 32 -b:v 0 -an " . escapeshellarg($server_paths['mob']),
-            "desktop_webm" => "{$this->ffmpeg_path} -i {$escaped_temp_path} -c:v libvpx-vp9 -crf 28 -b:v 0 -an " . escapeshellarg($server_paths['desktop_webm']),
-            "desktop_mp4" => "{$this->ffmpeg_path} -i {$escaped_temp_path} -c:v libx264 -crf 23 -an " . escapeshellarg($server_paths['desktop_mp4']),
-        ];
+        // Команда для создания постера (остается без изменений)
+        $poster_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -ss 00:00:01.000 -vframes 1 " . escapeshellarg($server_paths['poster']);
+        log_message("Executing FFmpeg for poster: {$poster_command}");
+        shell_exec($poster_command . ' 2>&1');
 
-        foreach ($commands as $key => $cmd) {
-            log_message("Executing FFmpeg for {$key}: {$cmd}");
-            shell_exec($cmd . ' 2>&1');
-            if (!file_exists($server_paths[$key])) {
-                throw new Exception("FFmpeg failed to create file for: {$key}");
+        // Команда №2: Создаем обе десктопные версии (webm и mp4) за один проход.
+        $desktop_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
+            "-c:v libvpx-vp9 -crf 28 -b:v 0 " . escapeshellarg($server_paths['desktop_webm']) . ' ' .
+            "-c:v libx264 -crf 23 " . escapeshellarg($server_paths['desktop_mp4']);
+        
+        log_message("Executing FFmpeg for desktop versions: {$desktop_command}");
+        shell_exec($desktop_command . ' 2>&1');
+
+        // Команда №3: Создаем мобильную версию.
+        // Она меньше, поэтому ее кодирование займет меньше времени.
+        $mobile_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
+            '-vf "scale=w=768:h=-2" -c:v libvpx-vp9 -crf 32 -b:v 0 ' . escapeshellarg($server_paths['mob']);
+            
+        log_message("Executing FFmpeg for mobile version: {$mobile_command}");
+        shell_exec($mobile_command . ' 2>&1');
+
+        $results = [];
+        // Проверяем наличие всех созданных файлов
+        foreach (array_keys($server_paths) as $type) {
+            if (file_exists($server_paths[$type])) {
+                $results[$type] = $paths[$type];
+                log_message("Successfully created {$type} at " . $server_paths[$type]);
+            } else {
+                $results[$type] = '';
+                log_message("Failed to create {$type} for: " . $escaped_temp_path);
             }
-            log_message("Successfully created file for: {$key}");
         }
 
-        return $paths;
+        return $results;
     }
 
     private function success($data, $statusCode = 200)
