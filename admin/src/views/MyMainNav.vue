@@ -452,10 +452,6 @@ const handleDragEnd = () => {
   margin-bottom: 16px;
 }
 
-.navigation-content {
-  /* Убираем все анимации и делаем контент всегда видимым */
-}
-
 .navigation-content-wrapper {
   display: flex;
   flex-direction: column;
