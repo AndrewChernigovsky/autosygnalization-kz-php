@@ -8,6 +8,7 @@ import Services from '../views/Services.vue';
 import MyContacts from '../views/MyContacts.vue';
 import AboutUs from '../views/AboutUs.vue';
 import UI from '../views/UI.vue';
+import MyMainNav from '../views/MyMainNav.vue';
 
 export const routes = [
   {
@@ -54,6 +55,11 @@ export const routes = [
     path: '/my-contacts',
     name: 'Мои контакты',
     component: MyContacts,
+  },
+  {
+    path: '/my-main-nav',
+    name: 'Моя главная навигация',
+    component: MyMainNav,
   },
 ];
 

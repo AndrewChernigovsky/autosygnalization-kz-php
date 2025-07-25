@@ -176,6 +176,7 @@ const getContacts = async () => {
 const addContact = async (type: string) => {
   await store.addContact(API_BASE_URL, newContact.value, type);
   resetNewContact();
+  await getContacts();
 };
 
 const updateContact = async (item: IContacts) => {
