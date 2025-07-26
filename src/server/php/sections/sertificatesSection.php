@@ -8,7 +8,7 @@ use DATA\SertificatesData;
 
 function sertificatesSection(): string
 {
-  $certificates = (new SertificatesData())->getData();
+  $certificates = (new SertificatesData())->getAllSertificates();
   // Массив с ссылками на сертификаты
 
   // Генерация HTML
@@ -21,13 +21,13 @@ function sertificatesSection(): string
         <ul class="swiper-wrapper sertificates__list list-style-none">
           <?php foreach ($certificates as $index => $certificate): ?>
             <li class="sertificates__slide swiper-slide">
-              <a href="<?= htmlspecialchars($certificate); ?>" class="fancybox quality-slider__image swiper-zoom-container"
+              <a href="<?= htmlspecialchars($certificate['image_path']); ?>" class="fancybox quality-slider__image swiper-zoom-container"
                 data-fancybox="gallerySertificates" data-fancybox-index="<?= $index; ?>">
-                <img src="<?= htmlspecialchars($certificate); ?>" alt="Сертификат компании Auto Security." width="300"
+                <img src="<?= htmlspecialchars($certificate['image_path']); ?>" alt="Сертификат компании Auto Security." width="300"
                   height="400" />
               </a>
               <a class="sertificates__download y-button-primary button" download
-                href="/client/docs/sertificates/sertificate-<?= $index + 1 ?>.pdf">Скачать</a>
+                href="<?= htmlspecialchars($certificate['image_path']); ?>">Скачать</a>
             </li>
           <?php endforeach; ?>
         </ul>

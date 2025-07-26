@@ -7,6 +7,8 @@ import Products from '../views/Products.vue';
 import Services from '../views/Services.vue';
 import MyContacts from '../views/MyContacts.vue';
 import AboutUs from '../views/AboutUs.vue';
+import Advantage from '../views/Advantage.vue';
+import Sertificates from '../views/Sertificates.vue';
 import UI from '../views/UI.vue';
 import MyMainNav from '../views/MyMainNav.vue';
 
@@ -45,6 +47,16 @@ export const routes = [
     path: '/about-us',
     name: 'О нас',
     component: AboutUs,
+  },
+  {
+    path: '/advantage',
+    name: 'Преимущества',
+    component: Advantage,
+  },
+  {
+    path: '/sertificates',
+    name: 'Сертификаты',
+    component: Sertificates,
   },
   {
     path: '/ui',

@@ -2,13 +2,14 @@
 
 namespace SECTIONS;
 
-use DATA\QualityVideos;
+use DATA\AdvantageVideoData;
+use DATA\AdvantageData;
 
 function qualitySection(): string
 {
   // Получаем данные
-  $qualityVideos = (new QualityVideos())->getData();
-
+  $qualityVideos = (new AdvantageVideoData())->getAllVideos();
+  $advantageData = (new AdvantageData())->getAllAdvantage();
   // Генерация HTML
   ob_start();
   ?>
@@ -29,6 +30,9 @@ function qualitySection(): string
     <div class="quality__present">
       <h2>
         <p>
+          <?php if (!empty($qualityVideos['videos'][0]['title_icon'])): ?>
+            <img src="<?= htmlspecialchars($qualityVideos['videos'][0]['title_icon']); ?>" alt="Иконка Starline" width="240" height="40">
+          <?php endif; ?>
           <span>
             <?= htmlspecialchars($qualityVideos['title']); ?>
           </span>
@@ -55,8 +59,12 @@ function qualitySection(): string
       <div class="quality__list-wrapper">
         <div class="container">
           <ul class="quality__list list-style-none">
-            <?php foreach ($qualityVideos['qualities'] as $index => $item): ?>
-              <li class="quality__item<?= $index > 2 ? ' quality__item--hidden' : '' ?>"><?= htmlspecialchars($item); ?>
+            <?php foreach ($advantageData as $index => $item): ?>
+              <li class="quality__item<?= $index > 2 ? ' quality__item--hidden' : '' ?>">
+                <?php if ($item['image_path']): ?>
+                  <img src="<?= htmlspecialchars($item['image_path']); ?>" alt="<?= htmlspecialchars($item['content']); ?>">
+                <?php endif; ?>
+                <p><?= $item['content']; ?></p>
               </li>
             <?php endforeach; ?>
           </ul>
