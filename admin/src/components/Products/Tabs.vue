@@ -1,10 +1,14 @@
-<script setup lang="ts">
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { useProductEditorStore } from '../../stores/productEditorStore';
 
-const editorStore = useProductEditorStore();
-
-defineOptions({
+export default defineComponent({
   name: 'Tabs',
+  emits: ['upload-icon', 'delete-icon'],
+  setup() {
+    const editorStore = useProductEditorStore();
+    return { editorStore };
+  },
 });
 </script>
 
@@ -39,7 +43,23 @@ defineOptions({
             </div>
             <div class="form-group">
               <label>Иконка:</label>
-              <input type="text" v-model="item.icon" />
+              <div class="icon-management">
+                <img v-if="item.icon" :src="item.icon" alt="Иконка" class="icon-preview" />
+                <input type="text" v-model="item.icon" readonly class="icon-input" />
+                <button
+                  @click="$emit('upload-icon', tabIndex, itemIndex)"
+                  class="btn-upload-image"
+                >
+                  Загрузить новую
+                </button>
+                <button
+                  @click="$emit('delete-icon', tabIndex, itemIndex)"
+                  class="btn-delete-icon"
+                  v-if="item.icon"
+                >
+                  Удалить
+                </button>
+              </div>
             </div>
             <div class="form-group">
               <label>Описание пункта:</label>
@@ -130,15 +150,36 @@ defineOptions({
   color: #fff;
   border-radius: 4px;
 }
+.icon-management {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.icon-preview {
+  width: 40px;
+  height: 40px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #666;
+}
+.icon-input {
+  flex: 1;
+  min-width: 200px;
+}
 .btn-delete-tab,
 .btn-delete-item,
-.btn-add {
+.btn-add,
+.btn-upload-image,
+.btn-delete-icon,
+.btn-select-icon {
   padding: 8px 12px;
   border: none;
   border-radius: 4px;
   color: white;
   cursor: pointer;
   white-space: nowrap;
+  font-size: 12px;
 }
 .btn-delete-tab,
 .btn-delete-item {
@@ -151,5 +192,20 @@ defineOptions({
 .btn-add-tab {
   width: 100%;
   margin-top: 15px;
+}
+.btn-upload-image {
+  background-color: #17a2b8;
+}
+.btn-delete-icon {
+  background-color: #ffc107;
+  color: black;
+}
+.btn-select-icon {
+  background-color: #6c757d;
+  border: 2px solid transparent;
+}
+.btn-select-icon.active {
+  border-color: #00ff00;
+  box-shadow: 0 0 5px #00ff00;
 }
 </style>

@@ -17,7 +17,8 @@
           <input
             v-if="
               editorStore.isEditing(product.id) &&
-              editorStore.fieldToEdit === 'model'
+              editorStore.fieldToEdit === 'model' &&
+              editorStore.editingProduct
             "
             v-model="editorStore.editingProduct.model"
             type="text"
@@ -33,7 +34,8 @@
           <input
             v-if="
               editorStore.isEditing(product.id) &&
-              editorStore.fieldToEdit === 'title'
+              editorStore.fieldToEdit === 'title' &&
+              editorStore.editingProduct
             "
             v-model="editorStore.editingProduct.title"
             type="text"
@@ -49,7 +51,8 @@
           <textarea
             v-if="
               editorStore.isEditing(product.id) &&
-              editorStore.fieldToEdit === 'description'
+              editorStore.fieldToEdit === 'description' &&
+              editorStore.editingProduct
             "
             v-model="editorStore.editingProduct.description"
           ></textarea>
@@ -66,7 +69,8 @@
           <input
             v-if="
               editorStore.isEditing(product.id) &&
-              editorStore.fieldToEdit === 'price'
+              editorStore.fieldToEdit === 'price' &&
+              editorStore.editingProduct
             "
             v-model="editorStore.editingProduct.price"
             type="number"
@@ -109,6 +113,7 @@
           @delete-image="(p, i) => emit('delete-image', p, i)"
           @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
         />
+        <Prices :product="product" />
 
         <div
           class="form-group"
@@ -118,7 +123,8 @@
           <select
             v-if="
               editorStore.isEditing(product.id) &&
-              editorStore.fieldToEdit === 'category'
+              editorStore.fieldToEdit === 'category' &&
+              editorStore.editingProduct
             "
             v-model="editorStore.editingProduct.category"
             @click.stop
@@ -145,7 +151,8 @@
             <textarea
               v-if="
                 editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'functions'
+                editorStore.fieldToEdit === 'functions' &&
+                editorStore.editingProduct
               "
               :value="
                 editorStore.getArrayAsCST(editorStore.editingProduct.functions)
@@ -166,7 +173,8 @@
             <textarea
               v-if="
                 editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'options'
+                editorStore.fieldToEdit === 'options' &&
+                editorStore.editingProduct
               "
               :value="
                 editorStore.getArrayAsCST(editorStore.editingProduct.options)
@@ -187,7 +195,8 @@
             <textarea
               v-if="
                 editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'options-filters'
+                editorStore.fieldToEdit === 'options-filters' &&
+                editorStore.editingProduct
               "
               :value="
                 editorStore.getArrayAsCST(
@@ -210,7 +219,8 @@
             <textarea
               v-if="
                 editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'autosygnals'
+                editorStore.fieldToEdit === 'autosygnals' &&
+                editorStore.editingProduct
               "
               :value="
                 editorStore.getArrayAsCST(
@@ -227,7 +237,7 @@
           </div>
         </div>
 
-        <Tabs />
+        <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" />
 
         <div class="product-actions">
           <button @click="saveChanges" class="btn-save">Сохранить</button>
@@ -256,8 +266,13 @@ import type { ProductI } from './interfaces/Products';
 import Gallery from './Gallery.vue';
 import Tabs from './Tabs.vue';
 import { useProductEditorStore } from '../../stores/productEditorStore';
+import Prices from './Prices.vue';
 
 const editorStore = useProductEditorStore();
+
+defineOptions({
+  name: 'Product',
+});
 
 const props = defineProps<{
   product: ProductI;
@@ -265,24 +280,6 @@ const props = defineProps<{
   isImageUploading: (productId: string, index: number | null) => boolean;
   getCategoryName: (key: string) => string;
 }>();
-
-const updateArrayField = (
-  event: Event,
-  fieldName: 'functions' | 'options' | 'options-filters' | 'autosygnals'
-) => {
-  const target = event.target as HTMLTextAreaElement;
-  editorStore.updateArrayField(fieldName, target.value);
-};
-
-watch(
-  () => props.product.gallery,
-  (newGallery) => {
-    if (editorStore.isEditing(props.product.id)) {
-      editorStore.editingProduct.gallery = newGallery;
-    }
-  },
-  { deep: true }
-);
 
 const emit = defineEmits<{
   (e: 'save-product', product: ProductI): void;
@@ -297,6 +294,24 @@ const emit = defineEmits<{
   (e: 'handle-toggle', event: Event, product: ProductI): void;
 }>();
 
+const updateArrayField = (
+  event: Event,
+  fieldName: 'functions' | 'options' | 'options-filters' | 'autosygnals'
+) => {
+  const target = event.target as HTMLTextAreaElement;
+  editorStore.updateArrayField(fieldName, target.value);
+};
+
+watch(
+  () => props.product.gallery,
+  (newGallery) => {
+    if (editorStore.isEditing(props.product.id) && editorStore.editingProduct) {
+      editorStore.editingProduct.gallery = newGallery;
+    }
+  },
+  { deep: true }
+);
+
 const handleToggle = (event: Event, product: ProductI) => {
   const detailsElement = event.target as HTMLDetailsElement;
   if (detailsElement.open) {
@@ -307,29 +322,48 @@ const handleToggle = (event: Event, product: ProductI) => {
   emit('handle-toggle', event, product);
 };
 
+// Логика для загрузки иконок вкладок
 const iconUploader = ref<HTMLInputElement | null>(null);
 const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(
   null
 );
 
-const isUploading = ref<Record<string, boolean>>({});
+const onUploadTabIcon = (tabIndex: number, itemIndex: number) => {
+  currentIconTarget.value = { tabIndex, itemIndex };
+  iconUploader.value?.click();
+};
 
-async function onIconFileSelected(event: Event) {
+const onDeleteTabIcon = async (tabIndex: number, itemIndex: number) => {
+  if (!editorStore.editingProduct) return;
+
+  try {
+    const response = await fetch(
+      '/server/php/admin/api/products/delete_tab_icon.php',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: editorStore.editingProduct.id,
+          tabIndex,
+          itemIndex,
+        }),
+      }
+    );
+
+    if (response.ok && editorStore.editingProduct.tabs) {
+      editorStore.editingProduct.tabs[tabIndex].content[itemIndex].icon = '';
+    }
+  } catch (error) {
+    console.error('Failed to delete icon:', error);
+  }
+};
+
+const onIconFileSelected = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
-  if (!file || !currentIconTarget.value) return;
+  if (!file || !currentIconTarget.value || !editorStore.editingProduct) return;
 
   const { tabIndex, itemIndex } = currentIconTarget.value;
-  if (!editorStore.editingProduct || !editorStore.editingProduct.tabs) return;
-
-  const previewUrl = URL.createObjectURL(file);
-
-  const newTabs = JSON.parse(JSON.stringify(editorStore.editingProduct.tabs));
-  newTabs[tabIndex].description[itemIndex]['path-icon'] = previewUrl;
-  editorStore.setTabs(newTabs);
-
-  const key = `tab-${tabIndex}-${itemIndex}`;
-  isUploading.value[key] = true;
 
   const formData = new FormData();
   formData.append('icon', file);
@@ -339,7 +373,7 @@ async function onIconFileSelected(event: Event) {
 
   try {
     const response = await fetch(
-      `server/php/admin/api/products/upload_tab_icon.php`,
+      '/server/php/admin/api/products/upload_tab_icon.php',
       {
         method: 'POST',
         body: formData,
@@ -352,31 +386,22 @@ async function onIconFileSelected(event: Event) {
 
     const result = await response.json();
     if (result.filePath && editorStore.editingProduct.tabs) {
-      const finalTabs = JSON.parse(
-        JSON.stringify(editorStore.editingProduct.tabs)
-      );
-      finalTabs[tabIndex].description[itemIndex].icon = result.filePath;
-      editorStore.setTabs(finalTabs);
+      editorStore.editingProduct.tabs[tabIndex].content[itemIndex].icon =
+        result.filePath;
     }
   } catch (error) {
     console.error('Failed to upload icon:', error);
   } finally {
-    isUploading.value[key] = false;
-    URL.revokeObjectURL(previewUrl);
-    target.value = ''; // Reset input
+    target.value = '';
     currentIconTarget.value = null;
   }
-}
+};
 
 function saveChanges() {
   if (editorStore.editingProduct) {
     emit('save-product', editorStore.editingProduct);
   }
 }
-
-defineOptions({
-  name: 'Product',
-});
 </script>
 
 <style scoped>

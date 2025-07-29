@@ -9,6 +9,14 @@ export interface Tab {
   content: DescriptionItem[];
 }
 
+export interface PriceItem {
+  title: string;
+  productPrice: string;
+  currency: string;
+  installationPrice: string;
+  description: string;
+}
+
 export interface ProductI {
   id: string;
   is_new?: boolean;
@@ -26,4 +34,5 @@ export interface ProductI {
   'options-filters': string[];
   autosygnals: string[];
   tabs?: Tab[];
+  prices?: PriceItem[] | string;
 }
