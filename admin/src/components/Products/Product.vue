@@ -259,10 +259,6 @@ import { useProductEditorStore } from '../../stores/productEditorStore';
 
 const editorStore = useProductEditorStore();
 
-defineOptions({
-  name: 'Product',
-});
-
 const props = defineProps<{
   product: ProductI;
   allCategories: Array<{ key: string; name: string }>;
@@ -359,7 +355,7 @@ async function onIconFileSelected(event: Event) {
       const finalTabs = JSON.parse(
         JSON.stringify(editorStore.editingProduct.tabs)
       );
-      finalTabs[tabIndex].description[itemIndex]['path-icon'] = result.filePath;
+      finalTabs[tabIndex].description[itemIndex].icon = result.filePath;
       editorStore.setTabs(finalTabs);
     }
   } catch (error) {
@@ -377,6 +373,10 @@ function saveChanges() {
     emit('save-product', editorStore.editingProduct);
   }
 }
+
+defineOptions({
+  name: 'Product',
+});
 </script>
 
 <style scoped>

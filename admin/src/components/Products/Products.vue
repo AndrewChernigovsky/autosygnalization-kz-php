@@ -96,6 +96,8 @@ async function saveChanges(product: ProductI) {
     color: '#fff',
   });
 
+  console.log(product, 'product');
+
   const updated: boolean = await updateProduct(product);
 
   if (updated) {

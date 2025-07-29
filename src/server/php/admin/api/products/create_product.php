@@ -61,6 +61,7 @@ try {
     $data['link'] = $link;
 
     if (isset($data['tabs'])) {
+
       $tabsJson = json_encode($data['tabs']);
       $tabsStmt = $db->prepare("
               INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 

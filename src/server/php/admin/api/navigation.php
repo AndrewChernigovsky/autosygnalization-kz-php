@@ -65,7 +65,7 @@ class NavigationAPI extends DataBase
   public function createNavigation($data)
   {
     try {
-        error_log(print_r($data, true));
+
       $this->validateNavigation($data);
 
       $query = "INSERT INTO Navigation (title, slug, href, parent_id, position, is_active, icon, target) 

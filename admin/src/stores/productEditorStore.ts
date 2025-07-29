@@ -38,7 +38,16 @@ export const useProductEditorStore = defineStore('productEditor', {
   actions: {
     startEditing(product: ProductI, field: string) {
       if (!this.editingProduct || this.editingProduct.id !== product.id) {
-        this.editingProduct = JSON.parse(JSON.stringify(product));
+        const productCopy = JSON.parse(JSON.stringify(product));
+        if (productCopy.tabs) {
+          productCopy.tabs.forEach((tab: any) => {
+            if (tab.description) {
+              tab.content = tab.description;
+              delete tab.description;
+            }
+          });
+        }
+        this.editingProduct = productCopy;
       }
       this.fieldToEdit = field;
     },
@@ -80,7 +89,7 @@ export const useProductEditorStore = defineStore('productEditor', {
         }
         this.editingProduct.tabs.push({
           title: 'Новая вкладка',
-          description: [
+          content: [
             {
               title: 'Новый пункт',
               icon: '',
@@ -88,6 +97,7 @@ export const useProductEditorStore = defineStore('productEditor', {
             },
           ],
         });
+        console.log(this.editingProduct.tabs, 'editingProduct');
       }
     },
     removeTab(tabIndex: number) {
@@ -101,10 +111,10 @@ export const useProductEditorStore = defineStore('productEditor', {
         this.editingProduct.tabs &&
         this.editingProduct.tabs[tabIndex]
       ) {
-        if (!this.editingProduct.tabs[tabIndex].description) {
-          this.editingProduct.tabs[tabIndex].description = [];
+        if (!this.editingProduct.tabs[tabIndex].content) {
+          this.editingProduct.tabs[tabIndex].content = [];
         }
-        this.editingProduct.tabs[tabIndex].description.push({
+        this.editingProduct.tabs[tabIndex].content.push({
           title: 'Новый пункт',
           description: 'Описание нового пункта',
           icon: '',
@@ -115,9 +125,9 @@ export const useProductEditorStore = defineStore('productEditor', {
       if (
         this.editingProduct &&
         this.editingProduct.tabs &&
-        this.editingProduct.tabs[tabIndex]?.description
+        this.editingProduct.tabs[tabIndex]?.content
       ) {
-        this.editingProduct.tabs[tabIndex].description.splice(itemIndex, 1);
+        this.editingProduct.tabs[tabIndex].content.splice(itemIndex, 1);
       }
     },
   },

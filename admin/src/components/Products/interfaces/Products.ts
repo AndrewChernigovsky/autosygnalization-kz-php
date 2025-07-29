@@ -6,7 +6,7 @@ export interface DescriptionItem {
 
 export interface Tab {
   title: string;
-  description: DescriptionItem[];
+  content: DescriptionItem[];
 }
 
 export interface ProductI {

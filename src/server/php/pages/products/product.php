@@ -41,7 +41,6 @@ function getAutoContent($products, $category, $id)
 }
 
 $contentImage = getAutoContent($products, $category, $id);
-error_log(print_r($contentImage, true) . 'contentImage');
 $contentDescription = getProductCardDescription($products, $id);
 
 $title = "$id | Auto Security";

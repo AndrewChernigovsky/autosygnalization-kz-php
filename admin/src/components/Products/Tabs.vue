@@ -28,7 +28,7 @@ defineOptions({
       <div class="description-items-list">
         <h4>Пункты описания:</h4>
         <div
-          v-for="(item, itemIndex) in tab.description"
+          v-for="(item, itemIndex) in tab.content"
           :key="itemIndex"
           class="description-item"
         >

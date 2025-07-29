@@ -111,6 +111,7 @@ export function useProducts() {
           'POST',
           productData
         );
+
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].id = createdProduct.id;
@@ -177,6 +178,7 @@ export function useProducts() {
     const newProduct: ProductI = {
       id: `new_${Date.now()}`, // Временный ID
       is_new: true,
+      model: '',
       title: 'Новый товар',
       description: 'Введите описание...',
       price: 0,
@@ -184,18 +186,12 @@ export function useProducts() {
       is_special: false,
       gallery: [],
       category: category,
-      // Заполняем остальные поля значениями по умолчанию, чтобы избежать ошибок
-      model: '',
-      // cart: false,
-      // currency: '₸',
-      // quantity: 0,
-      tabs: [],
       link: '#',
       functions: [],
       options: [],
       'options-filters': [],
-
       autosygnals: [],
+      tabs: [],
     };
     products.value.unshift(newProduct);
     return newProduct;
