@@ -2,10 +2,6 @@
 
 namespace API\ADMIN;
 
-// ВРЕМЕННО: Для отладки включаем отображение всех ошибок
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
@@ -68,9 +64,11 @@ class WorksAPI extends DataBase {
         if ($file['error'] !== UPLOAD_ERR_OK) {
             return false;
         }
-    
         $allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
-        if (!in_array($file['type'], $allowedTypes)) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mime_type = finfo_file($finfo, $file['tmp_name']);
+        finfo_close($finfo);
+        if (!in_array($mime_type, $allowedTypes)) {
             return false;
         }
     
@@ -83,9 +81,19 @@ class WorksAPI extends DataBase {
         }
 
         $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/works/images/';
-        if (!is_dir($upload_dir)) mkdir($upload_dir, 0777, true);
+        if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
         
-        $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $mime_to_extension = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'image/webp' => 'webp',
+            'image/jpg' => 'jpg'
+        ];
+
+        $file_extension = $mime_to_extension[$mime_type];
+        if (!$file_extension) {
+            return false;
+        }
         $new_filename = uniqid('works_', true) . '.' . $file_extension;
         $upload_file = $upload_dir . $new_filename;
         
@@ -96,8 +104,12 @@ class WorksAPI extends DataBase {
     }
 
     private function deleteImage($image_path) {
-        if (file_exists($image_path)) {
-            unlink($image_path);
+        $base_dir = $_SERVER['DOCUMENT_ROOT'];
+        $full_path = $base_dir . $image_path;
+        $real_path = realpath($full_path);
+        $real_upload_dir = realpath($base_dir . '/server/uploads/works/images/');
+        if ($real_path && strpos($real_path, $real_upload_dir) === 0 && file_exists($real_path)) {
+            unlink($real_path);
         }
     }
 
@@ -144,7 +156,7 @@ class WorksAPI extends DataBase {
                 return false; 
             }
             if ($old_data['image_path']) {
-                $this->deleteImage($_SERVER['DOCUMENT_ROOT'] . $old_data['image_path']);
+                $this->deleteImage($old_data['image_path']);
             }
             $image_path = $new_image_path;
         }
@@ -306,7 +318,7 @@ class WorksAPI extends DataBase {
                 return;
             }
             if ($work['image_path']) {
-                $this->deleteImage($_SERVER['DOCUMENT_ROOT'] . $work['image_path']);
+                $this->deleteImage($work['image_path']);
             }
             $query = "DELETE FROM Works WHERE work_id = :id";
             $params = [':id' => $id];
