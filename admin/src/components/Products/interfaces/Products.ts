@@ -1,6 +1,6 @@
 export interface DescriptionItem {
   title: string;
-  'path-icon'?: string;
+  icon?: string;
   description: string;
 }
 
