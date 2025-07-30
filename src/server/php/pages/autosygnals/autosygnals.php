@@ -10,7 +10,7 @@ use COMPONENTS\ModalCart;
 use function FUNCTIONS\renderPhoneButton;
 use function FUNCTIONS\getShop;
 
-$title = 'Автосигнализации';
+$title = 'Автосигнализации | Auto Security';
 $header = new Header();
 $footer = new Footer();
 $head = new Head($title, [], []);

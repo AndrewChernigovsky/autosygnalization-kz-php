@@ -169,27 +169,33 @@ const toggleEditItem = (item: INavItem) => {
       editItemExternalLink.value[item.id] = !!isExternal;
 
       // Если это внутренняя страница, найдем соответствующую страницу в списке
-      if (
-        !isExternal &&
-        store.availablePages &&
-        Array.isArray(store.availablePages)
-      ) {
-        const matchingPage = store.availablePages.find(
-          (page: any) =>
-            (page.path && page.path === item.link) ||
-            (page.link && page.link === item.link) ||
-            (page.url && page.url === item.link)
-        );
-        if (matchingPage) {
-          editItemSelectedPage.value[item.id] =
-            (matchingPage as any).path ||
-            (matchingPage as any).link ||
-            (matchingPage as any).url ||
-            '';
+      if (!isExternal) {
+        // Сначала проверяем, это ли главная страница
+        if (item.link === '/') {
+          editItemSelectedPage.value[item.id] = '/';
+        } else if (
+          store.availablePages &&
+          Array.isArray(store.availablePages)
+        ) {
+          const matchingPage = store.availablePages.find(
+            (page: any) =>
+              (page.path && page.path === item.link) ||
+              (page.link && page.link === item.link) ||
+              (page.url && page.url === item.link)
+          );
+          if (matchingPage) {
+            editItemSelectedPage.value[item.id] =
+              (matchingPage as any).path ||
+              (matchingPage as any).link ||
+              (matchingPage as any).url ||
+              '';
+          } else {
+            editItemSelectedPage.value[item.id] = '';
+          }
         } else {
           editItemSelectedPage.value[item.id] = '';
         }
-      } else {
+      } else if (item.id) {
         editItemSelectedPage.value[item.id] = '';
       }
     }
@@ -427,6 +433,15 @@ watch(
                   <span class="add-nav-item-label-text"
                     >Выберите страницу *</span
                   >
+                  <label class="radio-page-item">
+                    <input
+                      type="radio"
+                      value="/"
+                      v-model="selectedPageLink"
+                      class="radio-page-input"
+                    />
+                    <span class="radio-page-text">Главная страница</span>
+                  </label>
                   <label
                     v-for="page in store.availablePages as any"
                     :key="page.title"
@@ -564,6 +579,15 @@ watch(
                         <span class="add-nav-item-label-text"
                           >Выберите страницу *</span
                         >
+                        <label class="radio-page-item">
+                          <input
+                            type="radio"
+                            value="/"
+                            v-model="editItemSelectedPage[item.id as number]"
+                            class="radio-page-input"
+                          />
+                          <span class="radio-page-text">Главная страница</span>
+                        </label>
                         <label
                           v-for="page in store.availablePages as any"
                           :key="page.title"
