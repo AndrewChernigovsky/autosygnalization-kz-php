@@ -53,8 +53,17 @@ watch(
 );
 
 const loadPricesFromProduct = () => {
-  const productPrices =
+  let productPrices =
     editorStore.editingProduct?.prices || props.product.prices;
+
+  // Преобразуем массив объектов с content в массив с description
+  if (Array.isArray(productPrices) && productPrices.length > 0) {
+    if (typeof productPrices[0] === 'object' && 'content' in productPrices[0]) {
+      productPrices = productPrices.map((item: any) => ({
+        description: item.content || '',
+      }));
+    }
+  }
   pricesStore.loadPricesFromProduct(productPrices);
 };
 
