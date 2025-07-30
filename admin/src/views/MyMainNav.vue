@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import mainNavStore from '../stores/mainNavStore';
 import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyInput from '../components/UI/MyInput.vue';
@@ -32,6 +32,10 @@ const newNavItem = ref<INavItem>({
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const activeEditItem = ref<INavItem | null>(null);
+const isExternalLink = ref(false);
+const selectedPageLink = ref('');
+const editItemExternalLink = ref<Record<number, boolean>>({});
+const editItemSelectedPage = ref<Record<number, string>>({});
 
 // Добавляем переменные для drag and drop
 const draggedItem = ref<INavItem | null>(null);
@@ -39,7 +43,12 @@ const dragOverItem = ref<INavItem | null>(null);
 
 onMounted(async () => {
   await getNavItems();
+  await getAvailablePages();
 });
+
+const getAvailablePages = async () => {
+  await store.getAvailablePages();
+};
 
 const getNavItems = async () => {
   isLoading.value = true;
@@ -48,7 +57,6 @@ const getNavItems = async () => {
     navItems.value = store.navItems;
     error.value = store.error;
   } catch (err) {
-    console.error('Ошибка загрузки навигации:', err);
     error.value = 'Ошибка загрузки данных';
   } finally {
     isLoading.value = false;
@@ -84,6 +92,13 @@ const updateNavItem = async (item: INavItem) => {
 
   await store.updateNavItem(API_BASE_URL, item.id as number, item);
   activeEditItem.value = null;
+
+  // Очищаем состояние редактирования после успешного обновления
+  if (item.id) {
+    delete editItemExternalLink.value[item.id];
+    delete editItemSelectedPage.value[item.id];
+  }
+
   await getNavItems();
 };
 
@@ -120,7 +135,6 @@ const updateNavItemsOrder = async (
     const result = await response.json();
 
     if (!result.success) {
-      console.error('Ошибка обновления порядка:', result.error);
       Swal.fire(
         'Ошибка!',
         'Не удалось обновить порядок элементов навигации',
@@ -128,7 +142,6 @@ const updateNavItemsOrder = async (
       );
     }
   } catch (error) {
-    console.error('Ошибка отправки запроса:', error);
     Swal.fire('Ошибка!', 'Не удалось отправить запрос на сервер', 'error');
   }
 };
@@ -140,8 +153,46 @@ const handleRetry = async () => {
 const toggleEditItem = (item: INavItem) => {
   if (activeEditItem.value === item) {
     activeEditItem.value = null;
+    // Очищаем состояние редактирования при закрытии
+    if (item.id) {
+      delete editItemExternalLink.value[item.id];
+      delete editItemSelectedPage.value[item.id];
+    }
   } else {
     activeEditItem.value = item;
+
+    // Инициализируем состояние toggle на основе текущей ссылки
+    if (item.id) {
+      const isExternal =
+        item.link &&
+        (item.link.startsWith('http') || item.link.startsWith('https'));
+      editItemExternalLink.value[item.id] = !!isExternal;
+
+      // Если это внутренняя страница, найдем соответствующую страницу в списке
+      if (
+        !isExternal &&
+        store.availablePages &&
+        Array.isArray(store.availablePages)
+      ) {
+        const matchingPage = store.availablePages.find(
+          (page: any) =>
+            (page.path && page.path === item.link) ||
+            (page.link && page.link === item.link) ||
+            (page.url && page.url === item.link)
+        );
+        if (matchingPage) {
+          editItemSelectedPage.value[item.id] =
+            (matchingPage as any).path ||
+            (matchingPage as any).link ||
+            (matchingPage as any).url ||
+            '';
+        } else {
+          editItemSelectedPage.value[item.id] = '';
+        }
+      } else {
+        editItemSelectedPage.value[item.id] = '';
+      }
+    }
   }
 };
 
@@ -166,19 +217,15 @@ const resetNewNavItem = () => {
     icon_path: null,
     icon_path_url: null,
   };
+  selectedPageLink.value = '';
 };
 
 const getImageUrl = (item: INavItem): string => {
-  console.log('getImageUrl called with:', item);
-  console.log('icon_path_url:', item.icon_path_url);
-  console.log('icon_path:', item.icon_path);
-
   if (item.icon_path_url) return item.icon_path_url;
   if (typeof item.icon_path === 'string' && item.icon_path) {
     const fullPath = item.icon_path.startsWith('/')
       ? `http://localhost:5173${item.icon_path}`
       : item.icon_path;
-    console.log('Final image path:', fullPath);
     return fullPath;
   }
   return '';
@@ -266,6 +313,55 @@ const handleDragEnd = () => {
   draggedItem.value = null;
   dragOverItem.value = null;
 };
+
+const toggleLinkType = () => {
+  isExternalLink.value = !isExternalLink.value;
+  // Очищаем поле ссылки и выбранную страницу при переключении
+  newNavItem.value.link = '';
+  selectedPageLink.value = '';
+};
+
+// Следим за изменением выбранной страницы
+watch(selectedPageLink, (newValue) => {
+  if (newValue) {
+    newNavItem.value.link = newValue;
+  } else if (!isExternalLink.value) {
+    // Если радиокнопка не выбрана и это внутренняя страница, очищаем ссылку
+    newNavItem.value.link = '';
+  }
+});
+
+// Функция переключения типа ссылки для редактирования
+const toggleEditLinkType = (item: INavItem) => {
+  if (!item.id) return;
+
+  const itemId = item.id;
+  editItemExternalLink.value[itemId] = !editItemExternalLink.value[itemId];
+
+  // Очищаем поле ссылки и выбранную страницу при переключении
+  item.link = '';
+  editItemSelectedPage.value[itemId] = '';
+};
+
+// Следим за изменением выбранной страницы при редактировании
+watch(
+  editItemSelectedPage,
+  (newValues) => {
+    Object.keys(newValues).forEach((itemIdStr) => {
+      const itemId = parseInt(itemIdStr);
+      const selectedLink = newValues[itemId];
+      const item = navItems.value.find((item) => item.id === itemId);
+
+      if (item && selectedLink) {
+        item.link = selectedLink;
+      } else if (item && !editItemExternalLink.value[itemId]) {
+        // Если радиокнопка не выбрана и это внутренняя страница, очищаем ссылку
+        item.link = '';
+      }
+    });
+  },
+  { deep: true }
+);
 </script>
 
 <template>
@@ -299,16 +395,52 @@ const handleDragEnd = () => {
                     placeholder="Введите заголовок"
                   />
                 </label>
-
-                <label class="add-nav-item-label">
+                <div class="toggle-wrapper">
+                  <div class="toggle-item">
+                    <span class="toggle-item-text">Внутрення страница </span>
+                  </div>
+                  <div class="toggle-btn-wrapper">
+                    <MyBtn
+                      variant="primary"
+                      class="toggle-btn"
+                      :class="{ active: isExternalLink }"
+                      @click="toggleLinkType"
+                    >
+                      <div class="toggle-btn-input"></div>
+                    </MyBtn>
+                  </div>
+                  <div class="toggle-item">
+                    <span class="toggle-item-text">Внешняя ссылка</span>
+                  </div>
+                </div>
+                <label class="add-nav-item-label" v-if="isExternalLink">
                   <span class="add-nav-item-label-text">Ссылка *</span>
                   <MyInput
                     type="text"
                     variant="primary"
                     v-model="newNavItem.link"
-                    placeholder="Например: /about или https://example.com"
+                    placeholder="Например: https://example.com"
                   />
                 </label>
+
+                <div v-if="!isExternalLink" class="radio-pages-wrapper">
+                  <span class="add-nav-item-label-text"
+                    >Выберите страницу *</span
+                  >
+                  <label
+                    v-for="page in store.availablePages as any"
+                    :key="page.title"
+                    class="radio-page-item"
+                  >
+                    <input
+                      type="radio"
+                      :value="page.path || page.link || page.url || ''"
+                      v-model="selectedPageLink"
+                      class="radio-page-input"
+                    />
+                    <span class="radio-page-text">{{ page.title }}</span>
+                  </label>
+                </div>
 
                 <label class="add-nav-item-label file">
                   <span class="add-nav-item-label-text">Иконка</span>
@@ -391,15 +523,61 @@ const handleDragEnd = () => {
                 >
                   <div class="item-content-wrapper">
                     <div class="item-content-inputs">
-                      <label>
+                      <div class="toggle-wrapper">
+                        <div class="toggle-item">
+                          <span class="toggle-item-text"
+                            >Внутрення страница
+                          </span>
+                        </div>
+                        <div class="toggle-btn-wrapper">
+                          <MyBtn
+                            variant="primary"
+                            class="toggle-btn"
+                            :class="{ active: editItemExternalLink[item.id as number] }"
+                            @click="toggleEditLinkType(item)"
+                          >
+                            <div class="toggle-btn-input"></div>
+                          </MyBtn>
+                        </div>
+                        <div class="toggle-item">
+                          <span class="toggle-item-text">Внешняя ссылка</span>
+                        </div>
+                      </div>
+
+                      <label
+                        class="add-nav-item-label"
+                        v-if="editItemExternalLink[item.id as number]"
+                      >
                         <span class="add-nav-item-label-text">Ссылка *</span>
                         <MyInput
                           type="text"
                           variant="primary"
                           v-model="item.link as string"
-                          placeholder="Например: /about или https://example.com"
+                          placeholder="Например: https://example.com"
                         />
                       </label>
+
+                      <div
+                        v-if="!editItemExternalLink[item.id as number]"
+                        class="radio-pages-wrapper"
+                      >
+                        <span class="add-nav-item-label-text"
+                          >Выберите страницу *</span
+                        >
+                        <label
+                          v-for="page in store.availablePages as any"
+                          :key="page.title"
+                          class="radio-page-item"
+                        >
+                          <input
+                            type="radio"
+                            :value="page.path || page.link || page.url || ''"
+                            v-model="editItemSelectedPage[item.id as number]"
+                            class="radio-page-input"
+                          />
+                          <span class="radio-page-text">{{ page.title }}</span>
+                        </label>
+                      </div>
 
                       <label class="file">
                         <span class="add-nav-item-label-text">Иконка</span>
@@ -577,6 +755,7 @@ const handleDragEnd = () => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-bottom: 10px;
 }
 
 .item-info h3 {
@@ -637,5 +816,72 @@ const handleDragEnd = () => {
 .empty-state p {
   margin: 0;
   font-style: italic;
+}
+
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 40px;
+  height: 20px;
+  border-radius: 25px;
+  padding: 1px;
+  transition: all 0.3s ease;
+
+  &.active {
+    background: linear-gradient(180deg, #10172d 0%, #0031bc 100%);
+
+    & .toggle-btn-input {
+      margin-right: 0;
+      margin-left: auto;
+    }
+  }
+
+  & .toggle-btn-input {
+    margin-right: auto;
+    margin-left: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: all 0.3s ease;
+  }
+}
+
+.radio-pages-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.radio-page-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+}
+
+.radio-page-input {
+  margin: 0;
+  accent-color: #007bff;
+}
+
+.radio-page-text {
+  color: #ffffff;
+  font-size: 0.95em;
 }
 </style>
