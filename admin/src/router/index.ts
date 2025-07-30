@@ -1,15 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import SliderIntro from '../views/SliderIntro.vue';
-import Navigation from '../views/Navigation.vue';
-import Contacts from '../views/Contacts.vue';
 import Products from '../views/Products.vue';
 import Services from '../views/Services.vue';
 import MyContacts from '../views/MyContacts.vue';
 import AboutUs from '../views/AboutUs.vue';
 import Advantage from '../views/Advantage.vue';
 import Sertificates from '../views/Sertificates.vue';
-import UI from '../views/UI.vue';
 import MyMainNav from '../views/MyMainNav.vue';
 import Works from '../views/Works.vue';
 
@@ -27,12 +24,12 @@ export const routes = [
   {
     path: '/navigation',
     name: 'Навигация',
-    component: Navigation,
+    component: MyMainNav,
   },
   {
     path: '/contacts',
     name: 'Контакты',
-    component: Contacts,
+    component: MyContacts,
   },
   {
     path: '/products',
@@ -58,21 +55,6 @@ export const routes = [
     path: '/sertificates',
     name: 'Сертификаты',
     component: Sertificates,
-  },
-  {
-    path: '/ui',
-    name: 'UI',
-    component: UI,
-  },
-  {
-    path: '/my-contacts',
-    name: 'Мои контакты',
-    component: MyContacts,
-  },
-  {
-    path: '/my-main-nav',
-    name: 'Моя главная навигация',
-    component: MyMainNav,
   },
   {
     path: '/works',

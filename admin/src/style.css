@@ -104,13 +104,16 @@ button:focus-visible {
 .my-page {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
+
   background-image: linear-gradient(90deg, #121010 0%, #0E0C0C 100%);
   font-family: var(--font-family), 'Inter', sans-serif;
   color: #fff;
+}
 
+.app-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
 }
 
 .m-0 {

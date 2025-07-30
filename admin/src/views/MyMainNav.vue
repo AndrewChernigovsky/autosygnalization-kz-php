@@ -345,27 +345,39 @@ const handleDragEnd = () => {
                 }"
                 v-for="item in navItems"
                 :key="item.id"
-                draggable="true"
-                @dragstart="handleDragStart($event, item)"
                 @dragover="handleDragOver($event)"
                 @dragenter="handleDragEnter($event, item)"
                 @dragleave="handleDragLeave($event)"
                 @drop="handleDrop($event, item)"
-                @dragend="handleDragEnd"
               >
                 <div class="item-header">
-                  <div class="item-info">
-                    <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
-                    <MyInput
-                      v-if="activeEditItem === item"
-                      type="text"
-                      variant="primary"
-                      v-model="item.title"
-                      placeholder="Заголовок"
-                    />
-                    <span v-if="activeEditItem !== item" class="item-link">{{
-                      item.link
-                    }}</span>
+                  <div class="item-header-wrapper">
+                    <MyBtn
+                      class="d-and-d-btn"
+                      draggable="true"
+                      @dragstart="handleDragStart($event, item)"
+                      @dragend="handleDragEnd"
+                    >
+                      <img
+                        width="20px"
+                        height="20px"
+                        src="/src/assets/d-and-d.svg"
+                        alt="drag-and-drop"
+                      />
+                    </MyBtn>
+                    <div class="item-info">
+                      <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
+                      <MyInput
+                        v-if="activeEditItem === item"
+                        type="text"
+                        variant="primary"
+                        v-model="item.title"
+                        placeholder="Заголовок"
+                      />
+                      <span v-if="activeEditItem !== item" class="item-link">{{
+                        item.link
+                      }}</span>
+                    </div>
                   </div>
 
                   <MyBtn variant="primary" @click="toggleEditItem(item)">
@@ -502,7 +514,6 @@ const handleDragEnd = () => {
   box-shadow: inset 0 0 0 1px #ffffff;
   padding: 16px;
   border-radius: 8px;
-  cursor: move;
   transition: all 0.3s ease;
 
   &:hover {
@@ -528,6 +539,37 @@ const handleDragEnd = () => {
   justify-content: space-between;
   align-items: center;
   gap: 30px;
+}
+
+.item-header-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+
+  & .btn {
+    min-width: 20px;
+    max-width: 20px;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    border: none;
+  }
+}
+
+.d-and-d-btn {
+  cursor: grab !important;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 .item-info {

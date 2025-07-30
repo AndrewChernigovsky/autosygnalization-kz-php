@@ -486,16 +486,28 @@ const handleDragEnd = () => {
                 }"
                 v-for="item in contacts.filter((item) => item.type === type)"
                 :key="item.contact_id"
-                draggable="true"
-                @dragstart="handleDragStart($event, item)"
                 @dragover="handleDragOver($event)"
                 @dragenter="handleDragEnter($event, item)"
                 @dragleave="handleDragLeave($event)"
                 @drop="handleDrop($event, item, type)"
-                @dragend="handleDragEnd"
               >
                 <div class="item-header">
-                  <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
+                  <div class="item-header-wrapper">
+                    <MyBtn
+                      class="d-and-d-btn"
+                      draggable="true"
+                      @dragstart="handleDragStart($event, item)"
+                      @dragend="handleDragEnd"
+                    >
+                      <img
+                        width="20px"
+                        height="20px"
+                        src="/src/assets/d-and-d.svg"
+                        alt="drag-and-drop"
+                      />
+                    </MyBtn>
+                    <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
+                  </div>
                   <MyInput
                     v-if="activeEditItem === item"
                     type="text"
@@ -650,7 +662,6 @@ const handleDragEnd = () => {
   box-shadow: inset 0 0 0 1px #ffffff;
   padding: 16px;
   border-radius: 8px;
-  cursor: move;
   transition: all 0.3s ease;
 
   &:hover {
@@ -685,6 +696,36 @@ const handleDragEnd = () => {
 
   &.active {
     grid-template-rows: 1fr;
+  }
+}
+
+.item-header-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  & .btn {
+    min-width: 20px;
+    max-width: 20px;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    border: none;
+  }
+}
+
+.d-and-d-btn {
+  cursor: grab !important;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
