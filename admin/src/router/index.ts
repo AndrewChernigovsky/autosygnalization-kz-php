@@ -11,6 +11,7 @@ import Advantage from '../views/Advantage.vue';
 import Sertificates from '../views/Sertificates.vue';
 import UI from '../views/UI.vue';
 import MyMainNav from '../views/MyMainNav.vue';
+import Works from '../views/Works.vue';
 
 export const routes = [
   {
@@ -72,6 +73,11 @@ export const routes = [
     path: '/my-main-nav',
     name: 'Моя главная навигация',
     component: MyMainNav,
+  },
+  {
+    path: '/works',
+    name: 'Работы',
+    component: Works,
   },
 ];
 
