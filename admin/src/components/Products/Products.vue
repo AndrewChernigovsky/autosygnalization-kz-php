@@ -85,6 +85,7 @@ const isImageUploading = (productId: string, index: number | null) => {
 };
 
 async function saveChanges(product: ProductI) {
+  console.log('[Products.vue] saveChanges called', product);
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',

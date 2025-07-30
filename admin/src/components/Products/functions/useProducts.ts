@@ -80,7 +80,7 @@ export function useProducts() {
   }
 
   async function updateProduct(product: ProductI): Promise<boolean> {
-    console.log('[useProducts] updateProduct вызван. Товар:', product);
+    console.log('[useProducts.ts] updateProduct called', product);
     try {
       const productData = {
         id: product.id,
@@ -127,14 +127,39 @@ export function useProducts() {
           'POST',
           productData
         );
+        console.log(
+          '[useProducts.ts] update_product.php response',
+          updatedData
+        );
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].link = updatedData.link;
         }
       }
+
+      // --- Новый вызов API для сохранения descriptions (цен-услуг) ---
+      console.log(
+        '[useProducts.ts] product.prices before descriptions',
+        product.prices
+      );
+      let descriptions = [];
+      if (Array.isArray(product.prices)) {
+        descriptions = product.prices
+          .filter(
+            (item) => item && typeof item === 'object' && 'description' in item
+          )
+          .map((item) => item.description);
+        console.log('[useProducts.ts] descriptions to send', descriptions);
+        await apiCall('update_prices_products.php', 'POST', {
+          id: product.id,
+          descriptions,
+        });
+      }
+      // --- конец нового блока ---
+
       return true;
     } catch (error) {
-      console.error('Failed to update product:', error);
+      console.error('[useProducts.ts] updateProduct error:', error);
       return false;
     }
   }

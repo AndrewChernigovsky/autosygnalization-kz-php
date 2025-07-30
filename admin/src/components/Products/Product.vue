@@ -113,7 +113,7 @@
           @delete-image="(p, i) => emit('delete-image', p, i)"
           @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
         />
-        <Prices :product="product" />
+        <Prices ref="pricesRef" :product="product" />
 
         <div
           class="form-group"
@@ -237,7 +237,7 @@
           </div>
         </div>
 
-        <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" />
+        <!-- <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" /> -->
 
         <div class="product-actions">
           <button @click="saveChanges" class="btn-save">Сохранить</button>
@@ -397,8 +397,19 @@ const onIconFileSelected = async (event: Event) => {
   }
 };
 
+const pricesRef = ref();
+
 function saveChanges() {
+  console.log('[Product.vue] saveChanges called');
+  if (pricesRef.value && pricesRef.value.syncPricesToProduct) {
+    pricesRef.value.syncPricesToProduct();
+  }
   if (editorStore.editingProduct) {
+    console.log('[Product.vue] emit save-product', editorStore.editingProduct);
+    console.log(
+      '[Product.vue] editingProduct.prices',
+      editorStore.editingProduct.prices
+    );
     emit('save-product', editorStore.editingProduct);
   }
 }

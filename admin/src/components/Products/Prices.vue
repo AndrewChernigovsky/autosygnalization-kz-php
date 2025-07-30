@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watch, onMounted } from 'vue';
+import { watch, onMounted, defineExpose } from 'vue';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import type { ProductI } from './interfaces/Products';
@@ -40,7 +40,10 @@ watch(
     if (newEditingProduct?.id === props.product.id) {
       loadPricesFromProduct();
       pricesStore.setEditingProductId(props.product.id);
-    } else if (newEditingProduct === null && oldEditingProduct?.id === props.product.id) {
+    } else if (
+      newEditingProduct === null &&
+      oldEditingProduct?.id === props.product.id
+    ) {
       // Сохраняем цены обратно в editingProduct перед очисткой
       syncPricesToProduct();
       pricesStore.clearPrices();
@@ -60,7 +63,9 @@ const syncPricesToProduct = () => {
     editorStore.editingProduct &&
     pricesStore.editingProductId === props.product.id
   ) {
-    editorStore.editingProduct.prices = pricesStore.getSerializedPrices();
+    const prices = pricesStore.getSerializedPrices();
+    console.log('[Prices.vue] syncPricesToProduct', prices);
+    editorStore.editingProduct.prices = prices;
   }
 };
 
@@ -84,6 +89,12 @@ const handleInstallationPriceInput = (index: number, event: Event) => {
   const target = event.target as HTMLInputElement;
   pricesStore.updatePriceItem(index, 'installationPrice', target.value);
 };
+
+defineOptions({
+  name: 'Prices',
+});
+
+defineExpose({ syncPricesToProduct });
 </script>
 
 <template>
