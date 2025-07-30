@@ -48,6 +48,15 @@ class Products
       $product['tabs'] = !empty($product['tabs_data']) ? json_decode($product['tabs_data'], true) : [];
       unset($product['tabs_data']);
 
+      // Получаем услуги (цены) для товара
+      $pricesStmt = $this->db->prepare('
+        SELECT pr.id, pr.content
+        FROM Products_prices pp
+        JOIN Prices pr ON pp.price_id = pr.id
+        WHERE pp.product_id = :product_id
+      ');
+      $pricesStmt->execute([':product_id' => $product['id']]);
+      $product['prices'] = $pricesStmt->fetchAll(PDO::FETCH_ASSOC);
 
       // Удаляем служебные поля, которых нет в исходной структуре
       unset($product['created_at'], $product['updated_at']);
