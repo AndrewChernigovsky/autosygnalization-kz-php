@@ -19,9 +19,12 @@ class Footer
     $logo = new Logo();
     $contacts = new ContactsData();
     $phones = $contacts->getPhones();
-    $email = $contacts->getEmail(true);
+    $email = $contacts->getEmail();
     $web_site = $contacts->getWebsite(true);
     $socialIcons = $contacts->getSocialIcons();
+    $emailTitle = $email[0]['email'];
+    $emailLink = $email[0]['link'];
+    $emailSvgPath = $email[0]['svg_path'];
 
     $insertPHONE = new InsertPhone();
     $icon_phone = [
@@ -55,7 +58,9 @@ class Footer
             {$phones_footer}
           </div>
           <div class="email-site">
-            <div class="email">{$email}</div>
+            <div class="email"><a href="{$emailLink}" class="link link-message">
+                    {$emailTitle}
+                </a></div>
             <div class="site">{$web_site}</div>
           </div>
           {$geo->getGeo()}

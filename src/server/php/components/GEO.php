@@ -8,7 +8,6 @@ use DATA\ContactsData;
 class GEO
 {
   private $insertSVG;
-  private $address = "https://2gis.kz/almaty/geo/70000001027313872";
   private $contacts;
 
   public function __construct()
@@ -19,6 +18,10 @@ class GEO
 
   public function getGeo()
   {
+    $contactData = $this->contacts->getAddress();
+    $address = $contactData[0]['address'];
+    $addressLink = $contactData[0]['link'];
+    $addressSvgPath = $contactData[0]['svg_path'];
     $social = $this->contacts->getGeoIcon();
     $geoIcon = isset($social['geo']) ? $social['geo'] : null;
     if ($geoIcon === null) {
@@ -27,10 +30,10 @@ class GEO
 
     // Формируем HTML-вывод
     $output = "
-      <a href='{$this->address}' class='geo link'>
+      <a href='{$addressLink}' class='geo link'>
           <div class='geo__wrapper menu-geo-phone'>";
     $output .= $this->insertSVG->insertSvg($geoIcon);
-    $output .= '<span>' . $this->contacts->getAddress() . '</span>';
+    $output .= '<span>' . $address . '</span>';
     $output .= "</div>
       </a>";
 

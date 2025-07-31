@@ -5,6 +5,8 @@ import Navigation from '../views/Navigation.vue';
 import Contacts from '../views/Contacts.vue';
 import Products from '../views/Products.vue';
 import Services from '../views/Services.vue';
+import AboutUs from '../views/AboutUs.vue';
+import UI from '../views/UI.vue';
 
 export const routes = [
   {
@@ -36,6 +38,16 @@ export const routes = [
     path: '/services',
     name: 'Услуги',
     component: Services,
+  },
+  {
+    path: '/about-us',
+    name: 'О нас',
+    component: AboutUs,
+  },
+  {
+    path: '/ui',
+    name: 'UI',
+    component: UI,
   },
 ];
 

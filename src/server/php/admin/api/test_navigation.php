@@ -32,7 +32,7 @@ function makeRequest($url, $method = 'GET', $data = null)
 }
 
 // Базовый URL для тестирования
-$baseUrl = 'http://localhost/admin/api/navigation.php';
+$baseUrl = 'http://localhost/admin/api/navigation_tree.php';
 
 // Тест 1: Получение всех элементов навигации
 echo "1. Получение всех элементов навигации:\n";
