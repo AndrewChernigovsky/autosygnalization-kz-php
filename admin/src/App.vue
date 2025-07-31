@@ -1,22 +1,5 @@
 <script setup lang="ts">
 import Menu from './UI/Menu.vue';
-<<<<<<< HEAD
-=======
-// import test from './views/test.vue';
-
-const isSidebarOpen = ref(false);
-const iframeStore = useIframeStore();
-const hasSidebarBeenOpened = ref(false);
-
-const iframeKey = computed(() => iframeStore.refreshKey);
-
-function toggleSidebar() {
-  isSidebarOpen.value = !isSidebarOpen.value;
-  if (isSidebarOpen.value && !hasSidebarBeenOpened.value) {
-    hasSidebarBeenOpened.value = true;
-  }
-}
->>>>>>> 82a4a47595830b048a1fc4b09ce8743992d95a97
 </script>
 
 <template>
