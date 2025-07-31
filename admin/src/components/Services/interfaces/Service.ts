@@ -6,7 +6,7 @@ export interface ServiceImage {
 }
 
 export interface Service {
-  id: string | number;
+  id: string;
   name: string;
   description: string;
   image: ServiceImage;
@@ -17,7 +17,7 @@ export interface Service {
 }
 
 export interface AddedService {
-  id: string | number;
+  id: string;
   title: string;
   price: number;
 }

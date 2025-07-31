@@ -83,6 +83,7 @@
           v-for="service in localServices.added"
           :key="service.id"
           class="service-item"
+          :data-service-id="service.id"
         >
           <summary>{{ service.title }}</summary>
           <div class="service-details">
@@ -94,16 +95,29 @@
               <label>Цена:</label>
               <input type="number" v-model="service.price" />
             </div>
+            <div class="service-actions">
+              <button
+                @click="deleteAddedService(service.id)"
+                class="btn-delete"
+              >
+                Удалить
+              </button>
+            </div>
           </div>
         </details>
       </div>
-      <button
-        @click="addAddedService"
-        type="button"
-        class="btn-save with-margin-bottom"
-      >
-        Добавить дополнительную услугу
-      </button>
+      <div class="service-actions">
+        <button
+          @click="addAddedService"
+          type="button"
+          class="btn-save with-margin-bottom"
+        >
+          Добавить дополнительную услугу
+        </button>
+        <button @click="saveAllAddedServices" class="btn-save">
+          Сохранить
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -152,6 +166,108 @@ function handleImageUpload(
         showConfirmButton: false,
       });
     }
+  }
+}
+
+function deleteAddedService(serviceId: string) {
+  const index = localServices.value.added.findIndex((s) => s.id === serviceId);
+  if (index === -1) return;
+  const service = localServices.value.added[index];
+  // Если это новая услуга (ещё не сохранена на сервере)
+  if (service.id.startsWith('new-')) {
+    localServices.value.added.splice(index, 1);
+    return;
+  }
+  // Для сохранённых услуг — запрос на сервер
+  Swal.fire({
+    title: 'Вы уверены?',
+    text: `Удалить дополнительную услугу "${service.title}"?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Да, удалить!',
+    cancelButtonText: 'Отмена',
+    background: '#333',
+    color: '#fff',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          '/server/php/admin/api/services/delete_added_service.php',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: serviceId }),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Ошибка удаления');
+        }
+        localServices.value.added.splice(index, 1);
+        Swal.fire({
+          title: 'Удалено!',
+          text: 'Дополнительная услуга удалена.',
+          icon: 'success',
+          background: '#333',
+          color: '#fff',
+        });
+      } catch (error: any) {
+        Swal.fire({
+          title: 'Ошибка!',
+          text: 'Не удалось удалить услугу. ' + error.message,
+          icon: 'error',
+          background: '#333',
+          color: '#fff',
+        });
+      }
+    }
+  });
+}
+
+async function saveAllAddedServices() {
+  Swal.fire({
+    title: 'Сохранение...',
+    text: 'Пожалуйста, подождите',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    background: '#333',
+    color: '#fff',
+  });
+  try {
+    const response = await fetch(
+      '/server/php/admin/api/services/save_added_service.php',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ services: localServices.value.added }),
+      }
+    );
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Ошибка сохранения');
+    }
+    // Можно обновить localServices.added с сервера, если нужно
+    const saved = await response.json();
+    localServices.value.added = saved;
+    Swal.fire({
+      title: 'Сохранено!',
+      text: 'Все дополнительные услуги успешно сохранены.',
+      icon: 'success',
+      background: '#333',
+      color: '#fff',
+    });
+  } catch (error: any) {
+    Swal.fire({
+      title: 'Ошибка!',
+      text: 'Не удалось сохранить услуги. ' + error.message,
+      icon: 'error',
+      background: '#333',
+      color: '#fff',
+    });
   }
 }
 
@@ -365,7 +481,9 @@ async function saveService(serviceId: string) {
 
     if (isNew) {
       // If it was a new service, update the localServices.main array
-      const index = localServices.value.main.findIndex((s) => s.id === newId);
+      const index = localServices.value.main.findIndex(
+        (s) => s.id === serviceId
+      );
       if (index !== -1) {
         localServices.value.main[index] = savedService;
       }
