@@ -58,57 +58,63 @@ class NavigationLinks extends DataBase
 
   public function getNavigationFooterLinks()
   {
+    try {
+      $query = "SELECT section, name, link, position FROM Footer WHERE visible = 1 ORDER BY section, position ASC";
+      $stmt = $this->pdo->prepare($query);
+      $stmt->execute();
 
-    $navigationFooterLinks = [
-      [
-        'title' => 'Магазин',
-        'list' => [
-          [
-            //'name' => 'Автосигнализации',
-            'children' => [
-              ['link' => "/autosygnal?type=auto&SELECT=name", 'name' => 'Автосигнализации с автозапуском'],
-              ['link' => "/autosygnal?type=gsm&SELECT=name", 'name' => 'Автосигнализации с GSM'],
-              ['link' => "/autosygnal?type=without-auto&SELECT=name", 'name' => 'Автосигнализации без автозапуска'],
-              ['link' => "/autosygnal?type=starline&SELECT=name", 'name' => 'Каталог автосигнализаций Starline'],
-              ['link' => "/autosygnal?type=remote-controls&SELECT=name", 'name' => 'Пульты и аксессуары'],
-              ['link' => "/parking-systems?SELECT=name", 'name' => 'Видеорегистраторы'],
-              ['link' => "/price", 'name' => "Прайс на материал и установку"]
-            ],
-          ],
-        ],
-      ],
-      [
-        'title' => 'Установочный центр',
-        'list' => [
-          ['link' => "/service?service=setup", 'name' => 'Установка и ремонт сигнализаций'],
-          ['link' => "/service?service=locks", 'name' => 'Ремонт центрозамков'],
-          ['link' => "/service?service=setup-media", 'name' => 'Установка автозвука и мультимедиа'],
-          ['link' => "/service?service=setup-system-parking", 'name' => 'Установка систем паркинга'],
-          ['link' => "/service?service=autoelectric", 'name' => 'Услуги автоэлектрика'],
-          ['link' => "/service?service=rus", 'name' => 'Русификация авто и чиптюнинг'],
-          ['link' => "/service?service=diagnostic", 'name' => 'Компьютерная диагностика'],
-          ['link' => "/service?service=disabled-autosynal", 'name' => 'Отключение сигнализации'],
-          [
-            'link' => "/service?service=setup-videoregistration",
-            'name' => "Установка видеорегистраторов и антирадаров"
-          ],
-          ['link' => "/price", 'name' => "Прайс на услуги"],
-        ],
-      ],
-      [
-        'title' => "Клиенту",
-        "list" => [
-          ["link" => "/special", "name" => 'Специальные предложения'],
-          ["link" => "/cart", "name" => 'Корзина заказа'],
-          ["link" => "https://2gis.kz/almaty/geo/70000001027313872", "name" => 'Оставить отзыв'],
-          ["link" => "https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb", "name" => 'Архив выполненных работ'],
-          ["link" => "/contacts#location", "name" => 'Как к нам добраться'],
-          ["link" => "/sertificates", "name" => 'Наши сертификаты'],
-          ["link" => "#", "name" => 'Оплата и доставка'],
-        ]
-      ]
-    ];
-    return $navigationFooterLinks;
+      $links = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+      if (empty($links)) {
+        return []; // Если в футере пусто, возвращаем пустой массив
+      }
+
+      // Группируем ссылки по секциям
+      $groupedLinks = [];
+      foreach ($links as $link) {
+        $groupedLinks[$link['section']][] = [
+          'link' => $link['link'],
+          'name' => $link['name']
+        ];
+      }
+
+      // Формируем финальную структуру, которую ожидает GenerateFooterLinks.php
+      $navigationFooterLinks = [];
+      
+      $sectionTitles = [
+        'shop' => 'Магазин',
+        'installation' => 'Установочный центр',
+        'client' => 'Клиенту'
+      ];
+
+      foreach ($sectionTitles as $sectionKey => $sectionTitle) {
+          if(isset($groupedLinks[$sectionKey])) {
+              $children = $groupedLinks[$sectionKey];
+              // "Магазин" имеет дополнительный уровень вложенности 'children'
+              if ($sectionKey === 'shop') {
+                $navigationFooterLinks[] = [
+                    'title' => $sectionTitle,
+                    'list' => [
+                        [
+                            'children' => $children
+                        ]
+                    ]
+                ];
+              } else {
+                 $navigationFooterLinks[] = [
+                    'title' => $sectionTitle,
+                    'list' => $children
+                ];
+              }
+          }
+      }
+
+      return $navigationFooterLinks;
+
+    } catch (\Exception $e) {
+      error_log("Ошибка получения ссылок для футера: " . $e->getMessage());
+      return []; // В случае ошибки возвращаем пустой массив
+    }
   }
 
   public function getCategoriesAutoSygnals()

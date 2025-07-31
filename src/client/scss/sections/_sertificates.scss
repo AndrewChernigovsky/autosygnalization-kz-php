@@ -16,7 +16,6 @@
     li a {
       display: flex;
       justify-content: center;
-      height: inherit;
     }
   }
 
@@ -40,17 +39,26 @@
   }
 
   &__slide {
-    display: grid;
-    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
     align-items: center;
     gap: 20px;
+    padding: 0 20px; /* Добавляем отступы по бокам слайда */
 
-    a {
+    /* Стили для ссылки-обертки изображения */
+    a:first-child {
       border-radius: 16px;
       overflow: hidden;
+      display: block;
+      width: 100%;
+      height: 450px;
 
       img {
         width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
     }
 
@@ -58,9 +66,10 @@
       color: white;
       text-decoration: none;
       background-color: red;
-      padding: 10px;
-      border-radius: 0;
-      margin: 0 auto;
+      padding: 10px 0; /* Убираем боковые отступы, так как ширина 100% */
+      border-radius: 4px;
+      width: 100%; /* Растягиваем на всю доступную ширину */
+      text-align: center; /* Центрируем текст внутри кнопки */
     }
   }
 

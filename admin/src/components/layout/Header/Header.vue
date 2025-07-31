@@ -6,18 +6,6 @@ const route = useRoute();
 
 const navItems = router.getRoutes();
 
-const getRouteName = (routeItem: any) => {
-  if (routeItem.meta && routeItem.meta.title) {
-    return routeItem.meta.title;
-  }
-
-  const path = routeItem.path;
-  if (path === '/') return 'Главная';
-
-  const name = path.replace('/', '').replace('-', ' ');
-  return name.charAt(0).toUpperCase() + name.slice(1);
-};
-
 const isActive = (path: string) => {
   return route.path === path;
 };
@@ -25,7 +13,6 @@ const isActive = (path: string) => {
 
 <template>
   <header class="my-header">
-    <h1 class="my-title m-0">Админ-панель, здравствуйте Алексей!</h1>
     <div class="my-header-logo">
       <img
         src="../../../assets/logo.png"
@@ -42,7 +29,7 @@ const isActive = (path: string) => {
             :to="item.path"
             :class="['nav-link', 'my-link', { active: isActive(item.path) }]"
           >
-            {{ getRouteName(item) }}
+            {{ item.name }}
           </router-link>
         </li>
       </ul>

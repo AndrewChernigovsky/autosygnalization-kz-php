@@ -1,4 +1,4 @@
-@use "variables"as var;
+@use 'variables' as var;
 
 .quality {
   position: relative;
@@ -46,6 +46,10 @@
     // bottom: -2px;
     width: 100%;
 
+    img {
+      height: revert-layer;
+    }
+
     h2 {
       position: relative;
       min-height: 100px;
@@ -60,13 +64,17 @@
 
       p {
         display: flex;
+        gap: 10px;
         max-width: 1440px;
         padding: 30px 20px 30px 50px;
         margin: 0 auto;
         justify-content: center;
         font-weight: 400;
         font-family: var.$primary-font;
-
+        @media screen and (max-width: 768px) {
+          flex-direction: column;
+          gap: 25px;
+        }
         span {
           display: flex;
           // max-width: 380px;
@@ -76,20 +84,6 @@
           align-items: center;
           gap: 10px;
           position: relative;
-
-          &::before {
-            content: "";
-            // top: 50%;
-            // left: -260px;
-            // transform: translateY(-50%);
-            // position: absolute;
-            width: 240px;
-            height: 40px;
-            margin: 15px auto;
-            background-image: url("/client/images/logo-starline.png");
-            background-size: cover;
-            background-position: center;
-          }
         }
       }
     }
@@ -119,11 +113,32 @@
     margin: 0 auto;
     display: grid;
     justify-content: center;
+    text-align: center;
     gap: 10px;
     padding: 180px 0 40px 0;
 
+    p {
+      margin: 0;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
     @media screen and (max-width: var.$desktop-min) {
       padding: 40px 0;
+      align-content: left;
+
+      p {
+        text-align: left;
+      }
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      align-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
     }
 
     li {
@@ -131,30 +146,27 @@
       text-align: left;
       font-size: 18px;
       position: relative;
+      align-items: start;
 
       @media screen and (min-width: var.$desktop-min) {
-        &:nth-of-type(1) {
-          &::before {
-            background-image: url("/client/vectors/economy-1.svg");
-          }
-        }
+        padding-left: 0;
+      }
 
-        &:nth-of-type(2) {
-          &::before {
-            background-image: url("/client/vectors/economy-2.svg");
-          }
-        }
+      img {
+        width: 150px;
+        height: 150px;
+        position: absolute;
+        top: -155px;
+        left: 50%;
+        transform: translateX(-50%);
 
-        &:nth-of-type(3) {
-          &::before {
-            background-image: url("/client/vectors/economy-3.svg");
-          }
+        @media screen and (max-width: var.$desktop-min) {
+          display: none;
         }
-
       }
 
       &::before {
-        content: "";
+        content: '';
         position: absolute;
         width: 150px;
         height: 150px;
@@ -163,14 +175,16 @@
         top: -155px;
         left: 50%;
         transform: translateX(-50%);
+        display: none;
 
         @media screen and (max-width: var.$desktop-min) {
+          display: block;
           top: 50%;
           left: 0;
           width: 30px;
           height: 30px;
           transform: translateY(-50%);
-          background-image: url("/client/vectors/aprove.svg");
+          background-image: url('/client/vectors/aprove.svg');
         }
       }
     }
@@ -190,7 +204,6 @@
 
     @media screen and (min-width: var.$desktop-min) {
       text-align: left;
-
     }
   }
 
@@ -234,28 +247,15 @@
     }
 
     &__item {
+      text-align: center;
+      font-size: 28px;
+      flex-basis: 32%;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       &--hidden {
         display: none;
-      }
-    }
-
-    &__list {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      align-content: center;
-      flex-wrap: wrap;
-      gap: 20px;
-
-      li {
-        text-align: center;
-        font-size: 28px;
-        flex-basis: 32%;
-        padding: 0;
-
-        // &::before {
-        //   display: none;
-        // }
       }
     }
 
