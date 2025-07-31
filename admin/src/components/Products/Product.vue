@@ -237,7 +237,7 @@
           </div>
         </div>
 
-        <!-- <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" /> -->
+        <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" />
 
         <div class="product-actions">
           <button @click="saveChanges" class="btn-save">Сохранить</button>
