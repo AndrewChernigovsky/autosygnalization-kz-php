@@ -1,98 +1,81 @@
-export default class PrintDocument {
+import Swal from 'sweetalert2';
+
+export default class DownloadPrices {
   constructor(element) {
     this.element = element;
     this.container = document.createElement('div'); // Контейнер для печати
+    // Удаляем кастомный лоадер
     this.init();
   }
 
   init() {
     this.element.addEventListener('click', async () => {
+      if (Swal) {
+        Swal.fire({
+          title: 'Пожалуйста, подождите...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+      }
       const data = await this.getData();
-
-      this.populateContainer(data.data); // Заполняем контейнер данными
+      if (Swal) {
+        Swal.close();
+      }
+      if (!data) {
+        alert('Ошибка загрузки данных!');
+        return;
+      }
+      this.populateContainer(data.contacts, data.services, data.products); // Заполняем контейнер данными
       this.printIframe(); // Печатаем содержимое через временный iframe
     });
   }
 
   async getData() {
     try {
-      const response = await fetch(
-        '/server/php/admin/api/contacts/contact.php',
-        {
+      const [contactsRes, servicesRes, productsRes] = await Promise.all([
+        fetch('/server/php/admin/api/contacts/contact.php', {
           method: 'GET',
-          headers: {
-            'Content-type': 'application/json',
-          },
-        }
-      );
+          headers: { 'Content-type': 'application/json' },
+        }),
+        fetch('/server/php/api/services/get_all_services.php', {
+          method: 'GET',
+          headers: { 'Content-type': 'application/json' },
+        }),
+        fetch('/server/php/api/products/get_all_products.php?services=1', {
+          method: 'GET',
+          headers: { 'Content-type': 'application/json' },
+        }),
+      ]);
 
-      // ВАЖНО: добавьте это!
-      const text = await response.text();
-      console.log('Ответ сервера:', text);
+      const contactsText = await contactsRes.text();
+      const servicesText = await servicesRes.text();
+      const productsText = await productsRes.text();
 
-      if (!response.ok) {
-        throw new Error(`Ошибка сервера: ${response.status}`);
-      }
+      // console.log('Ответ сервера (контакты):', contactsText);
+      // console.log('Ответ сервера (услуги):', servicesText);
+      // console.log('Ответ сервера (продукты):', productsText);
 
-      // Попробуйте распарсить JSON только если статус ok
-      const data = JSON.parse(text);
-      console.log('Данные получены:', data);
+      if (!contactsRes.ok) throw new Error(`Ошибка сервера (контакты): ${contactsRes.status}`);
+      if (!servicesRes.ok) throw new Error(`Ошибка сервера (услуги): ${servicesRes.status}`);
+      if (!productsRes.ok) throw new Error(`Ошибка сервера (продукты): ${productsRes.status}`);
 
-      return data;
+      const contactsData = JSON.parse(contactsText);
+      const servicesData = JSON.parse(servicesText);
+      const productsData = JSON.parse(productsText);
+      return { contacts: contactsData, services: servicesData, products: productsData };
     } catch (error) {
-      console.error('Не удалось получить список контактов', error);
+      console.error('Не удалось получить данные', error);
       return null;
     }
   }
-  // populateContainer(data) {
-  //   const getByType = (type) => data.filter((item) => item.type === type);
 
-  //   const phones = getByType('contact-phone')
-  //     .map((item) => `<p>${item.title} ${item.content}</p>`)
-  //     .join('');
-
-  //   const socials = getByType('social')
-  //     .map((item) => `<p>${item.title} ${item.content}</p>`)
-  //     .join('');
-
-  //   const address = getByType('address')
-  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
-  //     .join('');
-  //   const email = getByType('email')
-  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
-  //     .join('');
-  //   const site = getByType('site')
-  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
-  //     .join('');
-  //   const schedule = getByType('schedule')
-  //     .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
-  //     .join('');
-
-  //   const locationDescription = getByType('location-description')
-  //     .map((item) => `<h3>${item.title}</h3><br/><p>${item.content}</p>`)
-  //     .join('');
-
-  //   this.container.innerHTML = `
-  //   <div>
-  //     <h2>Auto Security - <span>продажа и установка автосигнализаций, диагностика и ремонт автоэлектрики.</span></h2>
-
-  //     ${phones}
-  //     ${socials}
-
-  //     ${site}
-  //     ${email}
-  //     ${address}
-  //     ${schedule}
-
-  //     ${locationDescription}
-
-  //     <p>БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
-  //   </div>
-  // `;
-  // }
-
-  populateContainer(data) {
-    const getByType = (type) => data.filter((item) => item.type === type);
+  populateContainer(contacts, services, products) {
+    // console.log(contacts, 'contacts');
+    // console.log(services, 'services');
+    // console.log(products, 'products');
+    const getByType = (type) => contacts.data.filter((item) => item.type === type);
 
     const phones = getByType('contact-phone')
       .map((item) => `<p>${item.title} ${item.content}</p>`)
@@ -120,6 +103,32 @@ export default class PrintDocument {
 
     const locationDescription = getByType('location-description')
       .map((item) => `<h3>${item.title}</h3><p>${item.content}</p>`)
+      .join('');
+
+    const servicesHtml = services.main
+      .map((item) => `<p>${item.name} ${item.cost} ${item.currency}</p><p>${item.description}</p>`)
+      .join('');
+
+    const servicesAddedHtml = services.added
+      .map((item) => `<p>${item.title} ${item.price}</p>`)
+      .join('');
+
+    const productsHtml = Object.entries(products.category)
+      .map(([categoryName, productsArray]) => {
+        const productsList = productsArray
+          .map(product => `
+            <div class="product">
+              <h4>${product.title} - ${product.price || ''} ${product.currency || ''}</h4>
+              <p>установка от ${product.prices[0].price || ''} ${product.currency || ''}</p>
+            </div>
+          `)
+          .join('');
+        return `
+          <section class="product-category">
+            ${productsList}
+          </section>
+        `;
+      })
       .join('');
 
     this.container.innerHTML = `
@@ -153,6 +162,16 @@ export default class PrintDocument {
       </div>
 
       <p class="footer">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
+
+      <div class="section">
+        <h3>Прайс по оборудованию Starline и цены на установку</h3>
+        ${productsHtml}
+      </div>
+
+      <div class="section">
+        <h3>Прайс на дополнительные услуги</h3>
+        ${servicesAddedHtml}
+      </div>
     </div>
   `;
   }
@@ -246,4 +265,6 @@ export default class PrintDocument {
       document.body.removeChild(iframe);
     }, 500);
   }
+
+  // Удаляем методы showLoader и hideLoader
 }

@@ -35,6 +35,7 @@ const {
   processForm,
   formReusable,
   policyModal,
+  downloadPrices,
 } = {
   feedbackForm: document.getElementById('feedback-form'),
   footer: document.querySelector('footer'),
@@ -68,6 +69,7 @@ const {
   processForm: document.querySelector('.form__main-form'),
   formReusable: document.querySelector('.popup.modal-form'),
   policyModal: document.querySelector('.policy-modal'),
+  downloadPrices: document.getElementById('download-prices'),
 };
 
 async function loadModules() {
@@ -254,6 +256,11 @@ async function loadModules() {
       submitButton.disabled = false;
     }
   });
+  if (downloadPrices != null) {
+    const module = await import('./modules/download-prices.js');
+    const DownloadPrices = module.default;
+    new DownloadPrices(downloadPrices);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', loadModules);

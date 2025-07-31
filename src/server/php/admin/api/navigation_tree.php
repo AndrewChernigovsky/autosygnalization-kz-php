@@ -128,7 +128,6 @@ class NavigationTreeAPI extends DataBase
   public function createNavigation($data)
   {
     try {
-      error_log(print_r($data, true));
 
       $query = "INSERT INTO Navigation (title, slug, href, parent_id, position, is_active, icon, target)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -226,8 +225,8 @@ try {
     case 'DELETE':
       $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
       if (!$id) {
-          echo $api->error("ID не указан");
-          break;
+        echo $api->error("ID не указан");
+        break;
       }
       echo $api->deleteNavigationItem($id);
       break;

@@ -92,8 +92,6 @@ public function getAllContact(array $types = [])
         }
 
         $itemArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-        error_log(print_r($itemArr, true));
-
         if (empty($itemArr)) {
             return [['type' => 'none', 'title' => 'none', 'content' => 'none', 'link' => '/', 'icon_path' => '/']];
         }

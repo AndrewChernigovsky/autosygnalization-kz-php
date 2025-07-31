@@ -9,6 +9,7 @@ use DATA\PricesServicesData;
 use COMPONENTS\ModalForm;
 use function FUNCTIONS\renderPhoneButton;
 use DATA\Products;
+use DATA\ServicesData;
 
 $title = 'Прайс-лист | Auto Security';
 $head = new Head($title, [], []);
@@ -16,12 +17,12 @@ $header = new Header();
 $footer = new Footer();
 
 // $prices = (new PricesData())->getData();
-$pricesServices = (new PricesServicesData())->getData();
+// $pricesServices = (new PricesServicesData())->getData();
 
 $products = (new Products())->getData();
+$services = (new ServicesData())->getData();
 $prices = $products;
-
-error_log(print_r($prices, true) . 'prices22');
+error_log(print_r($services, true) . 'services22');
 
 ?>
 
@@ -42,6 +43,7 @@ echo $head->setHead();
           <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку:<span>*</span></h2>
           <ul class="price__list list-style-none">
             <?php foreach ($prices as $price): ?>
+              <?php if (!empty($price['prices'])): ?>
               <li class="price__item">
                 <details class="price__details product-cart">
                   <summary class="price__summary">
@@ -72,8 +74,9 @@ echo $head->setHead();
                       <?php endforeach; ?>
                     <?php endif; ?>
                   </div>
-                </div>
-              </li>
+                  </div>
+                </li>
+              <?php endif; ?>
             <?php endforeach; ?>
           </ul>
         </div>
@@ -82,23 +85,20 @@ echo $head->setHead();
     <section class="price-services">
       <div class="container">
         <h2 class="price-services__title">Прайс на дополнительные услуги:<span>*</span></h2>
+
         <ul class="price-services__list list-style-none">
-          <?php foreach ($pricesServices as $service): ?>
-            <li>
-              <div class="price-services__box">
-                <?php if (!empty($service['link'])): ?>
-                  <a href="<?php echo htmlspecialchars($service['link']); ?>">
-                    <?php echo ($service['title']); ?>
-                  </a>
-                <?php else: ?>
-                  <p><?php echo ($service['title']); ?></p>
-                <?php endif; ?>
-                <div class="price-services__price">
-                  <?php echo htmlspecialchars($service['productServicesPrice']) . ' ' . htmlspecialchars($service['currency']); ?>
+          <?php if (!empty($services['added'])): ?>
+            <?php foreach ($services['added'] as $service1): ?>
+              <li>
+                <div class="price-services__box">
+                  <p><?php echo htmlspecialchars($service1['title']); ?></p>
+                  <div class="price-services__price">
+                    <?php echo htmlspecialchars($service1['price']); ?>
+                  </div>
                 </div>
-              </div>
-            </li>
-          <?php endforeach; ?>
+              </li>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </ul>
         <p class="price-services__warning">* Цена услуг зависит от автомобиля и сложности работ.<br><br> Обязательно
           нужно уточнять у мастера совместимость оборудования и необходимый набор функций.<br><br> Все нюансы
@@ -106,8 +106,9 @@ echo $head->setHead();
       </div>
     </section>
     <div class="price-button">
-      <a class="button y-button-primary" href="/client/docs/Auto_Security_price.pdf"
-        download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+      <button class="button y-button-primary" id="download-prices">Скачать прайс-лист</button>
+      <!-- <a class="button y-button-primary" href="/client/docs/Auto_Security_price.pdf"
+        download="Auto-Security-price-2025.pdf" id="download-prices">Скачать прайс-лист</a> -->
     </div>
   </main>
   <?= $footer->getFooter(); ?>

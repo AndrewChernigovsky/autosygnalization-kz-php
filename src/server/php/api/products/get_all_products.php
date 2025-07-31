@@ -21,6 +21,12 @@ header("Content-Type: application/json; charset=UTF-8");
 $productsData = new Products();
 $allProducts = $productsData->getData();
 
+if (isset($_GET['services']) && $_GET['services'] == '1') {
+  $allProducts = array_values(array_filter($allProducts, function ($product) {
+    return isset($product['prices']) && is_array($product['prices']) && count($product['prices']) > 0;
+  }));
+}
+
 $groupedProducts = [];
 foreach ($allProducts as $product) {
   if (isset($product['category'])) {
@@ -32,3 +38,4 @@ foreach ($allProducts as $product) {
 }
 
 echo json_encode(['category' => $groupedProducts]);
+

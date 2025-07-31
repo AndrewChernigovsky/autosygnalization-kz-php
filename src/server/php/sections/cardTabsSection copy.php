@@ -43,7 +43,6 @@ function cardTabsSection($id)
 {
 
   $tabs = (new TabsAdditionalData())->getTabsByProductId($id);
-  error_log(print_r($tabs, true) . 'tabs22');
   // if (!empty($tabs)) {
   //   foreach ($tabs as $product) {
   //     if ($product['id'] === $id && isset($product['tabs'])) {
