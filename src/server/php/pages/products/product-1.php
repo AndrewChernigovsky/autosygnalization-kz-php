@@ -61,22 +61,27 @@ echo $head->setHead();
       <?= $contentImage; ?>
       <?= $contentDescription; ?>
       <div class="product-card__wrapper">
+        <div class="product-card__container">
+          <!-- <p class="product-card__text">Доставка:</p>
+          <a class="product-card__link" href="#"
+            style="background-image: url(<?= $path . '/client/vectors/link-icon.svg'; ?>);">о доставке и оплате</a> -->
+        </div>
         <a class="product-card__link product-card__link--mod" href="#">Наличие товара необходимо уточнить у
           менеджера.</a>
       </div>
       <?php if (isset($products) && !empty($products)): ?>
         <?php
         $product = null;
-        foreach ($products as $item) {
-          if ($item['id'] === $id) {
-            $product = $item;
-            break;
+        foreach ($products['category'] as $category) {
+          foreach ($category as $item) {
+            if ($item['id'] === $id) {
+              $product = $item;
+              break 2;
+            }
           }
         }
-
-        if ($product !== null):
-          $price = formatPriceWithSpaces($product['price']);
-          ?>
+        $price = formatPriceWithSpaces($product['price']);
+        if ($product !== null): ?>
           <div class="card-more__wrapper">
             <div class="card-more__button-cost-wrapper">
               <p>Количество</p>

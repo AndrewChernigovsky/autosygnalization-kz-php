@@ -3,51 +3,79 @@
     <details
       class="product-item"
       :open="product.is_new"
-      @toggle="(event) => emit('handle-toggle', event, product)"
+      @toggle="(event) => handleToggle(event, product)"
     >
       <summary>
-        <strong>{{ product.title }}</strong>
+        <strong>{{ editorStore.displayProduct(product).title }}</strong>
       </summary>
       <div class="product-editor">
-        <div class="form-group" @click="startEditing(product, 'model')">
+        <div
+          class="form-group"
+          @click="editorStore.startEditing(product, 'model')"
+        >
           <label>Модель:</label>
           <input
-            v-if="editingProduct?.id === product.id && fieldToEdit === 'model'"
-            v-model="editingProduct.model"
+            v-if="
+              editorStore.isEditing(product.id) &&
+              editorStore.fieldToEdit === 'model' &&
+              editorStore.editingProduct
+            "
+            v-model="editorStore.editingProduct.model"
             type="text"
           />
-          <span v-else>{{ product.model }}</span>
+          <span v-else>{{ editorStore.displayProduct(product).model }}</span>
         </div>
 
-        <div class="form-group" @click="startEditing(product, 'title')">
+        <div
+          class="form-group"
+          @click="editorStore.startEditing(product, 'title')"
+        >
           <label>Заголовок:</label>
           <input
-            v-if="editingProduct?.id === product.id && fieldToEdit === 'title'"
-            v-model="editingProduct.title"
+            v-if="
+              editorStore.isEditing(product.id) &&
+              editorStore.fieldToEdit === 'title' &&
+              editorStore.editingProduct
+            "
+            v-model="editorStore.editingProduct.title"
             type="text"
           />
-          <span v-else>{{ product.title }}</span>
+          <span v-else>{{ editorStore.displayProduct(product).title }}</span>
         </div>
 
-        <div class="form-group" @click="startEditing(product, 'description')">
+        <div
+          class="form-group"
+          @click="editorStore.startEditing(product, 'description')"
+        >
           <label>Описание:</label>
           <textarea
             v-if="
-              editingProduct?.id === product.id && fieldToEdit === 'description'
+              editorStore.isEditing(product.id) &&
+              editorStore.fieldToEdit === 'description' &&
+              editorStore.editingProduct
             "
-            v-model="editingProduct.description"
+            v-model="editorStore.editingProduct.description"
           ></textarea>
-          <span v-else>{{ product.description }}</span>
+          <span v-else>{{
+            editorStore.displayProduct(product).description
+          }}</span>
         </div>
 
-        <div class="form-group" @click="startEditing(product, 'price')">
+        <div
+          class="form-group"
+          @click="editorStore.startEditing(product, 'price')"
+        >
           <label>Цена:</label>
           <input
-            v-if="editingProduct?.id === product.id && fieldToEdit === 'price'"
-            v-model="editingProduct.price"
+            v-if="
+              editorStore.isEditing(product.id) &&
+              editorStore.fieldToEdit === 'price' &&
+              editorStore.editingProduct
+            "
+            v-model="editorStore.editingProduct.price"
             type="number"
           />
-          <span v-else>{{ product.price }}</span>
+          <span v-else>{{ editorStore.displayProduct(product).price }}</span>
         </div>
 
         <div class="form-group-checkbox">
@@ -55,12 +83,13 @@
           <input
             type="checkbox"
             :id="'popular-' + product.id"
-            :checked="
-              editingProduct && editingProduct.id === product.id
-                ? editingProduct.is_popular
-                : product.is_popular
+            :checked="editorStore.displayProduct(product).is_popular"
+            @change="
+              () => {
+                editorStore.startEditing(product, 'is_popular');
+                editorStore.handleCheckboxChange('is_popular');
+              }
             "
-            @change="handleCheckboxChange('is_popular')"
           />
         </div>
 
@@ -68,30 +97,36 @@
           <label>Специальный:</label>
           <input
             type="checkbox"
-            :checked="
-              editingProduct && editingProduct.id === product.id
-                ? editingProduct.is_special
-                : product.is_special
+            :checked="editorStore.displayProduct(product).is_special"
+            @change="
+              () => {
+                editorStore.startEditing(product, 'is_special');
+                editorStore.handleCheckboxChange('is_special');
+              }
             "
-            @change="handleCheckboxChange('is_special')"
           />
         </div>
 
         <Gallery
-          :product="product"
+          :product="editorStore.displayProduct(product)"
           :is-image-uploading="isImageUploading"
           @delete-image="(p, i) => emit('delete-image', p, i)"
           @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
         />
+        <Prices ref="pricesRef" :product="product" />
 
-        <div class="form-group" @click="startEditing(product, 'category_key')">
+        <div
+          class="form-group"
+          @click="editorStore.startEditing(product, 'category')"
+        >
           <label>Категория:</label>
           <select
             v-if="
-              editingProduct?.id === product.id &&
-              fieldToEdit === 'category_key'
+              editorStore.isEditing(product.id) &&
+              editorStore.fieldToEdit === 'category' &&
+              editorStore.editingProduct
             "
-            v-model="editingCategoryKey"
+            v-model="editorStore.editingProduct.category"
             @click.stop
           >
             <option
@@ -102,76 +137,107 @@
               {{ category.name }}
             </option>
           </select>
-          <span v-else>{{ getCategoryName(product.category_key) }}</span>
+          <span v-else>{{
+            getCategoryName(editorStore.displayProduct(product).category)
+          }}</span>
         </div>
 
         <div class="array-fields-editor">
-          <div class="form-group" @click="startEditing(product, 'functions')">
+          <div
+            class="form-group"
+            @click="editorStore.startEditing(product, 'functions')"
+          >
             <label>Функции (через запятую):</label>
             <textarea
               v-if="
-                editingProduct?.id === product.id && fieldToEdit === 'functions'
+                editorStore.isEditing(product.id) &&
+                editorStore.fieldToEdit === 'functions' &&
+                editorStore.editingProduct
               "
-              :value="getArrayAsCST(editingProduct.functions)"
+              :value="
+                editorStore.getArrayAsCST(editorStore.editingProduct.functions)
+              "
               @input="updateArrayField($event, 'functions')"
             ></textarea>
-            <span v-else>{{ getArrayAsCST(product.functions) }}</span>
-          </div>
-          <div class="form-group" @click="startEditing(product, 'options')">
-            <label>Опции (через запятую):</label>
-            <textarea
-              v-if="
-                editingProduct?.id === product.id && fieldToEdit === 'options'
-              "
-              :value="getArrayAsCST(editingProduct.options)"
-              @input="updateArrayField($event, 'options')"
-            ></textarea>
-            <span v-else>{{ getArrayAsCST(product.options) }}</span>
+            <span v-else>{{
+              editorStore.getArrayAsCST(
+                editorStore.displayProduct(product).functions
+              )
+            }}</span>
           </div>
           <div
             class="form-group"
-            @click="startEditing(product, 'options-filters')"
+            @click="editorStore.startEditing(product, 'options')"
+          >
+            <label>Опции (через запятую):</label>
+            <textarea
+              v-if="
+                editorStore.isEditing(product.id) &&
+                editorStore.fieldToEdit === 'options' &&
+                editorStore.editingProduct
+              "
+              :value="
+                editorStore.getArrayAsCST(editorStore.editingProduct.options)
+              "
+              @input="updateArrayField($event, 'options')"
+            ></textarea>
+            <span v-else>{{
+              editorStore.getArrayAsCST(
+                editorStore.displayProduct(product).options
+              )
+            }}</span>
+          </div>
+          <div
+            class="form-group"
+            @click="editorStore.startEditing(product, 'options-filters')"
           >
             <label>Опции-фильтры (через запятую):</label>
             <textarea
               v-if="
-                editingProduct?.id === product.id &&
-                fieldToEdit === 'options-filters'
+                editorStore.isEditing(product.id) &&
+                editorStore.fieldToEdit === 'options-filters' &&
+                editorStore.editingProduct
               "
-              :value="getArrayAsCST(editingProduct['options-filters'])"
+              :value="
+                editorStore.getArrayAsCST(
+                  editorStore.editingProduct['options-filters']
+                )
+              "
               @input="updateArrayField($event, 'options-filters')"
             ></textarea>
-            <span v-else>{{ getArrayAsCST(product['options-filters']) }}</span>
+            <span v-else>{{
+              editorStore.getArrayAsCST(
+                editorStore.displayProduct(product)['options-filters']
+              )
+            }}</span>
           </div>
-          <div class="form-group" @click="startEditing(product, 'autosygnals')">
+          <div
+            class="form-group"
+            @click="editorStore.startEditing(product, 'autosygnals')"
+          >
             <label>Раздел для автосигнализаций (через запятую):</label>
             <textarea
               v-if="
-                editingProduct?.id === product.id &&
-                fieldToEdit === 'autosygnals'
+                editorStore.isEditing(product.id) &&
+                editorStore.fieldToEdit === 'autosygnals' &&
+                editorStore.editingProduct
               "
-              :value="getArrayAsCST(editingProduct.autosygnals)"
+              :value="
+                editorStore.getArrayAsCST(
+                  editorStore.editingProduct.autosygnals
+                )
+              "
               @input="updateArrayField($event, 'autosygnals')"
             ></textarea>
-            <span v-else>{{ getArrayAsCST(product.autosygnals) }}</span>
+            <span v-else>{{
+              editorStore.getArrayAsCST(
+                editorStore.displayProduct(product).autosygnals
+              )
+            }}</span>
           </div>
         </div>
 
-        <Tabs
-          v-if="product.tabs"
-          :tabs="
-            editingProduct?.id === product.id && editingProduct.tabs
-              ? editingProduct.tabs
-              : product.tabs
-          "
-          :is-icon-uploading="
-            (tabIndex, itemIndex) => isUploading[`tab-${tabIndex}-${itemIndex}`]
-          "
-          @update:tabs="updateTabs"
-          @trigger-icon-upload="handleIconUpload"
-          @delete-icon="handleIconDelete"
-          :server-base-url="serverUrl"
-        />
+        <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" />
 
         <div class="product-actions">
           <button @click="saveChanges" class="btn-save">Сохранить</button>
@@ -195,11 +261,18 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import type { ProductI, Tab, DescriptionItem } from './interfaces/Products';
+import { ref, watch } from 'vue';
+import type { ProductI } from './interfaces/Products';
 import Gallery from './Gallery.vue';
 import Tabs from './Tabs.vue';
-import { API_URL } from '../../../config';
+import { useProductEditorStore } from '../../stores/productEditorStore';
+import Prices from './Prices.vue';
+
+const editorStore = useProductEditorStore();
+
+defineOptions({
+  name: 'Product',
+});
 
 const props = defineProps<{
   product: ProductI;
@@ -207,18 +280,6 @@ const props = defineProps<{
   isImageUploading: (productId: string, index: number | null) => boolean;
   getCategoryName: (key: string) => string;
 }>();
-
-watch(
-  () => props.product.gallery,
-  (newGallery) => {
-    if (editingProduct.value && editingProduct.value.id === props.product.id) {
-      editingProduct.value.gallery = newGallery;
-    } else {
-      startEditing(props.product, 'gallery');
-    }
-  },
-  { deep: true }
-);
 
 const emit = defineEmits<{
   (e: 'save-product', product: ProductI): void;
@@ -233,118 +294,86 @@ const emit = defineEmits<{
   (e: 'handle-toggle', event: Event, product: ProductI): void;
 }>();
 
-const editingProduct = ref<ProductI | null>(null);
-const fieldToEdit = ref<string | null>(null);
+const updateArrayField = (
+  event: Event,
+  fieldName: 'functions' | 'options' | 'options-filters' | 'autosygnals'
+) => {
+  const target = event.target as HTMLTextAreaElement;
+  editorStore.updateArrayField(fieldName, target.value);
+};
+
+watch(
+  () => props.product.gallery,
+  (newGallery) => {
+    if (editorStore.isEditing(props.product.id) && editorStore.editingProduct) {
+      editorStore.editingProduct.gallery = newGallery;
+    }
+  },
+  { deep: true }
+);
+
+const handleToggle = (event: Event, product: ProductI) => {
+  const detailsElement = event.target as HTMLDetailsElement;
+  if (detailsElement.open) {
+    editorStore.startEditing(product, '');
+  } else {
+    editorStore.cancelEditing();
+  }
+  emit('handle-toggle', event, product);
+};
+
+// Логика для загрузки иконок вкладок
 const iconUploader = ref<HTMLInputElement | null>(null);
 const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(
   null
 );
 
-const isUploading = ref<Record<string, boolean>>({});
-
-const serverUrl = API_URL.replace('/src/server', '');
-
-const editingCategoryKey = computed({
-  get: () => editingProduct.value?.category_key || '',
-  set: (value) => {
-    if (editingProduct.value) {
-      editingProduct.value.category_key = value;
-    }
-  },
-});
-
-function ensureEditing() {
-  if (!editingProduct.value) {
-    editingProduct.value = JSON.parse(JSON.stringify(props.product));
-    fieldToEdit.value = 'title';
-  }
-  return editingProduct.value;
-}
-
-function handleCheckboxChange(field: 'is_popular' | 'is_special') {
-  let productToEdit = editingProduct.value;
-
-  if (!productToEdit || productToEdit.id !== props.product.id) {
-    productToEdit = JSON.parse(JSON.stringify(props.product));
-    editingProduct.value = productToEdit;
-  }
-
-  if (productToEdit) {
-    productToEdit[field] = !productToEdit[field];
-    fieldToEdit.value = field;
-  }
-}
-
-function startEditing(product: ProductI, field: string) {
-  if (!editingProduct.value || editingProduct.value.id !== product.id) {
-    editingProduct.value = JSON.parse(JSON.stringify(product));
-  }
-  fieldToEdit.value = field;
-}
-
-function getArrayAsCST(arr: string[] | undefined): string {
-  if (!arr || arr.length === 0) return 'Нет';
-  return arr.join(', ');
-}
-
-function updateArrayField(
-  event: Event,
-  fieldName: 'functions' | 'options' | 'options-filters' | 'autosygnals'
-) {
-  if (editingProduct.value) {
-    const target = event.target as HTMLTextAreaElement;
-    const value = target.value
-      .split(',')
-      .map((s) => s.trim())
-      .filter(Boolean);
-
-    if (fieldName === 'options-filters') {
-      (editingProduct.value as any)['options-filters'] = value;
-    } else {
-      (editingProduct.value as any)[fieldName] = value;
-    }
-  }
-}
-
-function updateTabs(newTabs: Tab[]) {
-  const productToEdit = ensureEditing();
-  productToEdit.tabs = newTabs;
-}
-
-function handleIconUpload(tabIndex: number, itemIndex: number) {
-  ensureEditing();
+const onUploadTabIcon = (tabIndex: number, itemIndex: number) => {
   currentIconTarget.value = { tabIndex, itemIndex };
   iconUploader.value?.click();
-}
+};
 
-async function onIconFileSelected(event: Event) {
+const onDeleteTabIcon = async (tabIndex: number, itemIndex: number) => {
+  if (!editorStore.editingProduct) return;
+
+  try {
+    const response = await fetch(
+      '/server/php/admin/api/products/delete_tab_icon.php',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: editorStore.editingProduct.id,
+          tabIndex,
+          itemIndex,
+        }),
+      }
+    );
+
+    if (response.ok && editorStore.editingProduct.tabs) {
+      editorStore.editingProduct.tabs[tabIndex].content[itemIndex].icon = '';
+    }
+  } catch (error) {
+    console.error('Failed to delete icon:', error);
+  }
+};
+
+const onIconFileSelected = async (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
-  if (!file || !currentIconTarget.value) return;
+  if (!file || !currentIconTarget.value || !editorStore.editingProduct) return;
 
   const { tabIndex, itemIndex } = currentIconTarget.value;
-  const productToEdit = ensureEditing();
-  if (!productToEdit || !productToEdit.tabs) return;
-
-  const previewUrl = URL.createObjectURL(file);
-
-  // Re-construct tabs array for reactivity
-  const newTabs = JSON.parse(JSON.stringify(productToEdit.tabs));
-  newTabs[tabIndex].description[itemIndex]['path-icon'] = previewUrl;
-  productToEdit.tabs = newTabs;
-
-  const key = `tab-${tabIndex}-${itemIndex}`;
-  isUploading.value[key] = true;
 
   const formData = new FormData();
   formData.append('icon', file);
-  formData.append('productId', productToEdit.id);
+  formData.append('productId', editorStore.editingProduct.id);
   formData.append('tabIndex', String(tabIndex));
   formData.append('itemIndex', String(itemIndex));
 
   try {
     const response = await fetch(
-      `${API_URL}/php/admin/api/products/upload_tab_icon.php`,
+      '/server/php/admin/api/products/upload_tab_icon.php',
       {
         method: 'POST',
         body: formData,
@@ -356,63 +385,32 @@ async function onIconFileSelected(event: Event) {
     }
 
     const result = await response.json();
-    if (result.filePath && productToEdit.tabs) {
-      const finalTabs = JSON.parse(JSON.stringify(productToEdit.tabs));
-      finalTabs[tabIndex].description[itemIndex]['path-icon'] = result.filePath;
-      productToEdit.tabs = finalTabs;
+    if (result.filePath && editorStore.editingProduct.tabs) {
+      editorStore.editingProduct.tabs[tabIndex].content[itemIndex].icon =
+        result.filePath;
     }
   } catch (error) {
     console.error('Failed to upload icon:', error);
   } finally {
-    isUploading.value[key] = false;
-    URL.revokeObjectURL(previewUrl);
-    target.value = ''; // Reset input
+    target.value = '';
     currentIconTarget.value = null;
   }
-}
+};
 
-async function handleIconDelete(tabIndex: number, itemIndex: number) {
-  const productToEdit = ensureEditing();
-  if (!productToEdit) return;
-
-  try {
-    const response = await fetch(
-      `${API_URL}/php/admin/api/products/delete_tab_icon.php`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: productToEdit.id,
-          tabIndex,
-          itemIndex,
-        }),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Server responded with an error');
-    }
-
-    if (
-      productToEdit.tabs &&
-      Array.isArray(productToEdit.tabs[tabIndex].description)
-    ) {
-      const desc = productToEdit.tabs[tabIndex]
-        .description as DescriptionItem[];
-      if (desc[itemIndex]) {
-        desc[itemIndex]['path-icon'] = '';
-      }
-    }
-  } catch (error) {
-    console.error('Failed to delete icon:', error);
-  }
-}
+const pricesRef = ref();
 
 function saveChanges() {
-  if (editingProduct.value) {
-    emit('save-product', editingProduct.value);
-    editingProduct.value = null;
-    fieldToEdit.value = null;
+  console.log('[Product.vue] saveChanges called');
+  if (pricesRef.value && pricesRef.value.syncPricesToProduct) {
+    pricesRef.value.syncPricesToProduct();
+  }
+  if (editorStore.editingProduct) {
+    console.log('[Product.vue] emit save-product', editorStore.editingProduct);
+    console.log(
+      '[Product.vue] editingProduct.prices',
+      editorStore.editingProduct.prices
+    );
+    emit('save-product', editorStore.editingProduct);
   }
 }
 </script>
