@@ -161,6 +161,12 @@ defineExpose({
 });
 </script>
 
+<script lang="ts">
+export default {
+  name: 'ImageUpload',
+};
+</script>
+
 <template>
   <div class="image-upload-wrapper">
     <label class="image-upload-box">

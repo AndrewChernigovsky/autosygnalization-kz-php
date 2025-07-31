@@ -42,13 +42,9 @@ class FiltersRender
 
     $this->products = $products;
 
-    foreach ($this->products as &$category) {
-      foreach ($category as &$productType) {
-        foreach ($productType as &$product) {
-          if (isset($product['options-filters']) && is_string($product['options-filters'])) {
-            $product['options-filters'] = json_decode($product['options-filters'], true);
-          }
-        }
+    foreach ($this->products as &$product) {
+      if (isset($product['options-filters']) && is_string($product['options-filters'])) {
+        $product['options-filters'] = json_decode($product['options-filters'], true);
       }
     }
 
@@ -62,66 +58,49 @@ class FiltersRender
 
   public function returnCorrectedArr()
   {
-
     $count = [];
+
     if (!$this->get_params && $this->filters_correct === null) {
-      foreach ($this->products as $categoryType) {
-        if (!empty($categoryType)) {
-          foreach ($categoryType as $productType) {
-            if (!empty($productType)) {
-              foreach ($productType as $productTypeItem) {
-                $this->filters_correct_arr[] = $productTypeItem;
-                if (!empty($productTypeItem['options-filters'])) {
-                  foreach ($productTypeItem['options-filters'] as $counterName) {
-                    $count[$counterName] = ($count[$counterName] ?? 0) + 1;
-                  }
-                }
-              }
-            }
+      foreach ($this->products as $product) {
+        $this->filters_correct_arr[] = $product;
+        if (!empty($product['options-filters'])) {
+          foreach ($product['options-filters'] as $counterName) {
+            $count[$counterName] = ($count[$counterName] ?? 0) + 1;
           }
         }
       }
     } elseif ($this->get_params && $this->filters_correct == "special") {
       $this->filters_correct_arr = [];
+      foreach ($this->products as $product) {
+        if (!empty($product) && ($product['special'] ?? false) === true) {
+          $isMatch = true;
+          $active_params_arr = [];
 
-      foreach ($this->products as $categoryType) {
-        if (!empty($categoryType)) {
-          foreach ($categoryType as $productType) {
-            if (!empty($productType)) {
-              foreach ($productType as $productTypeItem) {
-                if (!empty($productTypeItem) && $productTypeItem['special'] === true) {
-                  $isMatch = false;
-                  $active_params_arr = [];
-                  if (isset($productTypeItem['price']) && ($productTypeItem['price'] < $this->filters_min_value || $productTypeItem['price'] > $this->filters_max_value)) {
-                    $isMatch = true;
-                    continue;
-                  }
-                  foreach ($this->get_params as $key => $value) {
-                    if ($value === 'on') {
-                      $active_params_arr[] = $key;
-                    }
-                  }
+          if (isset($product['price']) && ($product['price'] < $this->filters_min_value || $product['price'] > $this->filters_max_value)) {
+            $isMatch = false;
+          }
 
-                  if (!isset($productTypeItem['options-filters']) || !empty(array_diff($active_params_arr, $productTypeItem['options-filters']))) {
-                    $isMatch = true;
-                    error_log($isMatch . ' :MATCH1 ');
-                  }
+          if ($isMatch) {
+            foreach ($this->get_params as $key => $value) {
+              if ($value === 'on') {
+                $active_params_arr[] = $key;
+              }
+            }
 
-                  if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filters_correct, $productTypeItem['autosygnals']))) {
-                    $isMatch = true;
-                    error_log($isMatch . ' :MATCH2');
-                  }
+            if (!empty($active_params_arr) && (!isset($product['options-filters']) || !empty(array_diff($active_params_arr, $product['options-filters'])))) {
+              $isMatch = false;
+            }
+          }
 
+          if ($isMatch && (!isset($product['autosygnals']) || !is_array($product['autosygnals']) || !in_array($this->filters_correct, $product['autosygnals']))) {
+            $isMatch = false;
+          }
 
-
-                  if ($isMatch) {
-                    $this->filters_correct_arr[] = $productTypeItem;
-                    foreach ($productTypeItem['options-filters'] as $counterName) {
-                      $count[$counterName] = ($count[$counterName] ?? 0) + 1;
-                    }
-                  }
-
-                }
+          if ($isMatch) {
+            $this->filters_correct_arr[] = $product;
+            if (!empty($product['options-filters'])) {
+              foreach ($product['options-filters'] as $counterName) {
+                $count[$counterName] = ($count[$counterName] ?? 0) + 1;
               }
             }
           }
@@ -129,40 +108,35 @@ class FiltersRender
       }
     } elseif ($this->get_params && $this->filters_correct !== null) {
       $this->filters_correct_arr = [];
-      foreach ($this->products as $categoryType) {
-        if (!empty($categoryType)) {
-          foreach ($categoryType as $productType) {
-            if (!empty($productType)) {
-              foreach ($productType as $productTypeItem) {
-                if (!empty($productTypeItem)) {
-                  $isMatch = true;
-                  $active_params_arr = [];
-                  if (isset($productTypeItem['price']) && ($productTypeItem['price'] < $this->filters_min_value || $productTypeItem['price'] > $this->filters_max_value)) {
-                    $isMatch = false;
-                    continue;
-                  }
-                  foreach ($this->get_params as $key => $value) {
-                    if ($value === 'on') {
-                      $active_params_arr[] = $key;
-                    }
-                  }
+      foreach ($this->products as $product) {
+        if (!empty($product)) {
+          $isMatch = true;
+          $active_params_arr = [];
 
-                  if (!isset($productTypeItem['options-filters']) || !empty(array_diff($active_params_arr, $productTypeItem['options-filters']))) {
-                    $isMatch = false;
-                  }
+          if (isset($product['price']) && ($product['price'] < $this->filters_min_value || $product['price'] > $this->filters_max_value)) {
+            $isMatch = false;
+          }
 
-                  if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filters_correct, $productTypeItem['autosygnals']))) {
-                    $isMatch = false;
-                  }
+          if ($isMatch) {
+            foreach ($this->get_params as $key => $value) {
+              if ($value === 'on') {
+                $active_params_arr[] = $key;
+              }
+            }
+            if (!empty($active_params_arr) && (!isset($product['options-filters']) || !empty(array_diff($active_params_arr, $product['options-filters'])))) {
+              $isMatch = false;
+            }
+          }
 
-                  if ($isMatch) {
-                    $this->filters_correct_arr[] = $productTypeItem;
-                    foreach ($productTypeItem['options-filters'] as $counterName) {
-                      $count[$counterName] = ($count[$counterName] ?? 0) + 1;
-                    }
-                  }
+          if ($isMatch && (!isset($product['autosygnals']) || !is_array($product['autosygnals']) || !in_array($this->filters_correct, $product['autosygnals']))) {
+            $isMatch = false;
+          }
 
-                }
+          if ($isMatch) {
+            $this->filters_correct_arr[] = $product;
+            if (!empty($product['options-filters'])) {
+              foreach ($product['options-filters'] as $counterName) {
+                $count[$counterName] = ($count[$counterName] ?? 0) + 1;
               }
             }
           }
@@ -170,35 +144,31 @@ class FiltersRender
       }
     } elseif ($this->get_params && $this->filters_correct === null) {
       $this->filters_correct_arr = [];
-      foreach ($this->products as $categoryType) {
-        if (!empty($categoryType)) {
-          foreach ($categoryType as $productType) {
-            if (!empty($productType)) {
-              foreach ($productType as $productTypeItem) {
-                if (!empty($productTypeItem)) {
-                  $isMatch = true;
-                  $active_params_arr = [];
-                  if (isset($productTypeItem['price']) && ($productTypeItem['price'] < $this->filters_min_value || $productTypeItem['price'] > $this->filters_max_value)) {
-                    $isMatch = false;
-                    continue;
-                  }
-                  foreach ($this->get_params as $key => $value) {
-                    if ($value === 'on') {
-                      $active_params_arr[] = $key;
-                    }
-                  }
+      foreach ($this->products as $product) {
+        if (!empty($product)) {
+          $isMatch = true;
+          $active_params_arr = [];
 
-                  if (!isset($productTypeItem['options-filters']) || !empty(array_diff($active_params_arr, $productTypeItem['options-filters']))) {
-                    $isMatch = false;
-                  }
+          if (isset($product['price']) && ($product['price'] < $this->filters_min_value || $product['price'] > $this->filters_max_value)) {
+            $isMatch = false;
+          }
 
-                  if ($isMatch) {
-                    $this->filters_correct_arr[] = $productTypeItem;
-                    foreach ($productTypeItem['options-filters'] as $counterName) {
-                      $count[$counterName] = ($count[$counterName] ?? 0) + 1;
-                    }
-                  }
-                }
+          if ($isMatch) {
+            foreach ($this->get_params as $key => $value) {
+              if ($value === 'on') {
+                $active_params_arr[] = $key;
+              }
+            }
+            if (!empty($active_params_arr) && (!isset($product['options-filters']) || !empty(array_diff($active_params_arr, $product['options-filters'])))) {
+              $isMatch = false;
+            }
+          }
+
+          if ($isMatch) {
+            $this->filters_correct_arr[] = $product;
+            if (!empty($product['options-filters'])) {
+              foreach ($product['options-filters'] as $counterName) {
+                $count[$counterName] = ($count[$counterName] ?? 0) + 1;
               }
             }
           }
@@ -206,29 +176,24 @@ class FiltersRender
       }
     } elseif (!$this->get_params && $this->filters_correct !== null) {
       $this->filters_correct_arr = [];
-      foreach ($this->products as $categoryType) {
-        if (!empty($categoryType)) {
-          foreach ($categoryType as $productType) {
-            if (!empty($productType)) {
-              foreach ($productType as $productTypeItem) {
-                if (!empty($productTypeItem)) {
-                  $isMatch = true;
-                  if (!isset($productTypeItem['autosygnals']) || (!is_array($productTypeItem['autosygnals']) || !in_array($this->filters_correct, $productTypeItem['autosygnals']))) {
-                    $isMatch = false;
-                  }
-                  if ($isMatch) {
-                    $this->filters_correct_arr[] = $productTypeItem;
-                    foreach ($productTypeItem['options-filters'] as $counterName) {
-                      $count[$counterName] = ($count[$counterName] ?? 0) + 1;
-                    }
-                  }
-                }
+      foreach ($this->products as $product) {
+        if (!empty($product)) {
+          $isMatch = true;
+          if (!isset($product['autosygnals']) || !is_array($product['autosygnals']) || !in_array($this->filters_correct, $product['autosygnals'])) {
+            $isMatch = false;
+          }
+          if ($isMatch) {
+            $this->filters_correct_arr[] = $product;
+            if (!empty($product['options-filters'])) {
+              foreach ($product['options-filters'] as $counterName) {
+                $count[$counterName] = ($count[$counterName] ?? 0) + 1;
               }
             }
           }
         }
       }
     }
+
     foreach ($this->filters_function_arr as $index => $category) {
       $filterKey = $category['name'];
       $this->filters_function_arr[$index]['count'] = $count[$filterKey] ?? 0;
