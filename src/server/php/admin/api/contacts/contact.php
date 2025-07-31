@@ -3,7 +3,7 @@
 namespace API\ADMIN;
 // CORS-заголовки для разрешения запросов с фронта (например, React на localhost:5173)
 header("Access-Control-Allow-Origin: http://localhost:5173");
-header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json');
 
@@ -34,7 +34,7 @@ class ContactAPI extends DataBase
   public function getContacts()
   {
     try {
-      $query = "SELECT * FROM Contacts ORDER BY contact_id ASC";
+      $query = "SELECT * FROM Contacts ORDER BY `order` ASC, contact_id ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
       $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -47,6 +47,35 @@ class ContactAPI extends DataBase
     }
   }
 
+  // Обновление порядка контактов
+  public function updateContactsOrder($orderData)
+  {
+    try {
+      $this->pdo->beginTransaction();
+
+      foreach ($orderData as $item) {
+        if (!isset($item['contact_id']) || !isset($item['order'])) {
+          $this->pdo->rollBack();
+          return $this->error("Неверные данные для обновления порядка", 400);
+        }
+
+        $query = "UPDATE Contacts SET `order` = :order WHERE contact_id = :contact_id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute([
+          ':order' => $item['order'],
+          ':contact_id' => $item['contact_id']
+        ]);
+      }
+
+      $this->pdo->commit();
+      return $this->success(['message' => 'Порядок контактов успешно обновлен']);
+
+    } catch (\Exception $e) {
+      $this->pdo->rollBack();
+      error_log("Ошибка обновления порядка контактов: " . $e->getMessage());
+      return $this->error("Ошибка обновления порядка контактов", 500);
+    }
+  }
 
 
       public function updateContact($id, $data, $icon = null)
@@ -179,8 +208,15 @@ class ContactAPI extends DataBase
 
           $iconPath = '/server/uploads/contact/icons/' . $uniqueName;
         }
+
+        // Получаем максимальный order для данного типа
+        $orderQuery = "SELECT MAX(`order`) as max_order FROM Contacts WHERE type = ?";
+        $orderStmt = $this->pdo->prepare($orderQuery);
+        $orderStmt->execute([$data['type']]);
+        $orderResult = $orderStmt->fetch(\PDO::FETCH_ASSOC);
+        $nextOrder = ($orderResult['max_order'] ?? 0) + 1;
   
-        $query = "INSERT INTO Contacts (type,title,content,link,icon_path) VALUES (?, ?, ?, ?, ?)";
+        $query = "INSERT INTO Contacts (type,title,content,link,icon_path,`order`) VALUES (?, ?, ?, ?, ?, ?)";
   
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([
@@ -189,6 +225,7 @@ class ContactAPI extends DataBase
           $data['content'],
           $data['link'],
           $iconPath,
+          $nextOrder,
         ]);
   
         $contactId = $this->pdo->lastInsertId();
@@ -285,7 +322,7 @@ try {
           $icon = null;
         }
       } else {
-        // Если Content-Type не задан или не поддерживается для POST/PUT, выдаем ошибку
+        // Если Content-Type не задан или не поддерживается для POST/PUT/PATCH, выдаем ошибку
         http_response_code(415);
         echo json_encode(['success' => false, 'error' => 'Unsupported Media Type: ' . $contentType]);
         exit;
@@ -357,6 +394,18 @@ try {
       echo $api->deleteContactItem($id);
       break;
 
+    case 'PATCH':
+      // Обновление порядка контактов
+      if (isset($_GET['action']) && $_GET['action'] === 'update-order') {
+        if (!$input) {
+          echo $api->error("Данные для обновления порядка не переданы");
+          break;
+        }
+        echo $api->updateContactsOrder($input);
+      } else {
+        echo $api->error("Неизвестное действие", 400);
+      }
+      break;
 
     default:
       echo $api->error("Метод не поддерживается", 405);

@@ -1,7 +1,8 @@
 <script setup lang="ts">
 interface Props {
   type?: 'submit' | 'button' | 'reset';
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | '';
+  disabled?: boolean;
 }
 
 interface Emits {
@@ -10,7 +11,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   type: 'button',
-  variant: 'primary',
+  variant: '',
 });
 
 const emit = defineEmits<Emits>();
@@ -21,15 +22,14 @@ const handleClick = (event: MouseEvent) => {
 </script>
 
 <template>
-  <div>
-    <button
-      :type="props.type"
-      :class="['btn', props.variant]"
-      @click="handleClick"
-    >
-      <slot>btn</slot>
-    </button>
-  </div>
+  <button
+    :type="props.type"
+    :class="['btn', props.variant]"
+    :disabled="props.disabled"
+    @click="handleClick"
+  >
+    <slot>btn</slot>
+  </button>
 </template>
 
 <style scoped>
