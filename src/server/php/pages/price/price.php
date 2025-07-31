@@ -8,14 +8,21 @@ use DATA\PricesData;
 use DATA\PricesServicesData;
 use COMPONENTS\ModalForm;
 use function FUNCTIONS\renderPhoneButton;
+use DATA\Products;
 
 $title = 'Прайс-лист | Auto Security';
 $head = new Head($title, [], []);
 $header = new Header();
 $footer = new Footer();
 
-$prices = (new PricesData())->getData();
+// $prices = (new PricesData())->getData();
 $pricesServices = (new PricesServicesData())->getData();
+
+$products = (new Products())->getData();
+$prices = $products;
+
+error_log(print_r($prices, true) . 'prices22');
+
 ?>
 
 
@@ -34,35 +41,40 @@ echo $head->setHead();
           <h1 class="price__title">Прайс</h1>
           <h2 class="price__subtitle">Прайс по оборудованию Starline и цены на установку:<span>*</span></h2>
           <ul class="price__list list-style-none">
-            <?php
-            foreach ($prices as $price): ?>
-              <li class="price__item">
-                <details class="price__details product-cart">
-                  <summary class="price__summary">
-                    <p class="price__item-title" role="term" aria-details="faq-1">
-                      <?php echo htmlspecialchars($price['title']); ?>
-                    </p>
-                    <div class="price__item-box">
-                      <span class="price__item-product"><?php echo htmlspecialchars($price['productPrice']); ?></span>
-                      <span class="price__item-currency"><?php echo htmlspecialchars($price['currency']); ?></span>
-                    </div>
-                    <p class="price__item-price">установка от
-                      <?php echo htmlspecialchars($price['installationPrice']) . ' ' . htmlspecialchars($price['currency']) . '*'; ?>
-                    </p>
-                  </summary>
-                </details>
-                <div class="price__content" id="faq-1" role="definition">
-                  <div class="price__content-body">
-                    <ul class="price__item-description">
-                      <?php foreach ($price['description'] as $descItem): ?>
-                        <li class="price__item-text"><?php echo htmlspecialchars($descItem); ?></li>
-                      <?php endforeach; ?>
-                    </ul>
-                  </div>
-                </div>
-              </li>
+  <?php foreach ($prices as $price): ?>
+    <li class="price__item">
+      <details class="price__details product-cart">
+        <summary class="price__summary">
+          <p class="price__item-title" role="term" aria-details="faq-1">
+            <?= htmlspecialchars($price['title']); ?>
+          </p>
+          <div class="price__item-box">
+            <span class="price__item-product"><?= htmlspecialchars($price['price']); ?></span>
+            <span class="price__item-currency"><?= htmlspecialchars($price['currency']); ?></span>
+          </div>
+          <?php if (!empty($price['prices'])): ?>
+            <?php foreach ($price['prices'] as $service): ?>
+              <p class="price__item-price">
+                установка от <?= htmlspecialchars($service['price']) ?>*
+              </p>
             <?php endforeach; ?>
-          </ul>
+          <?php endif; ?>
+        </summary>
+      </details>
+      <div class="price__content" id="faq-1" role="definition">
+        <div class="price__content-body">
+          <?php if (!empty($price['prices'])): ?>
+            <?php foreach ($price['prices'] as $service): ?>
+              <div class="service-description">
+                <?= $service['content'] // content — это HTML, не экранируй! ?>
+              </div>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </div>
+      </div>
+    </li>
+  <?php endforeach; ?>
+</ul>
         </div>
       </div>
     </section>

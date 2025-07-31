@@ -50,7 +50,7 @@ class Products
 
       // Получаем услуги (цены) для товара
       $pricesStmt = $this->db->prepare('
-        SELECT pr.id, pr.content
+        SELECT pr.id, pr.content, pr.price
         FROM Products_prices pp
         JOIN Prices pr ON pp.price_id = pr.id
         WHERE pp.product_id = :product_id

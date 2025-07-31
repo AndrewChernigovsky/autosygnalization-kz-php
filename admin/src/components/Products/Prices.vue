@@ -56,11 +56,32 @@ const loadPricesFromProduct = () => {
   let productPrices =
     editorStore.editingProduct?.prices || props.product.prices;
 
-  // Преобразуем массив объектов с content в массив с description
+  // Преобразуем массив объектов с content в массив с description и автозаполнением остальных полей
   if (Array.isArray(productPrices) && productPrices.length > 0) {
     if (typeof productPrices[0] === 'object' && 'content' in productPrices[0]) {
       productPrices = productPrices.map((item: any) => ({
+        id: item.id || null,
+        title: props.product.title || '',
+        productPrice: props.product.price ? String(props.product.price) : '',
+        currency: '₸',
+        installationPrice: 'price' in item ? item.price : '',
         description: item.content || '',
+      }));
+    } else {
+      // Если уже массив объектов с description, но нет других полей — дополняем
+      productPrices = productPrices.map((item: any) => ({
+        id: 'id' in item ? item.id : null,
+        title: 'title' in item ? item.title : props.product.title || '',
+        productPrice:
+          'productPrice' in item
+            ? item.productPrice
+            : props.product.price
+            ? String(props.product.price)
+            : '',
+        currency: 'currency' in item ? item.currency : '₸',
+        installationPrice:
+          'installationPrice' in item ? item.installationPrice : '',
+        description: item.description || '',
       }));
     }
   }
@@ -131,9 +152,9 @@ defineExpose({ syncPricesToProduct });
               <span class="item-number">{{ index + 1 }}</span>
             </div>
 
-            <div class="price-item-fields">
+            <!-- <div class="price-item-fields">
               <div class="field-group">
-                <label>Название услуги:</label>
+                <label>Название товара:</label>
                 <input
                   :value="priceItem.title"
                   @input="(e) => handleTitleInput(index, e)"
@@ -150,9 +171,9 @@ defineExpose({ syncPricesToProduct });
                   type="text"
                   placeholder="259 600"
                 />
-              </div>
+              </div> -->
 
-              <div class="field-group">
+            <!-- <div class="field-group">
                 <label>Валюта:</label>
                 <input
                   :value="priceItem.currency"
@@ -160,42 +181,41 @@ defineExpose({ syncPricesToProduct });
                   type="text"
                   placeholder="₸"
                 />
-              </div>
+              </div> -->
 
-              <div class="field-group">
-                <label>Цена установки:</label>
-                <input
-                  :value="priceItem.installationPrice"
-                  @input="(e) => handleInstallationPriceInput(index, e)"
-                  type="text"
-                  placeholder="60 000"
-                />
-              </div>
+            <div class="field-group">
+              <label>Цена установки:</label>
+              <input
+                :value="priceItem.installationPrice"
+                @input="(e) => handleInstallationPriceInput(index, e)"
+                type="text"
+                placeholder="60 000"
+              />
+            </div>
 
-              <div class="field-group">
-                <label>Описание (список преимуществ):</label>
-                <QuillEditor
-                  :key="'price-' + index"
-                  theme="snow"
-                  :toolbar="toolbarOptions"
-                  contentType="html"
-                  :content="priceItem.description"
-                  @update:content="
-                    (val) => pricesStore.updatePriceDescription(index, val)
-                  "
-                />
-              </div>
+            <div class="field-group">
+              <label>Описание (список преимуществ):</label>
+              <QuillEditor
+                :key="'price-' + index"
+                theme="snow"
+                :toolbar="toolbarOptions"
+                contentType="html"
+                :content="priceItem.description"
+                @update:content="
+                  (val) => pricesStore.updatePriceDescription(index, val)
+                "
+              />
             </div>
           </div>
-
-          <button
-            type="button"
-            class="add-item-btn"
-            @click="pricesStore.addPriceItem"
-          >
-            + Добавить элемент цены
-          </button>
         </div>
+
+        <button
+          type="button"
+          class="add-item-btn"
+          @click="pricesStore.addPriceItem"
+        >
+          + Добавить элемент цены
+        </button>
       </div>
     </div>
 

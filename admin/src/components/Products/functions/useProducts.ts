@@ -137,22 +137,26 @@ export function useProducts() {
         }
       }
 
-      // --- Новый вызов API для сохранения descriptions (цен-услуг) ---
+      // --- Новый вызов API для сохранения цен-услуг ---
       console.log(
-        '[useProducts.ts] product.prices before descriptions',
+        '[useProducts.ts] product.prices before sending',
         product.prices
       );
-      let descriptions = [];
+      let prices = [];
       if (Array.isArray(product.prices)) {
-        descriptions = product.prices
+        prices = product.prices
           .filter(
             (item) => item && typeof item === 'object' && 'description' in item
           )
-          .map((item) => item.description);
-        console.log('[useProducts.ts] descriptions to send', descriptions);
+          .map((item) => ({
+            id: item.id || null,
+            description: item.description,
+            installationPrice: item.installationPrice || '',
+          }));
+        console.log('[useProducts.ts] prices to send', prices);
         await apiCall('update_prices_products.php', 'POST', {
           id: product.id,
-          descriptions,
+          prices,
         });
       }
       // --- конец нового блока ---
