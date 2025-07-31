@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import mainNavStore from '../stores/mainNavStore';
 import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyInput from '../components/UI/MyInput.vue';
@@ -18,6 +18,8 @@ interface INavItem {
 
 const API_BASE_URL = '/server/php/admin/api/navigation/navigation.php';
 
+const API_PAGE_URL = '/server/php/admin/api/pages/available_pages.php';
+
 const store = mainNavStore();
 
 const navItems = ref<INavItem[]>([]);
@@ -29,26 +31,40 @@ const newNavItem = ref<INavItem>({
   icon_path_url: null,
 });
 
+const pageItems = ref<{ title: string; link: string }[]>([]);
+
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const activeEditItem = ref<INavItem | null>(null);
 const isExternalLink = ref(false);
-const selectedPageLink = ref('');
+
 const editItemExternalLink = ref<Record<number, boolean>>({});
-const editItemSelectedPage = ref<Record<number, string>>({});
 
 // Добавляем переменные для drag and drop
 const draggedItem = ref<INavItem | null>(null);
 const dragOverItem = ref<INavItem | null>(null);
 
-onMounted(async () => {
-  await getNavItems();
-  await getAvailablePages();
+// Computed для валидации формы добавления
+const isFormValid = computed(() => {
+  const hasTitle = newNavItem.value.title?.trim();
+  const hasLink = newNavItem.value.link?.trim();
+
+  if (!hasTitle) return false;
+
+  // Если внешняя ссылка - проверяем что есть ссылка
+  if (isExternalLink.value) {
+    return !!hasLink;
+  }
+
+  // Если внутренняя страница - проверяем что выбрана страница
+  return !!hasLink;
 });
 
-const getAvailablePages = async () => {
-  await store.getAvailablePages();
-};
+onMounted(async () => {
+  await getNavItems();
+  await store.getAvailablePages(API_PAGE_URL);
+  pageItems.value = store.availablePages;
+});
 
 const getNavItems = async () => {
   isLoading.value = true;
@@ -64,12 +80,12 @@ const getNavItems = async () => {
 };
 
 const addNavItem = async () => {
-  if (!newNavItem.value.title.trim()) {
+  if (!newNavItem.value.title?.trim()) {
     Swal.fire('Ошибка!', 'Заголовок обязателен для заполнения', 'error');
     return;
   }
 
-  if (!newNavItem.value.link.trim()) {
+  if (!newNavItem.value.link?.trim()) {
     Swal.fire('Ошибка!', 'Ссылка обязательна для заполнения', 'error');
     return;
   }
@@ -96,7 +112,6 @@ const updateNavItem = async (item: INavItem) => {
   // Очищаем состояние редактирования после успешного обновления
   if (item.id) {
     delete editItemExternalLink.value[item.id];
-    delete editItemSelectedPage.value[item.id];
   }
 
   await getNavItems();
@@ -156,7 +171,6 @@ const toggleEditItem = (item: INavItem) => {
     // Очищаем состояние редактирования при закрытии
     if (item.id) {
       delete editItemExternalLink.value[item.id];
-      delete editItemSelectedPage.value[item.id];
     }
   } else {
     activeEditItem.value = item;
@@ -167,37 +181,6 @@ const toggleEditItem = (item: INavItem) => {
         item.link &&
         (item.link.startsWith('http') || item.link.startsWith('https'));
       editItemExternalLink.value[item.id] = !!isExternal;
-
-      // Если это внутренняя страница, найдем соответствующую страницу в списке
-      if (!isExternal) {
-        // Сначала проверяем, это ли главная страница
-        if (item.link === '/') {
-          editItemSelectedPage.value[item.id] = '/';
-        } else if (
-          store.availablePages &&
-          Array.isArray(store.availablePages)
-        ) {
-          const matchingPage = store.availablePages.find(
-            (page: any) =>
-              (page.path && page.path === item.link) ||
-              (page.link && page.link === item.link) ||
-              (page.url && page.url === item.link)
-          );
-          if (matchingPage) {
-            editItemSelectedPage.value[item.id] =
-              (matchingPage as any).path ||
-              (matchingPage as any).link ||
-              (matchingPage as any).url ||
-              '';
-          } else {
-            editItemSelectedPage.value[item.id] = '';
-          }
-        } else {
-          editItemSelectedPage.value[item.id] = '';
-        }
-      } else if (item.id) {
-        editItemSelectedPage.value[item.id] = '';
-      }
     }
   }
 };
@@ -223,7 +206,6 @@ const resetNewNavItem = () => {
     icon_path: null,
     icon_path_url: null,
   };
-  selectedPageLink.value = '';
 };
 
 const getImageUrl = (item: INavItem): string => {
@@ -322,20 +304,9 @@ const handleDragEnd = () => {
 
 const toggleLinkType = () => {
   isExternalLink.value = !isExternalLink.value;
-  // Очищаем поле ссылки и выбранную страницу при переключении
+  // Очищаем поле ссылки при переключении
   newNavItem.value.link = '';
-  selectedPageLink.value = '';
 };
-
-// Следим за изменением выбранной страницы
-watch(selectedPageLink, (newValue) => {
-  if (newValue) {
-    newNavItem.value.link = newValue;
-  } else if (!isExternalLink.value) {
-    // Если радиокнопка не выбрана и это внутренняя страница, очищаем ссылку
-    newNavItem.value.link = '';
-  }
-});
 
 // Функция переключения типа ссылки для редактирования
 const toggleEditLinkType = (item: INavItem) => {
@@ -344,30 +315,9 @@ const toggleEditLinkType = (item: INavItem) => {
   const itemId = item.id;
   editItemExternalLink.value[itemId] = !editItemExternalLink.value[itemId];
 
-  // Очищаем поле ссылки и выбранную страницу при переключении
+  // Очищаем поле ссылки при переключении
   item.link = '';
-  editItemSelectedPage.value[itemId] = '';
 };
-
-// Следим за изменением выбранной страницы при редактировании
-watch(
-  editItemSelectedPage,
-  (newValues) => {
-    Object.keys(newValues).forEach((itemIdStr) => {
-      const itemId = parseInt(itemIdStr);
-      const selectedLink = newValues[itemId];
-      const item = navItems.value.find((item) => item.id === itemId);
-
-      if (item && selectedLink) {
-        item.link = selectedLink;
-      } else if (item && !editItemExternalLink.value[itemId]) {
-        // Если радиокнопка не выбрана и это внутренняя страница, очищаем ссылку
-        item.link = '';
-      }
-    });
-  },
-  { deep: true }
-);
 </script>
 
 <template>
@@ -428,33 +378,28 @@ watch(
                     placeholder="Например: https://example.com"
                   />
                 </label>
-
-                <div v-if="!isExternalLink" class="radio-pages-wrapper">
-                  <span class="add-nav-item-label-text"
-                    >Выберите страницу *</span
-                  >
-                  <label class="radio-page-item">
-                    <input
-                      type="radio"
-                      value="/"
-                      v-model="selectedPageLink"
-                      class="radio-page-input"
-                    />
-                    <span class="radio-page-text">Главная страница</span>
-                  </label>
-                  <label
-                    v-for="page in store.availablePages as any"
-                    :key="page.title"
-                    class="radio-page-item"
-                  >
-                    <input
-                      type="radio"
-                      :value="page.path || page.link || page.url || ''"
-                      v-model="selectedPageLink"
-                      class="radio-page-input"
-                    />
-                    <span class="radio-page-text">{{ page.title }}</span>
-                  </label>
+                <div v-else>
+                  <h2>Выберите страницу*</h2>
+                  <ul class="page-items-list list-style-none m-0 p-0">
+                    <li
+                      v-for="page in pageItems"
+                      :key="page.link"
+                      class="page-item"
+                      :class="{ selected: newNavItem.link === page.link }"
+                    >
+                      <label class="page-item-label">
+                        <span class="page-item-text">{{ page.title }}</span>
+                        <input
+                          class="radio-input-page"
+                          :id="`edit-page-${page.title}`"
+                          name="edit-page"
+                          type="radio"
+                          v-model="newNavItem.link"
+                          :value="page.link"
+                        />
+                      </label>
+                    </li>
+                  </ul>
                 </div>
 
                 <label class="add-nav-item-label file">
@@ -473,7 +418,7 @@ watch(
               <MyBtn
                 variant="primary"
                 @click="addNavItem"
-                :disabled="!newNavItem.title.trim() || !newNavItem.link.trim()"
+                :disabled="!isFormValid"
               >
                 Добавить
               </MyBtn>
@@ -571,36 +516,30 @@ watch(
                           placeholder="Например: https://example.com"
                         />
                       </label>
-
-                      <div
-                        v-if="!editItemExternalLink[item.id as number]"
-                        class="radio-pages-wrapper"
-                      >
-                        <span class="add-nav-item-label-text"
-                          >Выберите страницу *</span
-                        >
-                        <label class="radio-page-item">
-                          <input
-                            type="radio"
-                            value="/"
-                            v-model="editItemSelectedPage[item.id as number]"
-                            class="radio-page-input"
-                          />
-                          <span class="radio-page-text">Главная страница</span>
-                        </label>
-                        <label
-                          v-for="page in store.availablePages as any"
-                          :key="page.title"
-                          class="radio-page-item"
-                        >
-                          <input
-                            type="radio"
-                            :value="page.path || page.link || page.url || ''"
-                            v-model="editItemSelectedPage[item.id as number]"
-                            class="radio-page-input"
-                          />
-                          <span class="radio-page-text">{{ page.title }}</span>
-                        </label>
+                      <div v-else>
+                        <h2>Выберите страницу*</h2>
+                        <ul class="page-items-list list-style-none m-0 p-0">
+                          <li
+                            v-for="page in pageItems"
+                            :key="page.link"
+                            class="page-item"
+                            :class="{ selected: item.link === page.link }"
+                          >
+                            <label class="page-item-label">
+                              <span class="page-item-text">{{
+                                page.title
+                              }}</span>
+                              <input
+                                class="radio-input-page"
+                                :id="`edit-page-${item.id}-${page.link}`"
+                                :name="`edit-page-${item.id}`"
+                                type="radio"
+                                v-model="item.link"
+                                :value="page.link"
+                              />
+                            </label>
+                          </li>
+                        </ul>
                       </div>
 
                       <label class="file">
@@ -878,34 +817,55 @@ watch(
   }
 }
 
-.radio-pages-wrapper {
+.page-items-list {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-top: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
-.radio-page-item {
+:deep(.page-item-label) {
+  position: relative;
+  padding: 10px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  gap: 10px;
+  background-color: #363535;
+  color: #ffffff;
+  border-radius: 5px;
+  transition: all 0.3s ease;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 5px;
   }
-}
 
-.radio-page-input {
-  margin: 0;
-  accent-color: #007bff;
-}
+  &:has(input[type='radio']:checked) {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 5px;
+  }
 
-.radio-page-text {
-  color: #ffffff;
-  font-size: 0.95em;
+  & .radio-input-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    & input[type='radio'] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      -ms-appearance: none;
+      -o-appearance: none;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+  }
 }
 </style>

@@ -140,25 +140,17 @@ const mainNavStore = defineStore('mainNavStore', () => {
     }
   };
 
-  const getAvailablePages = async () => {
+  const getAvailablePages = async (url: string) => {
     try {
       isLoading.value = true;
       error.value = null;
 
-      const response = await fetch(
-        '/server/php/admin/api/pages/available_pages.php'
-      );
+      const response = await fetchWithCors(url);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data.success && data.data) {
-        availablePages.value = data.data;
+      if (response.success && response.data) {
+        availablePages.value = response.data;
       } else {
-        throw new Error(data.error || 'Failed to load available pages');
+        throw new Error(response.error || 'Failed to load available pages');
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error';
