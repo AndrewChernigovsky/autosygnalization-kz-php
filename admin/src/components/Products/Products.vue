@@ -85,6 +85,7 @@ const isImageUploading = (productId: string, index: number | null) => {
 };
 
 async function saveChanges(product: ProductI) {
+  console.log('[Products.vue] saveChanges called', product);
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
@@ -95,6 +96,8 @@ async function saveChanges(product: ProductI) {
     background: '#333',
     color: '#fff',
   });
+
+  console.log(product, 'product');
 
   const updated: boolean = await updateProduct(product);
 
@@ -268,7 +271,7 @@ const getCategoryName = (categoryKey: string) => {
 
 const groupedProducts = computed(() => {
   return products.value.reduce((acc, product) => {
-    const category = product.category_key || 'uncategorized';
+    const category = product.category || 'uncategorized';
     if (!acc[category]) {
       acc[category] = [];
     }

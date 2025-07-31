@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useIframeStore } from './stores/iframeStore';
 import Menu from './UI/Menu.vue';
+<<<<<<< HEAD
+=======
 // import test from './views/test.vue';
 
 const isSidebarOpen = ref(false);
@@ -16,26 +16,12 @@ function toggleSidebar() {
     hasSidebarBeenOpened.value = true;
   }
 }
+>>>>>>> 82a4a47595830b048a1fc4b09ce8743992d95a97
 </script>
 
 <template>
   <div class="app-container">
     <Menu />
-    <aside :class="{ 'sidebar-open': isSidebarOpen }">
-      <button @click="toggleSidebar" class="toggle-btn">
-        {{ isSidebarOpen ? '◀' : '▶' }}
-      </button>
-      <div class="sidebar-content">
-        <iframe
-          v-if="hasSidebarBeenOpened"
-          :key="iframeKey"
-          src="http://localhost:3000/"
-          width="100%"
-          height="100%"
-          frameborder="0"
-        ></iframe>
-      </div>
-    </aside>
     <main class="main-content">
       <router-view />
     </main>
@@ -46,19 +32,6 @@ function toggleSidebar() {
 .app-container {
   display: flex;
   height: 100vh;
-}
-
-aside {
-  width: 50px;
-  height: 100%;
-  position: relative;
-  transition: width 0.3s ease;
-  overflow: hidden;
-  border-right: 1px solid #ccc;
-}
-
-aside.sidebar-open {
-  width: 100vw;
 }
 
 .toggle-btn {
@@ -80,10 +53,6 @@ aside.sidebar-open {
   border-radius: 5px 0 0 5px;
 }
 
-aside.sidebar-open .toggle-btn {
-  right: 0;
-}
-
 .sidebar-content {
   width: 100%;
   height: 100%;
@@ -91,22 +60,10 @@ aside.sidebar-open .toggle-btn {
   transition: opacity 0.3s ease;
 }
 
-aside.sidebar-open .sidebar-content {
-  opacity: 1;
-}
-
-iframe {
-  display: block;
-}
-
 .main-content {
   flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
   transition: all 0.3s ease;
-}
-
-aside.sidebar-open + .main-content {
-  display: none;
 }
 </style>

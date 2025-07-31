@@ -37,6 +37,11 @@ function closeMenu() {
 }
 </script>
 
+<script lang="ts">
+export default {
+  name: 'Menu',
+};
+</script>
 <style scoped lang="scss">
 .burger-menu {
   position: fixed;
