@@ -12,7 +12,7 @@ interface INavItem {
   link: string;
   icon_path: File | string | null;
   icon_path_url?: string | null;
-  order?: number;
+  sort_order?: number;
   isActive?: boolean;
 }
 
@@ -136,10 +136,10 @@ const deleteNavItem = async (item: INavItem) => {
 };
 
 const updateNavItemsOrder = async (
-  orderData: { id: number; order: number }[]
+  orderData: { id: number; sort_order: number }[]
 ) => {
   try {
-    const response = await fetch(`${API_BASE_URL}?action=update-order`, {
+    const response = await fetch(`${API_BASE_URL}?action=update-sort_order`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -273,16 +273,16 @@ const handleDrop = async (event: DragEvent, targetItem: INavItem) => {
     reorderedItems.splice(targetIndex, 0, movedItem);
 
     // Обновляем порядковые номера
-    const orderData: { id: number; order: number }[] = [];
+    const orderData: { id: number; sort_order: number }[] = [];
     reorderedItems.forEach((item, index) => {
       const newOrder = index + 1;
       if (item.id) {
         orderData.push({
           id: item.id,
-          order: newOrder,
+          sort_order: newOrder,
         });
         // Обновляем локальные данные
-        item.order = newOrder;
+        item.sort_order = newOrder;
       }
     });
 

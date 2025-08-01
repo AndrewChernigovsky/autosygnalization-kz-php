@@ -18,7 +18,6 @@ import Header from './components/layout/Header/Header.vue';
 
 <style scoped lang="scss">
 .app-container {
-  display: flex;
   height: 100vh;
 }
 
