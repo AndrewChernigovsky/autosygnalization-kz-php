@@ -1,15 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-
-interface LinkData {
-  links_data_id: number;
-  name: string;
-  link: string;
-  source_table: string;
-}
+import type { LinkData } from '../../types/FooterLinks';
 
 interface Props {
-  modelValue: string;
+  modelValue: LinkData | null;
   links: LinkData[];
   label?: string;
   id?: string;
@@ -30,14 +24,10 @@ const selectedValue = computed({
 
 <template>
   <div class="form-group">
-    <label v-if="props.label" :for="props.id">{{ props.label }}</label>
-    <select :id="props.id" v-model="selectedValue">
-      <option disabled value="">-- Выберите ссылку --</option>
-      <option
-        v-for="link in props.links"
-        :key="link.links_data_id"
-        :value="link.link"
-      >
+    <label v-if="label" :for="id">{{ label }}</label>
+    <select :id="id" v-model="selectedValue" class="form-input">
+      <option :value="null" disabled>-- Выберите ссылку --</option>
+      <option v-for="link in links" :key="link.links_data_id" :value="link">
         {{ link.name }}
       </option>
     </select>
@@ -46,12 +36,17 @@ const selectedValue = computed({
 
 <style scoped>
 .form-group {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   gap: 8px;
   margin-bottom: 1rem;
+  flex-grow: 0;
+  align-items: flex-start;
 }
 label {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 0;
   font-weight: 500;
   font-size: 0.9rem;
 }
@@ -61,6 +56,6 @@ select {
   border: 1px solid #ccc;
   width: 100%;
   max-width: 400px;
-  background-color: #fff;
+  background-color: black;
 }
 </style>

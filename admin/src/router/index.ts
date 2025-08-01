@@ -10,6 +10,7 @@ import Sertificates from '../views/Sertificates.vue';
 import MyMainNav from '../views/MyMainNav.vue';
 import Works from '../views/Works.vue';
 import Footer from '../views/Footer.vue';
+import NewFooter from '../views/NewFooter.vue';
 
 export const routes = [
   {
@@ -66,6 +67,11 @@ export const routes = [
     path: '/footer',
     name: 'Футер',
     component: Footer,
+  },
+  {
+    path: '/new-footer',
+    name: 'Новый футер',
+    component: NewFooter,
   },
 ];
 
