@@ -29,15 +29,13 @@ function updateFilterCounts($count_category_austosignals_arr, $products)
 {
   $count = [];
 
-  foreach ($products['category'] as $items) {
-    foreach ($items as $product) {
-      if (isset($product['autosygnals']) && is_array($product['autosygnals'])) {
-        foreach ($product['autosygnals'] as $filter) {
-          if (isset($count[$filter])) {
-            $count[$filter]++;
-          } else {
-            $count[$filter] = 1;
-          }
+  foreach ($products as $product) {
+    if (isset($product['autosygnals']) && is_array($product['autosygnals'])) {
+      foreach ($product['autosygnals'] as $filter) {
+        if (isset($count[$filter])) {
+          $count[$filter]++;
+        } else {
+          $count[$filter] = 1;
         }
       }
     }

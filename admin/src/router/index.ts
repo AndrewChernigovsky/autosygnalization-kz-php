@@ -9,6 +9,7 @@ import Advantage from '../views/Advantage.vue';
 import Sertificates from '../views/Sertificates.vue';
 import MyMainNav from '../views/MyMainNav.vue';
 import Works from '../views/Works.vue';
+import Footer from '../views/Footer.vue';
 
 export const routes = [
   {
@@ -60,6 +61,11 @@ export const routes = [
     path: '/works',
     name: 'Работы',
     component: Works,
+  },
+  {
+    path: '/footer',
+    name: 'Футер',
+    component: Footer,
   },
 ];
 

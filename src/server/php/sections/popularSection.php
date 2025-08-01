@@ -13,7 +13,7 @@ function popularSection(): string
   $pathHref = "/catalog?SELECT=name&PAGE=1";
 
   // Если товаров нет, возвращаем сообщение об отсутствии товаров
-  if (empty($products['category'])) {
+  if (empty($products)) {
     return <<<HTML
 <section class="popular" id="popular">
   <div class="container">
@@ -33,36 +33,34 @@ HTML;
       <div class="swiper swiper-popular">
         <ul class="popular__list swiper-wrapper list-style-none">
           <?php
-          foreach ($products['category'] as $category):
-            foreach ($category as $product):
-              if (!empty($product['popular']) && $product['popular'] === true): ?>
-                <li class="popular__item swiper-slide">
-                  <a href="<?= htmlspecialchars($product['link'] ?? ''); ?>" class="popular__item-bg">
-                    <div class="swiper swiper-popular-gallery">
-                      <div class="swiper-wrapper">
-                        <?php foreach ($product['gallery'] as $image): ?>
-                          <?= $card->getCard($image); ?>
-                        <?php endforeach; ?>
-                      </div>
-                      <div class="swiper-button-prev"></div>
-                      <div class="swiper-button-next"></div>
+          foreach ($products as $product):
+            if (!empty($product['is_popular']) && $product['is_popular'] === true): ?>
+              <li class="popular__item swiper-slide">
+                <a href="<?= htmlspecialchars($product['link'] ?? ''); ?>" class="popular__item-bg">
+                  <div class="swiper swiper-popular-gallery">
+                    <div class="swiper-wrapper">
+                      <?php foreach ($product['gallery'] as $image): ?>
+                        <?= $card->getCard($image); ?>
+                      <?php endforeach; ?>
                     </div>
-                    <h3 class="popular__item-title"><?= htmlspecialchars($product['title'] ?? ''); ?></h3>
-                    <p class="popular__item-block">
-                      <span class="popular__item-price"><?= htmlspecialchars($product['price'] ?? ''); ?></span>
-                      <span class="popular__item-currency"><?= htmlspecialchars($product['currency'] ?? ''); ?></span>
-                    </p>
-                  </a>
-                  <div class="popular__item-buttons">
-                    <a class="popular__item-link link y-button-secondary"
-                      href="<?= htmlspecialchars($product['link'] ?? ''); ?>">Подробнее</a>
-                    <a class="popular__item-link link y-button-primary cart-button" href="/cart"
-                      data-cost="<?= htmlspecialchars($product['price'] ?? ''); ?>"
-                      data-id="<?= htmlspecialchars($product['id'] ?? ''); ?>">Купить</a>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-button-next"></div>
                   </div>
-                </li>
-              <?php endif; ?>
-            <?php endforeach; ?>
+                  <h3 class="popular__item-title"><?= htmlspecialchars($product['title'] ?? ''); ?></h3>
+                  <p class="popular__item-block">
+                    <span class="popular__item-price"><?= htmlspecialchars($product['price'] ?? ''); ?></span>
+                    <span class="popular__item-currency"><?= htmlspecialchars($product['currency'] ?? ''); ?></span>
+                  </p>
+                </a>
+                <div class="popular__item-buttons">
+                  <a class="popular__item-link link y-button-secondary"
+                    href="<?= htmlspecialchars($product['link'] ?? ''); ?>">Подробнее</a>
+                  <a class="popular__item-link link y-button-primary cart-button" href="/cart"
+                    data-cost="<?= htmlspecialchars($product['price'] ?? ''); ?>"
+                    data-id="<?= htmlspecialchars($product['id'] ?? ''); ?>">Купить</a>
+                </div>
+              </li>
+            <?php endif; ?>
           <?php endforeach; ?>
         </ul>
         <div class="swiper-pagination"></div>
