@@ -112,7 +112,7 @@ public function getAllContact(array $types = [])
   public function getMap()
   {
       try {
-          $query = "SELECT link as link FROM Contacts WHERE type = 'map' ORDER BY contact_id ASC";
+          $query = "SELECT link as link FROM Contacts WHERE type = 'Карта' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
@@ -153,7 +153,7 @@ public function getAllContact(array $types = [])
   public function getPhones()
   {
       try {
-          $query = "SELECT content as phone FROM Contacts WHERE type = 'main-phone' ORDER BY contact_id ASC";
+          $query = "SELECT content as phone FROM Contacts WHERE type = 'Основной телефон' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
@@ -179,7 +179,7 @@ public function getAllContact(array $types = [])
   public function getContactPhones()
   {
       try {
-          $query = "SELECT content as phone, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'contact-phone' ORDER BY contact_id ASC";
+          $query = "SELECT content as phone, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Контактный телефон' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 

@@ -89,32 +89,28 @@ export default class PrintDocument {
   populateContainer(data) {
     const getByType = (type) => data.filter((item) => item.type === type);
 
-    const phones = getByType('contact-phone')
+    const phones = getByType('Основной телефон')
       .map((item) => `<p>${item.title} ${item.content}</p>`)
       .join('');
 
-    const socials = getByType('social')
+    const socials = getByType('Социальные сети')
       .map((item) => `<p>${item.title} ${item.content}</p>`)
       .join('');
 
-    const address = getByType('address')
+    const address = getByType('Адрес')
       .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
       .join('');
 
-    const email = getByType('email')
+    const email = getByType('Электронная почта')
       .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
       .join('');
 
-    const site = getByType('site')
+    const site = getByType('Сайт')
       .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
       .join('');
 
-    const schedule = getByType('schedule')
+    const schedule = getByType('Расписание')
       .map((item) => `<p><strong>${item.title}</strong> ${item.content}</p>`)
-      .join('');
-
-    const locationDescription = getByType('location-description')
-      .map((item) => `<h3>${item.title}</h3><p>${item.content}</p>`)
       .join('');
 
     this.container.innerHTML = `
@@ -143,9 +139,6 @@ export default class PrintDocument {
         ${schedule}
       </div>
 
-      <div class="section">
-        ${locationDescription}
-      </div>
 
       <p class="footer">БУДЕМ РАДЫ ВИДЕТЬ ВАС В НАШЕМ УСТАНОВОЧНОМ ЦЕНТРЕ!</p>
     </div>
