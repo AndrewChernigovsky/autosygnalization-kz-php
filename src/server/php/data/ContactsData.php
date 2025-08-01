@@ -39,7 +39,7 @@ public function __construct()
   public function getSchedule()
   {
       try {
-          $query = "SELECT content as text, title as title, icon_path as svg_path FROM Contacts WHERE type = 'schedule' ORDER BY contact_id ASC";
+          $query = "SELECT content as text, title as title, icon_path as svg_path FROM Contacts WHERE type = 'Расписание' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
@@ -133,7 +133,7 @@ public function getAllContact(array $types = [])
   public function getEmail()
   {
       try {
-          $query = "SELECT content as email, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'email' ORDER BY contact_id ASC";
+          $query = "SELECT content as email, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Электронная почта' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
@@ -205,7 +205,7 @@ public function getAllContact(array $types = [])
   public function getSocial()
   {
       try {
-          $query = "SELECT content as content, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'social' ORDER BY contact_id ASC";
+          $query = "SELECT content as content, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Социальные сети' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
@@ -240,7 +240,7 @@ public function getAllContact(array $types = [])
   public function getAddress()
   {
       try {
-          $query = "SELECT content as address, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'address' ORDER BY contact_id ASC";
+          $query = "SELECT content as address, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Адрес' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
@@ -260,7 +260,7 @@ public function getAllContact(array $types = [])
   public function getLocationDescription()
   {
       try {
-          $query = "SELECT content as path, title as title, FROM Contacts WHERE type = 'location-description' ORDER BY contact_id ASC";
+          $query = "SELECT content as path, title as title, FROM Contacts WHERE type = 'Как к нам добраться' ORDER BY contact_id ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 

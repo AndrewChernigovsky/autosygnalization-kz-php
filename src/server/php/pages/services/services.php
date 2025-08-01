@@ -23,6 +23,7 @@ $title = 'Автосигнализации';
 $header = new Header();
 $footer = new Footer();
 $head = new Head($title, [], []);
+error_log(print_r($services, true) . ' SSS');
 ?>
 
 <!DOCTYPE html>
@@ -35,13 +36,12 @@ $head = new Head($title, [], []);
   <main class="main">
     <section class="service" id="service">
       <div class="container">
-        <h2 class="service__title">наши услуги</h2>
+        <h2 class="service__title1">наши услуги</h2>
         <div class="swiper swiper-service">
           <ul class="service__list service__list--component list-style-none swiper-wrapper component">
-            <?php foreach ($services as $index => $service): ?>
+            <?php foreach ($services[0] as $index => $service): ?>
               <li class="service__item swiper-slide">
                 <?php
-                error_log(print_r($service, true) . ' 222');
                 echo $card->initCard($service);
                 ?>
               </li>
