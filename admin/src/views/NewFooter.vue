@@ -2,13 +2,7 @@
 import { ref, onMounted } from 'vue';
 import fetchWithCors from '../utils/fetchWithCors';
 import LinkSelector from '../components/UI/LinkSelector.vue';
-
-interface LinkData {
-  links_data_id: number;
-  name: string;
-  link: string;
-  source_table: string;
-}
+import type { LinkData } from '../types/links';
 
 const allLinksData = ref<LinkData[]>([]);
 const selectedLink = ref<string>('');
@@ -32,18 +26,12 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="all-links-data">
-    <LinkSelector
-      v-model="selectedLink"
-      :links="allLinksData"
-      label="Выберите ссылку"
-      id="footer-link-selector"
-    />
-    <div v-if="selectedLink" class="selected-info">
-      <p>Выбранная ссылка:</p>
-      <code>{{ selectedLink }}</code>
-    </div>
-  </div>
+  <LinkSelector
+    v-model="selectedLink"
+    :links="allLinksData"
+    label="Выберите ссылку"
+    id="footer-link-selector"
+  />
 </template>
 
 <style scoped>

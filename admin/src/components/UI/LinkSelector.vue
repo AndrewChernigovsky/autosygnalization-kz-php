@@ -1,12 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue';
-
-interface LinkData {
-  links_data_id: number;
-  name: string;
-  link: string;
-  source_table: string;
-}
+import type { LinkData } from '../../types/links';
 
 interface Props {
   modelValue: string;
@@ -30,14 +24,10 @@ const selectedValue = computed({
 
 <template>
   <div class="form-group">
-    <label v-if="props.label" :for="props.id">{{ props.label }}</label>
-    <select :id="props.id" v-model="selectedValue">
+    <label v-if="label" for="link">{{ label }}</label>
+    <select id="link" v-model="selectedValue" class="form-input">
       <option disabled value="">-- Выберите ссылку --</option>
-      <option
-        v-for="link in props.links"
-        :key="link.links_data_id"
-        :value="link.link"
-      >
+      <option v-for="link in links" :key="link.link" :value="link.link">
         {{ link.name }}
       </option>
     </select>
