@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 
 const mainNavStore = defineStore('mainNavStore', () => {
   const navItems = ref([]);
+  const availablePages = ref([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
@@ -21,7 +22,6 @@ const mainNavStore = defineStore('mainNavStore', () => {
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error';
-      console.error('Ошибка загрузки навигации:', err);
     } finally {
       isLoading.value = false;
     }
@@ -58,7 +58,6 @@ const mainNavStore = defineStore('mainNavStore', () => {
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error';
-      console.error('Ошибка добавления навигации:', err);
       await Swal.fire({
         title: 'Ошибка!',
         text: `Не удалось добавить элемент навигации: ${error.value}`,
@@ -100,7 +99,6 @@ const mainNavStore = defineStore('mainNavStore', () => {
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error';
-      console.error('Ошибка обновления навигации:', err);
       await Swal.fire({
         title: 'Ошибка!',
         text: `Не удалось обновить элемент навигации: ${error.value}`,
@@ -142,9 +140,30 @@ const mainNavStore = defineStore('mainNavStore', () => {
     }
   };
 
+  const getAvailablePages = async (url: string) => {
+    try {
+      isLoading.value = true;
+      error.value = null;
+
+      const response = await fetchWithCors(url);
+
+      if (response.success && response.data) {
+        availablePages.value = response.data;
+      } else {
+        throw new Error(response.error || 'Failed to load available pages');
+      }
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : 'Unknown error';
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return {
     navItems,
+    availablePages,
     getNavItems,
+    getAvailablePages,
     addNavItem,
     updateNavItem,
     deleteNavItem,

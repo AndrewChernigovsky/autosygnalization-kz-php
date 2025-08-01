@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import mainNavStore from '../stores/mainNavStore';
 import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyInput from '../components/UI/MyInput.vue';
@@ -18,6 +18,8 @@ interface INavItem {
 
 const API_BASE_URL = '/server/php/admin/api/navigation/navigation.php';
 
+const API_PAGE_URL = '/server/php/admin/api/pages/available_pages.php';
+
 const store = mainNavStore();
 
 const navItems = ref<INavItem[]>([]);
@@ -29,16 +31,39 @@ const newNavItem = ref<INavItem>({
   icon_path_url: null,
 });
 
+const pageItems = ref<{ title: string; link: string }[]>([]);
+
 const isLoading = ref(false);
 const error = ref<string | null>(null);
 const activeEditItem = ref<INavItem | null>(null);
+const isExternalLink = ref(false);
+
+const editItemExternalLink = ref<Record<number, boolean>>({});
 
 // Добавляем переменные для drag and drop
 const draggedItem = ref<INavItem | null>(null);
 const dragOverItem = ref<INavItem | null>(null);
 
+// Computed для валидации формы добавления
+const isFormValid = computed(() => {
+  const hasTitle = newNavItem.value.title?.trim();
+  const hasLink = newNavItem.value.link?.trim();
+
+  if (!hasTitle) return false;
+
+  // Если внешняя ссылка - проверяем что есть ссылка
+  if (isExternalLink.value) {
+    return !!hasLink;
+  }
+
+  // Если внутренняя страница - проверяем что выбрана страница
+  return !!hasLink;
+});
+
 onMounted(async () => {
   await getNavItems();
+  await store.getAvailablePages(API_PAGE_URL);
+  pageItems.value = store.availablePages;
 });
 
 const getNavItems = async () => {
@@ -48,7 +73,6 @@ const getNavItems = async () => {
     navItems.value = store.navItems;
     error.value = store.error;
   } catch (err) {
-    console.error('Ошибка загрузки навигации:', err);
     error.value = 'Ошибка загрузки данных';
   } finally {
     isLoading.value = false;
@@ -56,12 +80,12 @@ const getNavItems = async () => {
 };
 
 const addNavItem = async () => {
-  if (!newNavItem.value.title.trim()) {
+  if (!newNavItem.value.title?.trim()) {
     Swal.fire('Ошибка!', 'Заголовок обязателен для заполнения', 'error');
     return;
   }
 
-  if (!newNavItem.value.link.trim()) {
+  if (!newNavItem.value.link?.trim()) {
     Swal.fire('Ошибка!', 'Ссылка обязательна для заполнения', 'error');
     return;
   }
@@ -84,6 +108,12 @@ const updateNavItem = async (item: INavItem) => {
 
   await store.updateNavItem(API_BASE_URL, item.id as number, item);
   activeEditItem.value = null;
+
+  // Очищаем состояние редактирования после успешного обновления
+  if (item.id) {
+    delete editItemExternalLink.value[item.id];
+  }
+
   await getNavItems();
 };
 
@@ -120,7 +150,6 @@ const updateNavItemsOrder = async (
     const result = await response.json();
 
     if (!result.success) {
-      console.error('Ошибка обновления порядка:', result.error);
       Swal.fire(
         'Ошибка!',
         'Не удалось обновить порядок элементов навигации',
@@ -128,7 +157,6 @@ const updateNavItemsOrder = async (
       );
     }
   } catch (error) {
-    console.error('Ошибка отправки запроса:', error);
     Swal.fire('Ошибка!', 'Не удалось отправить запрос на сервер', 'error');
   }
 };
@@ -140,8 +168,20 @@ const handleRetry = async () => {
 const toggleEditItem = (item: INavItem) => {
   if (activeEditItem.value === item) {
     activeEditItem.value = null;
+    // Очищаем состояние редактирования при закрытии
+    if (item.id) {
+      delete editItemExternalLink.value[item.id];
+    }
   } else {
     activeEditItem.value = item;
+
+    // Инициализируем состояние toggle на основе текущей ссылки
+    if (item.id) {
+      const isExternal =
+        item.link &&
+        (item.link.startsWith('http') || item.link.startsWith('https'));
+      editItemExternalLink.value[item.id] = !!isExternal;
+    }
   }
 };
 
@@ -169,16 +209,11 @@ const resetNewNavItem = () => {
 };
 
 const getImageUrl = (item: INavItem): string => {
-  console.log('getImageUrl called with:', item);
-  console.log('icon_path_url:', item.icon_path_url);
-  console.log('icon_path:', item.icon_path);
-
   if (item.icon_path_url) return item.icon_path_url;
   if (typeof item.icon_path === 'string' && item.icon_path) {
     const fullPath = item.icon_path.startsWith('/')
       ? `http://localhost:5173${item.icon_path}`
       : item.icon_path;
-    console.log('Final image path:', fullPath);
     return fullPath;
   }
   return '';
@@ -266,6 +301,23 @@ const handleDragEnd = () => {
   draggedItem.value = null;
   dragOverItem.value = null;
 };
+
+const toggleLinkType = () => {
+  isExternalLink.value = !isExternalLink.value;
+  // Очищаем поле ссылки при переключении
+  newNavItem.value.link = '';
+};
+
+// Функция переключения типа ссылки для редактирования
+const toggleEditLinkType = (item: INavItem) => {
+  if (!item.id) return;
+
+  const itemId = item.id;
+  editItemExternalLink.value[itemId] = !editItemExternalLink.value[itemId];
+
+  // Очищаем поле ссылки при переключении
+  item.link = '';
+};
 </script>
 
 <template>
@@ -299,16 +351,56 @@ const handleDragEnd = () => {
                     placeholder="Введите заголовок"
                   />
                 </label>
-
-                <label class="add-nav-item-label">
+                <div class="toggle-wrapper">
+                  <div class="toggle-item">
+                    <span class="toggle-item-text">Внутрення страница </span>
+                  </div>
+                  <div class="toggle-btn-wrapper">
+                    <MyBtn
+                      variant="primary"
+                      class="toggle-btn"
+                      :class="{ active: isExternalLink }"
+                      @click="toggleLinkType"
+                    >
+                      <div class="toggle-btn-input"></div>
+                    </MyBtn>
+                  </div>
+                  <div class="toggle-item">
+                    <span class="toggle-item-text">Внешняя ссылка</span>
+                  </div>
+                </div>
+                <label class="add-nav-item-label" v-if="isExternalLink">
                   <span class="add-nav-item-label-text">Ссылка *</span>
                   <MyInput
                     type="text"
                     variant="primary"
                     v-model="newNavItem.link"
-                    placeholder="Например: /about или https://example.com"
+                    placeholder="Например: https://example.com"
                   />
                 </label>
+                <div v-else>
+                  <h2>Выберите страницу*</h2>
+                  <ul class="page-items-list list-style-none m-0 p-0">
+                    <li
+                      v-for="page in pageItems"
+                      :key="page.link"
+                      class="page-item"
+                      :class="{ selected: newNavItem.link === page.link }"
+                    >
+                      <label class="page-item-label">
+                        <span class="page-item-text">{{ page.title }}</span>
+                        <input
+                          class="radio-input-page"
+                          :id="`edit-page-${page.title}`"
+                          name="edit-page"
+                          type="radio"
+                          v-model="newNavItem.link"
+                          :value="page.link"
+                        />
+                      </label>
+                    </li>
+                  </ul>
+                </div>
 
                 <label class="add-nav-item-label file">
                   <span class="add-nav-item-label-text">Иконка</span>
@@ -326,7 +418,7 @@ const handleDragEnd = () => {
               <MyBtn
                 variant="primary"
                 @click="addNavItem"
-                :disabled="!newNavItem.title.trim() || !newNavItem.link.trim()"
+                :disabled="!isFormValid"
               >
                 Добавить
               </MyBtn>
@@ -345,27 +437,39 @@ const handleDragEnd = () => {
                 }"
                 v-for="item in navItems"
                 :key="item.id"
-                draggable="true"
-                @dragstart="handleDragStart($event, item)"
                 @dragover="handleDragOver($event)"
                 @dragenter="handleDragEnter($event, item)"
                 @dragleave="handleDragLeave($event)"
                 @drop="handleDrop($event, item)"
-                @dragend="handleDragEnd"
               >
                 <div class="item-header">
-                  <div class="item-info">
-                    <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
-                    <MyInput
-                      v-if="activeEditItem === item"
-                      type="text"
-                      variant="primary"
-                      v-model="item.title"
-                      placeholder="Заголовок"
-                    />
-                    <span v-if="activeEditItem !== item" class="item-link">{{
-                      item.link
-                    }}</span>
+                  <div class="item-header-wrapper">
+                    <MyBtn
+                      class="d-and-d-btn"
+                      draggable="true"
+                      @dragstart="handleDragStart($event, item)"
+                      @dragend="handleDragEnd"
+                    >
+                      <img
+                        width="20px"
+                        height="20px"
+                        src="/src/assets/d-and-d.svg"
+                        alt="drag-and-drop"
+                      />
+                    </MyBtn>
+                    <div class="item-info">
+                      <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
+                      <MyInput
+                        v-if="activeEditItem === item"
+                        type="text"
+                        variant="primary"
+                        v-model="item.title"
+                        placeholder="Заголовок"
+                      />
+                      <span v-if="activeEditItem !== item" class="item-link">{{
+                        item.link
+                      }}</span>
+                    </div>
                   </div>
 
                   <MyBtn variant="primary" @click="toggleEditItem(item)">
@@ -379,15 +483,64 @@ const handleDragEnd = () => {
                 >
                   <div class="item-content-wrapper">
                     <div class="item-content-inputs">
-                      <label>
+                      <div class="toggle-wrapper">
+                        <div class="toggle-item">
+                          <span class="toggle-item-text"
+                            >Внутрення страница
+                          </span>
+                        </div>
+                        <div class="toggle-btn-wrapper">
+                          <MyBtn
+                            variant="primary"
+                            class="toggle-btn"
+                            :class="{ active: editItemExternalLink[item.id as number] }"
+                            @click="toggleEditLinkType(item)"
+                          >
+                            <div class="toggle-btn-input"></div>
+                          </MyBtn>
+                        </div>
+                        <div class="toggle-item">
+                          <span class="toggle-item-text">Внешняя ссылка</span>
+                        </div>
+                      </div>
+
+                      <label
+                        class="add-nav-item-label"
+                        v-if="editItemExternalLink[item.id as number]"
+                      >
                         <span class="add-nav-item-label-text">Ссылка *</span>
                         <MyInput
                           type="text"
                           variant="primary"
                           v-model="item.link as string"
-                          placeholder="Например: /about или https://example.com"
+                          placeholder="Например: https://example.com"
                         />
                       </label>
+                      <div v-else>
+                        <h2>Выберите страницу*</h2>
+                        <ul class="page-items-list list-style-none m-0 p-0">
+                          <li
+                            v-for="page in pageItems"
+                            :key="page.link"
+                            class="page-item"
+                            :class="{ selected: item.link === page.link }"
+                          >
+                            <label class="page-item-label">
+                              <span class="page-item-text">{{
+                                page.title
+                              }}</span>
+                              <input
+                                class="radio-input-page"
+                                :id="`edit-page-${item.id}-${page.link}`"
+                                :name="`edit-page-${item.id}`"
+                                type="radio"
+                                v-model="item.link"
+                                :value="page.link"
+                              />
+                            </label>
+                          </li>
+                        </ul>
+                      </div>
 
                       <label class="file">
                         <span class="add-nav-item-label-text">Иконка</span>
@@ -502,7 +655,6 @@ const handleDragEnd = () => {
   box-shadow: inset 0 0 0 1px #ffffff;
   padding: 16px;
   border-radius: 8px;
-  cursor: move;
   transition: all 0.3s ease;
 
   &:hover {
@@ -530,11 +682,43 @@ const handleDragEnd = () => {
   gap: 30px;
 }
 
+.item-header-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+
+  & .btn {
+    min-width: 20px;
+    max-width: 20px;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    border: none;
+  }
+}
+
+.d-and-d-btn {
+  cursor: grab !important;
+  opacity: 0.7;
+  transition: all 0.2s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .item-info {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  margin-bottom: 10px;
 }
 
 .item-info h3 {
@@ -595,5 +779,93 @@ const handleDragEnd = () => {
 .empty-state p {
   margin: 0;
   font-style: italic;
+}
+
+.toggle-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 40px;
+  height: 20px;
+  border-radius: 25px;
+  padding: 1px;
+  transition: all 0.3s ease;
+
+  &.active {
+    background: linear-gradient(180deg, #10172d 0%, #0031bc 100%);
+
+    & .toggle-btn-input {
+      margin-right: 0;
+      margin-left: auto;
+    }
+  }
+
+  & .toggle-btn-input {
+    margin-right: auto;
+    margin-left: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #fff;
+    transition: all 0.3s ease;
+  }
+}
+
+.page-items-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+:deep(.page-item-label) {
+  position: relative;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background-color: #363535;
+  color: #ffffff;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 5px;
+  }
+
+  &:has(input[type='radio']:checked) {
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 5px;
+  }
+
+  & .radio-input-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    & input[type='radio'] {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      -ms-appearance: none;
+      -o-appearance: none;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+  }
 }
 </style>
