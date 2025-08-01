@@ -5,8 +5,8 @@ import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyInput from '../components/UI/MyInput.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
 import Swal from 'sweetalert2';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 
 interface IContacts {
   contact_id?: number;
@@ -18,6 +18,18 @@ interface IContacts {
   type: string;
   order?: number;
 }
+
+const quillOptions = {
+  placeholder: 'Введите текст...',
+  formats: ['bold', 'italic', 'underline', 'list', 'link'],
+  modules: {
+    toolbar: [
+      ['bold', 'italic', 'underline'],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      ['link'],
+    ],
+  },
+};
 
 const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
 
@@ -59,9 +71,7 @@ const activeEditItem = ref<IContacts | null>(null);
 const draggedItem = ref<IContacts | null>(null);
 const dragOverItem = ref<IContacts | null>(null);
 
-const needsQuill = (type: string) => {
-  return ['Адрес', 'Расписание', 'Как к нам добраться'].includes(type);
-};
+// Функция удалена - теперь используем QuillEditor везде где content: true
 
 // Функция для определения, какие поля должны быть доступны для каждого типа
 const getAvailableFields = (type: string) => {
@@ -94,7 +104,7 @@ const getAvailableFields = (type: string) => {
     case 'Сайт':
       return {
         title: true,
-        content: false,
+        content: true,
         link: true,
         icon_path: false,
       };
@@ -155,6 +165,8 @@ const getContentFieldLabel = (type: string) => {
       return 'График работы';
     case 'Как к нам добраться':
       return 'Как добратся';
+    case 'Сайт':
+      return 'Контент на странице';
     default:
       return 'Реквизиты';
   }
@@ -415,29 +427,14 @@ const handleDragEnd = () => {
                   <span class="add-contact-label-text">{{
                     getContentFieldLabel(type)
                   }}</span>
-                  <div v-if="needsQuill(type)" class="quill-editor-wrapper">
+                  <div class="quill-editor-wrapper">
                     <QuillEditor
                       v-model:content="newContact.content"
                       contentType="html"
                       theme="snow"
-                      :options="{
-                        placeholder: 'Введите текст...',
-                        modules: {
-                          toolbar: [
-                            ['bold', 'italic', 'underline'],
-                            [{ list: 'ordered' }, { list: 'bullet' }],
-                            ['link'],
-                          ],
-                        },
-                      }"
+                      :options="quillOptions"
                     />
                   </div>
-                  <MyInput
-                    v-else
-                    type="text"
-                    variant="primary"
-                    v-model="newContact.content"
-                  />
                 </label>
                 <label
                   v-if="getAvailableFields(type).link"
@@ -528,29 +525,14 @@ const handleDragEnd = () => {
                         <span class="add-contact-label-text">{{
                           getContentFieldLabel(item.type)
                         }}</span>
-                        <div v-if="needsQuill(item.type)">
+                        <div class="quill-editor-wrapper">
                           <QuillEditor
                             v-model:content="item.content"
                             contentType="html"
                             theme="snow"
-                            :options="{
-                              placeholder: 'Введите текст...',
-                              modules: {
-                                toolbar: [
-                                  ['bold', 'italic', 'underline'],
-                                  [{ list: 'ordered' }, { list: 'bullet' }],
-                                  ['link'],
-                                ],
-                              },
-                            }"
+                            :options="quillOptions"
                           />
                         </div>
-                        <MyInput
-                          v-else
-                          type="text"
-                          variant="primary"
-                          v-model="item.content as string"
-                        />
                       </label>
                       <label v-if="getAvailableFields(item.type).link">
                         <span class="add-contact-label-text">{{
@@ -765,10 +747,15 @@ const handleDragEnd = () => {
   background-color: #ffffff;
 }
 
+:deep(.ql-toolbar .ql-snow) {
+  z-index: 2;
+}
+
 :deep(.ql-container) {
   max-height: 200px;
   border-radius: 10px;
   border: 1px solid #363535;
+  z-index: 10;
 }
 
 :deep(.ql-toolbar) {

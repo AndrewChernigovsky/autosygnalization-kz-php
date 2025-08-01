@@ -129,8 +129,8 @@ import { API_URL } from '../../../config';
 import Loader from '../../UI/Loader.vue';
 import Swal from 'sweetalert2';
 // @ts-ignore
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import ImageUpload from '../../UI/ImageUpload.vue';
 import { nextTick } from 'vue';
 
