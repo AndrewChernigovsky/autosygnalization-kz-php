@@ -44,6 +44,15 @@ const toolbarOptions = [
   ['clean'],
 ];
 
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
+];
+
 // --- STATE ---
 
 // General
@@ -854,6 +863,7 @@ const leave = (el: Element) => {
                       <QuillEditor
                         theme="snow"
                         :toolbar="toolbarOptions"
+                        :formats="formatsOptions"
                         contentType="html"
                         v-model:content="item.content"
                       />
@@ -926,6 +936,7 @@ const leave = (el: Element) => {
                       <QuillEditor
                         theme="snow"
                         :toolbar="toolbarOptions"
+                        :formats="formatsOptions"
                         contentType="html"
                         v-model:content="slot.content"
                       />

@@ -21,12 +21,14 @@ interface IContacts {
 
 const quillOptions = {
   placeholder: 'Введите текст...',
-  formats: ['bold', 'italic', 'underline', 'list', 'link'],
+  formats: ['header', 'bold', 'italic', 'underline', 'list', 'link'],
   modules: {
     toolbar: [
+      [{ header: [1, 2, 3, false] }],
       ['bold', 'italic', 'underline'],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['link'],
+      ['clean'],
     ],
   },
 };

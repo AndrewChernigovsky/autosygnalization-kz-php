@@ -192,7 +192,8 @@ const handleDeleteClick = (event: Event) => {
     border-radius: 10px;
     color: #000000;
     background-color: #363535;
-    font-size: 34px;
+    font-size: var(--input-size);
+    line-height: var(--input-line-height);
 
     &:hover,
     &:focus {

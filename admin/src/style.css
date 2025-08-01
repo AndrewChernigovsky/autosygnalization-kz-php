@@ -1,98 +1,28 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  --base-color: #ffffff;
+  --base-background: linear-gradient(90deg, #121010 0%, #0E0C0C 100%);
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --text-size: 16px;
+  --text-line-height: 1.5;
+
+  --title-size: 32px;
+  --title-line-height: 1.2;
+
+  --subtitle-size: 24px;
+  --subtitle-line-height: 1.2;
+
+  --link-size: var(--text-size);
+  --link-line-height: var(--text-line-height);
+
+  --btn-size: var(--text-size);
+  --btn-line-height: var(--text-line-height);
+
+  --input-size: var(--text-size);
+  --input-line-height: var(--text-line-height);
+
 }
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-
-button:hover {
-  border-color: #646cff;
-}
-
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-.container {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-}
-
-
-.title {
-  font-size: 1.5rem;
-  color: #2c3e50;
-  margin-bottom: 2rem;
-}
-
-.card {
-  padding: 2em;
-}
-
-#app {
-  width: 100%;
-  height: 100vh;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-
-  a:hover {
-    color: #747bff;
-  }
-
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
-
-/*---------------------------------------------------------------------------------------------------*/
 
 *,
 *::before,
@@ -100,14 +30,25 @@ button:focus-visible {
   box-sizing: border-box;
 }
 
+html {
+  height: 100%;
+}
+
+#app {
+  width: 100%;
+  height: 100%;
+}
 
 .my-page {
   display: flex;
   flex-direction: column;
-
-  background-image: linear-gradient(90deg, #121010 0%, #0E0C0C 100%);
+  font-size: var(--text-size);
+  line-height: var(--text-line-height);
+  min-height: 100%;
+  margin: 0;
+  background-image: var(--base-background);
   font-family: var(--font-family), 'Inter', sans-serif;
-  color: #fff;
+  color: var(--base-color);
 }
 
 .app-container {
@@ -134,8 +75,16 @@ button:focus-visible {
 
 .my-link {
   text-decoration: none;
+  font-size: var(--link-size);
+  line-height: var(--link-line-height);
 }
 
 .my-title {
-  font-size: 32px;
+  font-size: var(--title-size);
+  line-height: var(--title-line-height);
+}
+
+.my-subtitle {
+  font-size: var(--subtitle-size);
+  line-height: var(--subtitle-line-height);
 }

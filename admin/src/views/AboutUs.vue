@@ -21,6 +21,15 @@ const toolbarOptions = [
   ['clean'],
 ];
 
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
+];
+
 const items = ref<AboutUsItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
@@ -406,6 +415,7 @@ onMounted(getAboutUsData);
                 <QuillEditor
                   theme="snow"
                   :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
                   contentType="html"
                   v-model:content="group[0].content"
                 />
@@ -423,6 +433,7 @@ onMounted(getAboutUsData);
               <QuillEditor
                 theme="snow"
                 :toolbar="toolbarOptions"
+                :formats="formatsOptions"
                 contentType="html"
               />
               <button type="submit" class="btn-add">Создать</button>
