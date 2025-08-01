@@ -5,7 +5,7 @@
       <Loader v-if="isLoading" />
       <div v-else class="services-list space-y-2">
         <details
-          v-for="service in localServices"
+          v-for="service in localServices.main"
           :key="service.id"
           class="service-item"
           :class="{
@@ -13,7 +13,6 @@
           }"
           :data-service-id="service.id"
         >
-          {{ console.log(service, 'service') }}
           <summary>{{ service.name }}</summary>
           <div class="service-details">
             <div class="form-group">
@@ -37,7 +36,7 @@
               <ImageUpload
                 :path="getFullImagePath(service.image.src)"
                 @upload-success="(data) => handleImageUpload(data, service.id)"
-                @image-cleared="localServices[service.id].image.src = ''"
+                @image-cleared="service.image.src = ''"
                 :extraData="{ serviceId: service.id }"
                 serviceImage
               />
@@ -76,12 +75,56 @@
         Добавить услугу
       </button>
     </div>
+    <h1>Дополнительные услуги</h1>
+    <div class="theme-dark">
+      <Loader v-if="isLoading" />
+      <div v-else class="services-list space-y-2">
+        <details
+          v-for="service in localServices.added"
+          :key="service.id"
+          class="service-item"
+          :data-service-id="service.id"
+        >
+          <summary>{{ service.title }}</summary>
+          <div class="service-details">
+            <div class="form-group">
+              <label>Название:</label>
+              <input type="text" v-model="service.title" />
+            </div>
+            <div class="form-group">
+              <label>Цена:</label>
+              <input type="number" v-model="service.price" />
+            </div>
+            <div class="service-actions">
+              <button
+                @click="deleteAddedService(service.id)"
+                class="btn-delete"
+              >
+                Удалить
+              </button>
+            </div>
+          </div>
+        </details>
+      </div>
+      <div class="service-actions">
+        <button
+          @click="addAddedService"
+          type="button"
+          class="btn-save with-margin-bottom"
+        >
+          Добавить дополнительную услугу
+        </button>
+        <button @click="saveAllAddedServices" class="btn-save">
+          Сохранить
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import type { Service } from './interfaces/Service';
+import type { Service, AddedService } from './interfaces/Service';
 import { API_URL } from '../../../config';
 import Loader from '../../UI/Loader.vue';
 import Swal from 'sweetalert2';
@@ -98,8 +141,10 @@ const toolbarOptions = [
   ['clean'],
 ];
 
-const services = ref<Record<string, Service>>({});
-const localServices = ref<Record<string, Service>>({});
+const localServices = ref<{ main: Service[]; added: AddedService[] }>({
+  main: [],
+  added: [],
+});
 const isLoading = ref(true);
 const highlightedServiceId = ref<string | null>(null);
 
@@ -107,22 +152,198 @@ function handleImageUpload(
   data: { path: string; filename: string },
   serviceId: string
 ) {
-  if (data.path && localServices.value[serviceId]) {
-    localServices.value[serviceId].image.src = data.path;
+  if (data.path && localServices.value.main.find((s) => s.id === serviceId)) {
+    const service = localServices.value.main.find((s) => s.id === serviceId);
+    if (service) {
+      service.image.src = data.path;
+      Swal.fire({
+        title: 'Успешно!',
+        text: `Изображение ${data.filename} загружено.`,
+        icon: 'success',
+        background: '#333',
+        color: '#fff',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    }
+  }
+}
+
+function deleteAddedService(serviceId: string) {
+  const index = localServices.value.added.findIndex((s) => s.id === serviceId);
+  if (index === -1) return;
+  const service = localServices.value.added[index];
+  // Если это новая услуга (ещё не сохранена на сервере)
+  if (service.id.startsWith('new-')) {
+    localServices.value.added.splice(index, 1);
+    return;
+  }
+  // Для сохранённых услуг — запрос на сервер
+  Swal.fire({
+    title: 'Вы уверены?',
+    text: `Удалить дополнительную услугу "${service.title}"?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Да, удалить!',
+    cancelButtonText: 'Отмена',
+    background: '#333',
+    color: '#fff',
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      try {
+        const response = await fetch(
+          '/server/php/admin/api/services/delete_added_service.php',
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: serviceId }),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Ошибка удаления');
+        }
+        localServices.value.added.splice(index, 1);
+        Swal.fire({
+          title: 'Удалено!',
+          text: 'Дополнительная услуга удалена.',
+          icon: 'success',
+          background: '#333',
+          color: '#fff',
+        });
+      } catch (error: any) {
+        Swal.fire({
+          title: 'Ошибка!',
+          text: 'Не удалось удалить услугу. ' + error.message,
+          icon: 'error',
+          background: '#333',
+          color: '#fff',
+        });
+      }
+    }
+  });
+}
+
+async function saveAllAddedServices() {
+  Swal.fire({
+    title: 'Сохранение...',
+    text: 'Пожалуйста, подождите',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+    background: '#333',
+    color: '#fff',
+  });
+  try {
+    const response = await fetch(
+      '/server/php/admin/api/services/save_added_service.php',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ services: localServices.value.added }),
+      }
+    );
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Ошибка сохранения');
+    }
+    // Можно обновить localServices.added с сервера, если нужно
+    const saved = await response.json();
+    localServices.value.added = saved;
     Swal.fire({
-      title: 'Успешно!',
-      text: `Изображение ${data.filename} загружено.`,
+      title: 'Сохранено!',
+      text: 'Все дополнительные услуги успешно сохранены.',
       icon: 'success',
       background: '#333',
       color: '#fff',
-      timer: 2000,
-      showConfirmButton: false,
+    });
+  } catch (error: any) {
+    Swal.fire({
+      title: 'Ошибка!',
+      text: 'Не удалось сохранить услуги. ' + error.message,
+      icon: 'error',
+      background: '#333',
+      color: '#fff',
     });
   }
 }
 
+function addAddedService() {
+  const existingNewId = localServices.value.added.find((s) =>
+    String(s.id).startsWith('new-')
+  )?.id;
+
+  if (existingNewId) {
+    Swal.fire({
+      title: 'Дополнительная услуга уже добавлена',
+      text: 'Необходимо сначала сохранить уже добавленную дополнительную услугу.',
+      icon: 'warning',
+      background: '#333',
+      color: '#fff',
+    });
+
+    highlightedServiceId.value = null;
+    nextTick(() => {
+      highlightedServiceId.value = existingNewId;
+      setTimeout(() => {
+        if (highlightedServiceId.value === existingNewId) {
+          highlightedServiceId.value = null;
+        }
+      }, 5000);
+
+      const element = document.querySelector(
+        `[data-service-id="${existingNewId}"]`
+      );
+      if (element) {
+        const detailsElement = element as HTMLDetailsElement;
+        detailsElement.open = true;
+        detailsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+
+    return;
+  }
+
+  const newId = `new-${Date.now()}`;
+  const newService: AddedService = {
+    id: newId,
+    title: 'Новая дополнительная услуга',
+    price: 0,
+  };
+  localServices.value.added.push(newService);
+  highlightedServiceId.value = newId;
+
+  setTimeout(() => {
+    if (highlightedServiceId.value === newId) {
+      highlightedServiceId.value = null;
+    }
+  }, 5000);
+
+  Swal.fire({
+    title: 'Добавлена форма для новой дополнительной услуги',
+    text: 'Заполните данные и нажмите "Сохранить".',
+    icon: 'info',
+    background: '#333',
+    color: '#fff',
+    timer: 3000,
+    showConfirmButton: false,
+  });
+
+  nextTick(() => {
+    const element = document.querySelector(`[data-service-id="${newId}"]`);
+    if (element) {
+      const detailsElement = element as HTMLDetailsElement;
+      detailsElement.open = true;
+      detailsElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+}
+
 function addService() {
-  const existingNewId = Object.keys(localServices.value).find((id) =>
+  const existingNewId = Object.keys(localServices.value.main).find((id) =>
     id.startsWith('new-')
   );
 
@@ -168,7 +389,7 @@ function addService() {
     cost: 0,
     currency: 'KZT',
   };
-  localServices.value[newId] = newService;
+  localServices.value.main.push(newService);
   highlightedServiceId.value = newId;
 
   setTimeout(() => {
@@ -200,18 +421,13 @@ function addService() {
 async function fetchServices() {
   try {
     const response = await fetch(
-      `/server/php/api/services/get_all_services.php`
+      '/server/php/api/services/get_all_services.php'
     );
-    if (!response.ok) throw new Error('Failed to fetch services');
     const data = await response.json();
-
-    const servicesWithId = Object.entries(data).reduce((acc, [id, service]) => {
-      acc[id] = { ...(service as Service), id };
-      return acc;
-    }, {} as Record<string, Service>);
-
-    services.value = servicesWithId;
-    localServices.value = JSON.parse(JSON.stringify(servicesWithId));
+    localServices.value = {
+      main: data.main || [],
+      added: data.added || [],
+    };
   } catch (error) {
     console.error(error);
   } finally {
@@ -233,15 +449,21 @@ async function saveService(serviceId: string) {
   });
 
   try {
-    const serviceToSave = localServices.value[serviceId];
+    const serviceToSave = localServices.value.main.find(
+      (s) => s.id === serviceId
+    );
+    if (!serviceToSave) {
+      throw new Error('Service not found');
+    }
+
     let endpoint = `/server/php/admin/api/services/update_service.php`;
     let payload: any = { ...serviceToSave };
 
     if (isNew) {
       endpoint = `/server/php/admin/api/services/create_service.php`;
     } else {
-      const originalService = services.value[serviceId];
-      payload.old_image_path = originalService.image.src;
+      // For existing services, we don't need to send old_image_path as it's not in the Service interface
+      // payload.old_image_path = originalService.image.src;
     }
 
     const response = await fetch(endpoint, {
@@ -258,11 +480,23 @@ async function saveService(serviceId: string) {
     const savedService = await response.json();
 
     if (isNew) {
-      delete localServices.value[serviceId];
-      localServices.value[savedService.id] = savedService;
-      services.value[savedService.id] = savedService;
+      // If it was a new service, update the localServices.main array
+      const index = localServices.value.main.findIndex(
+        (s) => s.id === serviceId
+      );
+      if (index !== -1) {
+        localServices.value.main[index] = savedService;
+      }
     } else {
-      services.value[serviceId] = JSON.parse(JSON.stringify(serviceToSave));
+      // If it was an existing service, update the localServices.main array
+      const index = localServices.value.main.findIndex(
+        (s) => s.id === serviceId
+      );
+      if (index !== -1) {
+        localServices.value.main[index] = JSON.parse(
+          JSON.stringify(serviceToSave)
+        );
+      }
     }
 
     Swal.fire({
@@ -287,7 +521,9 @@ async function saveService(serviceId: string) {
 }
 
 async function deleteService(serviceId: string) {
-  const serviceToDelete = localServices.value[serviceId];
+  const serviceToDelete = localServices.value.main.find(
+    (s) => s.id === serviceId
+  );
   if (!serviceToDelete) return;
 
   Swal.fire({
@@ -321,8 +557,12 @@ async function deleteService(serviceId: string) {
           throw new Error(errorData.message || 'Failed to delete service');
         }
 
-        delete localServices.value[serviceId];
-        delete services.value[serviceId];
+        const index = localServices.value.main.findIndex(
+          (s) => s.id === serviceId
+        );
+        if (index !== -1) {
+          localServices.value.main.splice(index, 1);
+        }
 
         Swal.fire({
           title: 'Удалено!',
