@@ -53,7 +53,7 @@ function getAvailablePages() {
                 }
             }
             
-            // Сортируем по названию
+            // Сортируем остальные страницы по названию (кроме главной)
             usort($pages, function($a, $b) {
                 return strcmp($a['title'], $b['title']);
             });
@@ -65,6 +65,12 @@ function getAvailablePages() {
     } catch (Exception $e) {
         throw new Exception('Error scanning pages: ' . $e->getMessage());
     }
+    
+    // Добавляем главную страницу в начало массива
+    array_unshift($pages, [
+        'title' => 'Главная',
+        'link' => '/'
+    ]);
     
     return $pages;
 }
