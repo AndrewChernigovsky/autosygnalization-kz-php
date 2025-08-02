@@ -4,7 +4,7 @@ namespace API;
 
 $data = [
   [
-    "title" => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОВ',
+    "title" => 'УСТАНОВКА ВИДЕОРЕГИСТРАТОРОВ',
     "image" => "/client/images/services/service-9.avif",
     "href" => "/service?service=setup",
     "quantity" => 11,

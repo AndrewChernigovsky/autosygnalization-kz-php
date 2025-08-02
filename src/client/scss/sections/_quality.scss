@@ -4,6 +4,15 @@
   position: relative;
   overflow: hidden;
   min-height: 600px;
+  border-top: 1px solid white;
+
+  @media screen and (max-width: var.$tablet) {
+    min-height: 200px;
+  }
+
+  @media screen and (max-width: var.$desktop-min) {
+    min-height: 200px;
+  }
 
   &__video {
     min-height: inherit;
@@ -11,6 +20,7 @@
     display: flex;
     height: inherit;
     max-width: 100%;
+    max-height: 600px;
     position: relative;
     z-index: 2;
     object-fit: cover;
@@ -24,7 +34,7 @@
       object-fit: cover;
       position: absolute;
       z-index: -1;
-      top: 0;
+      top: 200px;
       left: 0;
       filter: blur(5px);
     }
@@ -32,46 +42,48 @@
 
   &__present {
     min-height: 200px;
-    position: absolute;
-    bottom: -2px;
+    // position: absolute;
+    // bottom: -2px;
     width: 100%;
+
+    img {
+      height: revert-layer;
+    }
 
     h2 {
       position: relative;
       min-height: 100px;
       display: flex;
       align-items: center;
-      background-color: var.$black_0006;
+      background-color: var.$black;
       margin: 0;
       z-index: 3;
+      text-align: center;
+      justify-content: center;
+      width: 100%;
 
       p {
         display: flex;
+        gap: 10px;
         max-width: 1440px;
-        padding: 0 20px 0 50px;
+        padding: 30px 20px 30px 50px;
         margin: 0 auto;
         justify-content: center;
         font-weight: 400;
         font-family: var.$primary-font;
-
+        @media screen and (max-width: 768px) {
+          flex-direction: column;
+          gap: 25px;
+        }
         span {
           display: flex;
-          max-width: 380px;
-          text-align: left;
+          // max-width: 380px;
+          text-align: center;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
           position: relative;
-
-          &::before {
-            content: '';
-            top: 50%;
-            left: -50px;
-            transform: translateY(-50%);
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background-image: url('/client/vectors/shield.svg');
-            background-size: cover;
-            background-position: center;
-          }
         }
       }
     }
@@ -95,36 +107,109 @@
   &__list {
     min-height: inherit;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     align-content: center;
     font-weight: 700;
     font-family: var.$secondary-font;
     margin: 0 auto;
     display: grid;
     justify-content: center;
+    text-align: center;
     gap: 10px;
-    padding: 40px 0;
+    padding: 180px 0 40px 0;
+
+    p {
+      margin: 0;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    @media screen and (max-width: var.$desktop-min) {
+      padding: 40px 0;
+      align-content: left;
+
+      p {
+        text-align: left;
+      }
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      align-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
 
     li {
-      padding-left: 50px;
+      padding-left: 40px;
       text-align: left;
       font-size: 18px;
       position: relative;
+      align-items: start;
+
+      @media screen and (min-width: var.$desktop-min) {
+        padding-left: 0;
+      }
+
+      img {
+        width: 150px;
+        height: 150px;
+        position: absolute;
+        top: -155px;
+        left: 50%;
+        transform: translateX(-50%);
+
+        @media screen and (max-width: var.$desktop-min) {
+          display: none;
+        }
+      }
 
       &::before {
         content: '';
-        top: 50%;
-        left: 0;
-        transform: translateY(-50%);
         position: absolute;
-        width: 40px;
-        height: 40px;
-        background-image: url('/client/vectors/aprove.svg');
+        width: 150px;
+        height: 150px;
         background-size: cover;
         background-position: center;
+        top: -155px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+
+        @media screen and (max-width: var.$desktop-min) {
+          display: block;
+          top: 50%;
+          left: 0;
+          width: 30px;
+          height: 30px;
+          transform: translateY(-50%);
+          background-image: url('/client/vectors/aprove.svg');
+        }
       }
+    }
+  }
+
+  &__item {
+    text-transform: uppercase;
+  }
+
+  h2 span {
+    font-size: 16px;
+    text-transform: uppercase;
+
+    @media screen and (min-width: var.$phone) {
+      font-size: 20px;
+    }
+
+    @media screen and (min-width: var.$desktop-min) {
+      text-align: left;
+    }
+  }
+
+  @media screen and (max-width: var.$desktop-min) {
+    &__present {
+      min-height: 100px;
     }
   }
 
@@ -141,36 +226,36 @@
 
     h2 {
       min-height: 200px;
-      font-size: 48px;
+      font-size: 64px;
+      line-height: 88px;
 
       p {
         padding-left: 150px;
 
         span {
-          max-width: 750px;
+          // max-width: 750px;
+          font-size: 32px;
+          line-height: 36px;
 
           &::before {
-            width: 150px;
-            height: 150px;
-            left: -150px;
+            // width: 150px;
+            // height: 150px;
+            // left: -150px;
           }
         }
       }
     }
 
-    &__list {
+    &__item {
+      text-align: center;
+      font-size: 28px;
+      flex-basis: 32%;
+      padding: 0;
       display: flex;
+      justify-content: center;
       align-items: center;
-      justify-content: space-between;
-      align-content: center;
-
-      li {
-        text-align: center;
-        font-size: 28px;
-
-        &::before {
-          display: none;
-        }
+      &--hidden {
+        display: none;
       }
     }
 

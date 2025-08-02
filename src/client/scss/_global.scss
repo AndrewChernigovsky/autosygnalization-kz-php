@@ -1,5 +1,5 @@
-@use "variables" as var;
-@use "mixins" as mix;
+@use 'variables' as var;
+@use 'mixins' as mix;
 
 html {
   height: 100%;
@@ -7,6 +7,7 @@ html {
 }
 
 .container {
+  grid-column: 1 / 2;
   max-width: var.$desktop;
   margin: 0 auto;
   padding: 0 10px;
@@ -109,6 +110,14 @@ p {
   }
 }
 
+.link-message {
+  background-image: url('/client/vectors/message-icon.svg');
+}
+
+.link-site {
+  background-image: url('/client/vectors/home-icon.svg');
+}
+
 @keyframes showError {
   0% {
     opacity: 0;
@@ -117,4 +126,61 @@ p {
   100% {
     opacity: 1;
   }
+}
+
+.hidden-header-geo {
+  margin: 0 !important;
+  width: 50px !important;
+  height: 50px !important;
+  display: none !important;
+
+  svg {
+    width: 35px !important;
+    height: 35px !important;
+  }
+
+  @media screen and (min-width: var.$desktop-min) {
+    display: none !important;
+  }
+
+  @media screen and (max-width: var.$desktop-min) {
+    &.hidden {
+      display: flex !important;
+    }
+  }
+}
+
+#geoAddress {
+  @media screen and (max-width: var.$desktop-min) {
+    &.hidden {
+      display: none !important;
+    }
+  }
+}
+
+.popup {
+  &__icons {
+    svg {
+      width: 35px;
+      height: 35px;
+    }
+  }
+
+  &.phone-popup.active {
+    top: auto !important;
+    bottom: 75px;
+  }
+}
+
+.invisible {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: unset;
+  text-decoration: unset;
+}
+
+button[type='submit']:disabled {
+  opacity: 0.3;
+  background: var.$black-opacity-0-5;
 }

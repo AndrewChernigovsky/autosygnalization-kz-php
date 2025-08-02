@@ -1,6 +1,6 @@
-@use "variables" as var;
+@use 'variables' as var;
 
-.article{
+.article {
   position: relative;
   min-height: 418px;
   max-width: 300px;
@@ -12,6 +12,17 @@
   justify-content: space-between;
   align-items: center;
   grid-column: 1 / -1;
+
+  a {
+    text-decoration: none;
+    color: var.$white;
+    position: relative;
+    transition: 0.3s ease-in-out;
+
+    &:hover {
+      opacity: 0.6;
+    }
+  }
 
   &__title {
     margin: 0;
@@ -42,6 +53,8 @@
     position: absolute;
     bottom: 20px;
     z-index: 0;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   &__quantity {

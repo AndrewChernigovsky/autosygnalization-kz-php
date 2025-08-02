@@ -6,6 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Ramsey\\Uuid\\' => array($vendorDir . '/ramsey/uuid/src'),
+    'Ramsey\\Collection\\' => array($vendorDir . '/ramsey/collection/src'),
     'PROCESS\\IMAGES\\' => array($baseDir . '/php/process/images'),
     'PROCESS\\' => array($baseDir . '/php/process'),
     'MODELS\\TAGS\\' => array($baseDir . '/php/models/tags'),
@@ -27,13 +29,16 @@ return array(
     'CONTROLLERS\\CATEGORIES\\' => array($baseDir . '/php/controllers/categories'),
     'CONTROLLERS\\' => array($baseDir . '/php/controllers'),
     'COMPONENTS\\' => array($baseDir . '/php/components'),
+    'Brick\\Math\\' => array($vendorDir . '/brick/math/src'),
     'AUTH\\SESSIONS\\' => array($baseDir . '/php/auth/sessions'),
     'AUTH\\' => array($baseDir . '/php/auth'),
     'API\\SOCIAL\\' => array($baseDir . '/php/api/social'),
+    'API\\SERVICES\\' => array($baseDir . '/php/api/services'),
     'API\\PRODUCTS\\' => array($baseDir . '/php/api/products'),
     'API\\NEWS\\' => array($baseDir . '/php/api/news'),
     'API\\CATEGORIES\\' => array($baseDir . '/php/api/categories'),
     'API\\AUTH\\' => array($baseDir . '/php/api/auth'),
     'API\\ARTICLES\\' => array($baseDir . '/php/api/articles'),
+    'API\\ADMIN\\' => array($baseDir . '/php/api/admin'),
     'API\\' => array($baseDir . '/php/api'),
 );

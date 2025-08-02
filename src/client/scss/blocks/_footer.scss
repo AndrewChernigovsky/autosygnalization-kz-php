@@ -1,9 +1,11 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .footer {
-  padding: 20px 0;
+  padding: 50px 0 20px 0;
+  margin-top: 20px;
   position: relative;
   min-height: 300px;
+  border-top: 1px solid var.$white;
 
   &__inner {
     display: grid;
@@ -25,9 +27,14 @@
     row-gap: 10px;
     grid-template-areas:
       'logo logo'
-      'social phones'
+      'social social'
+      'phones phones'
       'email-site email-site'
       'geo geo';
+
+    a {
+      gap: 5px;
+    }
 
     .logo {
       grid-area: logo;
@@ -42,6 +49,11 @@
       text-transform: none;
       display: grid;
       grid-area: social;
+      display: flex;
+      align-items: center;
+      margin-right: auto;
+      gap: 10px;
+      flex-direction: row-reverse;
 
       p {
         color: var.$white;
@@ -80,11 +92,31 @@
         font-size: 14px;
         font-weight: 700;
         background-repeat: no-repeat;
-        background-size: 15px 15px;
+        background-size: 20px 20px;
         line-height: 30px;
-        padding-right: 30px;
-        background-position: right;
+        padding-left: 30px;
+        background-position: left;
       }
+    }
+
+    .social {
+      width: 100%;
+    }
+
+    .social p {
+      color: var.$white;
+      font-family: var.$primary-font;
+      margin: 0;
+      margin-right: auto;
+      font-size: 14px;
+      font-weight: 700;
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+      line-height: 30px;
+      padding-left: 30px;
+      background-position: left;
+      justify-content: flex-end;
+      background-image: url('/client/vectors/icons/instagramm-icon.svg');
     }
 
     .site {
@@ -99,10 +131,10 @@
         font-size: 14px;
         font-weight: 700;
         background-repeat: no-repeat;
-        background-size: 15px 15px;
+        background-size: 20px 20px;
         line-height: 25px;
-        padding-right: 30px;
-        background-position: right;
+        padding-left: 30px;
+        background-position: left;
       }
     }
 
@@ -113,6 +145,23 @@
       &__wrapper {
         color: var.$red;
         position: relative;
+        gap: 5px;
+
+        &.menu-geo-phone {
+          flex-direction: row;
+          display: flex;
+          // padding-left: 10px;
+
+          svg {
+            position: relative;
+            transform: none;
+          }
+        }
+
+        svg {
+          width: 25px;
+          height: 25px;
+        }
 
         span {
           color: var.$white;
@@ -210,7 +259,7 @@
         display: block;
       }
 
-      & > span {
+      &>span {
         position: relative;
       }
     }
@@ -253,21 +302,21 @@
         linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
     }
 
-    & + ul {
+    &+ul {
       display: none;
     }
 
-    &.active + ul {
+    &.active+ul {
       display: block;
     }
   }
 
   span {
-    &.toggle-list + ul {
+    &.toggle-list+ul {
       display: none;
     }
 
-    &.toggle-list.active + ul {
+    &.toggle-list.active+ul {
       display: grid;
     }
   }
@@ -347,6 +396,9 @@
   }
 
   @media screen and (min-width: var.$tablet) {
+    padding: 100px 0 50px 0;
+    margin-top: 100px;
+
     &__inner {
       max-width: 768px;
       justify-content: stretch;
@@ -359,8 +411,8 @@
       row-gap: 10px;
       grid-template-areas:
         'logo social phones'
-        'email-site geo phones'
-        'site geo phones';
+        'logo email-site geo'
+        'logo site geo';
 
       .social {
         justify-items: center;
@@ -373,8 +425,8 @@
           display: flex;
 
           svg {
-            width: 33px;
-            height: 33px;
+            width: 25px;
+            height: 25px;
           }
         }
       }
@@ -406,7 +458,12 @@
         text-align: center;
 
         span {
-          padding-right: 30px;
+          // padding-right: 40px;
+          text-align: left;
+        }
+
+        &__wrapper {
+          padding-left: 10px;
         }
 
         svg {
@@ -429,7 +486,7 @@
         padding-left: 0;
         cursor: auto;
 
-        & > span {
+        &>span {
           cursor: auto;
         }
 
@@ -450,6 +507,7 @@
     }
 
     &__menu-title {
+
       &::before,
       &::after {
         display: none;
@@ -472,7 +530,7 @@
       max-width: 1440px;
     }
 
-    &__menu-list > li:not(:has(a:first-of-type)) .toggle-list {
+    &__menu-list>li:not(:has(a:first-of-type)) .toggle-list {
       cursor: auto;
 
       &:hover {
@@ -584,14 +642,33 @@
   }
 
   @media screen and (min-width: var.$tablet) {
+    .social p {
+      background-position: left 30%;
+      width: 90%;
+      margin-right: auto;
+      border-bottom: 1px solid white;
+      padding-bottom: 10px;
+    }
+
     &__menu-list {
-      li > span:first-of-type:hover {
+      li>span:first-of-type:hover {
         opacity: 1;
       }
     }
   }
 
   @media screen and (min-width: var.$desktop) {
+    padding: 200px 0 50px 0;
+    margin-top: 200px;
+
+    &__contacts {
+      align-items: flex-start;
+
+      .logo img {
+        margin-top: -10px;
+      }
+    }
+
     &__inner {
       max-width: 1440px;
     }
@@ -600,12 +677,12 @@
       font-size: 20px;
 
       span {
-        padding-right: 70px;
+        // padding-right: 70px;
+        text-align: left;
       }
 
       svg {
         height: 29px;
-        right: 30px;
       }
     }
   }

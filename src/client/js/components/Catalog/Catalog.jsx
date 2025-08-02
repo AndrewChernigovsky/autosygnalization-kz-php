@@ -7,7 +7,9 @@ export class Catalog extends Component {
       quantity: props.quantity || 0,
     };
   }
-
+  formatNumberWithSpaces(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  }
   updateSessionStorage(id, quantity) {
     const localProducts = JSON.parse(sessionStorage.getItem('cart')) || [];
     const index = localProducts.findIndex((product) => product.id === id);
@@ -37,7 +39,7 @@ export class Catalog extends Component {
               <h3>${title}</h3>
               <div class="price">
                 <span>Цена: </span>
-                <span>${price} ${currency}</span>
+                <span>${this.formatNumberWithSpaces(price)} ${currency}</span>
               </div>
             </div>
           </div>

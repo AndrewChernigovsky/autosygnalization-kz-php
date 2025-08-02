@@ -1,8 +1,13 @@
-@use "variables"as var;
+@use "variables" as var;
 
 .header {
-
   background: linear-gradient(#010308, #000208);
+
+  @media screen and (max-width: var.$desktop-min) {
+    z-index: 11;
+    top: -1px;
+    position: sticky;
+  }
 
   &__head {
     display: flex;
@@ -30,7 +35,10 @@
       margin-top: 20px;
       text-decoration: underline;
       text-align: center;
-
+      line-height: 1.8;
+      text-decoration: none;
+      position: relative;
+      flex-grow: 0;
 
       svg {
         width: 40px;
@@ -43,6 +51,20 @@
         grid-column: 10/13;
         text-align: left;
         margin-top: 0;
+
+        &::before {
+          content: "";
+          position: absolute;
+          display: block;
+          top: 50%;
+          transform: translateY(-50%);
+          height: 2px;
+          min-width: 200px;
+          background-color: #ffffff;
+          z-index: 2;
+          left: 0;
+          margin-left: 50px;
+        }
       }
     }
   }
@@ -66,7 +88,6 @@
     text-transform: uppercase;
     font-weight: 700;
   }
-
 
   &__instagram {
     display: flex;
@@ -101,7 +122,6 @@
         margin-right: 10px;
       }
     }
-
   }
 
   &__cart {

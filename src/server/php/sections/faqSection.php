@@ -4,10 +4,10 @@ namespace SECTIONS;
 
 function faqSection()
 {
-    return <<<HTML
+  return <<<HTML
 <section class="faq" id="faq">
   <div class="container">
-    <h2>вопросы-ответы</h2>
+    <h2 class="secondary-title">вопросы-ответы</h2>
     <ol class="tabs-faq list-style-none">
       <li class="active">Какая информация нужна для расчета стоимости разработки сайта?</li>
       <li>От чего зависит цена на сайт?</li>
@@ -95,4 +95,3 @@ HTML;
 }
 
 ?>
-

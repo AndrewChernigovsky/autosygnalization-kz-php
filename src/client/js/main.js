@@ -223,7 +223,7 @@ async function loadModules() {
 
     new ProcessForm(
       {
-        form: '.form__main-form',
+        form: '.form__main-form.main-form',
       }
     );
   }
@@ -245,6 +245,15 @@ async function loadModules() {
     const content = await loadPolicyDocument('./files/docs/policy.txt');
     modal.setContent(content);
   }
+
+  const forms = document.querySelectorAll('form');
+
+  forms.forEach(form => {
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton && submitButton.disabled === true) {
+      submitButton.disabled = false;
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', loadModules);

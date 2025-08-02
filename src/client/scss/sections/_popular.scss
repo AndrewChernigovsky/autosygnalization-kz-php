@@ -18,7 +18,6 @@
   }
 
   &__item {
-
     border-radius: 15px;
     height: auto;
     position: relative;
@@ -53,7 +52,6 @@
         .swiper-slide {
           display: flex;
           background-color: var.$white;
-
         }
       }
 
@@ -81,7 +79,6 @@
         }
       }
     }
-
   }
 
   &__item-title {
@@ -127,13 +124,15 @@
   }
 
   &__item-bg {
-    background-color: var.$gray-bg-autosygnals;
+    background: var.$bg-popular-gradient;
     padding: 20px;
     display: flex;
     border-radius: 20px;
     flex-direction: column;
     height: 100%;
     justify-content: space-between;
+    color: unset;
+    text-decoration: unset;
   }
 
   &__all-products {
@@ -142,8 +141,6 @@
     min-width: 50%;
     font-size: 32px;
   }
-
-
 
   .swiper-pagination {
     bottom: 60px;

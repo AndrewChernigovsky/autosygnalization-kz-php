@@ -9,26 +9,30 @@ use DATA\NavigationLinks;
 
 class Header
 {
-    private $currentPath;
+  private $currentPath;
 
-    public function __construct()
-    {
-        $this->currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-    }
+  public function __construct()
+  {
+    $this->currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+  }
 
-    public function getHeader(): string
-    {
-        // Инициализация компонентов
-        $logo = new Logo();
-        $cart = new Cart();
-        $contacts = new ContactsData();
-        $phones = $contacts->getPhones();
-        $address = $contacts->getAddress();
+  public function getHeader(): string
+  {
+    // Инициализация компонентов
+    $logo = new Logo();
+    $cart = new Cart();
+    $contacts = new ContactsData();
+    $phones = $contacts->getPhones();
+    $contactData = $contacts->getAddress();
+    $address = $contactData[0]['address'];
+    $addressLink = $contactData[0]['link'];
+    $addressSvgPath = $contactData[0]['svg_path'];
 
-        $navigationLinks = new NavigationLinks();
 
-        // Генерация HTML
-        return <<<HTML
+    $navigationLinks = new NavigationLinks();
+
+    // Генерация HTML
+    return <<<HTML
 <header class="header">
     <div class="container">
         <div class="header__head">
@@ -52,6 +56,13 @@ class Header
                             {$this->generatePhoneLinks($phones)}
                         </address>
                     </div>
+                <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address hidden-header-geo">
+                    <div class="header__image image">
+                        <svg width="50" height="50">
+                            <use href="/client/vectors/sprite.svg#geo"></use>
+                        </svg>
+                    </div>
+                </a>
                     {$cart->initCart()}
                     <div class="menu-toggle">
                         <button type="button" id="btn-open-menu" class="button">
@@ -72,10 +83,10 @@ class Header
                         {$this->generatePhoneLinks($phones)}
                     </ul>
                 </div>
-                <a href="https://2gis.kz/almaty/geo/70000001027313872" class="link geo-address">
+                <a href="{$addressLink}" class="link geo-address" id="geoAddress">
                     <div class="header__image image">
                         <svg width="50" height="50">
-                            <use href="/client/vectors/sprite.svg#geo"></use>
+                            <use href="$addressSvgPath"></use>
                         </svg>
                     </div>
                     {$address}
@@ -85,35 +96,35 @@ class Header
     </div>
 </header>
 HTML;
-    }
+  }
 
-    private function generateNavigationLinks($links): string
-    {
-        $html = '';
-        foreach ($links as $link) {
-            $uniqueId = 'link_' . preg_replace('/[\/?=&]/', '_', $link['path']);
-            $isActive = $this->isActive($link['path'], $this->currentPath);
-            $html .= "<li class='nav-item'>
+  private function generateNavigationLinks($links): string
+  {
+    $html = '';
+    foreach ($links as $link) {
+      $uniqueId = 'link_' . preg_replace('/[\/?=&]/', '_', $link['path']);
+      $isActive = $this->isActive($link['path'], $this->currentPath);
+      $html .= "<li class='nav-item'>
                         <a class='link {$isActive}' href='" . htmlspecialchars($link['path']) . "' id='" . htmlspecialchars($uniqueId) . "'>" . htmlspecialchars($link['name']) . "</a>
                       </li>";
-        }
-        return $html;
     }
+    return $html;
+  }
 
-    private function generatePhoneLinks($phones): string
-    {
-        $html = '';
-        if (!empty($phones)) {
-            foreach ($phones as $phone) {
-                $cleanedPhone = str_replace(' ', '', $phone['phone']);
-                $html .= "<li><a href='tel:" . htmlspecialchars($cleanedPhone) . "'>" . htmlspecialchars($phone['phone']) . "</a></li>";
-            }
-        }
-        return $html;
+  private function generatePhoneLinks($phones): string
+  {
+    $html = '';
+    if (!empty($phones)) {
+      foreach ($phones as $phone) {
+        $cleanedPhone = str_replace(' ', '', $phone['phone']);
+        $html .= "<li><a href='tel:" . htmlspecialchars($cleanedPhone) . "'>" . htmlspecialchars($phone['phone']) . "</a></li>";
+      }
     }
+    return $html;
+  }
 
-    private function isActive($linkPath, $currentPath): string
-    {
-        return $linkPath === $currentPath ? 'active' : '';
-    }
+  private function isActive($linkPath, $currentPath): string
+  {
+    return $linkPath === $currentPath ? 'active' : '';
+  }
 }

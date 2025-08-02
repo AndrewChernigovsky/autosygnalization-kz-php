@@ -12,8 +12,9 @@ use COMPONENTS\FiltersRender;
 use COMPONENTS\Select;
 use COMPONENTS\Pagination;
 use COMPONENTS\ModalCart;
+use COMPONENTS\ModalForm;
 use COMPONENTS\CreateProductCards;
-
+use function FUNCTIONS\renderPhoneButton;
 use function FUNCTIONS\getShop;
 use function AUTH\SESSIONS\initSession;
 
@@ -73,7 +74,7 @@ $selectData = new SelectData();
       <?php if ($filteredProducts): ?>
         <?php
         $pagination = new Pagination($filteredProducts, $total_items_per_page);
-          ?>
+        ?>
         <?= $pagination->render(); ?>
       <?php endif; ?>
     </div>
@@ -81,6 +82,9 @@ $selectData = new SelectData();
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalCart())->render(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?php echo renderPhoneButton();
+  ?>
 </body>
 
 </html>

@@ -46,23 +46,23 @@ export class OfferCard extends Component {
     const components = data.map((item) => {
       return html`
         <article class="article">
-          <h4 class="article__title">${item.title}</h4>
-          <img
-            class="article__image"
-            src="${item.image}"
-            alt="${item.alt}"
-            width="130"
-            height="130"
-          />
+          <a href="${item.href}">
+            <h4 class="article__title">${item.title}</h4>
+            <img
+              class="article__image"
+              src="${item.image}"
+              alt="${item.alt}"
+              width="130"
+              height="130"
+            />
 
-          <div class="article__menu-btns">
-            <p class="article__quantity y-button-secondary">
-              <span>${item.quantity}</span> товаров
-            </p>
-            <a class="article__link y-button-primary link" href="${item.href}"
-              >в раздел</a
-            >
-          </div>
+            <div class="article__menu-btns">
+              <p class="article__quantity y-button-secondary">
+                <span>${item.quantity}</span> товаров
+              </p>
+              <p class="article__link y-button-primary link">в раздел</p>
+            </div>
+          </a>
         </article>
       `;
     });

@@ -12,9 +12,10 @@
 
 # Разрешение доступа к PDF-файлам
 <FilesMatch "\.pdf$">
-  Require all granted
+  <RequireAll>
+    Require all granted
+  </RequireAll>
 </FilesMatch>
-
 # MIME-типы
 AddType application/pdf .pdf
 AddType application/font-woff .woff
@@ -27,7 +28,13 @@ AddType image/avif .avif
 <IfModule mod_mime.c>
   AddType image/avif avif
 </IfModule>
-
+ 
+<IfModule mod_headers.c>
+  Header set Access-Control-Allow-Origin "http://localhost:5173
+  "
+  Header set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
+  Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+</IfModule>
 
 # Управление CORS для шрифтов
 <FilesMatch "\.(ttf|otf|eot|woff|woff2)$">
@@ -36,6 +43,10 @@ AddType image/avif .avif
   </IfModule>
   Require all granted
 </FilesMatch>
+
+# Обработка OPTIONS запросов для CORS
+RewriteCond %{REQUEST_METHOD} OPTIONS
+RewriteRule ^(.*)$ $1 [R=200,L]
 
 # Кэширование
 <IfModule mod_expires.c>
@@ -57,6 +68,8 @@ AddType image/avif .avif
 # ЧПУ
 RewriteEngine On
 
+
+
 # Обработка ошибок
 ErrorDocument 404 /server/php/errors/404.php
 ErrorDocument 403 /server/php/errors/403.php
@@ -69,8 +82,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^products/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ /server/php/pages/products/product.php?category=$1&id=$2 [L,QSA]
 
 
-
-
 RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
 RewriteRule ^about$ /server/php/pages/about/about.php [L,QSA]
 RewriteRule ^contacts$ /server/php/pages/contacts/contacts.php [L,QSA]
@@ -78,6 +89,7 @@ RewriteRule ^price$ /server/php/pages/price/price.php [L,QSA]
 RewriteRule ^special$ /server/php/pages/special/special.php [L,QSA]
 RewriteRule ^cart$ /server/php/pages/cart/cart.php [L,QSA]
 RewriteRule ^checkout$ /server/php/pages/checkout/checkout.php [L,QSA]
+RewriteRule ^api/products/get$ /server/php/api/products/get_all_products.php [L,QSA]
 
 RewriteRule ^/$ /index.php [L,QSA]
 
@@ -162,7 +174,10 @@ RewriteRule ^special$ /server/php/pages/special/special.php [L,QSA]
 
 
 
-RewriteRule ^contacts\.php$ /server/php/pages/service/service.php [L]
+RewriteRule ^contacts\.php$ /server/php/pages/contacts/contacts.php [L]
+RewriteRule ^sertificates\.php$ /server/php/pages/sertificates/sertificates.php [L]
+# Добавляем правило для URL без расширения .php
+RewriteRule ^sertificates$ /server/php/pages/sertificates/sertificates.php [L,QSA]
 
 # Обработка URL без параметров
 RewriteRule ^product$ /server/php/pages/products/product.php [L,QSA]

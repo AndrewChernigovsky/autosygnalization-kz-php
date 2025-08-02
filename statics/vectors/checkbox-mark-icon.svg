@@ -1,0 +1,9 @@
+<svg width="20.000000" height="20.000000" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<desc>
+			Created with Pixso.
+	</desc>
+	<defs/>
+	<rect id="checkbox-mark-icon" width="20.000000" height="20.000000" fill="#FFFFFF" fill-opacity="0"/>
+	<path id="path" d="M1.51 12.44L1.48 12.44C1.17 12.15 1.16 11.69 1.45 11.38C1.74 11.08 2.21 11.07 2.51 11.36L2.51 11.38L1.51 12.44ZM17.36 1.64L17.35 1.61C17.57 1.25 18.02 1.14 18.38 1.35C18.74 1.57 18.85 2.02 18.64 2.38L18.61 2.39L17.36 1.64Z" fill="#000000" fill-opacity="0" fill-rule="nonzero"/>
+	<path id="path" d="M2 11.9L8.4 18L18 2" stroke="#FF0000" stroke-opacity="1.000000" stroke-width="1.500000" stroke-linejoin="round" stroke-linecap="round"/>
+</svg>

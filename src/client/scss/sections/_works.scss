@@ -1,181 +1,178 @@
 @use 'variables' as var;
 
 .works {
-    padding: 30px 0;
+  padding: 30px 0;
+  border-top: 1px solid var.$white;
+  border-bottom: 1px solid var.$white;
+  margin-bottom: 60px;
 
-    &__title {
-        text-align: center;
-        margin: 10px;
-        margin-bottom: 30px;
-        font-size: 26px;
-        line-height: 44px;
+  &__title {
+    text-align: center;
+    margin: 10px;
+    margin-bottom: 30px;
+    font-size: 26px;
+    line-height: 44px;
 
-        @media screen and (min-width: var.$tablet) {
-            font-size: 38px;
-        }
-
-        @media screen and (min-width: var.$desktop-min) {
-            font-size: 40px;
-
-        }
+    @media screen and (min-width: var.$tablet) {
+      font-size: 38px;
     }
 
-    &__swiper {
-        padding: 20px 0 60px;
+    @media screen and (min-width: var.$desktop-min) {
+      font-size: 40px;
+    }
+  }
+
+  &__swiper {
+    padding: 20px 0 60px;
+  }
+
+  &__slide {
+    &-title {
+      font-family: var.$primary-font;
+      font-size: 18px;
+      text-align: center;
+      color: var.$white;
+      text-decoration: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      min-height: 54px;
+
+      @media screen and (min-width: var.$tablet) {
+        font-size: 24px;
+        min-height: 72px;
+      }
     }
 
-    &__slide {
+    &-image {
+      width: 100%;
+      height: 300px;
+      overflow: hidden;
+      border-radius: 8px;
+      margin: auto 0;
 
-        &-title {
-            font-family: var.$primary-font;
-            font-size: 18px;
-            text-align: center;
-            color: var.$white;
-            text-decoration: none;
-            border: none;
-            display: flex;
-            align-items: center;
-            margin: 0;
-            min-height: 54px;
-
-            @media screen and (min-width: var.$tablet) {
-                font-size: 24px;
-                min-height: 72px;
-            }
-        }
-
-        &-image {
-            width: 100%;
-            height: 300px;
-            overflow: hidden;
-            border-radius: 8px;
-            margin: auto 0;
-
-            img {
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                transition: transform 0.3s ease; 
-            }
-        }
-
-        &-button {
-            margin-top: auto;
-            padding: 12px 30px;
-            color: var.$white;
-            border-radius: 6px;
-            text-decoration: none;
-        }
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s ease;
+      }
     }
 
-    .swiper-pagination {
-        bottom: 0;
-        display: flex;
-        flex-wrap: nowrap;
-        justify-content: center;
-
-        &-bullet {
-            transition: 0.3s ease-in-out;
-            width: 20px;
-            height: 20px;
-            background-color: var.$gray_413E3E;
-
-            &-active {
-                background-color: var.$gray_959090;
-            }
-        }
+    &-button {
+      margin-top: auto;
+      padding: 12px 30px;
+      color: var.$white;
+      border-radius: 6px;
+      text-decoration: none;
     }
+  }
+
+  .swiper-pagination {
+    bottom: 0;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+
+    &-bullet {
+      transition: 0.3s ease-in-out;
+      width: 20px;
+      height: 20px;
+      background-color: red;
+
+      &-active {
+        background-color: red;
+      }
+    }
+  }
 }
 
 .modal-image {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var.$black-opacity-0-5;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var.$black-opacity-0-5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  cursor: pointer;
+
+  img {
+    max-width: 90%;
+    max-height: 90vh;
+    object-fit: contain;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    width: 40px;
+    height: 40px;
+    z-index: 11;
     cursor: pointer;
 
-    img {
-        max-width: 90%;
-        max-height: 90vh;
-        object-fit: contain;
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-45deg);
+      background-color: var.$white;
+      width: inherit;
+      height: 3px;
+      box-shadow: none;
+      border-radius: 10px;
     }
 
-    .close-button {
-        position: absolute; 
-        top: 10px; 
-        right: 10px;
-        background: none; 
-        border: none; 
-        width: 40px;
-        height: 40px;
-        z-index: 11;
-        cursor: pointer; 
-
-        &::before {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            background-color: var.$white;
-            width: inherit;
-            height: 3px;
-            box-shadow: none;
-            border-radius: 10px;
-        }
-
-        &::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(45deg);
-            background-color: var.$white;
-            width: inherit;
-            height: 3px;
-            border-radius: 10px;
-        }
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      background-color: var.$white;
+      width: inherit;
+      height: 3px;
+      border-radius: 10px;
     }
+  }
 }
 
-
-
 .swiper-works {
-    overflow: hidden;
+  overflow: hidden;
+  position: relative;
+
+  .swiper-slide {
+    width: 300px;
+    opacity: 0.5;
+    transition: opacity 0.3s ease, transform 0.3s ease;
     position: relative;
 
-    .swiper-slide {
-        width: 300px;
-        opacity: 0.5;
-        transition: opacity 0.3s ease, transform 0.3s ease;
-        position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    height: 100%;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        height: 100%;
-
-        &:not(.swiper-slide-active) {
-            transform: scale(0.8);
-        }
+    &:not(.swiper-slide-active) {
+      transform: scale(0.8);
     }
+  }
 
-    .swiper-slide-active {
-        transform: scale(1.1);
-        opacity: 1;
-        z-index: 1; 
-      }
+  .swiper-slide-active {
+    transform: scale(1.1);
+    opacity: 1;
+    z-index: 1;
+  }
 
-
-
-    .swiper-wrapper {
-        transform: translateX(-50px);
-    }
+  .swiper-wrapper {
+    transform: translateX(-50px);
+  }
 }

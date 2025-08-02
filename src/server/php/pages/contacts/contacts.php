@@ -5,8 +5,10 @@ use DATA\ContactsData;
 use LAYOUT\Header;
 use LAYOUT\Head;
 use LAYOUT\Footer;
+use COMPONENTS\ModalForm;
 
 use function AUTH\SESSIONS\initSession;
+use function FUNCTIONS\renderPhoneButton;
 
 initSession();
 
@@ -17,9 +19,16 @@ $footer = new Footer();
 
 $contacts = new ContactsData();
 $socialIcons = $contacts->getSocialIcons();
-$email = $contacts->getEmail(true);
+$email = $contacts->getEmail();
 $address = $contacts->getAddress();
 $phones = $contacts->getPhones();
+$contactPhones = $contacts->getContactPhones();
+$social = $contacts->getSocial();
+$schedule = $contacts->getSchedule();
+$map = $contacts->getMap();
+$locationDescription = $contacts->getLocationDescription();
+$allContacts = $contacts->getAllContact(['contact-phone', 'social','email', 'address', 'schedule']);
+error_log(print_r($allContacts, true) . 'Я ВЕСЬ МАССИВ КОНТАКТОВ');
 ?>
 
 <!DOCTYPE html>
@@ -30,79 +39,114 @@ echo $head->setHead();
 
 <body>
 
-<?= $header->getHeader(); ?>
+  <?= $header->getHeader(); ?>
   <main class="main">
     <section class="contacts-section">
       <div class="container">
         <h2>Контакты</h2>
         <ul class="contacts-section__list">
-          <li class="contacts-section__item">
-            <a href="tel:+77077478212">
-              <h3>Beeline:</h3>
-              <p>+77077478212</p>
-            </a>
-          </li>
-          <li class="contacts-section__item">
-            <a href="tel:+77017478212">
-              <h3>Kcell:</h3>
-              <p>+77017478212</p>
-            </a>
-          </li>
-          <li class=" contacts-section__item contacts-section__item--whatsap">
-            <a href="https://wa.me/77077478212" target="_blank">
-              <h3>Whatsapp:</h3>
-              <p>+77017478212</p>
-            </a>
-          </li>
-          <li class="contacts-section__item contacts-section__item--email">
-            <h3>Почта:</h3>
-            <p><?= $email ?></p>
-          </li>
-          <li class="contacts-section__item contacts-section__item--address">
-            <h3>Адрес:</h3>
-            <p><?= $address ?></p>
-          </li>
-          <li class="contacts-section__item contacts-section__item--schedule">
-            <h3>График работы:</h3>
-              <p>Вс. - Чт.: 10:00 - 18:00 <br>
-                Пт.: 10:00-15:00 <br>
-                <span>Сб.: Выходной</span>
-              </p>
-          </li>
-          <li class="contacts-section__item contacts-section__item--social">
-            <h3>Соцсети:</h3>
-            <ul class="contacts-section__item--social-icons">
-              <?php
-              foreach ($socialIcons as $social) {
-                  echo '<li>';
-                  echo $contacts->setSocial($social);
-                  echo '</li>';
-              }
-?>
-            </ul>
-          </li>
-          <li class="contacts-section__item contacts-section__item--btn">
-            <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
-          </li>
+            <?php foreach ($allContacts as $item): ?>
+              <?php if ($item['type'] === 'contact-phone'): ?>
+                <li class="contacts-section__item contacts-section__item--whatsap">
+                  <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
+                    <p><?php echo htmlspecialchars($item['content']) ?></p>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if ($item['type'] === 'social'): ?>
+                <?php if ($item['type'] === 'social' && $item['title'] === 'Whatsapp:'): ?>
+                <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
+                  <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
+                    <p><?php echo htmlspecialchars($item['content']) ?></p>
+                  </a>
+                </li>
+                <?php endif; ?>
+                <?php if ($item['type'] === 'social' && $item['title'] === 'Instagramm:'): ?>
+                  <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
+                    <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                        <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                        <svg width="25" height="25" aria-hidden="true">
+                          <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        </svg>
+                    </a>
+                  </li>
+                <?php endif; ?>
+              <?php endif; ?>
+              <?php if ($item['type'] === 'email'): ?>
+                <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['type']) ?>">
+                  <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                      <div class="icon-container">
+                        <svg width="25" height="25" aria-hidden="true">
+                          <use width="25" height="25" href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        </svg>
+                        <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                      </div>
+                      <p><?php echo htmlspecialchars($item['content']) ?></p>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if ($item['type'] === 'address'): ?>
+                <li class="contacts-section__item contacts-section__item--address">
+                  <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
+                    <p><?php echo $item['content'] ?></p>
+                  </a>
+                </li>
+              <?php endif; ?>
+              <?php if ($item['type'] === 'schedule'): ?>
+                <li class="contacts-section__item contacts-section__item--schedule">
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
+                    <p><?php echo $item['content'] ?></p>
+                </li>
+              <?php endif; ?>
+            <?php endforeach; ?>
+            <li class="contacts-section__item contacts-section__item--btn">
+              <button type="button" class="button y-button-primary" id="print-btn">Распечатать контакты</button>
+            </li>
         </ul>
       </div>
       <div class="map" id="location">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d1453.4679397503296!2d76.8722813!3d43.231804!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3883693b733bff39%3A0x716633e11986b3f8!2sAuto%20Security!5e0!3m2!1sru!2sru!4v1735233649305!5m2!1sru!2sru"
-          width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <?php if (!empty($map)): ?>
+                <iframe
+                  title='Map'
+                  src="<?php echo str_replace(' ', '', $map[0]['link']) ?>"
+                  width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <?php endif; ?>
       </div>
     </section>
     <section class="contacts-location">
       <div class="container">
-        <h2>КАК К НАМ ДОБРАТЬСЯ</h2>
-        <p>Едем по Абая со стороны Мате Залка в сторону Большой Алматинки, <br> перед речкой поворот направо, заезжаем на
-          территорию СТО. <br> Наш бокс №15.
-        </p>
+            <?php if (!empty($locationDescription)): ?>
+                  <h2><?php echo htmlspecialchars($locationDescription[0]['title']) ?></h2>
+                  <p><?php echo $locationDescription[0]['path'] ?></p>
+            <?php endif; ?>
         <div class="contacts-location__phone">
           <p>По всем вопросам звоните:</p>
           <div class="contacts-location__box">
-            <?php foreach($phones as $phone): ?>
+            <?php foreach ($phones as $phone): ?>
               <a href="tel:<?php echo str_replace(' ', '', $phone['phone']); ?>">
                 <?php echo $phone['phone']; ?>
               </a>
@@ -114,5 +158,8 @@ echo $head->setHead();
     </section>
   </main>
   <?= $footer->getFooter(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
+
 </html>

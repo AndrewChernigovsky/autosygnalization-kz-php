@@ -9,6 +9,7 @@ use COMPONENTS\ModalForm;
 
 use function AUTH\SESSIONS\initSession;
 use function FUNCTIONS\getShop;
+use function FUNCTIONS\renderPhoneButton;
 
 initSession();
 $header = new Header();
@@ -23,10 +24,10 @@ $head = new Head($title, [], []);
 
 <!DOCTYPE html>
 <html lang="ru">
-<?= $head->setHead();?>
+<?= $head->setHead(); ?>
 
 <body>
-  <?= $header->getHeader();?>
+  <?= $header->getHeader(); ?>
   <main class="main">
     <section class="cart-section">
       <div class="container">
@@ -45,8 +46,7 @@ $head = new Head($title, [], []);
           <div class="cart-section__option">
             <button type="button" class="button y-button-secondary  y-button-third" id="buy-fast-order">Быстрый
               заказ</button>
-            <a href="<?= "/checkout"; ?>"
-              class="button y-button-secondary  y-button-third">Оформить
+            <a href="<?= "/checkout"; ?>" class="button y-button-secondary  y-button-third">Оформить
               заказ</a>
           </div>
         </div>
@@ -58,7 +58,7 @@ $head = new Head($title, [], []);
     <?= getShop("shop"); ?>
   </main>
 
-  <?= $footer->getFooter();?>
+  <?= $footer->getFooter(); ?>
   <template id="product-template">
     <article class='product-card' id="">
       <div class="product-card__bg">
@@ -77,7 +77,8 @@ $head = new Head($title, [], []);
       </div>
     </article>
   </template>
-  <?= $modalForm->render();?>
+  <?= $modalForm->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
 
 </html>

@@ -15,10 +15,12 @@ use COMPONENTS\Select;
 use COMPONENTS\Pagination;
 use COMPONENTS\ModalCart;
 use COMPONENTS\SpecialProducts;
+use COMPONENTS\ModalForm;
 
 use function AUTH\SESSIONS\initSession;
 use function FUNCTIONS\getShop;
 use function FUNCTIONS\getParamsAutosygnals;
+use function FUNCTIONS\renderPhoneButton;
 
 initSession();
 getParamsAutosygnals("get_params_catalog");
@@ -46,9 +48,9 @@ $selectData = new SelectData();
 
 $filteredProducts = $filters_render->returnCorrectedArr();
 $create_product_cards = new CreateProductCards($filteredProducts, false, $total_items_per_page, $PAGE, function () {
-    $special = (new SpecialProducts())->render();
-    echo $special;
-    ;
+  $special = (new SpecialProducts())->render();
+  echo $special;
+  ;
 });
 ?>
 
@@ -59,7 +61,7 @@ echo $head->setHead();
 ?>
 
 <body>
-<?= $header->getHeader(); ?>
+  <?= $header->getHeader(); ?>
   <main class="main">
     <h2 class="title__h2">Каталог всех товаров</h2>
     <div class="catalog">
@@ -72,14 +74,14 @@ echo $head->setHead();
           <?php if (!empty($filteredProducts)): ?>
             <?= $create_product_cards->renderProductCards(); ?>
           <?php else: ?>
-              <p>Нет товаров, соответствующих выбранным фильтрам.</p>
+            <p>Нет товаров, соответствующих выбранным фильтрам.</p>
           <?php endif; ?>
         </div>
       </div>
       <?php if ($filteredProducts): ?>
         <?php
-          $pagination = new Pagination($filteredProducts, $total_items_per_page);
-          ?>
+        $pagination = new Pagination($filteredProducts, $total_items_per_page);
+        ?>
         <?= $pagination->render(); ?>
       <?php endif; ?>
     </div>
@@ -87,6 +89,8 @@ echo $head->setHead();
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalCart())->render(); ?>
+  <?= (new ModalForm())->render(); ?>
+  <?= renderPhoneButton(); ?>
 </body>
 
 </html>
