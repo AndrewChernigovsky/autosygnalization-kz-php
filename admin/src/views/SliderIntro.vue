@@ -9,10 +9,10 @@ const DeleteButton = defineAsyncComponent(
 );
 import { Container, Draggable } from 'vue-dndrop';
 import { Navigation, Pagination } from 'swiper/modules';
-import { Swiper, SwiperSlide } from 'swiper/vue';
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+// import { Swiper, SwiperSlide } from 'swiper/vue';
+// import 'swiper/css';
+// import 'swiper/css/navigation';
+// import 'swiper/css/pagination';
 
 import { useSlides } from '../components/SliderIntro/functions/useSlides';
 import { useDnD } from '../components/SliderIntro/functions/useDnD';
@@ -288,7 +288,7 @@ onMounted(async () => {
           <h3>Преимущества слайда:</h3>
           <div
             v-for="(advantage, advIndex) in item.advantages"
-            :key="advIndex"
+            :key="advIndex + advantage.toString()"
             class="advantage-item"
           >
             <input

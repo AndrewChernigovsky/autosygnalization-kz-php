@@ -148,7 +148,7 @@ export function useProducts() {
           .filter(
             (item) => item && typeof item === 'object' && 'description' in item
           )
-          .map((item) => ({
+          .map((item: any) => ({
             id: item.id || null,
             description: item.description,
             installationPrice: item.installationPrice || '',

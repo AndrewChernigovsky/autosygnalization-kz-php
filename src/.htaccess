@@ -188,3 +188,8 @@ RewriteRule ^product\.php$ /server/php/pages/products/product.php  [L,QSA]
 # Обработка catalog.php с параметрами category и id
 RewriteCond %{QUERY_STRING} ^category=([a-zA-Z0-9_-]+)&id=([a-zA-Z0-9_-]+)$
 RewriteRule ^product\.php$ /server/php/pages/products/product.php [L,QSA]
+
+# Обработка URL без параметров
+RewriteRule ^login$ /server/php/auth/login.php [L,QSA]
+RewriteRule ^google_auth$ /server/php/auth/google_auth.php [L,QSA]
+RewriteRule ^admin$ http://localhost:5173/admin/index.html [L,QSA]
