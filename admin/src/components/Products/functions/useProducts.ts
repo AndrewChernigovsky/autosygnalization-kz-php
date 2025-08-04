@@ -238,8 +238,8 @@ export function useProducts() {
       formData.append('imageIndex', String(imageIndex));
     }
 
-    // Если это новый продукт, отправляем текущую галерею, чтобы сервер мог её дополнить
-    if (product.is_new) {
+    // В новой логике мы всегда передаем галерею, если она есть
+    if (product.gallery && product.gallery.length > 0) {
       formData.append('gallery', JSON.stringify(product.gallery));
     }
 
@@ -247,12 +247,52 @@ export function useProducts() {
       const data = await apiCall('upload_image.php', 'POST', formData);
       const index = products.value.findIndex((p) => p.id === product.id);
       if (index !== -1) {
+        // Обновляем галерею в локальном состоянии, чтобы Vue среагировал
         products.value[index].gallery = data.gallery;
       }
       return data.gallery;
     } catch (error) {
       console.error('Failed to upload image:', error);
       return null;
+    }
+  }
+
+  async function uploadTabIcon(
+    productId: string,
+    tabIndex: number,
+    itemIndex: number,
+    file: File
+  ): Promise<string | null> {
+    const formData = new FormData();
+    formData.append('productId', productId);
+    formData.append('tabIndex', String(tabIndex));
+    formData.append('itemIndex', String(itemIndex));
+    formData.append('icon', file);
+
+    try {
+      const data = await apiCall('upload_tab_icon.php', 'POST', formData);
+      return data.filePath;
+    } catch (error) {
+      console.error('Failed to upload tab icon:', error);
+      return null;
+    }
+  }
+
+  async function deleteTabIcon(
+    productId: string,
+    tabIndex: number,
+    itemIndex: number
+  ) {
+    try {
+      await apiCall('delete_tab_icon.php', 'POST', {
+        productId,
+        tabIndex,
+        itemIndex,
+      });
+      return true;
+    } catch (error) {
+      console.error('Failed to delete tab icon:', error);
+      return false;
     }
   }
 
@@ -267,5 +307,7 @@ export function useProducts() {
     deleteImage,
     uploadImage,
     addProduct,
+    uploadTabIcon,
+    deleteTabIcon,
   };
 }
