@@ -65,6 +65,10 @@ html {
   padding: 0;
 }
 
+.border-none {
+  border: none;
+}
+
 .p-20 {
   padding: 20px;
 }

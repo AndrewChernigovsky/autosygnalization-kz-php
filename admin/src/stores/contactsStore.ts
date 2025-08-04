@@ -4,9 +4,23 @@ import fetchWithCors from '../utils/fetchWithCors';
 import Swal from 'sweetalert2';
 
 const contactsStore = defineStore('contactsStore', () => {
+  const contactsUrl = ref('/server/php/admin/api/contacts/contact.php');
   const contacts = ref([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+
+  const contactsTypes = ref<string[]>([
+    'Основной телефон',
+    'Адрес',
+    'Контактный телефон',
+    'Соц. сети',
+    'Электронная почта',
+    'Расписание',
+    'Карта',
+    'Как к нам добраться',
+    'Сайт',
+    'Мессенджер',
+  ]);
 
   const getContacts = async (url: string) => {
     try {
@@ -31,16 +45,18 @@ const contactsStore = defineStore('contactsStore', () => {
     }
   };
 
-  const addContact = async (url: string, data: any, type: string) => {
+  const addContact = async (url: string, data: any) => {
     try {
       isLoading.value = true;
       error.value = null;
 
       const formData = new FormData();
-      formData.append('title', data.title || '');
-      formData.append('content', data.content || '');
+      formData.append('title', data.title);
+      formData.append('content', data.content);
       formData.append('link', data.link || '');
-      formData.append('type', type);
+      formData.append('type', data.type);
+      formData.append('on_page', data.on_page);
+      formData.append('sort_order', data.sort_order);
 
       if (data.icon_path instanceof File) {
         formData.append('icon_path', data.icon_path);
@@ -148,6 +164,8 @@ const contactsStore = defineStore('contactsStore', () => {
 
   return {
     contacts,
+    contactsTypes,
+    contactsUrl,
     getContacts,
     addContact,
     updateContact,

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
+import Swal from 'sweetalert2';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import contactsStore from '../stores/contactsStore';
 import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyInput from '../components/UI/MyInput.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
-import Swal from 'sweetalert2';
-import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
-import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
+import AddContact from '../components/Contacts/AddContact.vue';
 
 interface IContacts {
   contact_id?: number;
@@ -19,51 +20,15 @@ interface IContacts {
   order?: number;
 }
 
-const quillOptions = {
-  placeholder: 'Введите текст...',
-  formats: ['header', 'bold', 'italic', 'underline', 'list', 'link'],
-  modules: {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link'],
-      ['clean'],
-    ],
-  },
-};
-
 const API_BASE_URL = '/server/php/admin/api/contacts/contact.php';
 
 const store = contactsStore();
 
 const contacts = ref<IContacts[]>([]);
 
-const newContact = ref<IContacts>({
-  title: '',
-  content: '',
-  icon_path: null,
-  icon_path_url: null,
-  link: '',
-  type: '',
-});
-
 const isLoading = ref(false);
 
 const error = ref<string | null>(null);
-
-const contactsType = ref<string[]>([
-  'Основной телефон',
-  'Адрес',
-  'Расписание',
-  'Контактный телефон',
-  'Соц. сети',
-  'Электронная почта',
-  'Расписание',
-  'Карта',
-  'Как к нам добраться',
-  'Сайт',
-]);
 
 const activeEditType = ref<string | null>(null);
 
@@ -73,9 +38,6 @@ const activeEditItem = ref<IContacts | null>(null);
 const draggedItem = ref<IContacts | null>(null);
 const dragOverItem = ref<IContacts | null>(null);
 
-// Функция удалена - теперь используем QuillEditor везде где content: true
-
-// Функция для определения, какие поля должны быть доступны для каждого типа
 const getAvailableFields = (type: string) => {
   switch (type) {
     case 'Основной телефон':
@@ -127,7 +89,6 @@ const getAvailableFields = (type: string) => {
   }
 };
 
-// Функция для получения названия поля title в зависимости от типа
 const getTitleFieldLabel = (type: string) => {
   switch (type) {
     case 'Социальные сети':
@@ -137,7 +98,6 @@ const getTitleFieldLabel = (type: string) => {
   }
 };
 
-// Функция для получения названия поля ссылки в зависимости от типа
 const getLinkFieldLabel = (type: string) => {
   switch (type) {
     case 'Основной телефон':
@@ -156,7 +116,6 @@ const getLinkFieldLabel = (type: string) => {
   }
 };
 
-// Функция для получения названия поля content в зависимости от типа
 const getContentFieldLabel = (type: string) => {
   switch (type) {
     case 'Адрес':
@@ -174,9 +133,9 @@ const getContentFieldLabel = (type: string) => {
   }
 };
 
-onMounted(async () => {
-  await getContacts();
-});
+// onMounted(async () => {
+//   await getContacts();
+// });
 
 const getContacts = async () => {
   isLoading.value = true;
@@ -292,7 +251,6 @@ const getImageUrl = (item: IContacts): string => {
   return '';
 };
 
-// Методы для drag and drop
 const handleDragStart = (event: DragEvent, item: IContacts) => {
   draggedItem.value = item;
   if (event.dataTransfer) {
@@ -389,195 +347,200 @@ const handleDragEnd = () => {
   <div class="my-page p-20">
     <section class="contacts">
       <h2 class="contacts-title my-title m-0">Контакты</h2>
-      <LoadingModal
-        v-if="isLoading || error"
-        :is-loading="isLoading"
-        :error="error"
-        :retry="handleRetry"
-      />
-      <div class="contacts-wrapper" v-for="type in contactsType" :key="type">
-        <div class="contacts-header">
-          <h3 class="contacts-subtitle">{{ type }}</h3>
-          <MyBtn variant="primary" @click="toggleEditMode(type)">
-            {{ activeEditType === type ? 'Закрыть' : 'Редактировать' }}
-          </MyBtn>
-        </div>
-        <div
-          class="contacts-content"
-          :class="{ active: activeEditType === type }"
-        >
-          <div class="contacts-content-wrapper">
-            <div class="add-contact">
-              <div class="add-contact-label-wrapper">
-                <label
-                  v-if="getAvailableFields(type).title"
-                  class="add-contact-label"
-                >
-                  <span class="add-contact-label-text">{{
-                    getTitleFieldLabel(type)
-                  }}</span>
-                  <MyInput
-                    type="text"
-                    variant="primary"
-                    v-model="newContact.title"
-                  />
-                </label>
-                <label
-                  v-if="getAvailableFields(type).content"
-                  class="add-contact-label"
-                >
-                  <span class="add-contact-label-text">{{
-                    getContentFieldLabel(type)
-                  }}</span>
-                  <div class="quill-editor-wrapper">
-                    <QuillEditor
-                      v-model:content="newContact.content"
-                      contentType="html"
-                      theme="snow"
-                      :options="quillOptions"
+      <AddContact :url="API_BASE_URL" />
+      <!-- <div v-if="false">
+        <LoadingModal
+          v-if="isLoading || error"
+          :is-loading="isLoading"
+          :error="error"
+          :retry="handleRetry"
+        />
+        <div class="contacts-wrapper" v-for="type in contactsType" :key="type">
+          <div class="contacts-header">
+            <h3 class="contacts-subtitle">{{ type }}</h3>
+            <MyBtn variant="primary" @click="toggleEditMode(type)">
+              {{ activeEditType === type ? 'Закрыть' : 'Редактировать' }}
+            </MyBtn>
+          </div>
+          <div
+            class="contacts-content"
+            :class="{ active: activeEditType === type }"
+          >
+            <div class="contacts-content-wrapper">
+              <div class="add-contact">
+                <div class="add-contact-label-wrapper">
+                  <label
+                    v-if="getAvailableFields(type).title"
+                    class="add-contact-label"
+                  >
+                    <span class="add-contact-label-text">{{
+                      getTitleFieldLabel(type)
+                    }}</span>
+                    <MyInput
+                      type="text"
+                      variant="primary"
+                      v-model="newContact.title"
                     />
-                  </div>
-                </label>
-                <label
-                  v-if="getAvailableFields(type).link"
-                  class="add-contact-label"
-                >
-                  <span class="add-contact-label-text">{{
-                    getLinkFieldLabel(type)
-                  }}</span>
-                  <MyInput
-                    type="text"
-                    variant="primary"
-                    v-model="newContact.link"
-                  />
-                </label>
-                <label
-                  v-if="getAvailableFields(type).icon_path"
-                  class="add-contact-label file"
-                >
-                  <span class="add-contact-label-text">Иконка</span>
-                  <MyInput
-                    width="150px"
-                    height="150px"
-                    type="file"
-                    variant="primary"
-                    :img="newContact.icon_path_url || ''"
-                    @fileChange="handleNewFileChange"
-                  />
-                </label>
-              </div>
-              <MyBtn
-                variant="primary"
-                @click="
-                  async () => {
-                    addContact(type);
-                  }
-                "
-                >Добавить</MyBtn
-              >
-            </div>
-            <ul class="contacts-list list-style-none">
-              <li
-                class="contacts-item"
-                :class="{
-                  dragging: draggedItem?.contact_id === item.contact_id,
-                  'drag-over': dragOverItem?.contact_id === item.contact_id,
-                }"
-                v-for="item in contacts.filter((item) => item.type === type)"
-                :key="item.contact_id"
-                @dragover="handleDragOver($event)"
-                @dragenter="handleDragEnter($event, item)"
-                @dragleave="handleDragLeave($event)"
-                @drop="handleDrop($event, item, type)"
-              >
-                <div class="item-header">
-                  <div class="item-header-wrapper">
-                    <MyBtn
-                      class="d-and-d-btn"
-                      draggable="true"
-                      @dragstart="handleDragStart($event, item)"
-                      @dragend="handleDragEnd"
-                    >
-                      <img
-                        width="20px"
-                        height="20px"
-                        src="/src/assets/d-and-d.svg"
-                        alt="drag-and-drop"
+                  </label>
+                  <label
+                    v-if="getAvailableFields(type).content"
+                    class="add-contact-label"
+                  >
+                    <span class="add-contact-label-text">{{
+                      getContentFieldLabel(type)
+                    }}</span>
+                    <div class="quill-editor-wrapper">
+                      <QuillEditor
+                        v-model:content="newContact.content"
+                        contentType="html"
+                        theme="snow"
+                        :options="quillOptions"
                       />
-                    </MyBtn>
-                    <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
-                  </div>
-                  <MyInput
-                    v-if="activeEditItem === item"
-                    type="text"
-                    variant="primary"
-                    v-model="item.title"
-                  />
-                  <MyBtn variant="primary" @click="toggleEditItem(item)">
-                    {{ activeEditItem === item ? 'Закрыть' : 'Редактировать' }}
-                  </MyBtn>
+                    </div>
+                  </label>
+                  <label
+                    v-if="getAvailableFields(type).link"
+                    class="add-contact-label"
+                  >
+                    <span class="add-contact-label-text">{{
+                      getLinkFieldLabel(type)
+                    }}</span>
+                    <MyInput
+                      type="text"
+                      variant="primary"
+                      v-model="newContact.link"
+                    />
+                  </label>
+                  <label
+                    v-if="getAvailableFields(type).icon_path"
+                    class="add-contact-label file"
+                  >
+                    <span class="add-contact-label-text">Иконка</span>
+                    <MyInput
+                      width="150px"
+                      height="150px"
+                      type="file"
+                      variant="primary"
+                      :img="newContact.icon_path_url || ''"
+                      @fileChange="handleNewFileChange"
+                    />
+                  </label>
                 </div>
-                <div
-                  class="item-content"
-                  :class="{ active: activeEditItem === item }"
+                <MyBtn
+                  variant="primary"
+                  @click="
+                    async () => {
+                      addContact(type);
+                    }
+                  "
+                  >Добавить</MyBtn
                 >
-                  <div class="item-content-wrapper">
-                    <div class="item-conent-inputs">
-                      <label v-if="getAvailableFields(item.type).content">
-                        <span class="add-contact-label-text">{{
-                          getContentFieldLabel(item.type)
-                        }}</span>
-                        <div class="quill-editor-wrapper">
-                          <QuillEditor
-                            v-model:content="item.content"
-                            contentType="html"
-                            theme="snow"
-                            :options="quillOptions"
-                          />
-                        </div>
-                      </label>
-                      <label v-if="getAvailableFields(item.type).link">
-                        <span class="add-contact-label-text">{{
-                          getLinkFieldLabel(item.type)
-                        }}</span>
-                        <MyInput
-                          type="text"
-                          variant="primary"
-                          v-model="item.link as string"
-                        />
-                      </label>
-                      <label
-                        v-if="getAvailableFields(item.type).icon_path"
-                        class="file"
+              </div>
+              <ul class="contacts-list list-style-none">
+                <li
+                  class="contacts-item"
+                  :class="{
+                    dragging: draggedItem?.contact_id === item.contact_id,
+                    'drag-over': dragOverItem?.contact_id === item.contact_id,
+                  }"
+                  v-for="item in contacts.filter((item) => item.type === type)"
+                  :key="item.contact_id"
+                  @dragover="handleDragOver($event)"
+                  @dragenter="handleDragEnter($event, item)"
+                  @dragleave="handleDragLeave($event)"
+                  @drop="handleDrop($event, item, type)"
+                >
+                  <div class="item-header">
+                    <div class="item-header-wrapper">
+                      <MyBtn
+                        class="d-and-d-btn"
+                        draggable="true"
+                        @dragstart="handleDragStart($event, item)"
+                        @dragend="handleDragEnd"
                       >
-                        <span class="add-contact-label-text">Иконка</span>
-                        <MyInput
-                          width="150px"
-                          height="150px"
-                          type="file"
-                          variant="primary"
-                          :img="getImageUrl(item)"
-                          @fileChange="
-                            (file) => handleEditFileChange(file, item)
-                          "
+                        <img
+                          width="20px"
+                          height="20px"
+                          src="/src/assets/d-and-d.svg"
+                          alt="drag-and-drop"
                         />
-                      </label>
+                      </MyBtn>
+                      <h3 v-if="activeEditItem !== item">{{ item.title }}</h3>
                     </div>
-                    <div class="item-content-footer">
-                      <MyBtn variant="primary" @click="updateContact(item)"
-                        >Сохранить</MyBtn
-                      >
-                      <MyBtn variant="primary" @click="deleteContact(item)"
-                        >Удалить</MyBtn
-                      >
+                    <MyInput
+                      v-if="activeEditItem === item"
+                      type="text"
+                      variant="primary"
+                      v-model="item.title"
+                    />
+                    <MyBtn variant="primary" @click="toggleEditItem(item)">
+                      {{
+                        activeEditItem === item ? 'Закрыть' : 'Редактировать'
+                      }}
+                    </MyBtn>
+                  </div>
+                  <div
+                    class="item-content"
+                    :class="{ active: activeEditItem === item }"
+                  >
+                    <div class="item-content-wrapper">
+                      <div class="item-conent-inputs">
+                        <label v-if="getAvailableFields(item.type).content">
+                          <span class="add-contact-label-text">{{
+                            getContentFieldLabel(item.type)
+                          }}</span>
+                          <div class="quill-editor-wrapper">
+                            <QuillEditor
+                              v-model:content="item.content"
+                              contentType="html"
+                              theme="snow"
+                              :options="quillOptions"
+                            />
+                          </div>
+                        </label>
+                        <label v-if="getAvailableFields(item.type).link">
+                          <span class="add-contact-label-text">{{
+                            getLinkFieldLabel(item.type)
+                          }}</span>
+                          <MyInput
+                            type="text"
+                            variant="primary"
+                            v-model="item.link as string"
+                          />
+                        </label>
+                        <label
+                          v-if="getAvailableFields(item.type).icon_path"
+                          class="file"
+                        >
+                          <span class="add-contact-label-text">Иконка</span>
+                          <MyInput
+                            width="150px"
+                            height="150px"
+                            type="file"
+                            variant="primary"
+                            :img="getImageUrl(item)"
+                            @fileChange="
+                              (file) => handleEditFileChange(file, item)
+                            "
+                          />
+                        </label>
+                      </div>
+                      <div class="item-content-footer">
+                        <MyBtn variant="primary" @click="updateContact(item)"
+                          >Сохранить</MyBtn
+                        >
+                        <MyBtn variant="primary" @click="deleteContact(item)"
+                          >Удалить</MyBtn
+                        >
+                      </div>
                     </div>
                   </div>
-                </div>
-              </li>
-            </ul>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </section>
   </div>
 </template>
