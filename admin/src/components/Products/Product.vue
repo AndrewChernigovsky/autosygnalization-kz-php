@@ -9,6 +9,7 @@
         <strong>{{ editorStore.displayProduct(product).title }}</strong>
       </summary>
       <div class="product-editor">
+        <!-- ... existing fields ... -->
         <div
           class="form-group"
           @click="editorStore.startEditing(product, 'model')"
@@ -106,7 +107,6 @@
             "
           />
         </div>
-
         <Gallery
           :product="editorStore.displayProduct(product)"
           :is-image-uploading="isImageUploading"
@@ -114,7 +114,6 @@
           @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
         />
         <Prices ref="pricesRef" :product="product" />
-
         <div
           class="form-group"
           @click="editorStore.startEditing(product, 'category')"
@@ -236,9 +235,7 @@
             }}</span>
           </div>
         </div>
-
         <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" />
-
         <div class="product-actions">
           <button @click="saveChanges" class="btn-save">Сохранить</button>
           <button
@@ -284,7 +281,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'save-product', product: ProductI): void;
   (e: 'delete-product', productId: string): void;
-  (e: 'toggle-popular', product: ProductI): void;
   (e: 'delete-image', product: ProductI, imageIndex: number): void;
   (
     e: 'trigger-file-upload',
@@ -292,6 +288,20 @@ const emit = defineEmits<{
     imageIndex: number | null
   ): void;
   (e: 'handle-toggle', event: Event, product: ProductI): void;
+  (e: 'cancel-editing', product: ProductI): void;
+  (
+    e: 'stage-tab-icon',
+    productId: string,
+    tabIndex: number,
+    itemIndex: number,
+    file: File
+  ): void;
+  (
+    e: 'delete-tab-icon',
+    productId: string,
+    tabIndex: number,
+    itemIndex: number
+  ): void;
 }>();
 
 const updateArrayField = (
@@ -318,11 +328,11 @@ const handleToggle = (event: Event, product: ProductI) => {
     editorStore.startEditing(product, '');
   } else {
     editorStore.cancelEditing();
+    emit('cancel-editing', product);
   }
   emit('handle-toggle', event, product);
 };
 
-// Логика для загрузки иконок вкладок
 const iconUploader = ref<HTMLInputElement | null>(null);
 const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(
   null
@@ -333,83 +343,37 @@ const onUploadTabIcon = (tabIndex: number, itemIndex: number) => {
   iconUploader.value?.click();
 };
 
-const onDeleteTabIcon = async (tabIndex: number, itemIndex: number) => {
+const onDeleteTabIcon = (tabIndex: number, itemIndex: number) => {
   if (!editorStore.editingProduct) return;
-
-  try {
-    const response = await fetch(
-      '/server/php/admin/api/products/delete_tab_icon.php',
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: editorStore.editingProduct.id,
-          tabIndex,
-          itemIndex,
-        }),
-      }
-    );
-
-    if (response.ok && editorStore.editingProduct.tabs) {
-      editorStore.editingProduct.tabs[tabIndex].content[itemIndex].icon = '';
-    }
-  } catch (error) {
-    console.error('Failed to delete icon:', error);
-  }
+  emit('delete-tab-icon', editorStore.editingProduct.id, tabIndex, itemIndex);
 };
 
-const onIconFileSelected = async (event: Event) => {
+const onIconFileSelected = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
-  if (!file || !currentIconTarget.value || !editorStore.editingProduct) return;
-
-  const { tabIndex, itemIndex } = currentIconTarget.value;
-
-  const formData = new FormData();
-  formData.append('icon', file);
-  formData.append('productId', editorStore.editingProduct.id);
-  formData.append('tabIndex', String(tabIndex));
-  formData.append('itemIndex', String(itemIndex));
-
-  try {
-    const response = await fetch(
-      '/server/php/admin/api/products/upload_tab_icon.php',
-      {
-        method: 'POST',
-        body: formData,
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error('Server responded with an error');
-    }
-
-    const result = await response.json();
-    if (result.filePath && editorStore.editingProduct.tabs) {
-      editorStore.editingProduct.tabs[tabIndex].content[itemIndex].icon =
-        result.filePath;
-    }
-  } catch (error) {
-    console.error('Failed to upload icon:', error);
-  } finally {
-    target.value = '';
-    currentIconTarget.value = null;
+  if (!file || !currentIconTarget.value || !editorStore.editingProduct) {
+    if (target) target.value = '';
+    return;
   }
+  const { tabIndex, itemIndex } = currentIconTarget.value;
+  emit(
+    'stage-tab-icon',
+    editorStore.editingProduct.id,
+    tabIndex,
+    itemIndex,
+    file
+  );
+  target.value = '';
+  currentIconTarget.value = null;
 };
 
 const pricesRef = ref();
 
 function saveChanges() {
-  console.log('[Product.vue] saveChanges called');
   if (pricesRef.value && pricesRef.value.syncPricesToProduct) {
     pricesRef.value.syncPricesToProduct();
   }
   if (editorStore.editingProduct) {
-    console.log('[Product.vue] emit save-product', editorStore.editingProduct);
-    console.log(
-      '[Product.vue] editingProduct.prices',
-      editorStore.editingProduct.prices
-    );
     emit('save-product', editorStore.editingProduct);
   }
 }

@@ -17,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$db = Database::getConnection();
+$dbConnection = Database::getConnection();
+$pdo = $dbConnection->getPdo(); // Use PDO directly for transactions
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -27,8 +28,12 @@ if (!isset($data['title'], $data['category'])) {
   exit;
 }
 
+$tempId = $data['id'] ?? null;
+
 try {
-  $stmt = $db->prepare(
+  $pdo->beginTransaction();
+
+  $stmt = $pdo->prepare(
     "INSERT INTO Products 
             (id, title, description, price, is_popular, gallery, category, model, currency, link, `options_filters`, `functions`, `options`, autosygnals, is_special) 
         VALUES 
@@ -56,29 +61,72 @@ try {
   $stmt->bindValue(':autosygnals', json_encode($data['autosygnals'] ?? []));
   $stmt->bindValue(':is_special', $data['is_special'] ?? 0, PDO::PARAM_INT);
 
-  if ($stmt->execute()) {
-    $data['id'] = $uuid;
-    $data['link'] = $link;
+  $stmt->execute();
 
-    if (isset($data['tabs'])) {
-
-      $tabsJson = json_encode($data['tabs']);
-      $tabsStmt = $db->prepare("
-              INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 
-              VALUES (:product_id, :tabs_data)
-          ");
-      $tabsStmt->execute([
-        ':product_id' => $uuid,
-        ':tabs_data' => $tabsJson
-      ]);
+  // --- Start of new logic: rename folders and update paths ---
+  $baseUploadPath = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/';
+  
+  // Update gallery
+  $gallery = $data['gallery'] ?? [];
+  $tempGalleryDir = $baseUploadPath . 'products/gallery/' . $tempId;
+  if (strpos($tempId, 'new_') === 0 && !empty($gallery) && is_dir($tempGalleryDir)) {
+    $newGalleryDir = $baseUploadPath . 'products/gallery/' . $uuid;
+    if (rename($tempGalleryDir, $newGalleryDir)) {
+      $newGallery = [];
+      foreach ($gallery as $imageUrl) {
+        $newGallery[] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $imageUrl);
+      }
+      $data['gallery'] = $newGallery;
+      $galleryJson = json_encode($newGallery);
+      $updateStmt = $pdo->prepare("UPDATE Products SET gallery = :gallery WHERE id = :id");
+      $updateStmt->execute([':gallery' => $galleryJson, ':id' => $uuid]);
     }
-
-    echo json_encode($data);
-  } else {
-    http_response_code(500);
-    echo json_encode(['message' => 'Failed to create product.']);
   }
-} catch (PDOException $e) {
+
+  // Update tabs
+  $tabs = $data['tabs'] ?? [];
+  $tempTabsDir = $baseUploadPath . 'tabs/' . $tempId;
+  if (strpos($tempId, 'new_') === 0 && !empty($tabs) && is_dir($tempTabsDir)) {
+    $newTabsDir = $baseUploadPath . 'tabs/' . $uuid;
+    if(rename($tempTabsDir, $newTabsDir)) {
+        foreach($tabs as $tabIndex => $tab) {
+            if(isset($tab['content'])) {
+                foreach($tab['content'] as $itemIndex => $item) {
+                    if (!empty($item['icon'])) {
+                       $tabs[$tabIndex]['content'][$itemIndex]['icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['icon']);
+                    }
+                }
+            }
+        }
+        $data['tabs'] = $tabs;
+    }
+  }
+  
+  // Save tabs data (either original or with updated paths)
+  if (isset($data['tabs'])) {
+    $tabsJson = json_encode($data['tabs']);
+    $tabsStmt = $pdo->prepare("
+            INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 
+            VALUES (:product_id, :tabs_data)
+            ON DUPLICATE KEY UPDATE tabs_data = :tabs_data
+        ");
+    $tabsStmt->execute([
+      ':product_id' => $uuid,
+      ':tabs_data' => $tabsJson
+    ]);
+  }
+  // --- End of new logic ---
+
+  $pdo->commit();
+
+  $data['id'] = $uuid;
+  $data['link'] = $link;
+  echo json_encode($data);
+
+} catch (Exception $e) {
+  if ($pdo->inTransaction()) {
+    $pdo->rollBack();
+  }
   http_response_code(500);
   echo json_encode(['message' => 'Database error: ' . $e->getMessage()]);
 }
