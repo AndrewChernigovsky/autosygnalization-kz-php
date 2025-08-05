@@ -142,97 +142,306 @@
         </div>
 
         <div class="array-fields-editor">
-          <div
-            class="form-group"
-            @click="editorStore.startEditing(product, 'functions')"
-          >
-            <label>Функции (через запятую):</label>
-            <textarea
-              v-if="
-                editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'functions' &&
-                editorStore.editingProduct
-              "
-              :value="
-                editorStore.getArrayAsCST(editorStore.editingProduct.functions)
-              "
-              @input="updateArrayField($event, 'functions')"
-            ></textarea>
-            <span v-else>{{
-              editorStore.getArrayAsCST(
-                editorStore.displayProduct(product).functions
-              )
-            }}</span>
+          <div class="form-group-functions">
+            <label>Функции:</label>
+            <div class="functions-checkboxes">
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'autostart-' + product.id"
+                  :checked="hasFunction(product, 'Автозапуск')"
+                  @change="toggleFunction('Автозапуск')"
+                />
+                <label :for="'autostart-' + product.id">Автозапуск</label>
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'engine-block-' + product.id"
+                  :checked="hasFunction(product, 'БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN')"
+                  @change="toggleFunction('БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN')"
+                />
+                <label :for="'engine-block-' + product.id"
+                  >БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'preheater-' + product.id"
+                  :checked="
+                    hasFunction(product, 'УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ')
+                  "
+                  @change="toggleFunction('УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ')"
+                />
+                <label :for="'preheater-' + product.id"
+                  >УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'phone-control-' + product.id"
+                  :checked="hasFunction(product, 'УПРАВЛЕНИЕ С ТЕЛЕФОНА')"
+                  @change="toggleFunction('УПРАВЛЕНИЕ С ТЕЛЕФОНА')"
+                />
+                <label :for="'phone-control-' + product.id"
+                  >УПРАВЛЕНИЕ С ТЕЛЕФОНА</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'free-monitoring-' + product.id"
+                  :checked="hasFunction(product, 'БЕСПЛАТНЫЙ МОНИТОРИНГ')"
+                  @change="toggleFunction('БЕСПЛАТНЫЙ МОНИТОРИНГ')"
+                />
+                <label :for="'free-monitoring-' + product.id"
+                  >БЕСПЛАТНЫЙ МОНИТОРИНГ</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'bluetooth-auth-' + product.id"
+                  :checked="
+                    hasFunction(product, 'УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART')
+                  "
+                  @change="
+                    toggleFunction('УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART')
+                  "
+                />
+                <label :for="'bluetooth-auth-' + product.id"
+                  >УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'smart-diagnostic-' + product.id"
+                  :checked="hasFunction(product, 'УМНАЯ АВТОДИАГНОСТИКА')"
+                  @change="toggleFunction('УМНАЯ АВТОДИАГНОСТИКА')"
+                />
+                <label :for="'smart-diagnostic-' + product.id"
+                  >УМНАЯ АВТОДИАГНОСТИКА</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'data-fuel-' + product.id"
+                  :checked="
+                    hasFunction(product, 'ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА')
+                  "
+                  @change="toggleFunction('ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА')"
+                />
+                <label :for="'data-fuel-' + product.id"
+                  >ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА</label
+                >
+              </div>
+            </div>
           </div>
-          <div
-            class="form-group"
-            @click="editorStore.startEditing(product, 'options')"
-          >
-            <label>Опции (через запятую):</label>
-            <textarea
-              v-if="
-                editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'options' &&
-                editorStore.editingProduct
-              "
-              :value="
-                editorStore.getArrayAsCST(editorStore.editingProduct.options)
-              "
-              @input="updateArrayField($event, 'options')"
-            ></textarea>
-            <span v-else>{{
-              editorStore.getArrayAsCST(
-                editorStore.displayProduct(product).options
-              )
-            }}</span>
+          <div class="form-group-options">
+            <label>Опции:</label>
+            <div class="options-checkboxes">
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'suv-' + product.id"
+                  :checked="hasOption(product, 'Для внедорожника')"
+                  @change="toggleOption('Для внедорожника', 'vnedorojnik')"
+                />
+                <label :for="'suv-' + product.id">Для внедорожника</label>
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'car-' + product.id"
+                  :checked="hasOption(product, 'Для легкового авто')"
+                  @change="toggleOption('Для легкового авто', 'legkoe-avto')"
+                />
+                <label :for="'car-' + product.id">Для легкового авто</label>
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-autosetup-' + product.id"
+                  :checked="hasOptionFilter(product, 'autosetup')"
+                  @change="toggleOptionFilter('autosetup')"
+                />
+                <label :for="'option-autosetup-' + product.id"
+                  >Автозапуск</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-block-engine-can-' + product.id"
+                  :checked="hasOptionFilter(product, 'block-engine-can')"
+                  @change="toggleOptionFilter('block-engine-can')"
+                />
+                <label :for="'option-block-engine-can-' + product.id"
+                  >Блокировка двигателя по CAN</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-control-before-start-' + product.id"
+                  :checked="hasOptionFilter(product, 'control-before-start')"
+                  @change="toggleOptionFilter('control-before-start')"
+                />
+                <label :for="'option-control-before-start-' + product.id"
+                  >Управление предпусковым подогревом</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-control-phone-' + product.id"
+                  :checked="hasOptionFilter(product, 'control-phone')"
+                  @change="toggleOptionFilter('control-phone')"
+                />
+                <label :for="'option-control-phone-' + product.id"
+                  >Управление с телефона</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-free-monitoring-' + product.id"
+                  :checked="hasOptionFilter(product, 'free-monitoring')"
+                  @change="toggleOptionFilter('free-monitoring')"
+                />
+                <label :for="'option-free-monitoring-' + product.id"
+                  >Бесплатный мониторинг</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-bluetooth-smart-' + product.id"
+                  :checked="hasOptionFilter(product, 'bluetooth-smart')"
+                  @change="toggleOptionFilter('bluetooth-smart')"
+                />
+                <label :for="'option-bluetooth-smart-' + product.id"
+                  >Умная авторизация по Bluetooth Smart</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-smart-diagnostic-' + product.id"
+                  :checked="hasOptionFilter(product, 'smart-diagnostic')"
+                  @change="toggleOptionFilter('smart-diagnostic')"
+                />
+                <label :for="'option-smart-diagnostic-' + product.id"
+                  >Умная автодиагностика</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-data-level-bensin-' + product.id"
+                  :checked="hasOptionFilter(product, 'data-level-bensin')"
+                  @change="toggleOptionFilter('data-level-bensin')"
+                />
+                <label :for="'option-data-level-bensin-' + product.id"
+                  >Данные о пробеге и уровне топлива</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-for-park-systems-' + product.id"
+                  :checked="hasOptionFilter(product, 'for-park-systems')"
+                  @change="toggleOptionFilter('for-park-systems')"
+                />
+                <label :for="'option-for-park-systems-' + product.id"
+                  >Для парктроников</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'option-remote-controls-' + product.id"
+                  :checked="hasOptionFilter(product, 'remote-controls')"
+                  @change="toggleOptionFilter('remote-controls')"
+                />
+                <label :for="'option-remote-controls-' + product.id"
+                  >Пульты управления</label
+                >
+              </div>
+            </div>
           </div>
-          <div
-            class="form-group"
-            @click="editorStore.startEditing(product, 'options-filters')"
-          >
-            <label>Опции-фильтры (через запятую):</label>
-            <textarea
-              v-if="
-                editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'options-filters' &&
-                editorStore.editingProduct
-              "
-              :value="
-                editorStore.getArrayAsCST(
-                  editorStore.editingProduct['options-filters']
-                )
-              "
-              @input="updateArrayField($event, 'options-filters')"
-            ></textarea>
-            <span v-else>{{
-              editorStore.getArrayAsCST(
-                editorStore.displayProduct(product)['options-filters']
-              )
-            }}</span>
-          </div>
-          <div
-            class="form-group"
-            @click="editorStore.startEditing(product, 'autosygnals')"
-          >
-            <label>Раздел для автосигнализаций (через запятую):</label>
-            <textarea
-              v-if="
-                editorStore.isEditing(product.id) &&
-                editorStore.fieldToEdit === 'autosygnals' &&
-                editorStore.editingProduct
-              "
-              :value="
-                editorStore.getArrayAsCST(
-                  editorStore.editingProduct.autosygnals
-                )
-              "
-              @input="updateArrayField($event, 'autosygnals')"
-            ></textarea>
-            <span v-else>{{
-              editorStore.getArrayAsCST(
-                editorStore.displayProduct(product).autosygnals
-              )
-            }}</span>
+          <div class="form-group-autosygnals">
+            <label>Раздел для автосигнализаций:</label>
+            <div class="autosygnals-checkboxes">
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'autosygnals-without-auto-' + product.id"
+                  :checked="hasAutosygnals(product, 'without-auto')"
+                  @change="toggleAutosygnals('without-auto')"
+                />
+                <label :for="'autosygnals-without-auto-' + product.id"
+                  >Без автозапуска</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'autosygnals-starline-' + product.id"
+                  :checked="hasAutosygnals(product, 'starline')"
+                  @change="toggleAutosygnals('starline')"
+                />
+                <label :for="'autosygnals-starline-' + product.id"
+                  >Starline</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'autosygnals-auto-' + product.id"
+                  :checked="hasAutosygnals(product, 'auto')"
+                  @change="toggleAutosygnals('auto')"
+                />
+                <label :for="'autosygnals-auto-' + product.id"
+                  >С автозапуском</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'autosygnals-gsm-' + product.id"
+                  :checked="hasAutosygnals(product, 'gsm')"
+                  @change="toggleAutosygnals('gsm')"
+                />
+                <label :for="'autosygnals-gsm-' + product.id">GSM модуль</label>
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'autosygnals-for-park-systems-' + product.id"
+                  :checked="hasAutosygnals(product, 'for-park-systems')"
+                  @change="toggleAutosygnals('for-park-systems')"
+                />
+                <label :for="'autosygnals-for-park-systems-' + product.id"
+                  >Для парктроников</label
+                >
+              </div>
+              <div class="form-group-checkbox">
+                <input
+                  type="checkbox"
+                  :id="'autosygnals-remote-controls-' + product.id"
+                  :checked="hasAutosygnals(product, 'remote-controls')"
+                  @change="toggleAutosygnals('remote-controls')"
+                />
+                <label :for="'autosygnals-remote-controls-' + product.id"
+                  >Пульты управления</label
+                >
+              </div>
+            </div>
           </div>
         </div>
         <Tabs @upload-icon="onUploadTabIcon" @delete-icon="onDeleteTabIcon" />
@@ -310,6 +519,130 @@ const updateArrayField = (
 ) => {
   const target = event.target as HTMLTextAreaElement;
   editorStore.updateArrayField(fieldName, target.value);
+};
+
+const hasFunction = (product: ProductI, functionName: string): boolean => {
+  const currentProduct = editorStore.displayProduct(product);
+  return currentProduct.functions?.includes(functionName) || false;
+};
+
+const toggleFunction = (functionName: string) => {
+  if (!editorStore.editingProduct) {
+    editorStore.startEditing(props.product, 'functions');
+  }
+
+  if (editorStore.editingProduct) {
+    if (!editorStore.editingProduct.functions) {
+      editorStore.editingProduct.functions = [];
+    }
+
+    const index = editorStore.editingProduct.functions.indexOf(functionName);
+    if (index > -1) {
+      // Удаляем функцию если она уже есть
+      editorStore.editingProduct.functions.splice(index, 1);
+    } else {
+      // Добавляем функцию если её нет
+      editorStore.editingProduct.functions.push(functionName);
+    }
+  }
+};
+
+const hasOption = (product: ProductI, optionName: string): boolean => {
+  const currentProduct = editorStore.displayProduct(product);
+  return currentProduct.options?.includes(optionName) || false;
+};
+
+const toggleOption = (optionName: string, filterValue: string) => {
+  if (!editorStore.editingProduct) {
+    editorStore.startEditing(props.product, 'options');
+  }
+
+  if (editorStore.editingProduct) {
+    // Инициализируем массивы если их нет
+    if (!editorStore.editingProduct.options) {
+      editorStore.editingProduct.options = [];
+    }
+    if (!editorStore.editingProduct['options-filters']) {
+      editorStore.editingProduct['options-filters'] = [];
+    }
+
+    const optionIndex = editorStore.editingProduct.options.indexOf(optionName);
+    const filterIndex =
+      editorStore.editingProduct['options-filters'].indexOf(filterValue);
+
+    if (optionIndex > -1) {
+      // Удаляем опцию и фильтр если они уже есть
+      editorStore.editingProduct.options.splice(optionIndex, 1);
+      if (filterIndex > -1) {
+        editorStore.editingProduct['options-filters'].splice(filterIndex, 1);
+      }
+    } else {
+      // Добавляем опцию и фильтр если их нет
+      editorStore.editingProduct.options.push(optionName);
+      editorStore.editingProduct['options-filters'].push(filterValue);
+    }
+  }
+};
+
+const hasOptionFilter = (product: ProductI, filterValue: string): boolean => {
+  const currentProduct = editorStore.displayProduct(product);
+  return currentProduct['options-filters']?.includes(filterValue) || false;
+};
+
+const toggleOptionFilter = (filterValue: string) => {
+  if (!editorStore.editingProduct) {
+    editorStore.startEditing(props.product, 'options-filters');
+  }
+
+  if (editorStore.editingProduct) {
+    // Инициализируем массив если его нет
+    if (!editorStore.editingProduct['options-filters']) {
+      editorStore.editingProduct['options-filters'] = [];
+    }
+
+    const filterIndex =
+      editorStore.editingProduct['options-filters'].indexOf(filterValue);
+
+    if (filterIndex > -1) {
+      // Удаляем фильтр если он уже есть
+      editorStore.editingProduct['options-filters'].splice(filterIndex, 1);
+    } else {
+      // Добавляем фильтр если его нет
+      editorStore.editingProduct['options-filters'].push(filterValue);
+    }
+  }
+};
+
+const hasAutosygnals = (
+  product: ProductI,
+  autosygnalsValue: string
+): boolean => {
+  const currentProduct = editorStore.displayProduct(product);
+  return currentProduct.autosygnals?.includes(autosygnalsValue) || false;
+};
+
+const toggleAutosygnals = (autosygnalsValue: string) => {
+  if (!editorStore.editingProduct) {
+    editorStore.startEditing(props.product, 'autosygnals');
+  }
+
+  if (editorStore.editingProduct) {
+    // Инициализируем массив если его нет
+    if (!editorStore.editingProduct.autosygnals) {
+      editorStore.editingProduct.autosygnals = [];
+    }
+
+    const autosygnalsIndex =
+      editorStore.editingProduct.autosygnals.indexOf(autosygnalsValue);
+
+    if (autosygnalsIndex > -1) {
+      // Удаляем значение если оно уже есть
+      editorStore.editingProduct.autosygnals.splice(autosygnalsIndex, 1);
+    } else {
+      // Добавляем значение если его нет
+      editorStore.editingProduct.autosygnals.push(autosygnalsValue);
+    }
+  }
 };
 
 watch(
@@ -432,6 +765,108 @@ function saveChanges() {
 .form-group-checkbox input[type='checkbox'] {
   width: 20px;
   height: 20px;
+}
+
+.form-group-functions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group-functions label {
+  font-weight: bold;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+.functions-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background-color: #2c2c2c;
+  border-radius: 4px;
+}
+
+.functions-checkboxes .form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.functions-checkboxes .form-group-checkbox label {
+  font-weight: normal;
+  color: #eee;
+  margin: 0;
+  cursor: pointer;
+}
+
+.form-group-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group-options label {
+  font-weight: bold;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+.options-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background-color: #2c2c2c;
+  border-radius: 4px;
+}
+
+.options-checkboxes .form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.options-checkboxes .form-group-checkbox label {
+  font-weight: normal;
+  color: #eee;
+  margin: 0;
+  cursor: pointer;
+}
+
+.form-group-autosygnals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group-autosygnals label {
+  font-weight: bold;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+.autosygnals-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background-color: #2c2c2c;
+  border-radius: 4px;
+}
+
+.autosygnals-checkboxes .form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.autosygnals-checkboxes .form-group-checkbox label {
+  font-weight: normal;
+  color: #eee;
+  margin: 0;
+  cursor: pointer;
 }
 .array-fields-editor {
   border-top: 1px solid #444;
