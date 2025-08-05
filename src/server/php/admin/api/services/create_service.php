@@ -3,7 +3,7 @@ namespace API\SERVICES\ADMIN;
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 use Exception;
 use HELPERS\SlugHelper;
 
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   exit;
 }
 
-$dbConnection = Database::getConnection();
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);

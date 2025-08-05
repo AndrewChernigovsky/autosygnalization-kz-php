@@ -11,67 +11,73 @@ import MyMainNav from '../views/MyMainNav.vue';
 import Works from '../views/Works.vue';
 import Footer from '../views/Footer.vue';
 import NewFooter from '../views/NewFooter.vue';
+import Registrations from '../views/Registrations.vue';
 
 export const routes = [
   {
-    path: '/',
+    path: '/main-page',
     name: 'Главная',
     component: Home,
   },
   {
-    path: '/slider-intro',
+    path: '/slider-intro-page',
     name: 'Слайдер',
     component: SliderIntro,
   },
   {
-    path: '/navigation',
+    path: '/navigation-page',
     name: 'Навигация',
     component: MyMainNav,
   },
   {
-    path: '/contacts',
+    path: '/contacts-page',
     name: 'Контакты',
     component: MyContacts,
   },
   {
-    path: '/products',
+    path: '/products-page',
     name: 'Продукты',
     component: Products,
   },
   {
-    path: '/services',
+    path: '/services-page',
     name: 'Услуги',
     component: Services,
   },
   {
-    path: '/about-us',
+    path: '/about-us-page',
     name: 'О нас',
     component: AboutUs,
   },
   {
-    path: '/advantage',
+    path: '/advantages-page',
     name: 'Преимущества',
     component: Advantage,
   },
   {
-    path: '/sertificates',
+    path: '/sertificates-page',
     name: 'Сертификаты',
     component: Sertificates,
   },
   {
-    path: '/works',
+    path: '/works-page',
     name: 'Работы',
     component: Works,
   },
   {
-    path: '/footer',
+    path: '/footer-page',
     name: 'Футер',
     component: Footer,
   },
   {
-    path: '/new-footer',
+    path: '/new-footer-page',
     name: 'Новый футер',
     component: NewFooter,
+  },
+  {
+    path: '/registrations-page',
+    name: 'Регистрации',
+    component: Registrations,
   },
 ];
 
