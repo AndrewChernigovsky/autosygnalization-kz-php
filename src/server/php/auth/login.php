@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <main class="main">
     <div class="container">
       <h1>Админ панель</h1>
-      <form action="/google_auth" method="post">
+      <form action="/sign_up" method="post">
         <label for="password">Введите пароль</label>
         <input type="password" id="password" name="password" placeholder="Пароль">
         <label for="login">Введите логин</label>
