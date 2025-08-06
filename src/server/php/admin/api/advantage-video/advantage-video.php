@@ -260,7 +260,7 @@ class AdvantageVideoAPI extends DataBase {
         $video = $this->ffmpeg->open($temp_path);
 
         $video->save(new \FFMpeg\Format\Video\WebM(), $server_paths['desktop_webm']);
-        $video->save(new \FFMpeg\Format\Video\MP4(), $server_paths['desktop_mp4']);
+        $video->save(new \FFMpeg\Format\Video\X264(), $server_paths['desktop_mp4']);
         $video->save(new \FFMpeg\Format\Video\WebM(), $server_paths['mob']);
 
         // // Команда для создания постера (остается без изменений)
