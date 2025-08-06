@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useProductEditorStore } from '../../stores/productEditorStore';
 
 export default defineComponent({
@@ -7,7 +7,11 @@ export default defineComponent({
   emits: ['upload-icon', 'delete-icon'],
   setup() {
     const editorStore = useProductEditorStore();
-    return { editorStore };
+    const openTabs = ref<Record<number, boolean>>({});
+    const toggleTab = (index: number) => {
+      openTabs.value[index] = !openTabs.value[index];
+    };
+    return { editorStore, openTabs, toggleTab };
   },
 });
 </script>
@@ -19,64 +23,86 @@ export default defineComponent({
       :key="tabIndex"
       class="tab-item"
     >
-      <div class="tab-header">
-        <div class="form-group">
-          <label>Заголовок вкладки:</label>
-          <input type="text" v-model="tab.title" />
-        </div>
-        <button @click="editorStore.removeTab(tabIndex)" class="btn-delete-tab">
-          Удалить вкладку
-        </button>
-      </div>
-
-      <div class="description-items-list">
-        <h4>Пункты описания:</h4>
-        <div
-          v-for="(item, itemIndex) in tab.content"
-          :key="itemIndex"
-          class="description-item"
-        >
-          <div class="description-item-inputs">
-            <div class="form-group">
-              <label>Заголовок пункта:</label>
-              <input type="text" v-model="item.title" />
-            </div>
-            <div class="form-group">
-              <label>Иконка:</label>
-              <div class="icon-management">
-                <img v-if="item.icon" :src="item.icon" alt="Иконка" class="icon-preview" />
-                <input type="text" v-model="item.icon" readonly class="icon-input" />
-                <button
-                  @click="$emit('upload-icon', tabIndex, itemIndex)"
-                  class="btn-upload-image"
-                >
-                  Загрузить новую
-                </button>
-                <button
-                  @click="$emit('delete-icon', tabIndex, itemIndex)"
-                  class="btn-delete-icon"
-                  v-if="item.icon"
-                >
-                  Удалить
-                </button>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Описание пункта:</label>
-              <textarea v-model="item.description"></textarea>
-            </div>
+      <div>
+        <div class="tab-header">
+          <div class="form-group">
+            <label>Заголовок вкладки:</label>
+            <input type="text" v-model="tab.title" />
           </div>
+          <button @click="toggleTab(tabIndex)" class="btn-toggle-tab">
+            {{ openTabs[tabIndex] ? 'Свернуть' : 'Развернуть' }}
+          </button>
           <button
-            @click="editorStore.removeDescriptionItem(tabIndex, itemIndex)"
-            class="btn-delete-item"
+            @click="editorStore.removeTab(tabIndex)"
+            class="btn-delete-tab"
           >
-            Удалить пункт
+            Удалить вкладку
           </button>
         </div>
+
+        <div class="description-items-list" v-if="openTabs[tabIndex]">
+          <h4>Пункты описания:</h4>
+          <div
+            v-for="(item, itemIndex) in tab.content"
+            :key="itemIndex"
+            class="description-item"
+          >
+            <div class="description-item-inputs">
+              <div class="form-group">
+                <label>Заголовок пункта:</label>
+                <input type="text" v-model="item.title" />
+              </div>
+              <div class="form-group">
+                <label>Иконка:</label>
+                <div class="icon-management">
+                  <img
+                    v-if="item.icon"
+                    :src="item.icon"
+                    alt="Иконка"
+                    class="icon-preview"
+                  />
+                  <input
+                    type="text"
+                    v-model="item.icon"
+                    readonly
+                    class="icon-input"
+                  />
+                  <button
+                    @click="$emit('upload-icon', tabIndex, itemIndex)"
+                    class="btn-upload-image"
+                  >
+                    Загрузить новую
+                  </button>
+                  <button
+                    @click="$emit('delete-icon', tabIndex, itemIndex)"
+                    class="btn-delete-icon"
+                    v-if="item.icon"
+                  >
+                    Удалить
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Описание пункта:</label>
+                <textarea v-model="item.description"></textarea>
+              </div>
+            </div>
+            <button
+              @click="editorStore.removeDescriptionItem(tabIndex, itemIndex)"
+              class="btn-delete-item"
+            >
+              Удалить пункт
+            </button>
+          </div>
+        </div>
+        <button
+          @click="editorStore.addDescriptionItem(tabIndex)"
+          class="btn-add"
+          v-if="openTabs[tabIndex]"
+        >
+          Добавить пункт описания
+        </button>
       </div>
-      <button @click="editorStore.addDescriptionItem(tabIndex)" class="btn-add">
-        Добавить пункт описания
-      </button>
     </div>
 
     <button @click="editorStore.addTab()" class="btn-add btn-add-tab">
