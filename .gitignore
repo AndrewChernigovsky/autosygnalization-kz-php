@@ -10,4 +10,4 @@ gulpfile.js
 .DS_Store
 dist.rar
 autosygnalization-kz-php.rar
-src/server/vendor/*
+src/server/vendor/
