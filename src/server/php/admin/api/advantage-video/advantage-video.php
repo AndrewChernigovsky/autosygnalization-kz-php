@@ -9,7 +9,11 @@ header("Access-control-allow-headers: Content-Type, Authorization, X-Requested-W
 header('Content-Type: application/json');
 
 
+
 require_once __DIR__ . '/../../../../vendor/autoload.php';
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
+use FFMpeg\TimeCode;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use FFMpeg\TimeCode;

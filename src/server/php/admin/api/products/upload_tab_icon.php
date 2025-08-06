@@ -36,7 +36,7 @@ if ($file['error'] !== UPLOAD_ERR_OK) {
   exit;
 }
 
-$uploadDir = __DIR__ . '/../../../../uploads/tabs/' . $productId . '/';
+$uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/tabs/' . $productId . '/';
 if (!is_dir($uploadDir)) {
   mkdir($uploadDir, 0777, true);
 }
@@ -48,40 +48,34 @@ $uploadFilePath = $uploadDir . $newFileName;
 try {
   $pdo->beginTransaction();
 
-  // 1. Get current tabs data or create if not exists
   $stmt = $pdo->prepare("SELECT tabs_data FROM TabsAdditionalProductsData WHERE product_id = :product_id");
   $stmt->execute([':product_id' => $productId]);
   $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
   $tabs = $result ? json_decode($result['tabs_data'], true) : [];
 
-  // Ensure structure is valid for the new icon
   if (!isset($tabs[$tabIndex])) {
-    $tabs[$tabIndex] = ['title' => 'Новая вкладка', 'description' => []];
+    $tabs[$tabIndex] = ['title' => 'Новая вкладка', 'content' => []];
   }
-  if (!isset($tabs[$tabIndex]['description'][$itemIndex])) {
-    $tabs[$tabIndex]['description'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'icon' => ''];
+  if (!isset($tabs[$tabIndex]['content'][$itemIndex])) {
+    $tabs[$tabIndex]['content'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'icon' => ''];
+  }
+  
+  if (!empty($tabs[$tabIndex]['content'][$itemIndex]['icon'])) {
+      $oldIconUrl = $tabs[$tabIndex]['content'][$itemIndex]['icon'];
+      $oldIconPath = $_SERVER['DOCUMENT_ROOT'] . parse_url($oldIconUrl, PHP_URL_PATH);
+      if (file_exists($oldIconPath)) {
+          unlink($oldIconPath);
+      }
   }
 
-  // 2. Check for old icon and delete it
-  if (!empty($tabs[$tabIndex]['description'][$itemIndex]['icon'])) {
-    $oldIconPath = $tabs[$tabIndex]['description'][$itemIndex]['icon'];
-    $oldFileFullPath = __DIR__ . '/../../../..' . $oldIconPath;
-    if (file_exists($oldFileFullPath)) {
-      unlink($oldFileFullPath);
-    }
-  }
-
-  // 3. Move the new file
   if (!move_uploaded_file($file['tmp_name'], $uploadFilePath)) {
     throw new Exception("Failed to move uploaded file.");
   }
 
-  // 4. Update the path in the tabs array
   $newIconPath = '/server/uploads/tabs/' . $productId . '/' . $newFileName;
-  $tabs[$tabIndex]['description'][$itemIndex]['icon'] = $newIconPath;
+  $tabs[$tabIndex]['content'][$itemIndex]['icon'] = $newIconPath;
 
-  // 5. Save updated tabs data back to DB using INSERT ... ON DUPLICATE KEY UPDATE
   $updateStmt = $pdo->prepare("
         INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 
         VALUES (:product_id, :tabs_data)
@@ -101,7 +95,6 @@ try {
   if ($pdo->inTransaction()) {
     $pdo->rollBack();
   }
-  // Clean up uploaded file if something went wrong
   if (file_exists($uploadFilePath)) {
     unlink($uploadFilePath);
   }
