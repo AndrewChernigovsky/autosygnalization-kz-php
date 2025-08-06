@@ -8,8 +8,11 @@ header("Access-control-allow-methods: GET, POST, DELETE, OPTIONS");
 header("Access-control-allow-headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json');
 
-require_once __DIR__ . '/../../../../vendor/autoload.php';
 
+require_once __DIR__ . '/../../../../vendor/autoload.php';
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
+use FFMpeg\TimeCode;
 use DATABASE\DataBase;
 use Exception;
 
@@ -28,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 class AdvantageVideoAPI extends DataBase {
     protected $pdo;
     private $upload_dir;
-    private $ffmpeg_path = 'C:\\ffmpeg-7.1.1-full_build\\bin\\ffmpeg.exe';
+    private $ffmpeg;
 
     public function __construct() {
         $db = DataBase::getInstance();
@@ -37,6 +40,16 @@ class AdvantageVideoAPI extends DataBase {
         if (!is_dir($this->upload_dir)) {
             mkdir($this->upload_dir, 0777, true);
         }
+    
+    $ffmpeg_dir = 'C:\\Users\\ADMIN\\AppData\\Local\\Microsoft\\WinGet\\Links\\';
+        
+    $this->ffmpeg = FFMpeg::create([
+        'ffmpeg.binaries'  => "{$ffmpeg_dir}\\ffmpeg.exe",
+        'ffprobe.binaries' => "{$ffmpeg_dir}\\ffprobe.exe",
+        'timeout' => 60,
+        'ffmpeg.threads' => 4,
+    ]);
+
     }
 
     public function getAll() {
@@ -243,26 +256,33 @@ class AdvantageVideoAPI extends DataBase {
 
         $escaped_temp_path = escapeshellarg($temp_path);
 
-        // Команда для создания постера (остается без изменений)
-        $poster_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -ss 00:00:01.000 -vframes 1 " . escapeshellarg($server_paths['poster']);
-        log_message("Executing FFmpeg for poster: {$poster_command}");
-        shell_exec($poster_command . ' 2>&1');
 
-        // Команда №2: Создаем обе десктопные версии (webm и mp4) за один проход.
-        $desktop_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
-            "-c:v libvpx-vp9 -crf 28 -b:v 0 " . escapeshellarg($server_paths['desktop_webm']) . ' ' .
-            "-c:v libx264 -crf 23 " . escapeshellarg($server_paths['desktop_mp4']);
+        $video = $this->ffmpeg->open($temp_path);
+
+        $video->save(new \FFMpeg\Format\Video\WebM(), $server_paths['desktop_webm']);
+        $video->save(new \FFMpeg\Format\Video\MP4(), $server_paths['desktop_mp4']);
+        $video->save(new \FFMpeg\Format\Video\WebM(), $server_paths['mob']);
+
+        // // Команда для создания постера (остается без изменений)
+        // $poster_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -ss 00:00:01.000 -vframes 1 " . escapeshellarg($server_paths['poster']);
+        // log_message("Executing FFmpeg for poster: {$poster_command}");
+        // shell_exec($poster_command . ' 2>&1');
+
+        // // Команда №2: Создаем обе десктопные версии (webm и mp4) за один проход.
+        // $desktop_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
+        //     "-c:v libvpx-vp9 -crf 28 -b:v 0 " . escapeshellarg($server_paths['desktop_webm']) . ' ' .
+        //     "-c:v libx264 -crf 23 " . escapeshellarg($server_paths['desktop_mp4']);
         
-        log_message("Executing FFmpeg for desktop versions: {$desktop_command}");
-        shell_exec($desktop_command . ' 2>&1');
+        // log_message("Executing FFmpeg for desktop versions: {$desktop_command}");
+        // shell_exec($desktop_command . ' 2>&1');
 
-        // Команда №3: Создаем мобильную версию.
-        // Она меньше, поэтому ее кодирование займет меньше времени.
-        $mobile_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
-            '-vf "scale=w=768:h=-2" -c:v libvpx-vp9 -crf 32 -b:v 0 ' . escapeshellarg($server_paths['mob']);
+        // // Команда №3: Создаем мобильную версию.
+        // // Она меньше, поэтому ее кодирование займет меньше времени.
+        // $mobile_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
+        //     '-vf "scale=w=768:h=-2" -c:v libvpx-vp9 -crf 32 -b:v 0 ' . escapeshellarg($server_paths['mob']);
             
-        log_message("Executing FFmpeg for mobile version: {$mobile_command}");
-        shell_exec($mobile_command . ' 2>&1');
+        // log_message("Executing FFmpeg for mobile version: {$mobile_command}");
+        // shell_exec($mobile_command . ' 2>&1');
 
         $results = [];
         // Проверяем наличие всех созданных файлов
@@ -317,5 +337,6 @@ try {
 } catch (\Exception $e) {
     error_log("Критическая ошибка API 'Видео преимуществ': " . $e->getMessage());
     http_response_code(500);
+    error_log("Критическая ошибка API 'Видео преимуществ': " . $e->getMessage());
     echo json_encode(['success' => false, 'error' => 'Внутренняя ошибка сервера']);
 } 
