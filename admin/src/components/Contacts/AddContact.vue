@@ -7,6 +7,7 @@ import MyFileInput from '../UI/MyFileInput.vue';
 import MyCheckboxInput from '../UI/MyCheckboxInput.vue';
 import MyRadioInput from '../UI/MyRadioInput.vue';
 import MyQuill from '../UI/MyQuill.vue';
+import addItemOnDB from '../../functions/addItemOnDB';
 
 interface INewContact {
   type: string;
@@ -18,7 +19,7 @@ interface INewContact {
   on_page: boolean;
 }
 
-const addNewContactActive = ref(true);
+const addNewContactActive = ref(false);
 
 const newContact = ref<INewContact>({
   type: '',
@@ -30,20 +31,36 @@ const newContact = ref<INewContact>({
   on_page: false,
 });
 
-const contactsStore = useContactsStore();
+const isValid = ref(true);
 
-const contactTypes = contactsStore.contactsTypes;
+const contactsStore = useContactsStore();
 
 const handleFileChange = (file: File | null) => {
   newContact.value.icon_path = file;
 };
 
 const addNewContact = () => {
-  // contactsStore.addContact(
-  //   contactsStore.contactsUrl,
-  //   newContact.value,
-  // );
-  console.log(newContact.value);
+  if (!newContact.value.type || !newContact.value.title) {
+    isValid.value = false;
+    const targetElement = document.getElementById('contact-type-list');
+    if (targetElement) {
+      targetElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+    return;
+  } else {
+    isValid.value = true;
+  }
+
+  const filteredContacts = contactsStore.contacts.filter(
+    (contact: any) => contact.type === newContact.value.type
+  );
+
+  newContact.value.sort_order = filteredContacts.length + 1;
+
+  addItemOnDB(newContact.value, contactsStore.contactsApiUrl);
 };
 </script>
 
@@ -66,9 +83,13 @@ const addNewContact = () => {
           <div class="addcontact-type-title">
             <h3 class="subtitle m-0">Выберите тип контакта*</h3>
           </div>
-          <ul class="addcontact-type-list list-style-none m-0 p-0">
+          <ul
+            id="contact-type-list"
+            class="addcontact-type-list list-style-none m-0 p-0"
+            :class="isValid ? '' : 'not-valid'"
+          >
             <li
-              v-for="contactType in contactTypes"
+              v-for="contactType in contactsStore.contactsTypes"
               :key="contactType"
               class="addcontact-type-item"
             >
@@ -91,7 +112,11 @@ const addNewContact = () => {
         <div class="addcontact-inputs-wrapper">
           <div class="addcontact-label">
             <h3 class="subtitle m-0">Заголовок*</h3>
-            <MyInput variant="primary" v-model="newContact.title" />
+            <MyInput
+              :class="isValid ? '' : 'not-valid'"
+              variant="primary"
+              v-model="newContact.title"
+            />
             <p class="addcontact-help m-0">
               *Введите заголовок, он <strong>НЕ</strong> будет отображаться на
               странице
@@ -199,7 +224,7 @@ const addNewContact = () => {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  padding: 10px;
+  padding: 20px;
 }
 
 .addcontact-type-label {
@@ -271,6 +296,9 @@ const addNewContact = () => {
   }
 
   :deep(.ql-container) {
+    color: #000;
+    background-color: #fff;
+    min-height: 120px;
     max-height: 120px;
 
     :deep(.ql-editor) {

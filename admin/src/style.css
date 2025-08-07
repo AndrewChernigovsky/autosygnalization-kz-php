@@ -92,3 +92,7 @@ html {
   font-size: var(--subtitle-size);
   line-height: var(--subtitle-line-height);
 }
+
+.not-valid {
+  box-shadow: inset 0 0 0 5px #ff0000;
+}

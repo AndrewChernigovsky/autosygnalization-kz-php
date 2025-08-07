@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
 import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
-
-const emit = defineEmits<{
-  (e: 'update:content', value: string): void;
-}>();
+import { ref, watch } from 'vue';
 
 const props = defineProps<{
   content: string;
   quillOptions?: any;
+}>();
+
+const content = ref(props.content);
+
+const emit = defineEmits<{
+  (e: 'update:content', value: string): void;
 }>();
 
 const presetQuillOptions = {
@@ -24,14 +27,19 @@ const presetQuillOptions = {
     ],
   },
 };
+
+watch(content, (newVal) => {
+  emit('update:content', newVal);
+});
 </script>
 
 <template>
   <div class="my-quill-wrapper">
     <QuillEditor
-      v-model:content="props.content"
+      v-model:content="content"
       theme="snow"
       :options="presetQuillOptions ? presetQuillOptions : props.quillOptions"
+      content-type="html"
     />
   </div>
 </template>

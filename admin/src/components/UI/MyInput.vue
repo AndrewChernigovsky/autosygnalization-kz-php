@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-interface Props {
+interface IProps {
   modelValue?: string | null;
   type?: 'text' | 'email' | 'password' | 'number' | 'tel';
   variant?: 'primary' | 'secondary' | '';
@@ -9,52 +9,40 @@ interface Props {
   disabled?: boolean;
   id?: string | undefined;
   className?: string;
-  width?: string;
-  height?: string;
-  img?: string;
   name?: string;
 }
 
-interface Emits {
-  (e: 'update:modelValue', value: string | null): void;
-  (e: 'fileChange', file: File | null): void;
-  (e: 'focus', event: FocusEvent): void;
-  (e: 'blur', event: FocusEvent): void;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  type: 'text',
-  placeholder: '',
-  disabled: false,
-  variant: '',
-  className: '',
-  img: '',
-});
+const props = defineProps<IProps>();
 
 const inputClass = computed(() =>
   [
     'my-input',
-    props.variant ? props.variant : false,
+    props.variant,
+    props.modelValue ? 'active' : false,
     props.className ? props.className : false,
   ]
     .filter(Boolean)
     .join(' ')
 );
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string | null): void;
+}>();
 </script>
 
 <template>
-  <div
-    :style="{ width: props.width, height: props.height }"
-    :class="['my-input-wrapper']"
-  >
+  <div class="my-input-wrapper">
     <input
-      :name="props.name || undefined"
-      :id="props.id || undefined"
-      :type="props.type"
-      :value="props.modelValue || ''"
-      :placeholder="props.placeholder"
-      :disabled="props.disabled"
       :class="inputClass"
+      :name="name"
+      :id="id"
+      :type="type"
+      :placeholder="placeholder"
+      :disabled="disabled"
+      :value="modelValue"
+      @input="
+        emit('update:modelValue', ($event.target as HTMLInputElement)?.value)
+      "
     />
   </div>
 </template>

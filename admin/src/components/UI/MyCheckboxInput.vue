@@ -40,7 +40,7 @@ const handleChange = (event: Event) => {
     width: 40px;
     height: 20px;
     appearance: none;
-    background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
+    background: linear-gradient(180deg, #10172d 0%, #0031bc 100%);
     border-radius: 10px;
     border: 1px solid #fff;
 
@@ -48,7 +48,7 @@ const handleChange = (event: Event) => {
       content: '';
       position: absolute;
       top: 50%;
-      left: 2px;
+      left: 22px;
       transform: translateY(-50%);
       width: 15px;
       height: 15px;
@@ -58,9 +58,9 @@ const handleChange = (event: Event) => {
     }
 
     &:checked {
-      background: linear-gradient(180deg, #10172d 0%, #0031bc 100%);
+      background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
       &::before {
-        left: 22px;
+        left: 2px;
       }
     }
   }
