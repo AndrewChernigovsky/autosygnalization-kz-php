@@ -1,17 +1,24 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-// Конфигурация
-$clientID = '21540797099-2m4tbtjpgo8vjlaac8ct20jq7aoio5r6.apps.googleusercontent.com';
-$clientSecret = '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';
 // Корректный Redirect URI, указывающий на обработчик
 $redirectUri = 'http://localhost:3000/google_auth_callback';
+
+$dotenv = Dotenv\Dotenv::createImmutable('./.env');
+$dotenv->load();
+
+require_once __DIR__ . '/../../vendor/autoload.php';
 
 // Создаем клиент Google
 $client = new Google\Client();
 $client->setClientId($clientID);
 $client->setClientSecret($clientSecret);
 $client->setRedirectUri($redirectUri);
+
+// Конфигурация
+$client->setClientId($_ENV['GOOGLE_CLIENT_ID']);
+$client->setClientSecret($_ENV['GOOGLE_CLIENT_SECRET']);
+
 $client->addScope("email");
 $client->addScope("profile");
 

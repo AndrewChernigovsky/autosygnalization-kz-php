@@ -10,20 +10,20 @@ $title = 'Админ панель | Auto Security';
 // Проверяем, была ли отправлена форма
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   // Проверяем, что логин и пароль были переданы
-  if (!empty($_POST['login']) && !empty($_POST['password'])) {
+  if (!empty($_POST['email']) && !empty($_POST['password'])) {
     try {
       $dbConnection = DataBase::getConnection();
       $pdo = $dbConnection->getPdo();
 
       // Ищем пользователя по логину, полученному из формы
-      $sql = "SELECT * FROM users WHERE login = :login";
+      $sql = "SELECT * FROM users WHERE email = :email";
       $stmt = $pdo->prepare($sql);
-      $stmt->execute(['login' => $_POST['login']]);
+      $stmt->execute(['email' => $_POST['email']]);
       $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
       // Проверяем, найден ли пользователь и совпадает ли пароль
       // ВАЖНО: В реальном приложении используйте password_verify()
-      if ($user && $user['password'] == $_POST['password']) {
+      if ($user && password_verify($_POST['password'], $user['password'])) {
         // Если аутентификация успешна, перенаправляем
         header('Location: /google_auth');
         exit();
@@ -41,18 +41,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="ru">
+<style>
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 300px;
+  }
+</style>
 
 <body>
   <main class="main">
     <div class="container">
       <h1>Админ панель</h1>
       <form action="/sign_up" method="post">
-        <label for="password">Введите пароль</label>
-        <input type="password" id="password" name="password" placeholder="Пароль">
-        <label for="login">Введите логин</label>
-        <input type="text" id="login" name="username" placeholder="Логин">
-        <label for="email">Введите email</label>
-        <input type="email" id="email" name="email" placeholder="Email">
+        <div class="form-group">
+          <label for="email">Введите email</label>
+          <input type="text" id="email" name="email" placeholder="Email">
+          <label for="password">Введите пароль</label>
+          <input type="password" id="password" name="password" placeholder="Пароль">
+        </div>
         <button id="loginButton">Войти</button>
       </form>
       <?php

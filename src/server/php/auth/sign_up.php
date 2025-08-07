@@ -19,23 +19,22 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   exit;
 }
 
-$json_data = file_get_contents('php://input');
-$data = json_decode($json_data, true);
+$data = [];
+$contentType = trim($_SERVER["CONTENT_TYPE"] ?? '');
 
-$username = $data['username'] ?? null;
-$email = $data['email'] ?? null;
-$password = $data['password'] ?? null;
-$password_confirm = $data['password_confirm'] ?? null;
-
-if (empty($username) || empty($email) || empty($password) || empty($password_confirm)) {
-  http_response_code(400);
-  echo json_encode(['success' => false, 'message' => 'Все поля обязательны для заполнения.']);
-  exit;
+if (strpos($contentType, 'application/json') !== false) {
+  $json_data = file_get_contents('php://input');
+  $data = json_decode($json_data, true) ?: [];
+} else {
+  $data = $_POST;
 }
 
-if ($password !== $password_confirm) {
+$email = $data['email'] ?? null;
+$password = $data['password'] ?? null;
+
+if (empty($email) || empty($password)) {
   http_response_code(400);
-  echo json_encode(['success' => false, 'message' => 'Пароли не совпадают.']);
+  echo json_encode(['success' => false, 'message' => 'Все поля обязательны для заполнения.']);
   exit;
 }
 
@@ -45,29 +44,18 @@ try {
   $dbConnection = DataBase::getConnection();
   $pdo = $dbConnection->getPdo();
 
-  $sql = "SELECT id FROM users WHERE username = :username OR email = :email";
+  $sql = "SELECT id FROM users WHERE email = :email";
   $stmt = $pdo->prepare($sql);
-  $stmt->execute(['username' => $username, 'email' => $email]);
+  $stmt->execute(['email' => $email]);
 
   if ($stmt->fetch()) {
-    http_response_code(409);
-    echo json_encode(['success' => false, 'message' => 'Пользователь с таким логином или email уже существует.']);
+    header('Location: /google_auth');
     exit;
   }
 
-  $sql = "UPDATE users SET username = :username, email = :email, password = :password WHERE email = :email";
-  $stmt = $pdo->prepare($sql);
-  $stmt->execute(['username' => $username, 'email' => $email, 'password' => $hashed_password]);
-
-  if ($stmt->rowCount() > 0) {
-    echo json_encode(['success' => true, 'message' => 'Пользователь успешно зарегистрирован.']);
-  } else {
-    http_response_code(500);
-    echo json_encode(['success' => false, 'message' => 'Не удалось зарегистрировать пользователя.']);
-  }
 } catch (\Exception $e) {
-  error_log("Ошибка при регистрации: " . $e->getMessage());
+  error_log("Ошибка " . $e->getMessage());
   http_response_code(500);
-  echo json_encode(['success' => false, 'message' => 'Ошибка на сервере при регистрации.']);
+  echo json_encode(['success' => false, 'message' => 'Ошибка на сервере.']);
 }
 ?>
