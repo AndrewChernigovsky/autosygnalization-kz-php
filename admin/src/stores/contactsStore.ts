@@ -83,6 +83,23 @@ const contactsStore = defineStore('contactsStore', () => {
     };
   };
 
+  const updateContactsOrder = (
+    updateData: Array<{ contact_id: number; sort_order: number }>
+  ) => {
+    const updatedContacts = contacts.value.map((contact) => {
+      const updateItem = updateData.find(
+        (item) => item.contact_id === contact.contact_id
+      );
+      if (updateItem) {
+        return { ...contact, sort_order: updateItem.sort_order };
+      }
+      return contact;
+    });
+
+    // Заменяем весь массив для гарантии реактивности
+    contacts.value = updatedContacts;
+  };
+
   return {
     contacts,
     contactsTypes,
@@ -93,6 +110,7 @@ const contactsStore = defineStore('contactsStore', () => {
     isValid,
     getContacts,
     resetNewContact,
+    updateContactsOrder,
   };
 });
 

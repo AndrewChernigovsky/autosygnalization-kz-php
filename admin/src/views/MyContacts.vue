@@ -21,7 +21,7 @@ onMounted(() => {
       :error="contactsStore.error"
       :retry="contactsStore.getContacts"
     />
-    <div v-else>
+    <div class="contacts-wrapper" v-else>
       <AddContact />
       <ContactsList />
     </div>
@@ -30,6 +30,12 @@ onMounted(() => {
 
 <style scoped>
 .contacts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.contacts-wrapper {
   display: flex;
   flex-direction: column;
   gap: 16px;
