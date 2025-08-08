@@ -3,7 +3,7 @@
         'name' => 'autosecurity/news',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '1d878ca6af0cc68ef61543a8c6219286cebaad97',
+        'reference' => '4e5639c7b438a292c8a7316d467cf2afb78ea23e',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         'autosecurity/news' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '1d878ca6af0cc68ef61543a8c6219286cebaad97',
+            'reference' => '4e5639c7b438a292c8a7316d467cf2afb78ea23e',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

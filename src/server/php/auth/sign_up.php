@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 use DATABASE\DataBase;
@@ -49,7 +50,14 @@ try {
   $stmt->execute(['email' => $email]);
 
   if ($stmt->fetch()) {
-    header('Location: /google_auth');
+    $_SESSION['success_message'] = 'Вы являетесь администратором. Перевожу вас на страницу авторизации Google.';
+    $_SESSION['auth_ok'] = true;
+    session_write_close();
+    header('Location: /login');
+    exit;
+  } else {
+    $_SESSION['error_message'] = 'Вы не являетесь администратором. Вход запрещен.';
+    header('Location: /login');
     exit;
   }
 

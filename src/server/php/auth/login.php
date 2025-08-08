@@ -5,6 +5,15 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 use DATABASE\DataBase;
 
 $error_message = '';
+if (!empty($_SESSION['error_message'])) {
+  $error_message = $_SESSION['error_message'];
+  unset($_SESSION['error_message']);
+}
+$success_message = '';
+if (!empty($_SESSION['success_message'])) {
+  $success_message = $_SESSION['success_message'];
+  unset($_SESSION['success_message']);
+}
 $title = 'Админ панель | Auto Security';
 
 // Проверяем, была ли отправлена форма
@@ -24,8 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       // Проверяем, найден ли пользователь и совпадает ли пароль
       // ВАЖНО: В реальном приложении используйте password_verify()
       if ($user && password_verify($_POST['password'], $user['password'])) {
-        // Если аутентификация успешна, перенаправляем
-        header('Location: /google_auth');
+        // Показываем сообщение и выполняем отложенный редирект через /login
+        $_SESSION['auth_ok'] = true;
+        error_log('LOGIN_OK: sid=' . session_id() . '; set auth_ok=1');
+        $_SESSION['success_message'] = 'Вы являетесь администратором. Перевожу вас на страницу авторизации Google.';
+        session_write_close();
+        header('Location: /login');
         exit();
       } else {
         $error_message = '<p>Неверный пароль или логин</p>';
@@ -63,12 +76,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <button id="loginButton">Войти</button>
       </form>
-      <?php
-      // Выводим сообщение об ошибке, если оно есть
-      if (!empty($error_message)) {
-        echo $error_message;
-      }
-      ?>
+      <?php if (!empty($error_message)): ?>
+        <div class="error" style="color: #b00020; margin-top: 12px;"><?= htmlspecialchars($error_message) ?></div>
+      <?php endif; ?>
+      <?php if (!empty($success_message)): ?>
+        <div class="success" style="color: #008000; margin-top: 12px;">
+          <?= htmlspecialchars($success_message) ?>
+          <div style="margin-top:8px;">Перенаправление через <span id="countdown">3</span> сек.</div>
+        </div>
+        <script>
+          (function () {
+            var seconds = 3;
+            var el = document.getElementById('countdown');
+            if (el) {
+              el.textContent = seconds;
+              var timer = setInterval(function () {
+                seconds -= 1;
+                el.textContent = seconds;
+                if (seconds <= 0) {
+                  clearInterval(timer);
+                  window.location.href = '/google_auth';
+                }
+              }, 1000);
+            }
+          })();
+        </script>
+      <?php endif; ?>
     </div>
   </main>
 </body>

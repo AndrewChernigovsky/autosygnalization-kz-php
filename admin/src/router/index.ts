@@ -76,7 +76,7 @@ export const routes = [
   },
   {
     path: '/registrations-page',
-    name: 'Регистрации',
+    name: 'Профиль',
     component: Registrations,
   },
 ];
