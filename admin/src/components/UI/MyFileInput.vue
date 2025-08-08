@@ -7,13 +7,14 @@ const props = defineProps<{
   width?: string;
   height?: string;
   accept?: string;
+  imgPath?: string;
 }>();
 
 const emit = defineEmits<{
   fileChange: [file: File | null];
 }>();
 
-const imgPath = ref('');
+const imgPath = ref(props.imgPath);
 const isLoading = ref(false);
 const selectedFile = ref<File | null>(null);
 
@@ -103,7 +104,9 @@ const clearImage = (event: Event) => {
 }
 
 .file-input-image {
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  display: block;
   transition: opacity 0.3s ease;
   pointer-events: none; /* Отключаем события мыши для изображения */
 }

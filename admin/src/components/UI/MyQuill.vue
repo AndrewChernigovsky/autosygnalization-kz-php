@@ -4,7 +4,7 @@ import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import { ref, watch } from 'vue';
 
 const props = defineProps<{
-  content: string;
+  content: string | null;
   quillOptions?: any;
 }>();
 
