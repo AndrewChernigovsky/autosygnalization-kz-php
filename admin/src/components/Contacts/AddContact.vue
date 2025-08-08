@@ -144,12 +144,6 @@ const addNewContact = async (e?: Event | null) => {
           <MyBtn type="button" variant="primary" @click="addNewContact($event)"
             >Добавить</MyBtn
           >
-          <MyBtn variant="secondary" @click="addNewContactActive = false"
-            >Отмена</MyBtn
-          >
-          <MyBtn variant="secondary" @click="addNewContactActive = false"
-            >Сбросить</MyBtn
-          >
         </div>
       </div>
     </div>
