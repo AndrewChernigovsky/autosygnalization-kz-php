@@ -39,13 +39,22 @@ export const useProductEditorStore = defineStore('productEditor', {
     startEditing(product: ProductI, field: string) {
       if (!this.editingProduct || this.editingProduct.id !== product.id) {
         const productCopy = JSON.parse(JSON.stringify(product));
+        console.log(productCopy, 'productCopy');
         if (productCopy.tabs) {
-          productCopy.tabs.forEach((tab: any) => {
-            if (tab.description) {
-              tab.content = tab.description;
-              delete tab.description;
-            }
-          });
+          if (Array.isArray(productCopy.tabs)) {
+            // Если это массив, просто нормализуем поле description
+            productCopy.tabs.forEach((tab: any) => {
+              if (tab.description) {
+                tab.content = tab.description;
+                delete tab.description;
+              }
+            });
+          } else if (typeof productCopy.tabs === 'object') {
+            // Если это объект, трансформируем его в массив вкладок
+            productCopy.tabs = Object.entries(productCopy.tabs).map(
+              ([title, content]) => ({ title, content })
+            );
+          }
         }
         this.editingProduct = productCopy;
       }

@@ -15,6 +15,7 @@ export interface PriceItem {
   currency: string;
   installationPrice: string;
   description: string;
+  id?: string | number | null;
 }
 
 export interface ProductI {

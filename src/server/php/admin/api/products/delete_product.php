@@ -16,7 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$db = Database::getConnection();
+$dbConnection = Database::getConnection();
+$pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -28,41 +29,70 @@ if (!isset($data['id'])) {
 
 $productId = $data['id'];
 
-try {
-  // 1. Получить пути к изображениям из галереи
-  $stmt = $db->prepare("SELECT gallery FROM Products WHERE id = :id");
-  $stmt->bindParam(':id', $productId);
-  $stmt->execute();
-  $result = $stmt->fetch(PDO::FETCH_ASSOC);
-
-  if ($result && !empty($result['gallery'])) {
-    $gallery = json_decode($result['gallery'], true);
-    foreach ($gallery as $imageUrl) {
-      // Преобразуем URL в путь к файлу
-      // Предполагается, что DOCUMENT_ROOT содержит путь до корня сайта
-      $filePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($imageUrl, PHP_URL_PATH);
-      if (file_exists($filePath)) {
-        unlink($filePath);
-      }
+// Helper function to delete directory recursively
+function deleteDir($dirPath) {
+    if (!is_dir($dirPath)) {
+        return;
     }
+    if (substr($dirPath, strlen($dirPath) - 1, 1) != '/') {
+        $dirPath .= '/';
+    }
+    $files = glob($dirPath . '*', GLOB_MARK);
+    foreach ($files as $file) {
+        if (is_dir($file)) {
+            deleteDir($file);
+        } else {
+            unlink($file);
+        }
+    }
+    if (is_dir($dirPath)) {
+        rmdir($dirPath);
+    }
+}
+
+
+try {
+  $pdo->beginTransaction();
+
+  // 1. Delete gallery images and folder
+  $galleryDir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/products/gallery/' . $productId;
+  if (is_dir($galleryDir)) {
+      deleteDir($galleryDir);
   }
 
-  // 2. Удалить товар из базы данных
-  $stmt = $db->prepare("DELETE FROM Products WHERE id = :id");
+  // 2. Delete tabs icons folder
+  $tabsDir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/tabs/' . $productId;
+  if (is_dir($tabsDir)) {
+      deleteDir($tabsDir);
+  }
+
+  // 3. Delete from TabsAdditionalProductsData
+  $stmtTabs = $pdo->prepare("DELETE FROM TabsAdditionalProductsData WHERE product_id = :id");
+  $stmtTabs->bindParam(':id', $productId);
+  $stmtTabs->execute();
+
+  // 4. Delete product from Products table
+  $stmt = $pdo->prepare("DELETE FROM Products WHERE id = :id");
   $stmt->bindParam(':id', $productId);
 
   if ($stmt->execute()) {
     if ($stmt->rowCount() > 0) {
-      echo json_encode(['message' => 'Product deleted successfully.']);
+      $pdo->commit();
+      echo json_encode(['message' => 'Product and all related data deleted successfully.']);
     } else {
+      $pdo->rollBack();
       http_response_code(404);
       echo json_encode(['message' => 'Product not found.']);
     }
   } else {
+    $pdo->rollBack();
     http_response_code(500);
     echo json_encode(['message' => 'Failed to delete product.']);
   }
 } catch (PDOException $e) {
+  if ($pdo->inTransaction()) {
+      $pdo->rollBack();
+  }
   http_response_code(500);
   echo json_encode(['message' => 'Database error: ' . $e->getMessage()]);
 }
