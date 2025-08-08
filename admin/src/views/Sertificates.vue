@@ -249,8 +249,30 @@ const removeNewSlot = (index: number) => {
 const onFileChangeForNew = (event: Event, slot: NewSertificateSlot) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    slot.file = input.files[0];
-    slot.preview = URL.createObjectURL(input.files[0]);
+    const file = input.files[0];
+    // --- ВАЛИДАЦИЯ ФАЙЛА ---
+    if (file.size > 10485760) {
+      // 10 МБ
+      Swal.fire(
+        'Ошибка',
+        'Файл слишком большой. Максимальный размер - 10 МБ.',
+        'error'
+      );
+      clearImageInNewSlot(slot);
+      return;
+    }
+    if (file.type !== 'application/pdf') {
+      Swal.fire(
+        'Ошибка',
+        'Неверный формат файла. Разрешены только PDF.',
+        'error'
+      );
+      clearImageInNewSlot(slot);
+      return;
+    }
+    // --- КОНЕЦ ВАЛИДАЦИИ ---
+    slot.file = file;
+    slot.preview = URL.createObjectURL(file);
   }
 };
 
@@ -272,6 +294,27 @@ const onFileChangeForExisting = (event: Event, id: number) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     const file = input.files[0];
+    // --- ВАЛИДАЦИЯ ФАЙЛА ---
+    if (file.size > 10485760) {
+      // 10 МБ
+      Swal.fire(
+        'Ошибка',
+        'Файл слишком большой. Максимальный размер - 10 МБ.',
+        'error'
+      );
+      cancelUpdate(id);
+      return;
+    }
+    if (file.type !== 'application/pdf') {
+      Swal.fire(
+        'Ошибка',
+        'Неверный формат файла. Разрешены только PDF.',
+        'error'
+      );
+      cancelUpdate(id);
+      return;
+    }
+    // --- КОНЕЦ ВАЛИДАЦИИ ---
     filesToUpdate.value[id] = file;
     previewsForUpdate.value[id] = URL.createObjectURL(file);
   }
