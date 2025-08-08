@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
-  modelValue: boolean;
-  value: boolean;
+  modelValue: boolean | number;
+  value: boolean | number;
   variant?: 'primary' | 'secondary';
 }>();
 
@@ -23,7 +23,7 @@ const handleChange = (event: Event) => {
       secondary: variant === 'secondary',
     }"
     type="checkbox"
-    :checked="modelValue"
+    :checked="modelValue === value"
     @change="handleChange"
   />
 </template>

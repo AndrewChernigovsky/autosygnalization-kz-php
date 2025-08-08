@@ -10,13 +10,12 @@ export default async function addItemOnDB(item: any, url: string) {
     }
 
     showSwal('Подождите', 'Добавляем', 'info');
-    const response = await fetchWithCors(url, {
+    await fetchWithCors(url, {
       method: 'POST',
       body: formData,
     });
     showSwal('Успешно', 'Добавлено', 'success');
   } catch (error) {
-    console.log(error, 'error', item, 'item');
     showSwal('Ошибка', 'Не удалось добавить', 'error');
   }
 }

@@ -34,7 +34,8 @@ class ContactAPI extends DataBase
   public function getContacts()
   {
     try {
-      $query = "SELECT * FROM Contacts ORDER BY `order` ASC, contact_id ASC";
+      $query = "SELECT * FROM Contacts 
+ORDER BY type ASC, sort_order ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
       $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -54,15 +55,15 @@ class ContactAPI extends DataBase
       $this->pdo->beginTransaction();
 
       foreach ($orderData as $item) {
-        if (!isset($item['contact_id']) || !isset($item['order'])) {
+        if (!isset($item['contact_id']) || !isset($item['sort_order'])) {
           $this->pdo->rollBack();
           return $this->error("Неверные данные для обновления порядка", 400);
         }
 
-        $query = "UPDATE Contacts SET `order` = :order WHERE contact_id = :contact_id";
+        $query = "UPDATE Contacts SET `sort_order` = :sort_order WHERE contact_id = :contact_id";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([
-          ':order' => $item['order'],
+          ':sort_order' => $item['sort_order'],
           ':contact_id' => $item['contact_id']
         ]);
       }
@@ -143,7 +144,9 @@ class ContactAPI extends DataBase
                     title = :title,
                     content = :content,
                     link = :link,
-                    icon_path = :icon_path
+                    icon_path = :icon_path,
+                    sort_order = :sort_order,
+                    on_page = :on_page
                     WHERE contact_id = :id";
 
           $stmt = $this->pdo->prepare($query);
@@ -153,6 +156,8 @@ class ContactAPI extends DataBase
             ':content' => $data['content'],
             ':link' => $data['link'],
             ':icon_path' => $iconPath,
+            ':sort_order' => $data['sort_order'],
+            ':on_page' => $data['on_page'] === 'true' || $data['on_page'] === true ? 1 : 0,
             ':id' => $id
           ]);
 
@@ -210,13 +215,13 @@ class ContactAPI extends DataBase
         }
 
         // Получаем максимальный order для данного типа
-        $orderQuery = "SELECT MAX(`order`) as max_order FROM Contacts WHERE type = ?";
+        $orderQuery = "SELECT MAX(`sort_order`) as max_order FROM Contacts WHERE type = ?";
         $orderStmt = $this->pdo->prepare($orderQuery);
         $orderStmt->execute([$data['type']]);
         $orderResult = $orderStmt->fetch(\PDO::FETCH_ASSOC);
         $nextOrder = ($orderResult['max_order'] ?? 0) + 1;
   
-        $query = "INSERT INTO Contacts (type,title,content,link,icon_path,`order`) VALUES (?, ?, ?, ?, ?, ?)";
+        $query = "INSERT INTO Contacts (type,title,content,link,icon_path,sort_order,on_page) VALUES (?, ?, ?, ?, ?, ?, ?)";
   
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([
@@ -226,6 +231,7 @@ class ContactAPI extends DataBase
           $data['link'],
           $iconPath,
           $nextOrder,
+          $data['on_page'] === 'true' || $data['on_page'] === true ? 1 : 0,
         ]);
   
         $contactId = $this->pdo->lastInsertId();

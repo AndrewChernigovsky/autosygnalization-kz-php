@@ -2,17 +2,49 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import fetchWithCors from '../utils/fetchWithCors';
 
+interface INewContact {
+  type: string;
+  title: string;
+  content: string;
+  icon_path?: File | null;
+  link: string;
+  sort_order: number | null;
+  on_page: boolean;
+}
+
+interface IContact {
+  contact_id: number;
+  type: string;
+  title: string;
+  content: string;
+  icon_path: string;
+  link: string;
+  sort_order: number;
+  on_page: boolean;
+}
+
 const contactsStore = defineStore('contactsStore', () => {
   const contactsApiUrl = ref('/server/php/admin/api/contacts/contact.php');
-  const contacts = ref([]);
+  const contacts = ref<IContact[]>([]);
+  const newContact = ref<INewContact>({
+    type: '',
+    title: '',
+    content: '',
+    icon_path: null,
+    link: '',
+    sort_order: null,
+    on_page: false,
+  });
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+
+  const isValid = ref(true);
 
   const contactsTypes = ref<string[]>([
     'Основной телефон',
     'Адрес',
     'Контактный телефон',
-    'Соц. сети',
+    'Социальные сети',
     'Электронная почта',
     'Расписание',
     'Карта',
@@ -39,15 +71,28 @@ const contactsStore = defineStore('contactsStore', () => {
     }
   };
 
-  getContacts();
+  const resetNewContact = () => {
+    newContact.value = {
+      type: '',
+      title: '',
+      content: '',
+      icon_path: null,
+      link: '',
+      sort_order: 0,
+      on_page: false,
+    };
+  };
 
   return {
     contacts,
     contactsTypes,
+    newContact,
     contactsApiUrl,
     isLoading,
     error,
+    isValid,
     getContacts,
+    resetNewContact,
   };
 });
 

@@ -1,66 +1,58 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import useContactsStore from '../../stores/contactsStore';
+import contactsStore from '../../stores/contactsStore';
 import MyBtn from '../UI/MyBtn.vue';
 import MyInput from '../UI/MyInput.vue';
 import MyFileInput from '../UI/MyFileInput.vue';
 import MyCheckboxInput from '../UI/MyCheckboxInput.vue';
-import MyRadioInput from '../UI/MyRadioInput.vue';
 import MyQuill from '../UI/MyQuill.vue';
 import addItemOnDB from '../../functions/addItemOnDB';
-
-interface INewContact {
-  type: string;
-  title: string;
-  content: string;
-  icon_path?: File | null;
-  link: string;
-  sort_order: number | null;
-  on_page: boolean;
-}
+import showSwal from '../../functions/showSwal';
+import ContactsTypeList from './ContactsTypeList.vue';
 
 const addNewContactActive = ref(false);
 
-const newContact = ref<INewContact>({
-  type: '',
-  title: '',
-  content: '',
-  icon_path: null,
-  link: '',
-  sort_order: null,
-  on_page: false,
-});
-
-const isValid = ref(true);
-
-const contactsStore = useContactsStore();
+const store = contactsStore();
 
 const handleFileChange = (file: File | null) => {
-  newContact.value.icon_path = file;
+  store.newContact.icon_path = file;
 };
 
-const addNewContact = () => {
-  if (!newContact.value.type || !newContact.value.title) {
-    isValid.value = false;
-    const targetElement = document.getElementById('contact-type-list');
+const addNewContact = async (e?: Event | null) => {
+  store.isValid = false;
+
+  if (!store.newContact.type || !store.newContact.title) {
+    store.isValid = false;
+  } else {
+    store.isValid = true;
+  }
+
+  const targetElement = document.getElementById('contact-type-list');
+
+  if (!store.isValid) {
+    if (e) {
+      (e.target as HTMLElement).blur();
+    }
+    showSwal('Ошибка', 'Заполните все поля', 'error');
     if (targetElement) {
       targetElement.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
       });
     }
+
     return;
-  } else {
-    isValid.value = true;
   }
 
-  const filteredContacts = contactsStore.contacts.filter(
-    (contact: any) => contact.type === newContact.value.type
-  );
+  store.newContact.sort_order =
+    store.contacts.filter(
+      (contact: any) => contact.type === store.newContact.type
+    ).length + 1;
 
-  newContact.value.sort_order = filteredContacts.length + 1;
-
-  addItemOnDB(newContact.value, contactsStore.contactsApiUrl);
+  await addItemOnDB(store.newContact, store.contactsApiUrl);
+  addNewContactActive.value = false;
+  store.getContacts();
+  store.resetNewContact();
 };
 </script>
 
@@ -83,39 +75,19 @@ const addNewContact = () => {
           <div class="addcontact-type-title">
             <h3 class="subtitle m-0">Выберите тип контакта*</h3>
           </div>
-          <ul
+          <ContactsTypeList
             id="contact-type-list"
             class="addcontact-type-list list-style-none m-0 p-0"
-            :class="isValid ? '' : 'not-valid'"
-          >
-            <li
-              v-for="contactType in contactsStore.contactsTypes"
-              :key="contactType"
-              class="addcontact-type-item"
-            >
-              <label
-                class="addcontact-type-label"
-                :class="{ active: newContact.type === contactType }"
-              >
-                <h3 class="subtitle m-0">{{ contactType }}</h3>
-                <MyRadioInput
-                  variant="primary"
-                  name="contact"
-                  v-model="newContact.type"
-                  :value="contactType"
-                  :checked="newContact.type === contactType"
-                />
-              </label>
-            </li>
-          </ul>
+            :class="store.isValid ? '' : 'not-valid'"
+          />
         </div>
         <div class="addcontact-inputs-wrapper">
           <div class="addcontact-label">
             <h3 class="subtitle m-0">Заголовок*</h3>
             <MyInput
-              :class="isValid ? '' : 'not-valid'"
+              :class="store.isValid ? '' : 'not-valid'"
               variant="primary"
-              v-model="newContact.title"
+              v-model="store.newContact.title"
             />
             <p class="addcontact-help m-0">
               *Введите заголовок, он <strong>НЕ</strong> будет отображаться на
@@ -124,14 +96,15 @@ const addNewContact = () => {
           </div>
           <div class="addcontact-label quill-input">
             <h3 class="subtitle m-0">Контент на странице*</h3>
-            <MyQuill v-model:content="newContact.content" />
+            <MyQuill v-model:content="store.newContact.content" />
             <p class="addcontact-help m-0">
-              *Введите текст, который будет отображаться на странице
+              *Введите текст, который будет отображаться на странице <br />
+              **Если контакт google карта то оставьте поле пустым
             </p>
           </div>
           <div class="addcontact-label">
             <h3 class="subtitle m-0">Ссылка</h3>
-            <MyInput variant="primary" v-model="newContact.link" />
+            <MyInput variant="primary" v-model="store.newContact.link" />
             <p class="addcontact-help m-0">
               *Если нет ссылки, оставьте поле пустым <br />
               **Если контакт телефон, то ссылка должна быть в формате
@@ -161,14 +134,16 @@ const addNewContact = () => {
             <span>Да</span>
             <MyCheckboxInput
               variant="primary"
-              v-model="newContact.on_page"
+              v-model="store.newContact.on_page"
               :value="true"
             />
             <span>Нет</span>
           </label>
         </div>
         <div class="addcontact-buttons-wrapper">
-          <MyBtn variant="primary" @click="addNewContact">Добавить</MyBtn>
+          <MyBtn type="button" variant="primary" @click="addNewContact($event)"
+            >Добавить</MyBtn
+          >
           <MyBtn variant="secondary" @click="addNewContactActive = false"
             >Отмена</MyBtn
           >

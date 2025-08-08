@@ -3,6 +3,7 @@ import useContactsStore from '../stores/contactsStore';
 import { onMounted } from 'vue';
 import AddContact from '../components/Contacts/AddContact.vue';
 import LoadingModal from '../components/UI/LoadingModal.vue';
+import ContactsList from '../components/Contacts/ContactsList.vue';
 
 const contactsStore = useContactsStore();
 
@@ -22,6 +23,7 @@ onMounted(() => {
     />
     <div v-else>
       <AddContact />
+      <ContactsList />
     </div>
   </section>
 </template>
