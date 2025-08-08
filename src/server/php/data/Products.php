@@ -2,8 +2,6 @@
 
 namespace DATA;
 
-require_once __DIR__ . '/../database/Database.php';
-
 use DATABASE\DataBase; // Изменено на DataBase
 use PDO;
 

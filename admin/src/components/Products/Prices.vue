@@ -109,20 +109,20 @@ const syncPricesToProduct = () => {
 };
 
 // Обработчики input событий
-const handleTitleInput = (index: number, event: Event) => {
-  const target = event.target as HTMLInputElement;
-  pricesStore.updatePriceItem(index, 'title', target.value);
-};
+// const handleTitleInput = (index: number, event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   pricesStore.updatePriceItem(index, 'title', target.value);
+// };
 
-const handleProductPriceInput = (index: number, event: Event) => {
-  const target = event.target as HTMLInputElement;
-  pricesStore.updatePriceItem(index, 'productPrice', target.value);
-};
+// const handleProductPriceInput = (index: number, event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   pricesStore.updatePriceItem(index, 'productPrice', target.value);
+// };
 
-const handleCurrencyInput = (index: number, event: Event) => {
-  const target = event.target as HTMLInputElement;
-  pricesStore.updatePriceItem(index, 'currency', target.value);
-};
+// const handleCurrencyInput = (index: number, event: Event) => {
+//   const target = event.target as HTMLInputElement;
+//   pricesStore.updatePriceItem(index, 'currency', target.value);
+// };
 
 const handleInstallationPriceInput = (index: number, event: Event) => {
   const target = event.target as HTMLInputElement;

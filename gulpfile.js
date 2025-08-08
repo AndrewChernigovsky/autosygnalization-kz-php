@@ -61,7 +61,7 @@ const phpTask = (cb) => {
 
   // Копирование PHP файлов
   tasks.push(
-    src(['./src/server/php/**'], { encoding: false })
+    src(['./src/server/php/**', '!./src/server/php/**/.env'], { encoding: false })
       .pipe(changed(destPathPhp))
       .pipe(dest(destPathPhp))
   );
@@ -254,6 +254,12 @@ const copyStatics = (cb) => {
       "./src/server/composer.json",
       "./src/server/composer.lock",
     ]).pipe(dest(paths.dist + '/server'))
+  );
+
+  // Копирование .env для server и auth
+  tasks.push(
+    src(["./src/server/.env"], { encoding: false, allowEmpty: true })
+      .pipe(dest(paths.dist + '/server'))
   );
 
   return Promise.all(tasks)

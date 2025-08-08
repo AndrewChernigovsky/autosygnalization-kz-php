@@ -3,13 +3,11 @@ import { ref, onMounted, computed, nextTick } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import LinkSelector from '../components/UI/LinkSelector.vue';
-import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyModal from '../components/UI/MyModal.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
 import type { LinkData, IFooterLink, SectionKey } from '../types/FooterLinks';
 
 const allLinksData = ref<LinkData[]>([]);
-const selectedLink = ref<LinkData | null>(null);
 const footerLinks = ref<IFooterLink[]>([]);
 const isInitialLoading = ref(false);
 const isUpdating = ref(false);
