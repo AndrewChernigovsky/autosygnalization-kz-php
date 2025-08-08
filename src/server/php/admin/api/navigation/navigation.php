@@ -32,7 +32,7 @@ class NavigationAPI extends DataBase
   public function getNavItems()
   {
     try {
-      $query = "SELECT * FROM Main_Nav ORDER BY `order` ASC, id ASC";
+      $query = "SELECT * FROM Navigation ORDER BY `sort_order` ASC, id ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
       $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
@@ -52,9 +52,9 @@ class NavigationAPI extends DataBase
       $this->pdo->beginTransaction();
 
       foreach ($orderData as $item) {
-        $query = "UPDATE Main_Nav SET `order` = ? WHERE id = ?";
+        $query = "UPDATE Navigation SET `sort_order` = ? WHERE id = ?";
         $stmt = $this->pdo->prepare($query);
-        $stmt->execute([$item['order'], $item['id']]);
+        $stmt->execute([$item['sort_order'], $item['id']]);
       }
 
       $this->pdo->commit();
@@ -112,12 +112,12 @@ class NavigationAPI extends DataBase
       }
 
       // Получаем максимальный порядок для нового элемента
-      $orderQuery = "SELECT COALESCE(MAX(`order`), 0) + 1 as next_order FROM Main_Nav";
+      $orderQuery = "SELECT COALESCE(MAX(`sort_order`), 0) + 1 as next_order FROM Navigation";
       $orderStmt = $this->pdo->prepare($orderQuery);
       $orderStmt->execute();
       $nextOrder = $orderStmt->fetch(\PDO::FETCH_ASSOC)['next_order'];
 
-      $query = "INSERT INTO Main_Nav (title, link, icon_path, `order`) VALUES (?, ?, ?, ?)";
+      $query = "INSERT INTO Navigation (title, link, icon_path, `sort_order`) VALUES (?, ?, ?, ?)";
       $stmt = $this->pdo->prepare($query);
       
       $stmt->execute([
@@ -145,7 +145,7 @@ class NavigationAPI extends DataBase
       error_log(print_r($data, true));
 
       // Получаем текущие данные элемента
-      $currentQuery = "SELECT * FROM Main_Nav WHERE id = ?";
+      $currentQuery = "SELECT * FROM Navigation WHERE id = ?";
       $currentStmt = $this->pdo->prepare($currentQuery);
       $currentStmt->execute([$id]);
       $currentData = $currentStmt->fetch(\PDO::FETCH_ASSOC);
@@ -197,7 +197,7 @@ class NavigationAPI extends DataBase
         error_log("Файл успешно обновлен: " . $iconPath);
       }
 
-      $query = "UPDATE Main_Nav SET title = ?, link = ?, icon_path = ? WHERE id = ?";
+      $query = "UPDATE Navigation SET title = ?, link = ?, icon_path = ? WHERE id = ?";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute([
         $data['title'],
@@ -223,7 +223,7 @@ class NavigationAPI extends DataBase
   {
     try {
       // Получаем данные элемента для удаления файла
-      $query = "SELECT icon_path FROM Main_Nav WHERE id = ?";
+      $query = "SELECT icon_path FROM Navigation WHERE id = ?";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute([$id]);
       $navItemData = $stmt->fetch(\PDO::FETCH_ASSOC);
@@ -238,7 +238,7 @@ class NavigationAPI extends DataBase
       }
 
       // Удаляем элемент из базы данных
-      $deleteQuery = "DELETE FROM Main_Nav WHERE id = ?";
+      $deleteQuery = "DELETE FROM Navigation WHERE id = ?";
       $deleteStmt = $this->pdo->prepare($deleteQuery);
       $deleteStmt->execute([$id]);
 
@@ -366,7 +366,7 @@ try {
       }
 
     case 'PATCH':
-      if (isset($_GET['action']) && $_GET['action'] === 'update-order') {
+      if (isset($_GET['action']) && $_GET['action'] === 'update-sort_order') {
         if (!$input) {
           echo $api->error("Данные не переданы");
           break;

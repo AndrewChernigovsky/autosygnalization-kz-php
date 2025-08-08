@@ -5,7 +5,7 @@ import plus from '../../assets/input-file-plus.svg';
 
 interface Props {
   modelValue?: string | null;
-  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'file';
+  type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'file' | 'radio';
   variant?: 'primary' | 'secondary' | '';
   placeholder?: string;
   disabled?: boolean;
@@ -14,6 +14,7 @@ interface Props {
   width?: string;
   height?: string;
   img?: string;
+  name?: string;
 }
 
 interface Emits {
@@ -90,6 +91,7 @@ const handleDeleteClick = (event: Event) => {
     :class="['my-input-wrapper', props.type === 'file' ? 'file' : '']"
   >
     <input
+      :name="props.name || undefined"
       :id="props.id || undefined"
       :type="props.type"
       :value="props.modelValue || ''"

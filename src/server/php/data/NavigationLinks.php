@@ -25,11 +25,15 @@ class NavigationLinks extends DataBase
   public function getNavlinks()
   {
     try {
-      $query = "SELECT title as name, href as path FROM Navigation WHERE parent_id IS NULL AND is_active = 1 ORDER BY position ASC";
+      $query = "SELECT title as name, link as path, sort_order FROM Navigation";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
 
       $navigationLinks = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+      usort($navigationLinks, function($a, $b) {
+        return $a['sort_order'] <=> $b['sort_order'];
+    });
 
       if (empty($navigationLinks)) {
         return [

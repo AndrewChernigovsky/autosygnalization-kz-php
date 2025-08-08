@@ -13,6 +13,7 @@ function serviceSection(): string
     $data = new Services($servicesData);
     $services = array_values($data->getServices());
     $card = new ServiceCard();
+    error_log(print_r($services, true) . ' SSSq');
 
     // Генерация HTML
     ob_start();
@@ -22,7 +23,7 @@ function serviceSection(): string
             <h2 class="service__title secondary-title">наши услуги</h2>
             <div class="swiper swiper-service">
                 <ul class="service__list service__list--component list-style-none swiper-wrapper">
-                    <?php foreach ($services as $service): ?>
+                    <?php foreach ($services[0] as $service): ?>
                         <li class="service__item swiper-slide">
                             <?= $card->initCard($service); ?>
                         </li>

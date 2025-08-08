@@ -110,6 +110,8 @@ class FooterAPI extends DataBase
     $link = $data['link'] ?? null;
     $section = $data['section'] ?? null;
     $position = $data['position'] ?? 99;
+    $source_table = $data['source_table'] ?? 'custom';
+    $source_id = $data['source_id'] ?? null;
 
     if (!$name || !$link || !$section) {
       echo $this->error('Не все поля (name, link, section) были переданы');
@@ -122,12 +124,14 @@ class FooterAPI extends DataBase
     }
 
     try {
-      $query = "INSERT INTO Footer (name, link, section, position, source_table) VALUES (:name, :link, :section, :position, 'custom')";
+      $query = "INSERT INTO Footer (name, link, section, position, source_table, source_id) VALUES (:name, :link, :section, :position, :source_table, :source_id)";
       $params = [
         ':name' => $name,
         ':link' => $link,
         ':section' => $section,
         ':position' => $position,
+        ':source_table' => $source_table,
+        ':source_id' => $source_id,
       ];
       $is_success = $this->executePost($query, $params);
 
