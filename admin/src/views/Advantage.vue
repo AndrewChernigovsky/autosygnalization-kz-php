@@ -592,7 +592,7 @@ const leave = (el: Element) => {
 </script>
 
 <template>
-  <div class="container">
+  <div class="container-advantage">
     <h1 class="main-title">Управление секцией 'Качество и преимущества'</h1>
     <div v-if="isLoadingAdvantages || isLoadingVideos" class="loading-overlay">
       <div class="spinner"></div>
@@ -974,13 +974,14 @@ const leave = (el: Element) => {
 </template>
 
 <style scoped>
-.container {
+.container-advantage {
   background-color: #2d2d2d;
   color: #e0e0e0;
   padding: 2rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
   min-height: 100vh;
+  width: 100%;
 }
 .main-title {
   font-size: 1.8rem;
@@ -1351,7 +1352,7 @@ textarea:focus {
   border-color: #555;
   border-bottom: 0;
 }
-:deep(.ql-container.ql-snow) {
+:deep(.ql-container-advantage.ql-snow) {
   border-color: #555;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
