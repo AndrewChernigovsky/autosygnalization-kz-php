@@ -14,10 +14,10 @@ define('SECRET_KEY', '6LcXjXMqAAAAAOjUP-PcxCVOASxRW67hRD6hixlf');
 // Данные для подключения к базе данных
 
 // define('DB_HOST', 'localhost');
-// define('DB_NAME', 'h69706c_autosygnals');
-// define('DB_USER', 'h69706c_autosygnals');
-// define('DB_PASSWORD', 'I1[k}Lv0a$cS');
-// define('BASE_URL', 'https://cryptonewshub.info');
+// define('DB_NAME', 'p-348714_autosygnals');
+// define('DB_USER', 'p-348714_autosygnals');
+// define('DB_PASSWORD', 'Sinkhr0fazatron');
+// define('BASE_URL', 'http://localhost:3306');
 
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'autosygnals');

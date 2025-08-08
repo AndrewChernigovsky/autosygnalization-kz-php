@@ -3,7 +3,7 @@ namespace API\SERVICES\ADMIN;
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 use Exception;
 
 // Set CORS headers
@@ -35,7 +35,7 @@ if (!isset($data['id'])) {
 $serviceId = $data['id'];
 $imagePath = $data['image_path'] ?? null;
 
-$dbConnection = Database::getConnection();
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 try {

@@ -1,4 +1,4 @@
-import { ref, reactive } from 'vue';
+import { ref } from 'vue';
 import type { Slide } from '../interfaces/types';
 import Swal from 'sweetalert2';
 import { useIframeStore } from '../../../stores/iframeStore';
