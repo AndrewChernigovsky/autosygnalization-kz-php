@@ -1,8 +1,21 @@
 import fetchWithCors from '../utils/fetchWithCors';
-import showSwal from './showSwal';
+import showSwal, { showConfirm } from './showSwal';
 
 export default async function deleteItemOnDB(item: any, url: string) {
   try {
+    // Показываем подтверждение удаления
+    const confirmed = await showConfirm(
+      'Подтвердите удаление',
+      `Вы уверены, что хотите удалить "${item.title}"? Это действие нельзя отменить.`,
+      'Удалить',
+      'Отмена'
+    );
+
+    // Если пользователь отменил, выходим
+    if (!confirmed) {
+      return;
+    }
+
     showSwal('Подождите', 'Удаляем', 'info');
 
     // Для контактов используем contact_id как ID

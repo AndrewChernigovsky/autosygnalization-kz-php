@@ -72,6 +72,10 @@ const toggleContactItem = (contactId: number) => {
 };
 
 const handleSaveContact = async (contact: any) => {
+  if (!contact.title.trim()) {
+    showSwal('Ошибка', 'Заголовок не может быть пустым', 'error');
+    return;
+  }
   await uppdateItemOnDB(contact, store.contactsApiUrl);
   await store.getContacts();
 };
@@ -226,7 +230,9 @@ const reorderContacts = async (draggedContact: any, targetContact: any) => {
                 />
               </div>
               <div class="contact-item-header-wrapper">
-                <h2 class="title m-0">{{ contact.title }}</h2>
+                <h2 class="title m-0">
+                  {{ contact.title ? contact.title : 'Заголовок' }}
+                </h2>
                 <MyBtn
                   variant="primary"
                   @click="toggleContactItem(contact.contact_id)"
@@ -426,7 +432,6 @@ const reorderContacts = async (draggedContact: any, targetContact: any) => {
   }
 
   &:hover:not(.dragging) {
-    transform: translateY(-1px);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 }
