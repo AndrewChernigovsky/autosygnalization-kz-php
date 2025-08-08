@@ -59,7 +59,7 @@ const addNewContact = async (e?: Event | null) => {
 <template>
   <div class="addcontact">
     <div class="addcontact-header">
-      <h2 class="titile m-0">Добавить новый контакт</h2>
+      <h2 class="title m-0">Добавить новый контакт</h2>
       <MyBtn
         variant="primary"
         @click="addNewContactActive = !addNewContactActive"

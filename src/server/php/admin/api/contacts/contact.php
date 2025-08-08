@@ -1,11 +1,27 @@
 <?php
 
+// Отключаем вывод ошибок и предупреждений PHP в браузер
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
+
+// Очищаем буфер вывода перед отправкой JSON
+if (ob_get_level()) {
+    ob_clean();
+}
+ob_start();
+
+// Убираем любые BOM (Byte Order Mark) символы
+if (function_exists('mb_internal_encoding')) {
+    mb_internal_encoding('UTF-8');
+}
+
 namespace API\ADMIN;
 // CORS-заголовки для разрешения запросов с фронта (например, React на localhost:5173)
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
@@ -316,6 +332,7 @@ try {
 
         if (json_last_error() !== JSON_ERROR_NONE) {
           http_response_code(400);
+          ob_clean();
           echo json_encode(['success' => false, 'error' => 'Invalid JSON']);
           exit;
         }
@@ -330,6 +347,7 @@ try {
       } else {
         // Если Content-Type не задан или не поддерживается для POST/PUT/PATCH, выдаем ошибку
         http_response_code(415);
+        ob_clean();
         echo json_encode(['success' => false, 'error' => 'Unsupported Media Type: ' . $contentType]);
         exit;
       }
@@ -338,6 +356,7 @@ try {
 
   switch ($method) {
     case 'GET':
+      ob_clean();
       echo $api->getContacts();
       break;
 
@@ -348,20 +367,25 @@ try {
       if ($id) {
         // --- Это обновление (метод PUT через POST) ---
         if (!$input && !$icon) {
+            ob_clean();
             echo $api->error("Данные для обновления не переданы");
             break;
         }
         // Вызываем updateContact, передавая ID, данные и, возможно, иконку
+        ob_clean();
         echo $api->updateContact($id, $input, $icon);
 
       } else {
         // --- Это создание ---
         if ($input && strpos($contentType, 'application/json') !== false) {
+            ob_clean();
             echo $api->createContact($input);
         } elseif ($input && strpos($contentType,'multipart/form-data') !== false) {
             // Эта ветка обработает и создание с иконкой, и без нее
+            ob_clean();
             echo $api->createContact($input, $icon);
         } else {
+            ob_clean();
             echo $api->error("Данные для создания не переданы");
         }
       }
@@ -369,24 +393,30 @@ try {
       
     case 'PUT':
       if (!$input) {
+      ob_clean();
       echo $api->error("Данные не переданы");
       break;
       }
       $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
       if (!$id) {
+      ob_clean();
       echo $api->error("ID не указан");
       break;
       }
       if ($input && strpos($contentType, 'application/json') !== false && $id) {
+          ob_clean();
           echo $api->updateContact($id, $input);
       break;
       } elseif ($input && $icon && strpos($contentType,'multipart/form-data') !== false && $id) {
+          ob_clean();
           echo $api->updateContact($id, $input, $icon);
         break;
       } elseif ($input && strpos($contentType,'multipart/form-data') !== false) {
+         ob_clean();
          echo $api->updateContact($id, $input);
         break;
       } else {
+          ob_clean();
           echo $api->error("Данные не переданы");
         break;
       }
@@ -394,9 +424,11 @@ try {
     case 'DELETE':
       $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
       if (!$id) {
+          ob_clean();
           echo $api->error("ID не указан");
           break;
       }
+      ob_clean();
       echo $api->deleteContactItem($id);
       break;
 
@@ -404,25 +436,33 @@ try {
       // Обновление порядка контактов
       if (isset($_GET['action']) && $_GET['action'] === 'update-order') {
         if (!$input) {
+          ob_clean();
           echo $api->error("Данные для обновления порядка не переданы");
           break;
         }
+        ob_clean();
         echo $api->updateContactsOrder($input);
       } else {
+        ob_clean();
         echo $api->error("Неизвестное действие", 400);
       }
       break;
 
     default:
+      ob_clean();
       echo $api->error("Метод не поддерживается", 405);
       break;
   }
 } catch (\Exception $e) {
   error_log("Критическая ошибка API контактов: " . $e->getMessage());
   http_response_code(500);
+  ob_clean();
   echo json_encode([
     'success' => false,
     'error' => 'Внутренняя ошибка сервера'
   ]);
 }
+
+// Завершаем буферизацию и отправляем вывод
+ob_end_flush();
 
