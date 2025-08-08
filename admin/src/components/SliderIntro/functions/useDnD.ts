@@ -1,4 +1,4 @@
-import { ref, nextTick } from 'vue';
+import {nextTick } from 'vue';
 import type { Ref } from 'vue';
 import type { Slide } from '../interfaces/types';
 import Swal from 'sweetalert2';

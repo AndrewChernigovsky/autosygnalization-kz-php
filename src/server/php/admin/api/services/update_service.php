@@ -10,13 +10,13 @@ header('Content-Type: application/json');
 
 // Handle preflight request
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
+  http_response_code(200);
+  exit;
 }
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 use Exception;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   exit;
 }
 
-$dbConnection = Database::getConnection();
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -36,8 +36,6 @@ if (!isset($data['id'])) {
   exit;
 }
 
-// Log incoming data for debugging
-error_log(print_r($data, true));
 
 $serviceId = $data['id'];
 $services_data = $data['services'];

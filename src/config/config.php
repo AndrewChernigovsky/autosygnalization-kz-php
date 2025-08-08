@@ -12,14 +12,14 @@ define('SECRET_KEY', '6LcXjXMqAAAAAOjUP-PcxCVOASxRW67hRD6hixlf');
 
 // Данные для подключения к базе данных
 
+// define('DB_HOST', 'localhost');
+// define('DB_NAME', 'p-348714_autosygnals');
+// define('DB_USER', 'p-348714_autosygnals');
+// define('DB_PASSWORD', 'Sinkhr0fazatron');
+// define('BASE_URL', 'http://localhost:3306');
+
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'autosygnals');
 define('DB_USER', 'root');
 define('DB_PASSWORD', '');
 define('BASE_URL', 'https://localhost:3000');
-
-// define('DB_HOST', 'localhost');
-// define('DB_NAME', 'autosygnals');
-// define('DB_USER', 'root');
-// define('DB_PASSWORD', '');
-// define('BASE_URL', 'https://localhost:3000');

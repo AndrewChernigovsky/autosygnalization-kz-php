@@ -60,13 +60,13 @@ try {
     $tabs[$tabIndex] = ['title' => 'Новая вкладка', 'description' => []];
   }
   if (!isset($tabs[$tabIndex]['description'][$itemIndex])) {
-    $tabs[$tabIndex]['description'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'path-icon' => ''];
+    $tabs[$tabIndex]['description'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'icon' => ''];
   }
 
   // 2. Check for old icon and delete it
-  if (!empty($tabs[$tabIndex]['description'][$itemIndex]['path-icon'])) {
-    $oldIconPath = $tabs[$tabIndex]['description'][$itemIndex]['path-icon'];
-    $oldFileFullPath = __DIR__ . '/../../../../' . ltrim(parse_url($oldIconPath, PHP_URL_PATH), '/');
+  if (!empty($tabs[$tabIndex]['description'][$itemIndex]['icon'])) {
+    $oldIconPath = $tabs[$tabIndex]['description'][$itemIndex]['icon'];
+    $oldFileFullPath = __DIR__ . '/../../../..' . $oldIconPath;
     if (file_exists($oldFileFullPath)) {
       unlink($oldFileFullPath);
     }
@@ -78,8 +78,8 @@ try {
   }
 
   // 4. Update the path in the tabs array
-  $newIconPath = '/uploads/tabs/' . $productId . '/' . $newFileName;
-  $tabs[$tabIndex]['description'][$itemIndex]['path-icon'] = $newIconPath;
+  $newIconPath = '/server/uploads/tabs/' . $productId . '/' . $newFileName;
+  $tabs[$tabIndex]['description'][$itemIndex]['icon'] = $newIconPath;
 
   // 5. Save updated tabs data back to DB using INSERT ... ON DUPLICATE KEY UPDATE
   $updateStmt = $pdo->prepare("

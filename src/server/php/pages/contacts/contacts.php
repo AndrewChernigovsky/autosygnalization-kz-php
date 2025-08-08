@@ -27,8 +27,10 @@ $social = $contacts->getSocial();
 $schedule = $contacts->getSchedule();
 $map = $contacts->getMap();
 $locationDescription = $contacts->getLocationDescription();
-$allContacts = $contacts->getAllContact(['contact-phone', 'social','email', 'address', 'schedule']);
+$allContacts = $contacts->getAllContact(['Контактный телефон', 'Социальные сети','Электронная почта', 'Адрес', 'Расписание']);
 error_log(print_r($allContacts, true) . 'Я ВЕСЬ МАССИВ КОНТАКТОВ');
+error_log(print_r($allContacts[0]['type'], true) . 'Я ВЕСЬ МАССИВ ТИПОВ КОНТАКТОВ ZALUPA');
+error_log(print_r($allContacts[0]['type'], true) . 'Я ВЕСЬ МАССИВ ТЕЛЕФОНОВ ИЛИ ОСНОВНОЙ ТЕЛЕФОН ZALUPA');
 ?>
 
 <!DOCTYPE html>
@@ -46,8 +48,8 @@ echo $head->setHead();
         <h2>Контакты</h2>
         <ul class="contacts-section__list">
             <?php foreach ($allContacts as $item): ?>
-              <?php if ($item['type'] === 'contact-phone'): ?>
-                <li class="contacts-section__item contacts-section__item--whatsap">
+              <?php if ($item['type'] === 'Контактный телефон'): ?>
+                <li class="contacts-section__item contacts-section__item">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
                     <div class="icon-container">
                       <svg width="25" height="25" aria-hidden="true">
@@ -59,8 +61,8 @@ echo $head->setHead();
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if ($item['type'] === 'social'): ?>
-                <?php if ($item['type'] === 'social' && $item['title'] === 'Whatsapp:'): ?>
+              <?php if ($item['type'] === 'Социальные сети'): ?>
+                <?php if ($item['type'] === 'Социальные сети' && $item['title'] === 'Whatsapp:'): ?>
                 <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
                     <div class="icon-container">
@@ -73,7 +75,7 @@ echo $head->setHead();
                   </a>
                 </li>
                 <?php endif; ?>
-                <?php if ($item['type'] === 'social' && $item['title'] === 'Instagramm:'): ?>
+                <?php if ($item['type'] === 'Социальные сети' && $item['title'] === 'Instagramm:'): ?>
                   <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
                     <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
                         <h3><?php echo htmlspecialchars($item['title']) ?></h3>
@@ -84,7 +86,7 @@ echo $head->setHead();
                   </li>
                 <?php endif; ?>
               <?php endif; ?>
-              <?php if ($item['type'] === 'email'): ?>
+              <?php if ($item['type'] === 'Электронная почта'): ?>
                 <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['type']) ?>">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
                       <div class="icon-container">
@@ -97,7 +99,7 @@ echo $head->setHead();
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if ($item['type'] === 'address'): ?>
+              <?php if ($item['type'] === 'Адрес'): ?>
                 <li class="contacts-section__item contacts-section__item--address">
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
                     <div class="icon-container">
@@ -110,7 +112,7 @@ echo $head->setHead();
                   </a>
                 </li>
               <?php endif; ?>
-              <?php if ($item['type'] === 'schedule'): ?>
+              <?php if ($item['type'] === 'Расписание'): ?>
                 <li class="contacts-section__item contacts-section__item--schedule">
                     <div class="icon-container">
                       <svg width="25" height="25" aria-hidden="true">

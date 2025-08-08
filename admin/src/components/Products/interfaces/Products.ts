@@ -1,12 +1,20 @@
 export interface DescriptionItem {
   title: string;
-  'path-icon'?: string;
+  icon?: string;
   description: string;
 }
 
 export interface Tab {
   title: string;
-  description: DescriptionItem[];
+  content: DescriptionItem[];
+}
+
+export interface PriceItem {
+  title: string;
+  productPrice: string;
+  currency: string;
+  installationPrice: string;
+  description: string;
 }
 
 export interface ProductI {
@@ -16,13 +24,15 @@ export interface ProductI {
   title: string;
   description: string;
   price: number;
+  link: string;
   is_popular: boolean;
   is_special: boolean;
   gallery: string[];
-  category_key: string;
+  category: string;
   functions: string[];
   options: string[];
   'options-filters': string[];
   autosygnals: string[];
   tabs?: Tab[];
+  prices?: PriceItem[] | string;
 }

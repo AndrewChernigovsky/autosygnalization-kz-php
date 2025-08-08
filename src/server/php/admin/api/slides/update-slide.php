@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
   echo json_encode(['error' => 'Method Not Allowed']);
   exit;
 }
-error_log('XXXXXXXXXX');
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 $id = $data['id'] ?? null;
