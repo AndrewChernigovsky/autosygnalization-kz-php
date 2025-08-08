@@ -19,7 +19,7 @@ function worksSection(): string
                 <div class="works__swiper-wrapper swiper-wrapper">
                     <?php foreach ($works as $work): ?>
                         <div class="swiper-slide works__slide">
-                            <h3 class="works__slide-title"><?= htmlspecialchars($work['title']) . ' ' . htmlspecialchars($work['link']); ?></h3>
+                            <h3 class="works__slide-title"><?= htmlspecialchars($work['title']); ?></h3>
                             <div class="works__slide-image swiper-zoom-container">
                                 <img src="<?= htmlspecialchars($work['image_path']); ?>" alt="Фото работы нашего сервиса" width="600" height="300" />
                             </div>

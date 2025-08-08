@@ -341,6 +341,8 @@ try {
   }
 } catch (Exception $e) {
   error_log("Критическая ошибка API 'Видео преимуществ': " . $e->getMessage());
+  error_log("Файл ошибки: " . $e->getFile());
+  error_log("Строка ошибки: " . $e->getLine());
   http_response_code(500);
   error_log("Критическая ошибка API 'Видео преимуществ': " . $e->getMessage());
   echo json_encode(['success' => false, 'error' => 'Внутренняя ошибка сервера']);
