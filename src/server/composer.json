@@ -69,6 +69,6 @@
     ]
   },
   "config": {
-    "optimize-,autoloader": true
+    "optimize-autoloader": true
   }
 }
