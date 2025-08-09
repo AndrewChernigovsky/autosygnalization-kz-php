@@ -13,9 +13,9 @@ CREATE TABLE `Sertificates` (
 
 
 INSERT INTO `Sertificates` (`image_path`, `pdf_path`, `position`) VALUES
-('/client/images/sertificates/sertificate-1.avif', '/client/images/sertificates/sertificate-1.pdf', 1),
-('/client/images/sertificates/sertificate-2.avif', '/client/images/sertificates/sertificate-2.pdf', 2),
-('/client/images/sertificates/sertificate-3.avif', '/client/images/sertificates/sertificate-3.pdf', 3);
+('/client/images/sertificates/sertificate-1.avif', '/client/pdf/sertificate-1.pdf', 1),
+('/client/images/sertificates/sertificate-2.avif', '/client/pdf/sertificate-2.pdf', 2),
+('/client/images/sertificates/sertificate-3.avif', '/client/pdf/sertificate-3.pdf', 3);
 
 
 
