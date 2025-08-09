@@ -23,11 +23,7 @@ const linkSourceMode = ref<'custom' | 'existing'>('custom');
 const selectedLinkForModal = ref<LinkData | null>(null);
 
 watch(selectedLinkForModal, (newSelectedLink) => {
-  if (
-    newSelectedLink &&
-    linkSourceMode.value === 'existing' &&
-    editingLink.value
-  ) {
+  if (newSelectedLink && editingLink.value) {
     editingLink.value.name = newSelectedLink.name;
   }
 });
@@ -170,6 +166,12 @@ const updatePositions = async (items: IFooterLink[]) => {
 const saveLink = async (link: Partial<IFooterLink> | null) => {
   if (!link) return;
 
+  // Нормализация названия перед сохранением
+  if (link.name) {
+    link.name =
+      link.name.charAt(0).toUpperCase() + link.name.slice(1).toLowerCase();
+  }
+
   let payload: Partial<IFooterLink>;
 
   if (linkSourceMode.value === 'existing') {
@@ -179,7 +181,6 @@ const saveLink = async (link: Partial<IFooterLink> | null) => {
     }
     payload = {
       ...link,
-      name: selectedLinkForModal.value.name,
       link: selectedLinkForModal.value.link,
       source_table: 'custom', // Per existing logic
       source_id: selectedLinkForModal.value.links_data_id,
@@ -374,7 +375,7 @@ onMounted(() => {
               >
                 <div class="link-info">
                   <span class="drag-handle">⠿</span>
-                  <span>{{ link.name }}</span>
+                  <span class="link-name">{{ link.name }}</span>
                 </div>
                 <div class="item-controls">
                   <MyBtn variant="primary" @click="openModal(link)"
@@ -598,6 +599,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.link-name {
+  text-transform: lowercase;
+}
+.link-name::first-letter {
+  text-transform: uppercase;
 }
 .drag-handle {
   font-size: 1.4rem;
