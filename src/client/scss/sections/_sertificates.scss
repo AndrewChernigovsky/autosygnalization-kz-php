@@ -1,5 +1,5 @@
-@use 'variables' as var;
-@use 'mixins' as mix;
+@use 'variables'as var;
+@use 'mixins'as mix;
 
 .sertificates {
   overflow: hidden;
@@ -44,16 +44,18 @@
   &__slide {
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex-grow: 33.3%;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    padding: 0 20px; /* Добавляем отступы по бокам слайда */
+    padding: 0 20px;
+    /* Добавляем отступы по бокам слайда */
 
     /* Стили для ссылки-обертки изображения */
     a:first-child {
       border-radius: 16px;
-      overflow: hidden; /* скрываем все, что выходит за рамки */
+      overflow: hidden;
+      /* скрываем все, что выходит за рамки */
       display: block;
       width: 100%;
       aspect-ratio: 3 / 4;
@@ -74,7 +76,8 @@
         border: none;
         border-radius: 16px;
         background-color: #f8f9fa;
-        pointer-events: none; /* Отключаем взаимодействие с iframe */
+        pointer-events: none;
+        /* Отключаем взаимодействие с iframe */
         position: relative;
         left: 50%;
         transform: translateX(-50%);
@@ -129,10 +132,13 @@
       color: white;
       text-decoration: none;
       background-color: red;
-      padding: 12px 0; /* высота кнопки */
+      padding: 12px 0;
+      /* высота кнопки */
       border-radius: 4px;
-      width: 100%; /* Растягиваем на всю доступную ширину */
-      text-align: center; /* Центрируем текст внутри кнопки */
+      width: 100%;
+      /* Растягиваем на всю доступную ширину */
+      text-align: center;
+      /* Центрируем текст внутри кнопки */
       /* Синхронизируем ширину превью и кнопки: превью уже 100% блока слайда */
     }
   }
