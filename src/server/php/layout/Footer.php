@@ -7,6 +7,7 @@ use DATA\ContactsData;
 use COMPONENTS\GEO;
 use COMPONENTS\Logo;
 use COMPONENTS\InsertPhone;
+use COMPONENTS\InsertSVG;
 use HELPERS\GenerateFooterLinks;
 use DATA\NavigationLinks;
 
@@ -21,7 +22,7 @@ class Footer
     $phones = $contacts->getPhones();
     $email = $contacts->getEmail();
     $web_site = $contacts->getWebsite(true);
-    $socialIcons = $contacts->getSocialIcons();
+    $socialIcons = $contacts->getSocial();
     $emailTitle = $email[0]['email'];
     $emailLink = $email[0]['link'];
     $emailSvgPath = $email[0]['svg_path'];
@@ -49,10 +50,9 @@ class Footer
         <div class="footer__contacts">
           {$logo->getLogo()}
           <div class="social">
-            <p>Instagram</p>
-            <!-- <ul class="social__icons list-style-none">
-              {$this->generateSocialIcons($socialIcons, $contacts)}
-            </ul> -->
+            <ul class="social__icons list-style-none">
+              {$this->generateSocialIcons($socialIcons)}
+            </ul>
           </div>
           <div class="phones">
             {$phones_footer}
@@ -77,11 +77,28 @@ class Footer
 HTML;
   }
 
-  private function generateSocialIcons($socialIcons, $contacts): string
+  private function generateSocialIcons($socialIcons): string
   {
     $html = '';
+    $insertSVG = new InsertSVG();
+    
     foreach ($socialIcons as $social) {
-      $html .= '<li>' . $contacts->setSocial($social) . '</li>';
+      $socialData = [
+        'name' => $social['title'],
+        'width' => '50',
+        'height' => '50',
+        'image' => $social['svg_path'],
+        'href' => $social['link']
+      ];
+      
+      $html .= '<li><a class="social-contact link" href="' . htmlspecialchars($social['link']) . '">';
+      
+      // Добавляем SVG иконку из базы данных
+      if (!empty($social['svg_path'])) {
+        $html .= $insertSVG->insertSvg($socialData);
+      }
+      
+      $html .= htmlspecialchars($social['title']) . '</a></li>';
     }
     return $html;
   }

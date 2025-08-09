@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Авг 09 2025 г., 18:49
+-- Время создания: Авг 09 2025 г., 19:18
 -- Версия сервера: 8.0.30
 -- Версия PHP: 8.1.9
 
@@ -44,15 +44,11 @@ CREATE TABLE `Navigation` (
 --
 
 INSERT INTO `Navigation` (`id`, `title`, `content`, `link`, `icon_path`, `sort_order`, `on_page`, `created_at`, `updated_at`) VALUES
-(12, 'Автосигнализации', '', '/autosygnals', '/server/uploads/navigation/icons/icon-1754067701.svg', 2, 1, '2025-07-31 15:16:51', '2025-08-09 15:43:21'),
-(13, 'Главная2', '', '/', '/server/uploads/navigation/icons/icon-1754055507.svg', 1, 0, '2025-08-01 13:38:27', '2025-08-09 15:48:49'),
-(14, 'Услуги', '', '/services', '/server/uploads/navigation/icons/icon-1754067710.svg', 3, 1, '2025-08-01 13:39:30', '2025-08-01 17:01:50'),
+(12, 'Автосигнализации', 'Автосигнализации', '/autosygnals', '/server/uploads/navigation/icons/icon-1754067701.svg', 2, 1, '2025-07-31 15:16:51', '2025-08-09 16:17:04'),
+(13, 'Главная2', '', '/', '/server/uploads/navigation/icons/icon-1754055507.svg', 1, 1, '2025-08-01 13:38:27', '2025-08-09 16:18:36'),
+(14, 'Услуги', 'Услуги', '/services', '/server/uploads/navigation/icons/icon-1754067710.svg', 3, 1, '2025-08-01 13:39:30', '2025-08-09 16:17:10'),
 (15, 'Zalupa', 'Zalupivka', '/', '/server/uploads/navigation/icons/icon-1754752917.svg', 4, 1, '2025-08-09 15:21:57', '2025-08-09 15:21:57'),
-(16, 'ASD', '', 'ASD', '/server/uploads/navigation/icons/icon-1754753539.svg', 5, 1, '2025-08-09 15:32:19', '2025-08-09 15:32:19'),
-(17, 'ASD', 'ddd', '/services', NULL, 6, 1, '2025-08-09 15:32:34', '2025-08-09 15:32:34'),
-(18, 'test', '', '/', NULL, 7, 1, '2025-08-09 15:33:53', '2025-08-09 15:33:53'),
-(19, 'test2', '', '/sertificates', NULL, 8, 1, '2025-08-09 15:34:07', '2025-08-09 15:34:07'),
-(20, 'test 3', '', '/autosygnals', NULL, 9, 0, '2025-08-09 15:37:09', '2025-08-09 15:37:09');
+(21, 'Zapravka', 'Контакты', '/contacts', NULL, 6, 1, '2025-08-09 16:14:52', '2025-08-09 16:14:52');
 
 --
 -- Индексы сохранённых таблиц
@@ -72,7 +68,7 @@ ALTER TABLE `Navigation`
 -- AUTO_INCREMENT для таблицы `Navigation`
 --
 ALTER TABLE `Navigation`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

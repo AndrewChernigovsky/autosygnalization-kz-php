@@ -71,14 +71,16 @@ const addNewNavItem = async (e?: Event | null) => {
               v-model="store.newNavItem.title"
             />
             <p class="addlink-help m-0">
-              *Введите заголовок навигационного элемента
+              *Введите заголовок навигационного элемента НЕ будет отображаться
+              на сайте
             </p>
           </div>
           <div class="addlink-label">
             <h3 class="subtitle m-0">Контент на странице</h3>
             <MyInput variant="primary" v-model="store.newNavItem.content" />
             <p class="addlink-help m-0">
-              *Дополнительный контент для навигационного элемента (опционально)
+              *Дополнительный контент для навигационного элемента БУДЕТ
+              отображаться на сайте
             </p>
           </div>
           <div class="addlink-checkbox-wrapper">

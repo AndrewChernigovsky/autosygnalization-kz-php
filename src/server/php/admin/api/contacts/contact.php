@@ -2,7 +2,7 @@
 
 namespace API\ADMIN;
 // CORS-заголовки для разрешения запросов с фронта (например, React на localhost:5173)
-header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json');
@@ -368,28 +368,19 @@ try {
       break;
       
     case 'PUT':
-      if (!$input) {
-      echo $api->error("Данные не переданы");
-      break;
-      }
       $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
       if (!$id) {
-      echo $api->error("ID не указан");
-      break;
-      }
-      if ($input && strpos($contentType, 'application/json') !== false && $id) {
-          echo $api->updateContact($id, $input);
-      break;
-      } elseif ($input && $icon && strpos($contentType,'multipart/form-data') !== false && $id) {
-          echo $api->updateContact($id, $input, $icon);
-        break;
-      } elseif ($input && strpos($contentType,'multipart/form-data') !== false) {
-         echo $api->updateContact($id, $input);
-        break;
-      } else {
-          echo $api->error("Данные не переданы");
+        echo $api->error("ID не указан");
         break;
       }
+      
+      if (!$input && !$icon) {
+        echo $api->error("Данные для обновления не переданы");
+        break;
+      }
+      
+      echo $api->updateContact($id, $input, $icon);
+      break;
     
     case 'DELETE':
       $id = isset($_GET['id']) ? (int) $_GET['id'] : null;
