@@ -64,6 +64,18 @@ const handleCreate = async (slot: NewSertificateSlot, index: number) => {
     return;
   }
 
+  // Показываем лоадер
+  Swal.fire({
+    title: 'Сохранение...',
+    text: 'Пожалуйста, подождите',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
+
   const formData = new FormData();
   formData.append('action', 'create');
   formData.append('image', slot.file);
@@ -95,6 +107,18 @@ const handleUpdate = async (id: number) => {
     Swal.fire('Ошибка', 'Нет файла для обновления.', 'error');
     return;
   }
+
+  // Показываем лоадер
+  Swal.fire({
+    title: 'Обновление...',
+    text: 'Пожалуйста, подождите',
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    showConfirmButton: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 
   const formData = new FormData();
   formData.append('action', 'update');
@@ -400,13 +424,13 @@ onMounted(fetchData);
           class="actions-update"
         >
           <button
-            class="btn-save"
+            class="btn primary btn-save"
             @click="handleUpdate(sertificate.sertificate_id)"
           >
             Сохранить
           </button>
           <button
-            class="btn-cancel"
+            class="btn secondary btn-cancel"
             @click="cancelUpdate(sertificate.sertificate_id)"
           >
             Отмена
@@ -475,13 +499,16 @@ onMounted(fetchData);
         </div>
         <div class="actions-new">
           <button
-            class="btn-save"
+            class="btn primary btn-save"
             @click="handleCreate(slot, index)"
             :disabled="!slot.file"
           >
             Сохранить
           </button>
-          <button class="btn-delete-slot" @click="removeNewSlot(index)">
+          <button
+            class="btn secondary btn-delete-slot"
+            @click="removeNewSlot(index)"
+          >
             Удалить
           </button>
         </div>
@@ -499,7 +526,60 @@ onMounted(fetchData);
 </template>
 
 <style scoped>
-/* Общие стили контейнера и заголовков */
+.btn {
+  border: 2px solid #ffffff;
+  padding: 8px;
+  background: none;
+  cursor: pointer;
+  outline: none;
+  color: black;
+  width: auto;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.primary {
+  background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: white;
+}
+
+.secondary {
+  background: linear-gradient(180deg, #10172d 0%, #0031bc 100%);
+  color: white;
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.primary:hover,
+.primary:focus-visible {
+  opacity: 0.7;
+}
+
+.primary:active {
+  opacity: 0.3;
+}
+
+.secondary:hover,
+.secondary:focus-visible {
+  opacity: 0.7;
+}
+
+.secondary:active {
+  opacity: 0.3;
+}
+
+.primary:disabled,
+.secondary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: none;
+  background-color: #cdcdcd;
+}
+
 .container-sertificates {
   background-color: inherit;
   color: #e0e0e0;
