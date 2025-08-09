@@ -1,6 +1,6 @@
 import { h, render } from 'preact';
 import { html } from 'htm/preact';
-import { SetWork, mountSetWork } from "./components/Search.jsx";
+import { SetWork, mountSetWork } from './components/Search.jsx';
 
 const {
   feedbackForm,
@@ -162,6 +162,13 @@ async function loadModules() {
     const { initFancybox } = await import('./modules/fancybox.js');
     initFancybox();
   }
+
+  // Инициализация PDF превью
+  const pdfPreviewExist = document.querySelectorAll('.pdf-preview-iframe');
+  if (pdfPreviewExist.length > 0) {
+    const { initPdfPreview } = await import('./modules/pdf-preview.js');
+    initPdfPreview();
+  }
   if (buttonPrint) {
     const module = await import('./modules/print-contacts.js');
     const PrintDocument = module.default;
@@ -214,33 +221,31 @@ async function loadModules() {
     const { initDeliveryModal } = await import('./modules/deliveryModal.js');
     initDeliveryModal();
   }
-  if (document.getElementById("search-input")) {
-    mountSetWork("search-input");
+  if (document.getElementById('search-input')) {
+    mountSetWork('search-input');
   }
   if (processForm != null) {
     const formHandler = await import('./modules/form-handler.js');
     const ProcessForm = formHandler.default;
 
-    new ProcessForm(
-      {
-        form: '.form__main-form.main-form',
-      }
-    );
+    new ProcessForm({
+      form: '.form__main-form.main-form',
+    });
   }
   if (formReusable != null) {
     const formReusable = await import('./modules/form-reusable.js');
     const FormReusable = formReusable.default;
 
-    new FormReusable(
-      {
-        container: '.popup.modal-form',
-        form: '.form__main-form',
-      }
-    );
+    new FormReusable({
+      container: '.popup.modal-form',
+      form: '.form__main-form',
+    });
   }
 
   if (policyModal != null) {
-    const { createPolicyModal, loadPolicyDocument } = await import('./modules/policy-modal.js');
+    const { createPolicyModal, loadPolicyDocument } = await import(
+      './modules/policy-modal.js'
+    );
     const modal = createPolicyModal('Политика конфиденциальности');
     const content = await loadPolicyDocument('./files/docs/policy.txt');
     modal.setContent(content);
@@ -248,7 +253,7 @@ async function loadModules() {
 
   const forms = document.querySelectorAll('form');
 
-  forms.forEach(form => {
+  forms.forEach((form) => {
     const submitButton = form.querySelector('button[type="submit"]');
     if (submitButton && submitButton.disabled === true) {
       submitButton.disabled = false;
@@ -257,4 +262,3 @@ async function loadModules() {
 }
 
 document.addEventListener('DOMContentLoaded', loadModules);
-

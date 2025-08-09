@@ -249,8 +249,30 @@ const removeNewSlot = (index: number) => {
 const onFileChangeForNew = (event: Event, slot: NewSertificateSlot) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
-    slot.file = input.files[0];
-    slot.preview = URL.createObjectURL(input.files[0]);
+    const file = input.files[0];
+    // --- ВАЛИДАЦИЯ ФАЙЛА ---
+    if (file.size > 10485760) {
+      // 10 МБ
+      Swal.fire(
+        'Ошибка',
+        'Файл слишком большой. Максимальный размер - 10 МБ.',
+        'error'
+      );
+      clearImageInNewSlot(slot);
+      return;
+    }
+    if (file.type !== 'application/pdf') {
+      Swal.fire(
+        'Ошибка',
+        'Неверный формат файла. Разрешены только PDF.',
+        'error'
+      );
+      clearImageInNewSlot(slot);
+      return;
+    }
+    // --- КОНЕЦ ВАЛИДАЦИИ ---
+    slot.file = file;
+    slot.preview = URL.createObjectURL(file);
   }
 };
 
@@ -272,6 +294,27 @@ const onFileChangeForExisting = (event: Event, id: number) => {
   const input = event.target as HTMLInputElement;
   if (input.files && input.files[0]) {
     const file = input.files[0];
+    // --- ВАЛИДАЦИЯ ФАЙЛА ---
+    if (file.size > 10485760) {
+      // 10 МБ
+      Swal.fire(
+        'Ошибка',
+        'Файл слишком большой. Максимальный размер - 10 МБ.',
+        'error'
+      );
+      cancelUpdate(id);
+      return;
+    }
+    if (file.type !== 'application/pdf') {
+      Swal.fire(
+        'Ошибка',
+        'Неверный формат файла. Разрешены только PDF.',
+        'error'
+      );
+      cancelUpdate(id);
+      return;
+    }
+    // --- КОНЕЦ ВАЛИДАЦИИ ---
     filesToUpdate.value[id] = file;
     previewsForUpdate.value[id] = URL.createObjectURL(file);
   }
@@ -291,7 +334,7 @@ onMounted(fetchData);
 </script>
 
 <template>
-  <div class="container">
+  <div class="container-sertificates">
     <h1 class="main-title">Управление сертификатами</h1>
 
     <div v-if="isLoading" class="loading-overlay">
@@ -318,7 +361,20 @@ onMounted(fetchData);
           class="image-container"
           @click="triggerFileSelect(sertificate.sertificate_id)"
         >
+          <iframe
+            v-if="
+              filesToUpdate[sertificate.sertificate_id]?.type ===
+                'application/pdf' || sertificate.image_path?.endsWith('.pdf')
+            "
+            :src="
+              previewsForUpdate[sertificate.sertificate_id] ||
+              sertificate.image_path
+            "
+            class="sertificate-pdf-preview"
+            frameborder="0"
+          ></iframe>
           <img
+            v-else
             :src="
               previewsForUpdate[sertificate.sertificate_id] ||
               sertificate.image_path
@@ -333,7 +389,7 @@ onMounted(fetchData);
         </div>
         <input
           type="file"
-          accept="image/*"
+          accept="application/pdf"
           class="hidden-file-input"
           :ref="(el) => (fileInputs[`existing-sertificate-${sertificate.sertificate_id}`] = el as HTMLInputElement)"
           @change="onFileChangeForExisting($event, sertificate.sertificate_id)"
@@ -375,7 +431,7 @@ onMounted(fetchData);
         <div class="image-uploader">
           <input
             type="file"
-            accept="image/*"
+            accept="application/pdf"
             class="hidden-file-input"
             :id="`file-input-new-sertificate-${slot.tempId}`"
             :ref="
@@ -386,7 +442,18 @@ onMounted(fetchData);
             @change="onFileChangeForNew($event, slot)"
           />
           <div v-if="slot.preview" class="image-preview-wrapper">
-            <img :src="slot.preview" alt="preview" class="sertificate-image" />
+            <iframe
+              v-if="slot.file?.type === 'application/pdf'"
+              :src="slot.preview"
+              class="sertificate-pdf-preview"
+              frameborder="0"
+            ></iframe>
+            <img
+              v-else
+              :src="slot.preview"
+              alt="preview"
+              class="sertificate-image"
+            />
             <button class="btn-remove-image" @click="clearImageInNewSlot(slot)">
               ×
             </button>
@@ -396,7 +463,14 @@ onMounted(fetchData);
             :for="`file-input-new-sertificate-${slot.tempId}`"
             class="image-uploader-placeholder"
           >
-            <span>+</span>
+            <div class="image-uploader-placeholder-content">
+              <span class="download-icon"
+                >Кликните сюда для загрузки сертификата</span
+              >
+              <span class="download-icon"
+                >Загрузите можно только в формате PDF, но не более 10 МБ</span
+              >
+            </div>
           </label>
         </div>
         <div class="actions-new">
@@ -426,8 +500,8 @@ onMounted(fetchData);
 
 <style scoped>
 /* Общие стили контейнера и заголовков */
-.container {
-  background-color: #2d2d2d;
+.container-sertificates {
+  background-color: inherit;
   color: #e0e0e0;
   padding: 2rem;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
@@ -505,6 +579,13 @@ onMounted(fetchData);
   height: 100%;
   object-fit: cover;
   transition: filter 0.3s;
+}
+
+.sertificate-pdf-preview {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
 }
 
 .image-container:hover .sertificate-image {
@@ -666,10 +747,6 @@ onMounted(fetchData);
   border: 2px dashed #555;
   background-color: #3a3a3a;
 }
-.image-uploader-placeholder span {
-  font-size: 48px;
-  color: #777;
-}
 .hidden-file-input {
   display: none;
 }
@@ -723,5 +800,14 @@ onMounted(fetchData);
 }
 .btn-delete-slot {
   background-color: #6c757d;
+}
+
+.download-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 500;
+  color: #777;
+  text-align: center;
 }
 </style>

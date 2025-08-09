@@ -35,9 +35,12 @@
               :get-category-name="getCategoryName"
               @save-product="saveChanges"
               @delete-product="deleteProductHandler"
-              @delete-image="deleteImage"
+              @delete-image="handleDeleteImage"
               @trigger-file-upload="triggerFileUpload"
               @handle-toggle="handleToggle"
+              @cancel-editing="handleCancelEditing"
+              @stage-tab-icon="handleStageTabIcon"
+              @delete-tab-icon="handleDeleteTabIcon"
             />
           </div>
         </div>
@@ -53,6 +56,7 @@ import type { ProductI } from './interfaces/Products';
 import Swal from 'sweetalert2';
 import Loader from '../../UI/Loader.vue';
 import Product from './Product.vue';
+import { useProductEditorStore } from '../../stores/productEditorStore';
 
 const {
   products,
@@ -61,20 +65,37 @@ const {
   fetchProducts,
   updateProduct,
   deleteProduct,
-  deleteImage,
   uploadImage,
   addProduct,
+  uploadTabIcon,
+  deleteTabIcon: apiDeleteTabIcon,
 } = useProducts();
 
+const productEditorStore = useProductEditorStore();
 const fileInput = ref<HTMLInputElement | null>(null);
 const uploadContext = ref<{ product: ProductI; index: number | null } | null>(
   null
 );
-const isCreatingNewProduct = ref(false);
 const imageUploadStatus = ref<{
   productId: string;
   index: number | null;
 } | null>(null);
+
+const filesToUpload = ref<
+  Map<string, { file: File; blobUrl: string; originalIndex: number | null }[]>
+>(new Map());
+
+const tabIconsToUpload = ref<
+  Map<
+    string,
+    {
+      tabIndex: number;
+      itemIndex: number;
+      file: File;
+      blobUrl: string;
+    }[]
+  >
+>(new Map());
 
 const isImageUploading = (productId: string, index: number | null) => {
   if (!imageUploadStatus.value) return false;
@@ -84,8 +105,20 @@ const isImageUploading = (productId: string, index: number | null) => {
   );
 };
 
+const handleCancelEditing = (product: ProductI) => {
+  const galleryFiles = filesToUpload.value.get(product.id);
+  if (galleryFiles) {
+    galleryFiles.forEach(({ blobUrl }) => URL.revokeObjectURL(blobUrl));
+    filesToUpload.value.delete(product.id);
+  }
+  const iconFiles = tabIconsToUpload.value.get(product.id);
+  if (iconFiles) {
+    iconFiles.forEach(({ blobUrl }) => URL.revokeObjectURL(blobUrl));
+    tabIconsToUpload.value.delete(product.id);
+  }
+};
+
 async function saveChanges(product: ProductI) {
-  console.log('[Products.vue] saveChanges called', product);
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
@@ -97,34 +130,64 @@ async function saveChanges(product: ProductI) {
     color: '#fff',
   });
 
-  console.log(product, 'product');
+  const productRef = products.value.find((p) => p.id === product.id) || product;
 
-  const updated: boolean = await updateProduct(product);
+  // 1. Загрузка изображений галереи
+  const galleryFiles = filesToUpload.value.get(product.id) || [];
+  if (galleryFiles.length > 0) {
+    productRef.gallery = productRef.gallery.filter(
+      (url) => !url.startsWith('blob:')
+    );
 
-  if (updated) {
-    if (product.is_new) {
-      isCreatingNewProduct.value = false;
+    for (const fileData of galleryFiles) {
+      const uploadedGallery = await uploadImage(
+        productRef,
+        fileData.file,
+        fileData.originalIndex
+      );
+      if (uploadedGallery) {
+        productRef.gallery = uploadedGallery;
+      }
     }
-    Swal.fire({
-      title: 'Сохранено!',
-      text: 'Товар был успешно обновлен.',
-      icon: 'success',
-      background: '#333',
-      color: '#fff',
-    });
+    filesToUpload.value.delete(product.id);
+    galleryFiles.forEach(({ blobUrl }) => URL.revokeObjectURL(blobUrl));
+    product.gallery = productRef.gallery;
+  }
+
+  // 2. Загрузка иконок вкладок
+  const iconFiles = tabIconsToUpload.value.get(product.id) || [];
+  if (iconFiles.length > 0) {
+    for (const iconData of iconFiles) {
+      const newPath = await uploadTabIcon(
+        product.id,
+        iconData.tabIndex,
+        iconData.itemIndex,
+        iconData.file
+      );
+      if (newPath && product.tabs) {
+        product.tabs[iconData.tabIndex].content[iconData.itemIndex].icon =
+          newPath;
+      }
+    }
+    tabIconsToUpload.value.delete(product.id);
+    iconFiles.forEach(({ blobUrl }) => URL.revokeObjectURL(blobUrl));
+  }
+
+  // 3. Сохранение основного продукта
+  const updated: boolean = await updateProduct(product);
+  if (updated) {
+    Swal.fire('Сохранено!', 'Товар был успешно обновлен.', 'success');
   } else {
-    Swal.fire({
-      title: 'Ошибка!',
-      text: 'Не удалось сохранить товар.',
-      icon: 'error',
-      background: '#333',
-      color: '#fff',
-    });
+    Swal.fire('Ошибка!', 'Не удалось сохранить товар.', 'error');
   }
 }
-
 async function deleteProductHandler(productId: string) {
   const productToDelete = products.value.find((p) => p.id === productId);
+  if (productToDelete?.is_new) {
+    products.value = products.value.filter((p) => p.id !== productId);
+    handleCancelEditing(productToDelete); // Очистка всех временных файлов
+    return;
+  }
 
   const result = await Swal.fire({
     title: 'Вы уверены?',
@@ -150,30 +213,35 @@ async function deleteProductHandler(productId: string) {
       background: '#333',
       color: '#fff',
     });
-
     const deleted = await deleteProduct(productId);
-
     if (deleted) {
-      if (productToDelete?.is_new) {
-        isCreatingNewProduct.value = false;
-      }
-      Swal.fire({
-        title: 'Удалено!',
-        text: 'Товар был успешно удален.',
-        icon: 'success',
-        background: '#333',
-        color: '#fff',
-      });
+      Swal.fire('Удалено!', 'Товар был успешно удален.', 'success');
     } else {
-      Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось удалить товар.',
-        icon: 'error',
-        background: '#333',
-        color: '#fff',
-      });
+      Swal.fire('Ошибка!', 'Не удалось удалить товар.', 'error');
     }
   }
+}
+async function handleDeleteImage(product: ProductI, imageIndex: number) {
+  const productInState =
+    productEditorStore.editingProduct?.id === product.id
+      ? productEditorStore.editingProduct
+      : product;
+  if (!productInState) return;
+
+  const imageUrl = productInState.gallery[imageIndex];
+
+  if (imageUrl.startsWith('blob:')) {
+    const files = filesToUpload.value.get(product.id) || [];
+    const fileIndex = files.findIndex((f) => f.blobUrl === imageUrl);
+    if (fileIndex !== -1) {
+      URL.revokeObjectURL(imageUrl);
+      files.splice(fileIndex, 1);
+      filesToUpload.value.set(product.id, files);
+    }
+  }
+  // Simply remove from the array in the local state.
+  // The server will handle the actual file deletion on save.
+  productInState.gallery.splice(imageIndex, 1);
 }
 
 async function handleToggle(event: Event, product: ProductI) {
@@ -190,10 +258,8 @@ async function handleToggle(event: Event, product: ProductI) {
       background: '#333',
       color: '#fff',
     });
-
     if (result.isConfirmed) {
-      await deleteProduct(product.id);
-      isCreatingNewProduct.value = false;
+      deleteProductHandler(product.id);
     } else {
       detailsElement.open = true;
     }
@@ -211,39 +277,81 @@ async function handleFileSelected(event: Event) {
     if (target) target.value = '';
     return;
   }
-
   const { product, index } = uploadContext.value;
   const file = target.files[0];
 
-  imageUploadStatus.value = { productId: product.id, index };
+  const productInState =
+    productEditorStore.editingProduct?.id === product.id
+      ? productEditorStore.editingProduct
+      : product;
 
-  try {
-    const newGallery = await uploadImage(product, file, index);
-    if (newGallery) {
-      Swal.fire({
-        title: 'Успешно!',
-        text: 'Изображение загружено.',
-        icon: 'success',
-        background: '#333',
-        color: '#fff',
-        timer: 1500,
-        showConfirmButton: false,
-      });
-    } else {
-      throw new Error('Upload failed and returned no gallery.');
+  const blobUrl = URL.createObjectURL(file);
+  const productFiles = filesToUpload.value.get(product.id) || [];
+  // Save the original index for replacement purposes
+  productFiles.push({ file, blobUrl, originalIndex: index });
+  filesToUpload.value.set(product.id, productFiles);
+
+  if (index !== null) {
+    const oldUrl = productInState.gallery[index];
+    if (oldUrl.startsWith('blob:')) {
+      URL.revokeObjectURL(oldUrl);
+      const files = filesToUpload.value.get(product.id) || [];
+      const fileIndex = files.findIndex((f) => f.blobUrl === oldUrl);
+      if (fileIndex !== -1) files.splice(fileIndex, 1);
     }
-  } catch (err) {
-    console.error('Failed to upload image:', err);
-    Swal.fire({
-      title: 'Ошибка!',
-      text: 'Не удалось загрузить изображение.',
-      icon: 'error',
-      background: '#333',
-      color: '#fff',
+    productInState.gallery[index] = blobUrl;
+  } else {
+    productInState.gallery.push(blobUrl);
+  }
+  if (target) target.value = '';
+}
+
+function handleStageTabIcon(
+  productId: string,
+  tabIndex: number,
+  itemIndex: number,
+  file: File
+) {
+  const productInState = productEditorStore.editingProduct;
+  if (!productInState || productInState.id !== productId) return;
+
+  const blobUrl = URL.createObjectURL(file);
+  const productIcons = tabIconsToUpload.value.get(productId) || [];
+  productIcons.push({ tabIndex, itemIndex, file, blobUrl });
+  tabIconsToUpload.value.set(productId, productIcons);
+
+  if (productInState.tabs) {
+    productInState.tabs[tabIndex].content[itemIndex].icon = blobUrl;
+  }
+}
+
+function handleDeleteTabIcon(
+  productId: string,
+  tabIndex: number,
+  itemIndex: number
+) {
+  const productInState = productEditorStore.editingProduct;
+  if (!productInState || productInState.id !== productId) return;
+
+  const iconUrl = productInState.tabs?.[tabIndex].content[itemIndex].icon || '';
+
+  if (iconUrl.startsWith('blob:')) {
+    const icons = tabIconsToUpload.value.get(productId) || [];
+    const iconIndex = icons.findIndex((i) => i.blobUrl === iconUrl);
+    if (iconIndex !== -1) {
+      URL.revokeObjectURL(iconUrl);
+      icons.splice(iconIndex, 1);
+      tabIconsToUpload.value.set(productId, icons);
+    }
+    if (productInState.tabs) {
+      productInState.tabs[tabIndex].content[itemIndex].icon = '';
+    }
+  } else {
+    apiDeleteTabIcon(productId, tabIndex, itemIndex).then((success) => {
+      if (success && productInState.tabs) {
+        productInState.tabs[tabIndex].content[itemIndex].icon = '';
+      }
     });
-  } finally {
-    imageUploadStatus.value = null;
-    if (target) target.value = '';
   }
 }
 
@@ -252,7 +360,6 @@ const categoryTranslations: Record<string, string> = {
   'park-systems': 'Парковочные системы',
   'remote-controls': 'Пульты управления',
 };
-
 const allCategories = computed(() => {
   const keysFromProducts = Object.keys(groupedProducts.value);
   const keysFromTranslations = Object.keys(categoryTranslations);
@@ -279,7 +386,6 @@ const groupedProducts = computed(() => {
     return acc;
   }, {} as Record<string, ProductI[]>);
 });
-
 onMounted(() => {
   fetchProducts();
 });

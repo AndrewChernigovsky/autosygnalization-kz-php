@@ -1,9 +1,10 @@
 <?php
 
 $log_file = __DIR__ . '/debug.log';
-file_put_contents($log_file, "--- NEW REQUEST ---\n", FILE_APPEND);
+file_put_contents($log_file, "--- NEW REQUEST (update_product.php) ---\n", FILE_APPEND);
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../config/config.php';
 
 use DATABASE\Database;
 
@@ -32,30 +33,73 @@ if (!isset($data['id'])) {
 
 $productId = $data['id'];
 
+function getIconsFromTabs(array $tabs): array {
+    $icons = [];
+    foreach ($tabs as $tab) {
+        if (isset($tab['content']) && is_array($tab['content'])) {
+            foreach ($tab['content'] as $item) {
+                if (!empty($item['icon'])) {
+                    $icons[] = $item['icon'];
+                }
+            }
+        }
+    }
+    return $icons;
+}
+
 try {
   $pdo->beginTransaction();
 
-  // 1. Update Products table with all fields
+  // Handle gallery image deletions
+  $stmt = $pdo->prepare("SELECT gallery FROM Products WHERE id = :id");
+  $stmt->execute([':id' => $productId]);
+  $currentProduct = $stmt->fetch(PDO::FETCH_ASSOC);
+
+  if ($currentProduct) {
+    $currentGallery = json_decode($currentProduct['gallery'], true) ?: [];
+    $newGallery = $data['gallery'] ?? [];
+    $imagesToDelete = array_diff($currentGallery, $newGallery);
+    foreach ($imagesToDelete as $imageUrl) {
+      $filePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($imageUrl, PHP_URL_PATH);
+      if (file_exists($filePath)) {
+        unlink($filePath);
+      }
+    }
+  }
+
+  // Handle tab icon deletions
+  $tabsStmt = $pdo->prepare("SELECT tabs_data FROM TabsAdditionalProductsData WHERE product_id = :product_id");
+  $tabsStmt->execute([':product_id' => $productId]);
+  $currentTabsData = $tabsStmt->fetch(PDO::FETCH_ASSOC);
+
+  if($currentTabsData) {
+      $currentTabs = json_decode($currentTabsData['tabs_data'], true) ?: [];
+      $newTabs = $data['tabs'] ?? [];
+
+      $currentIcons = getIconsFromTabs($currentTabs);
+      $newIcons = getIconsFromTabs($newTabs);
+
+      $iconsToDelete = array_diff($currentIcons, $newIcons);
+
+      foreach($iconsToDelete as $iconUrl) {
+          $filePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($iconUrl, PHP_URL_PATH);
+          if (file_exists($filePath)) {
+              unlink($filePath);
+          }
+      }
+  }
+
+  // Update Products table
   $productStmt = $pdo->prepare("
       UPDATE Products SET
-          model = :model,
-          title = :title,
-          description = :description,
-          price = :price,
-          is_popular = :is_popular,
-          is_special = :is_special,
-          gallery = :gallery,
-          category = :category,
-          link = :link,
-          functions = :functions,
-          options = :options,
-          options_filters = :options_filters,
-          autosygnals = :autosygnals
+          model = :model, title = :title, description = :description, price = :price,
+          is_popular = :is_popular, is_special = :is_special, gallery = :gallery,
+          category = :category, link = :link, functions = :functions, options = :options,
+          options_filters = :options_filters, autosygnals = :autosygnals
       WHERE id = :id
   ");
 
   $link = "/product?category={$data['category']}&id={$data['id']}";
-
   $productData = [
     ':id' => $productId,
     ':model' => $data['model'] ?? '',
@@ -72,27 +116,24 @@ try {
     ':options_filters' => json_encode($data['options-filters'] ?? []),
     ':autosygnals' => json_encode($data['autosygnals'] ?? []),
   ];
-
   $productStmt->execute($productData);
 
-  // 2. Update or Insert into TabsAdditionalProductsData table
+  // Update TabsAdditionalProductsData table
   if (isset($data['tabs'])) {
     $tabsJson = json_encode($data['tabs']);
-    $tabsStmt = $pdo->prepare("
+    $updateTabsStmt = $pdo->prepare("
             INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 
             VALUES (:product_id, :tabs_data)
             ON DUPLICATE KEY UPDATE tabs_data = :tabs_data
         ");
-    $tabsStmt->execute([
-      ':product_id' => $productId,
-      ':tabs_data' => $tabsJson
-    ]);
+    $updateTabsStmt->execute([':product_id' => $productId, ':tabs_data' => $tabsJson]);
   }
 
   $pdo->commit();
 
   http_response_code(200);
-  echo json_encode(['message' => 'Product updated successfully.']);
+  echo json_encode(['message' => 'Product updated successfully.', 'link' => $link]);
+
 } catch (Exception $e) {
   if ($pdo && $pdo->inTransaction()) {
     $pdo->rollBack();

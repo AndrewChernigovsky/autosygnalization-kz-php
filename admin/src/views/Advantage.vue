@@ -984,6 +984,7 @@ const leave = (el: Element) => {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
   min-height: 100vh;
+  width: 100%;
 }
 .main-title {
   font-size: 1.8rem;
