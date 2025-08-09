@@ -583,13 +583,14 @@ onMounted(getAboutUsData);
 
               <!-- Кнопка для добавления нового слота -->
               <div class="add-slot-wrapper">
-                <button
+                <MyBtn
+                  variant="primary"
                   type="button"
                   class="btn-add btn-add-slot"
                   @click="addNewImageSlot"
                 >
                   Добавить слот для фото
-                </button>
+                </MyBtn>
               </div>
             </template>
           </div>

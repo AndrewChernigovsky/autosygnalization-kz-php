@@ -11,13 +11,11 @@ header('Content-Type: application/json');
 
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
-use FFMpeg\FFMpeg;
-use FFMpeg\FFProbe;
-use FFMpeg\TimeCode;
-use DATABASE\DataBase;
+
 use FFMpeg\FFmpeg;
 use FFMpeg\FFProbe;
 use FFMpeg\Coordinate\TimeCode;
+use DATABASE\DataBase;
 use FFMpeg\Coordinate\Dimension;
 use FFMpeg\Format\Video\X264;
 use FFMpeg\Format\Video\WebM;
@@ -125,7 +123,20 @@ class AdvantageVideoAPI extends DataBase
       }
 
       // Обработка основного видео
-      if (isset($files['main_video'])) {
+      if (isset($post['remove_main_video']) && $post['remove_main_video'] == '1') {
+        // Удаляем все старые видео-файлы
+        $this->deleteFile($old_paths['video_poster']);
+        $this->deleteFile($old_paths['video_src_mob']);
+        foreach ($old_paths['sources'] as $source) {
+            $this->deleteFile($source['src_path']);
+        }
+        // Очищаем поля в базе
+        $update_fields[] = 'video_poster = NULL';
+        $update_fields[] = 'video_src_mob = NULL';
+        // Удаляем записи из AdvantageVideoSources
+        $this->pdo->prepare("DELETE FROM AdvantageVideoSources WHERE video_id = :id")->execute([':id' => $id]);
+
+      } elseif (isset($files['main_video'])) {
         $video_file = $files['main_video'];
 
         // Проверка размера видеофайла
@@ -180,6 +191,71 @@ class AdvantageVideoAPI extends DataBase
       return $this->error("Ошибка на сервере при обновлении видео: " . $e->getMessage(), 500);
     }
   }
+
+  public function create($post, $files)
+  {
+      set_time_limit(300);
+      log_message("--- Create request received ---");
+      log_message("POST data: " . print_r($post, true));
+      log_message("FILES data: " . print_r($files, true));
+
+      try {
+          $this->pdo->beginTransaction();
+
+          // 1. Вставляем основную запись, чтобы получить ID
+          $query = "INSERT INTO AdvantageVideos (title, position) VALUES (:title, 1)";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute([':title' => $post['title'] ?? '']);
+          $id = $this->pdo->lastInsertId();
+
+          if (!$id) {
+              throw new Exception("Не удалось создать запись и получить ID.");
+          }
+
+          $update_fields = [];
+          $params = [':id' => $id];
+
+          // 2. Обработка иконки
+          if (isset($files['title_icon'])) {
+              $new_path = $this->uploadFile($files['title_icon'], 'icon');
+              if ($new_path) {
+                  $update_fields[] = 'title_icon = :title_icon';
+                  $params[':title_icon'] = $new_path;
+              }
+          }
+
+          // 3. Обработка основного видео
+          if (isset($files['main_video'])) {
+              $paths = $this->processVideoWithFFmpeg($files['main_video']['tmp_name']);
+              $update_fields[] = 'video_poster = :poster';
+              $params[':poster'] = $paths['poster'];
+              $update_fields[] = 'video_src_mob = :mob';
+              $params[':mob'] = $paths['mob'];
+
+              $source_stmt = $this->pdo->prepare("INSERT INTO AdvantageVideoSources (video_id, src_path, src_type) VALUES (:video_id, :src_path, :src_type)");
+              $source_stmt->execute([':video_id' => $id, ':src_path' => $paths['desktop_webm'], ':src_type' => 'video/webm']);
+              $source_stmt->execute([':video_id' => $id, ':src_path' => $paths['desktop_mp4'], ':src_type' => 'video/mp4']);
+          }
+
+          // 4. Обновляем запись с путями к файлам
+          if (!empty($update_fields)) {
+              $query = "UPDATE AdvantageVideos SET " . implode(', ', $update_fields) . " WHERE video_id = :id";
+              $stmt = $this->pdo->prepare($query);
+              $stmt->execute($params);
+          }
+
+          $this->pdo->commit();
+          // Возвращаем новую созданную запись целиком
+          $newVideoData = $this->getVideoById($id);
+          return $this->success($newVideoData, 201);
+
+      } catch (Exception $e) {
+          $this->pdo->rollBack();
+          log_message("ERROR during create: " . $e->getMessage());
+          return $this->error("Ошибка на сервере при создании видео: " . $e->getMessage(), 500);
+      }
+  }
+
 
   public function delete($id)
   {
@@ -256,6 +332,22 @@ class AdvantageVideoAPI extends DataBase
 
     return $paths;
   }
+
+  private function getVideoById($id)
+  {
+        $query_video = "SELECT * FROM AdvantageVideos WHERE video_id = :id";
+        $stmt_video = $this->pdo->prepare($query_video);
+        $stmt_video->execute([':id' => $id]);
+        $video = $stmt_video->fetch(\PDO::FETCH_ASSOC);
+
+        if ($video) {
+            $query_sources = "SELECT source_id, src_path, src_type FROM AdvantageVideoSources WHERE video_id = :video_id";
+            $stmt_sources = $this->pdo->prepare($query_sources);
+            $stmt_sources->execute([':video_id' => $video['video_id']]);
+            $video['sources'] = $stmt_sources->fetchAll(\PDO::FETCH_ASSOC);
+        }
+        return $video;
+    }
 
   private function processVideoWithFFmpeg($temp_path)
   {
@@ -384,7 +476,12 @@ try {
       break;
 
     case 'POST':
-      echo $api->update($_POST, $_FILES);
+        // Различаем создание и обновление
+        if (isset($_POST['video_id']) && $_POST['video_id'] != '0') {
+            echo $api->update($_POST, $_FILES);
+        } else {
+            echo $api->create($_POST, $_FILES);
+        }
       break;
 
     case 'DELETE':

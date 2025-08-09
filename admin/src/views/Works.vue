@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
+import MyBtn from '../components/UI/MyBtn.vue';
 
 // --- Interfaces ---
 interface Work {
@@ -273,17 +274,17 @@ onMounted(() => {
           </div>
         </div>
         <div class="form-actions form-group-full">
-          <button type="submit" class="btn btn-primary">
+          <MyBtn variant="primary" type="submit">
             {{ isEditing ? 'Обновить' : 'Создать' }}
-          </button>
-          <button
+          </MyBtn>
+          <MyBtn
             v-if="isEditing"
             type="button"
             @click="cancelEdit"
             class="btn btn-secondary"
           >
             Отмена
-          </button>
+          </MyBtn>
         </div>
       </form>
     </div>
@@ -307,15 +308,17 @@ onMounted(() => {
         <div class="work-card-content">
           <p class="work-card-title">{{ work.title }}</p>
           <div class="work-card-actions">
-            <button @click="startEdit(work)" class="btn btn-sm">
+            <MyBtn variant="primary" type="button" @click="startEdit(work)">
+              <MyIcon name="edit" />
               РЕДАКТИРОВАТЬ
-            </button>
-            <button
+            </MyBtn>
+            <MyBtn
+              variant="secondary"
               @click="handleDelete(work.work_id)"
               class="btn btn-sm btn-danger"
             >
               УДАЛИТЬ
-            </button>
+            </MyBtn>
           </div>
         </div>
       </div>
@@ -422,10 +425,7 @@ select:focus {
   background-color: #6c757d;
   color: #ffffff;
 }
-.btn-danger {
-  border-color: #dc3545;
-  color: #dc3545;
-}
+
 .btn-danger:hover {
   background-color: #dc3545;
   color: #ffffff;
