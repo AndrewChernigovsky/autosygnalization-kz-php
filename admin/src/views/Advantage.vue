@@ -115,7 +115,18 @@ const getVideosData = async () => {
           JSON.stringify(videoItems.value[0])
         );
       } else {
-        originalVideoItem.value = null;
+        // Создаем заглушку, если видео не существует
+        const placeholderVideo: VideoItem = {
+          video_id: 0, // Используем 0 как признак нового видео
+          title: '',
+          title_icon: null,
+          video_poster: null,
+          video_src_mob: null,
+          position: 1,
+          sources: [],
+        };
+        videoItems.value.push(placeholderVideo);
+        originalVideoItem.value = JSON.parse(JSON.stringify(placeholderVideo));
       }
     } else {
       throw new Error(response.error || 'Не удалось загрузить данные видео');
@@ -452,6 +463,12 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   if (videoInput && videoInput.files && videoInput.files.length > 0) {
     formData.append('main_video', videoInput.files[0]);
     updatedParts.push('Основное видео');
+  } else if (
+    video.video_poster === null &&
+    originalVideo.video_poster !== null
+  ) {
+    formData.append('remove_main_video', '1');
+    updatedParts.push('Основное видео');
   }
 
   if (updatedParts.length === 0) {
@@ -466,6 +483,7 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
     return;
   }
 
+  const isCreating = video.video_id === 0;
   formData.append('video_id', video.video_id.toString());
 
   try {
@@ -475,9 +493,20 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
       body: formData,
     });
     if (response.success) {
-      const successMessage = generateSuccessMessage(updatedParts);
-      Swal.fire('Сохранено!', successMessage, 'success');
-      await getVideosData();
+      if (isCreating) {
+        // Заменяем заглушку на реальные данные с сервера
+        const createdVideo = response.data;
+        const index = videoItems.value.findIndex((v) => v.video_id === 0);
+        if (index !== -1) {
+          videoItems.value.splice(index, 1, createdVideo);
+        }
+        originalVideoItem.value = JSON.parse(JSON.stringify(createdVideo));
+        Swal.fire('Создано!', 'Видео-блок успешно создан.', 'success');
+      } else {
+        const successMessage = generateSuccessMessage(updatedParts);
+        Swal.fire('Сохранено!', successMessage, 'success');
+        await getVideosData(); // Перезагружаем для синхронизации
+      }
       videoPreviews.value = {};
     } else {
       throw new Error(response.error || 'Ошибка при обновлении видео-блока');
@@ -523,11 +552,23 @@ const onFileChange = (event: Event, type: 'icon' | 'video') => {
 };
 
 const clearVideoFile = (type: 'icon' | 'video') => {
-  // Для иконки - помечаем на удаление с сервера
-  if (type === 'icon' && videoItems.value.length > 0) {
-    videoItems.value[0].title_icon = null;
+  if (videoItems.value.length === 0) return;
+
+  const currentVideo = videoItems.value[0];
+  let message = '';
+
+  if (type === 'icon') {
+    currentVideo.title_icon = null;
+    message = 'Иконка будет удалена после сохранения';
+  } else if (type === 'video') {
+    // Помечаем видео на удаление
+    currentVideo.video_poster = null;
+    currentVideo.video_src_mob = null;
+    currentVideo.sources = [];
+    message = 'Видео будет удалено после сохранения';
   }
-  // В любом случае сбрасываем превью
+
+  // Сбрасываем превью
   videoPreviews.value[type] = null;
 
   // Сбрасываем значение в инпуте
@@ -539,13 +580,10 @@ const clearVideoFile = (type: 'icon' | 'video') => {
   Swal.fire({
     toast: true,
     position: 'top',
-    icon: 'success',
-    title:
-      type === 'icon'
-        ? 'Иконка будет удалена после сохранения'
-        : 'Выбор видео отменен',
+    icon: 'info',
+    title: message,
     showConfirmButton: false,
-    timer: 2000,
+    timer: 2500,
   });
 };
 
@@ -686,14 +724,14 @@ const leave = (el: Element) => {
 
                       <label>Основное видео (для конвертации):</label>
                       <p class="input-note">
-                        До 25МБ, ~1920x1080px. Форматы: MP4, WebM, WAV.
+                        До 25МБ, ~1920x1080px. Форматы только MP4.
                       </p>
                       <input
                         type="file"
                         name="main_video"
                         class="hidden-file-input"
                         id="main-video-input"
-                        accept="video/mp4,video/webm,audio/wav"
+                        accept="video/mp4"
                         @change="onFileChange($event, 'video')"
                       />
                       <label for="main-video-input" class="image-uploader">
