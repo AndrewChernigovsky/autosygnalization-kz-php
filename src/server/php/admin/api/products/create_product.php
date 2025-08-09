@@ -21,9 +21,9 @@ $db = Database::getConnection();
 
 $data = json_decode(file_get_contents("php://input"), true);
 
-if (!isset($data['title'], $data['category_key'])) {
+if (!isset($data['title'], $data['category'])) {
   http_response_code(400);
-  echo json_encode(['message' => 'Product title or category key not provided.']);
+  echo json_encode(['message' => 'Product title or category not provided.']);
   exit;
 }
 
@@ -35,8 +35,8 @@ try {
             (:id, :title, :description, :price, :is_popular, :gallery, :category, :model, :currency, :link, :options_filters, :functions, :options, :autosygnals, :is_special)"
   );
 
-  $uuid = 'product_' . $data['category_key'] . '_' . Uuid::uuid4()->toString();
-  $link = "/product?category={$data['category_key']}&id={$uuid}";
+  $uuid = 'product_' . $data['category'] . '_' . Uuid::uuid4()->toString();
+  $link = "/product?category={$data['category']}&id={$uuid}";
   $galleryJson = json_encode($data['gallery'] ?? []);
   $is_popular = !empty($data['is_popular']) ? 1 : 0;
 
@@ -46,7 +46,7 @@ try {
   $stmt->bindValue(':price', $data['price'] ?? 0);
   $stmt->bindValue(':is_popular', $is_popular ?? 0);
   $stmt->bindValue(':gallery', $galleryJson);
-  $stmt->bindValue(':category', $data['category_key']);
+  $stmt->bindValue(':category', $data['category']);
   $stmt->bindValue(':model', $data['model'] ?? $data['title']);
   $stmt->bindValue(':currency', $data['currency'] ?? '₸');
   $stmt->bindValue(':link', $link);
@@ -54,11 +54,25 @@ try {
   $stmt->bindValue(':functions', json_encode($data['functions'] ?? []));
   $stmt->bindValue(':options', json_encode($data['options'] ?? []));
   $stmt->bindValue(':autosygnals', json_encode($data['autosygnals'] ?? []));
-  $stmt->bindValue(':is_special', $data['special'] ?? 0, PDO::PARAM_INT);
+  $stmt->bindValue(':is_special', $data['is_special'] ?? 0, PDO::PARAM_INT);
 
   if ($stmt->execute()) {
     $data['id'] = $uuid;
     $data['link'] = $link;
+
+    if (isset($data['tabs'])) {
+
+      $tabsJson = json_encode($data['tabs']);
+      $tabsStmt = $db->prepare("
+              INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 
+              VALUES (:product_id, :tabs_data)
+          ");
+      $tabsStmt->execute([
+        ':product_id' => $uuid,
+        ':tabs_data' => $tabsJson
+      ]);
+    }
+
     echo json_encode($data);
   } else {
     http_response_code(500);

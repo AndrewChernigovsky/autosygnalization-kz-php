@@ -46,6 +46,10 @@
     // bottom: -2px;
     width: 100%;
 
+    img {
+      height: revert-layer;
+    }
+
     h2 {
       position: relative;
       min-height: 100px;

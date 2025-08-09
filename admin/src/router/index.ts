@@ -1,59 +1,83 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import SliderIntro from '../views/SliderIntro.vue';
-import Navigation from '../views/Navigation.vue';
-import Contacts from '../views/Contacts.vue';
 import Products from '../views/Products.vue';
 import Services from '../views/Services.vue';
+import MyContacts from '../views/MyContacts.vue';
 import AboutUs from '../views/AboutUs.vue';
 import Advantage from '../views/Advantage.vue';
-import UI from '../views/UI.vue';
+import Sertificates from '../views/Sertificates.vue';
+import MyMainNav from '../views/MyMainNav.vue';
+import Works from '../views/Works.vue';
+import Footer from '../views/Footer.vue';
+import NewFooter from '../views/NewFooter.vue';
+import Registrations from '../views/Registrations.vue';
 
 export const routes = [
   {
-    path: '/',
+    path: '/main-page',
     name: 'Главная',
     component: Home,
   },
   {
-    path: '/slider-intro',
+    path: '/slider-intro-page',
     name: 'Слайдер',
     component: SliderIntro,
   },
   {
-    path: '/navigation',
+    path: '/navigation-page',
     name: 'Навигация',
-    component: Navigation,
+    component: MyMainNav,
   },
   {
-    path: '/contacts',
+    path: '/contacts-page',
     name: 'Контакты',
-    component: Contacts,
+    component: MyContacts,
   },
   {
-    path: '/products',
+    path: '/products-page',
     name: 'Продукты',
     component: Products,
   },
   {
-    path: '/services',
+    path: '/services-page',
     name: 'Услуги',
     component: Services,
   },
   {
-    path: '/about-us',
+    path: '/about-us-page',
     name: 'О нас',
     component: AboutUs,
   },
   {
-    path: '/advantage',
+    path: '/advantages-page',
     name: 'Преимущества',
     component: Advantage,
   },
   {
-    path: '/ui',
-    name: 'UI',
-    component: UI,
+    path: '/sertificates-page',
+    name: 'Сертификаты',
+    component: Sertificates,
+  },
+  {
+    path: '/works-page',
+    name: 'Работы',
+    component: Works,
+  },
+  {
+    path: '/footer-page',
+    name: 'Футер',
+    component: Footer,
+  },
+  {
+    path: '/new-footer-page',
+    name: 'Новый футер',
+    component: NewFooter,
+  },
+  {
+    path: '/registrations-page',
+    name: 'Профиль',
+    component: Registrations,
   },
 ];
 

@@ -2,7 +2,7 @@
 
 namespace DATA;
 
-require_once __DIR__ . '/../database/Database.php';
+
 
 use DATABASE\DataBase;
 use PDO;
@@ -25,7 +25,6 @@ class ServicesData
     $structuredServices = [];
     foreach ($servicesFromDb as $service) {
       $serviceId = $service['id'];
-
       $structuredServices[$serviceId] = [
         'id' => $serviceId,
         'name' => $service['name'],
@@ -35,9 +34,35 @@ class ServicesData
           'description' => $service['image_alt'],
         ],
         'href' => $service['href'],
-        'services' => $service['services'] ?? '', // Use 'services' field
+        'services' => $service['services'] ?? '',
         'cost' => (int) $service['cost'],
         'currency' => $service['currency'],
+      ];
+    }
+
+    // Получаем дополнительные услуги
+    $addedServices = $this->getDataAddedServices();
+
+    // Возвращаем основной массив + отдельный ключ для дополнительных услуг
+    return [
+      'main' => array_values($structuredServices),
+      'added' => array_values($addedServices),
+    ];
+  }
+  public function getDataAddedServices(): array
+  {
+    $stmt = $this->db->prepare("SELECT * FROM add_services ORDER BY id");
+    $stmt->execute();
+    $servicesFromDb = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $structuredServices = [];
+    foreach ($servicesFromDb as $service) {
+      $serviceId = $service['id'];
+
+      $structuredServices[$serviceId] = [
+        'id' => $serviceId,
+        'title' => $service['title'],
+        'price' => $service['price']
       ];
     }
 

@@ -2,156 +2,60 @@
 
 namespace SECTIONS;
 
-use DATA\TabsData;
-
-// $current_product_id = isset($_GET['id']) && preg_match('/^[a-zA-Z0-9_-]+$/', $_GET['id']) ? $_GET['id'] : '';
-
-// error_log(print_r($current_product_id, true) . " Это id продукта");
-
-// $product_tabs = [];
-
-
-function isActiveClassTab($index)
-{
-    return $index === 0 ? 'tab__button--active' : '';
-}
-
-function isActiveClassTabContent($index)
-{
-    return $index === 0 ? 'tab__list--show' : '';
-}
-
-function DescriptionTabIsEmpty($tabs, $title)
-{
-    if (isset($tabs['ОПИСАНИЕ'])) {
-        $descriptionArray = $tabs['ОПИСАНИЕ'];
-
-        if (is_array($descriptionArray) && empty($descriptionArray)) {
-            return $title !== 'ОПИСАНИЕ' ? 'tab__list--show ' : '';
-        }
-    }
-    return '';
-}
-
-function isTextTab($title)
-{
-    return $title === 'ГАРАНТИЯ' ? 'tab__list--no-column ' : '';
-}
-
+use DATA\TabsAdditionalData;
 
 function cardTabsSection($id)
 {
+  $tabs_from_db = (new TabsAdditionalData())->getTabsByProductId($id);
 
-    $tabs = (new TabsData())->getData();
-    if (!empty($tabs)) {
-        foreach ($tabs as $product) {
-            if ($product['id'] === $id && isset($product['tabs'])) {
-                $product_tabs = $product['tabs'];
-                break;
-            }
-        }
-    }
-    if (empty($product_tabs)) {
-        return '<p>Информация о товаре недоступна.</p>';
-    }
+  if (empty($tabs_from_db)) {
+    return '';
+  }
 
-    ob_start(); // Начинаем буферизацию вывода
-    ?>
+  ob_start();
+  ?>
   <section class="tab">
-      <div class="tab__wrapper">
-          <!-- Кнопки вкладок -->
-          <div class="tab__buttons">
-              <?php $index = 0; ?>
-              <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
-                  <?php if (empty($tab_content)) {
-                      continue;
-                  } ?>
-                  <button type="button" class="tab__button <?= isActiveClassTab($index) ?> y-button-secondary"
-                          data-tab="<?= htmlspecialchars($tab_title) ?>">
-                      <?= htmlspecialchars($tab_title) ?>
-                  </button>
-                  <?php $index++; ?>
-              <?php endforeach; ?>
-          </div>
-
-          <!-- Контент вкладок -->
-          <div class="tab__content">
-              <?php $index = 0; ?>
-              <?php foreach ($product_tabs as $tab_title => $tab_content): ?>
-                  <?php if (empty($tab_content)) {
-                      continue;
-                  } ?>
-
-                  <?php
-                  $tab_classes = [
-                      isActiveClassTabContent($index),
-                      isTextTab($tab_title),
-                      DescriptionTabIsEmpty($product_tabs, $tab_title),
-                      (count($tab_content) === 1 ? 'tab__list--no-column' : '')
-                  ];
-                  $tab_classes = implode(' ', array_filter($tab_classes));
-                  ?>
-
-                  <?php if ($tab_title === 'ОПИСАНИЕ'): ?>
-                      <!-- Список items -->
-                      <?php if (isset($tab_content['items'])): ?>
-                          <ul class="tab__list <?= $tab_classes ?> list-style-none" data-content="<?= htmlspecialchars($tab_title) ?>">
-                              <?php foreach ($tab_content['items'] as $item): ?>
-                                  <li class="tab__item"
-                                      style="background-image: url('<?= htmlspecialchars($item['path-icon'] ?? '') ?>')">
-                                      <?php if (!empty($item['title'])): ?>
-                                          <h3 class="tab__title"><?= htmlspecialchars($item['title']) ?></h3>
-                                      <?php endif; ?>
-                                      <p class="tab__description"><?= $item['description'] ?></p>
-                                  </li>
-                              <?php endforeach; ?>
-                          </ul>
-                      <?php endif; ?>
-
-                      <!-- Список items-service -->
-                      <?php if (isset($tab_content['items-service'])): ?>
-                          <p class="tab__text">Удобный сервис</p>
-                          <ul class="tab__list tab__list--service <?= $tab_classes ?> list-style-none" data-content="<?= htmlspecialchars($tab_title) ?>">
-                              <?php foreach ($tab_content['items-service'] as $item): ?>
-                                  <li class="tab__item"
-                                      style="background-image: url('<?= htmlspecialchars($item['path-icon'] ?? '') ?>')">
-                                      <?php if (!empty($item['title'])): ?>
-                                          <h3 class="tab__title"><?= htmlspecialchars($item['title']) ?></h3>
-                                      <?php endif; ?>
-                                      <p class="tab__description"><?= $item['description'] ?></p>
-                                  </li>
-                              <?php endforeach; ?>
-                          </ul>
-                      <?php endif; ?>
-
-                      <!-- Description -->
-                      <?php if (isset($tab_content['description'])): ?>
-                          <ul class="tab__list tab__list--no-column <?= $tab_classes ?> list-style-none" data-content="<?= htmlspecialchars($tab_title) ?>">
-                              <li class="tab__item tab__item--text">
-                                  <p class="tab__description"><?= $tab_content['description'] ?></p>
-                              </li>
-                          </ul>
-                      <?php endif; ?>
-
-                  <?php else: ?>
-                      <!-- Для других вкладок -->
-                      <ul class="tab__list <?= $tab_classes ?> list-style-none" data-content="<?= htmlspecialchars($tab_title) ?>">
-                          <?php foreach ($tab_content as $item): ?>
-                              <li class="tab__item tab__item--text">
-                                  <?php if (!empty($item['title'])): ?>
-                                      <h3 class="tab__title"><?= htmlspecialchars($item['title']) ?></h3>
-                                  <?php endif; ?>
-                                  <p class="tab__description"><?= $item['description'] ?></p>
-                              </li>
-                          <?php endforeach; ?>
-                      </ul>
-                  <?php endif; ?>
-
-                  <?php $index++; ?>
-              <?php endforeach; ?>
-          </div>
+    <div class="tab__wrapper">
+      <!-- Блок с кнопками вкладок -->
+      <div class="tab__buttons">
+        <?php foreach ($tabs_from_db as $index => $tab_row): ?>
+          <?php
+          if (empty($tab_row['content']))
+            continue;
+          $tab_data = json_decode($tab_row['content'], true);
+          if (!isset($tab_data['title']))
+            continue;
+          ?>
+          <button type="button" class="tab__button <?= $index === 0 ? 'tab__button--active' : '' ?> y-button-secondary"
+            data-tab="<?= htmlspecialchars($tab_data['title']) ?>">
+            <?= htmlspecialchars($tab_data['title']) ?>
+          </button>
+        <?php endforeach; ?>
       </div>
+
+      <!-- Блок с контентом вкладок -->
+      <div class="tab__content">
+        <?php foreach ($tabs_from_db as $index => $tab_row): ?>
+          <?php
+          if (empty($tab_row['content']))
+            continue;
+          $tab_data = json_decode($tab_row['content'], true);
+          if (!isset($tab_data['title']) || !isset($tab_data['content']) || !is_array($tab_data['content']))
+            continue;
+          ?>
+          <ul class="tab__list <?= $index === 0 ? 'tab__list--show' : '' ?> list-style-none"
+            data-content="<?= htmlspecialchars($tab_data['title']) ?>">
+            <?php foreach ($tab_data['content'] as $item): ?>
+              <li class="tab__item" style="background-image: url(<?= htmlspecialchars($item['icon'] ?? '') ?>);">
+                <h3 class="tab__title"><?= htmlspecialchars($item['title'] ?? '') ?></h3>
+                <p class="tab__description"><?= htmlspecialchars($item['description'] ?? '') ?></p>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        <?php endforeach; ?>
+      </div>
+    </div>
   </section>
   <?php
-  return ob_get_clean(); // Возвращаем содержимое буфера
+  return ob_get_clean();
 }

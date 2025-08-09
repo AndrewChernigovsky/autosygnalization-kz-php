@@ -30,8 +30,7 @@ AddType image/avif .avif
 </IfModule>
  
 <IfModule mod_headers.c>
-  Header set Access-Control-Allow-Origin "http://localhost:5173
-  "
+  Header set Access-Control-Allow-Origin "http://localhost:5173"
   Header set Access-Control-Allow-Methods "POST, GET, OPTIONS, DELETE, PUT"
   Header set Access-Control-Allow-Headers "Content-Type, Authorization"
 </IfModule>
@@ -45,8 +44,8 @@ AddType image/avif .avif
 </FilesMatch>
 
 # Обработка OPTIONS запросов для CORS
-RewriteCond %{REQUEST_METHOD} OPTIONS
-RewriteRule ^(.*)$ $1 [R=200,L]
+# RewriteCond %{REQUEST_METHOD} OPTIONS
+# RewriteRule ^(.*)$ $1 [R=200,L]
 
 # Кэширование
 <IfModule mod_expires.c>
@@ -82,7 +81,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^products/([a-zA-Z0-9_-]+)/([a-zA-Z0-9_-]+)$ /server/php/pages/products/product.php?category=$1&id=$2 [L,QSA]
 
 
-RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+RewriteRule ^service$ /server/php/pages/services/service.php [L,QSA]
 RewriteRule ^about$ /server/php/pages/about/about.php [L,QSA]
 RewriteRule ^contacts$ /server/php/pages/contacts/contacts.php [L,QSA]
 RewriteRule ^price$ /server/php/pages/price/price.php [L,QSA]
@@ -132,34 +131,34 @@ RewriteRule ^autosygnal$ /server/php/pages/autosygnals/autosygnal.php [L,QSA]
 
 # Обработка service.php с параметром service
 RewriteCond %{QUERY_STRING} ^service=([a-zA-Z0-9_-]+)$
-RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
+RewriteRule ^service\.php$ /server/php/pages/services/service.php [L,QSA]
 
 # Обработка URL без параметров
-RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+RewriteRule ^service$ /server/php/pages/services/service.php [L,QSA]
 
 
 
 # Rule 1: Redirect /services to services.php
-RewriteRule ^services$ /server/php/pages/service/services.php [L,QSA]
+RewriteRule ^services$ /server/php/pages/services/services.php [L,QSA]
 
 # Rule 2: Обработка service.php с любыми параметрами
 RewriteCond %{QUERY_STRING} .+
-RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
+RewriteRule ^service\.php$ /server/php/pages/services/service.php [L,QSA]
 
 # Rule 3: Обработка service без расширения .php с любыми параметрами
 RewriteCond %{QUERY_STRING} .+
-RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+RewriteRule ^service$ /server/php/pages/services/service.php [L,QSA]
 
 # Rule 1: Redirect /services to services.php
-RewriteRule ^services$ /server/php/pages/service/services.php [L,QSA]
+RewriteRule ^services$ /server/php/pages/services/services.php [L,QSA]
 
 # Rule 2: Обработка service.php с любыми параметрами
 RewriteCond %{QUERY_STRING} .+
-RewriteRule ^service\.php$ /server/php/pages/service/service.php [L,QSA]
+RewriteRule ^service\.php$ /server/php/pages/services/service.php [L,QSA]
 
 # Rule 3: Обработка service без расширения .php с любыми параметрами
 RewriteCond %{QUERY_STRING} .+
-RewriteRule ^service$ /server/php/pages/service/service.php [L,QSA]
+RewriteRule ^service$ /server/php/pages/services/service.php [L,QSA]
 
 # Rule 2: Обработка service.php с любыми параметрами
 RewriteCond %{QUERY_STRING} .+
@@ -189,3 +188,12 @@ RewriteRule ^product\.php$ /server/php/pages/products/product.php  [L,QSA]
 # Обработка catalog.php с параметрами category и id
 RewriteCond %{QUERY_STRING} ^category=([a-zA-Z0-9_-]+)&id=([a-zA-Z0-9_-]+)$
 RewriteRule ^product\.php$ /server/php/pages/products/product.php [L,QSA]
+
+# Обработка URL без параметров
+RewriteRule ^login$ /server/php/auth/login.php [L,QSA]
+RewriteRule ^google_auth$ /server/php/auth/google_auth.php [L,QSA]
+RewriteRule ^sign_in$ /server/php/auth/sign_in.php [L,QSA]
+RewriteRule ^sign_up$ /server/php/auth/sign_up.php [L,QSA]
+RewriteRule ^google_auth_callback$ /server/php/auth/google-auth-callback.php [L,QSA]
+RewriteRule ^admin$ http://localhost:5173/admin/index.html [L,QSA]
+RewriteRule ^profile$ /server/php/admin/api/profile/profile.php [L,QSA]

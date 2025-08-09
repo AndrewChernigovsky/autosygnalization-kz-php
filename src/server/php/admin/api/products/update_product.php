@@ -1,5 +1,8 @@
 <?php
 
+$log_file = __DIR__ . '/debug.log';
+file_put_contents($log_file, "--- NEW REQUEST ---\n", FILE_APPEND);
+
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use DATABASE\Database;
@@ -19,6 +22,7 @@ $dbConnection = Database::getConnection();
 $pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);
+file_put_contents($log_file, "Received data: " . print_r($data, true) . "\n", FILE_APPEND);
 
 if (!isset($data['id'])) {
   http_response_code(400);
@@ -32,34 +36,36 @@ try {
   $pdo->beginTransaction();
 
   // 1. Update Products table with all fields
-  $productStmt = $pdo->prepare("UPDATE Products SET 
-        model = :model, 
-        title = :title, 
-        description = :description, 
-        price = :price, 
-        is_popular = :is_popular, 
-        is_special = :is_special, 
-        gallery = :gallery, 
-        category = :category_key,
-        link = :link,
-        functions = :functions, 
-        options = :options, 
-        options_filters = :options_filters, 
-        autosygnals = :autosygnals
-        WHERE id = :id");
+  $productStmt = $pdo->prepare("
+      UPDATE Products SET
+          model = :model,
+          title = :title,
+          description = :description,
+          price = :price,
+          is_popular = :is_popular,
+          is_special = :is_special,
+          gallery = :gallery,
+          category = :category,
+          link = :link,
+          functions = :functions,
+          options = :options,
+          options_filters = :options_filters,
+          autosygnals = :autosygnals
+      WHERE id = :id
+  ");
 
-  $link = "/product?category={$data['category_key']}&id={$data['id']}";
+  $link = "/product?category={$data['category']}&id={$data['id']}";
 
   $productData = [
     ':id' => $productId,
-    ':model' => $data['model'],
-    ':title' => $data['title'],
-    ':description' => $data['description'],
-    ':price' => $data['price'],
+    ':model' => $data['model'] ?? '',
+    ':title' => $data['title'] ?? '',
+    ':description' => $data['description'] ?? '',
+    ':price' => $data['price'] ?? 0,
     ':is_popular' => !empty($data['is_popular']) ? 1 : 0,
     ':is_special' => !empty($data['is_special']) ? 1 : 0,
     ':gallery' => json_encode($data['gallery'] ?? []),
-    ':category_key' => $data['category_key'],
+    ':category' => $data['category'] ?? 'uncategorized',
     ':link' => $link,
     ':functions' => json_encode($data['functions'] ?? []),
     ':options' => json_encode($data['options'] ?? []),
@@ -93,4 +99,5 @@ try {
   }
   http_response_code(500);
   echo json_encode(['message' => 'Failed to update product: ' . $e->getMessage()]);
+  file_put_contents($log_file, "Error: " . $e->getMessage() . "\n", FILE_APPEND);
 }

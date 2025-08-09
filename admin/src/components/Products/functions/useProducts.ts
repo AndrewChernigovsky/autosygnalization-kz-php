@@ -63,7 +63,7 @@ export function useProducts() {
             const categoryProducts = data.category[categoryKey];
             const productsWithCategory = categoryProducts.map((p: any) => ({
               ...p,
-              category_key: categoryKey,
+              category: categoryKey,
               is_popular: p.popular ?? false,
             }));
             allProducts.push(...productsWithCategory);
@@ -80,18 +80,27 @@ export function useProducts() {
   }
 
   async function updateProduct(product: ProductI): Promise<boolean> {
-    console.log('[useProducts] updateProduct вызван. Товар:', product);
+    console.log('[useProducts.ts] updateProduct called', product);
     try {
       const productData = {
         id: product.id,
+        model: product.model,
         title: product.title,
         description: product.description,
         price: product.price,
         is_popular: product.is_popular,
+        is_special: product.is_special,
         gallery: product.gallery,
-        category_key: product.category_key,
-        model: product.model,
+        category: product.category,
+        link: product.link,
+        functions: product.functions,
+        options: product.options,
+        'options-filters': product['options-filters'],
+        autosygnals: product.autosygnals,
+        tabs: product.tabs,
       };
+
+      console.log('productData', productData);
 
       if (product.is_new) {
         console.log(
@@ -102,6 +111,7 @@ export function useProducts() {
           'POST',
           productData
         );
+
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].id = createdProduct.id;
@@ -117,14 +127,43 @@ export function useProducts() {
           'POST',
           productData
         );
+        console.log(
+          '[useProducts.ts] update_product.php response',
+          updatedData
+        );
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].link = updatedData.link;
         }
       }
+
+      // --- Новый вызов API для сохранения цен-услуг ---
+      console.log(
+        '[useProducts.ts] product.prices before sending',
+        product.prices
+      );
+      let prices = [];
+      if (Array.isArray(product.prices)) {
+        prices = product.prices
+          .filter(
+            (item) => item && typeof item === 'object' && 'description' in item
+          )
+          .map((item: any) => ({
+            id: item.id || null,
+            description: item.description,
+            installationPrice: item.installationPrice || '',
+          }));
+        console.log('[useProducts.ts] prices to send', prices);
+        await apiCall('update_prices_products.php', 'POST', {
+          id: product.id,
+          prices,
+        });
+      }
+      // --- конец нового блока ---
+
       return true;
     } catch (error) {
-      console.error('Failed to update product:', error);
+      console.error('[useProducts.ts] updateProduct error:', error);
       return false;
     }
   }
@@ -160,7 +199,7 @@ export function useProducts() {
     }
   }
 
-  async function addProduct(category_key: string) {
+  async function addProduct(category: string) {
     console.log(
       '[useProducts] addProduct вызван. Только локальные изменения, без API-запроса.'
     );
@@ -168,25 +207,20 @@ export function useProducts() {
     const newProduct: ProductI = {
       id: `new_${Date.now()}`, // Временный ID
       is_new: true,
+      model: '',
       title: 'Новый товар',
       description: 'Введите описание...',
       price: 0,
       is_popular: false,
+      is_special: false,
       gallery: [],
-      category_key: category_key,
-      category: category_key,
-      // Заполняем остальные поля значениями по умолчанию, чтобы избежать ошибок
-      model: '',
-      cart: false,
-      popular: false,
-      currency: '₸',
-      quantity: 0,
+      category: category,
       link: '#',
       functions: [],
       options: [],
       'options-filters': [],
-      is_special: false,
       autosygnals: [],
+      tabs: [],
     };
     products.value.unshift(newProduct);
     return newProduct;
