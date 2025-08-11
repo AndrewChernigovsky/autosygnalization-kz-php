@@ -23,7 +23,6 @@ use Exception;
 function log_message($message)
 {
   $log_file = sys_get_temp_dir() . '/advantage-video-debug.log';
-  error_log(print_r($log_file, true) . " - log_file");
   $timestamp = date('Y-m-d H:i:s');
   file_put_contents($log_file, "[$timestamp] " . $message . "\n", FILE_APPEND);
 }
@@ -117,11 +116,6 @@ class AdvantageVideoAPI extends DataBase
         }
         $update_fields[] = 'title_icon = NULL';
       } elseif (isset($files['title_icon'])) {
-        // Проверка размера файла иконки
-        $max_icon_size = 5 * 1024 * 1024; // 5 MB
-        if ($files['title_icon']['size'] > $max_icon_size) {
-          throw new Exception('Размер файла иконки не должен превышать 5 МБ.');
-        }
         $new_path = $this->uploadFile($files['title_icon'], 'icon');
         if ($new_path) {
           $this->deleteFile($old_paths['title_icon']);
@@ -146,13 +140,6 @@ class AdvantageVideoAPI extends DataBase
 
       } elseif (isset($files['main_video'])) {
         $video_file = $files['main_video'];
-
-        // Проверка размера видеофайла
-        $max_video_size = 25 * 1024 * 1024; // 25 MB
-        if ($video_file['size'] > $max_video_size) {
-          throw new Exception('Размер видеофайла не должен превышать 25 МБ.');
-        }
-
         if ($video_file['error'] !== UPLOAD_ERR_OK) {
           throw new Exception('Ошибка загрузки видео: ' . $video_file['error']);
         }
@@ -359,106 +346,66 @@ class AdvantageVideoAPI extends DataBase
 
   private function processVideoWithFFmpeg($temp_path)
   {
-    try {
-      $video = $this->ffmpeg->open($temp_path);
+    log_message("Starting FFmpeg processing for: {$temp_path}");
+    $base_name = 'video_' . uniqid();
 
-      // Проверка на наличие видеодорожки
-      if ($video->getStreams()->videos()->count() === 0) {
-        throw new Exception('Загруженный файл не является видео или не содержит видеодорожек.');
+    $paths = [
+      'poster' => "/server/uploads/advantage-video/{$base_name}.avif",
+      'mob' => "/server/uploads/advantage-video/{$base_name}_mob.webm",
+      'desktop_webm' => "/server/uploads/advantage-video/{$base_name}_desktop.webm",
+      'desktop_mp4' => "/server/uploads/advantage-video/{$base_name}_desktop.mp4",
+    ];
+
+    $server_paths = [
+      'poster' => $this->upload_dir . "{$base_name}.avif",
+      'mob' => $this->upload_dir . "{$base_name}_mob.webm",
+      'desktop_webm' => $this->upload_dir . "{$base_name}_desktop.webm",
+      'desktop_mp4' => $this->upload_dir . "{$base_name}_desktop.mp4",
+    ];
+
+    $escaped_temp_path = escapeshellarg($temp_path);
+
+
+    $video = $this->ffmpeg->open($temp_path);
+
+    $video->save(new \FFMpeg\Format\Video\WebM(), $server_paths['desktop_webm']);
+    $video->save(new \FFMpeg\Format\Video\X264(), $server_paths['desktop_mp4']);
+    $video->save(new \FFMpeg\Format\Video\WebM(), $server_paths['mob']);
+
+    // // Команда для создания постера (остается без изменений)
+    // $poster_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -ss 00:00:01.000 -vframes 1 " . escapeshellarg($server_paths['poster']);
+    // log_message("Executing FFmpeg for poster: {$poster_command}");
+    // shell_exec($poster_command . ' 2>&1');
+
+    // // Команда №2: Создаем обе десктопные версии (webm и mp4) за один проход.
+    // $desktop_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
+    //     "-c:v libvpx-vp9 -crf 28 -b:v 0 " . escapeshellarg($server_paths['desktop_webm']) . ' ' .
+    //     "-c:v libx264 -crf 23 " . escapeshellarg($server_paths['desktop_mp4']);
+
+    // log_message("Executing FFmpeg for desktop versions: {$desktop_command}");
+    // shell_exec($desktop_command . ' 2>&1');
+
+    // // Команда №3: Создаем мобильную версию.
+    // // Она меньше, поэтому ее кодирование займет меньше времени.
+    // $mobile_command = "{$this->ffmpeg_path} -i {$escaped_temp_path} -an " .
+    //     '-vf "scale=w=768:h=-2" -c:v libvpx-vp9 -crf 32 -b:v 0 ' . escapeshellarg($server_paths['mob']);
+
+    // log_message("Executing FFmpeg for mobile version: {$mobile_command}");
+    // shell_exec($mobile_command . ' 2>&1');
+
+    $results = [];
+    // Проверяем наличие всех созданных файлов
+    foreach (array_keys($server_paths) as $type) {
+      if (file_exists($server_paths[$type])) {
+        $results[$type] = $paths[$type];
+        log_message("Successfully created {$type} at " . $server_paths[$type]);
+      } else {
+        $results[$type] = '';
+        log_message("Failed to create {$type} for: " . $escaped_temp_path);
       }
-
-      $original_dimensions = $video->getStreams()->videos()->first()->getDimensions();
-
-      log_message("Начало обработки видео: " . $original_dimensions->getWidth() . "x" . $original_dimensions->getHeight());
-
-      $base_name = 'video_' . uniqid();
-
-      $paths = [
-        'poster' => "/server/uploads/advantage-video/{$base_name}.avif",
-        'mob' => "/server/uploads/advantage-video/{$base_name}_mob.webm",
-        'desktop_webm' => "/server/uploads/advantage-video/{$base_name}_desktop.webm",
-        'desktop_mp4' => "/server/uploads/advantage-video/{$base_name}_desktop.mp4",
-      ];
-
-      $server_paths = [
-        'poster' => $this->upload_dir . "{$base_name}.avif",
-        'mob' => $this->upload_dir . "{$base_name}_mob.webm",
-        'desktop_webm' => $this->upload_dir . "{$base_name}_desktop.webm",
-        'desktop_mp4' => $this->upload_dir . "{$base_name}_desktop.mp4",
-      ];
-
-      // 1. Создаем постер из исходного видео
-      $video->frame(TimeCode::fromSeconds(1))->save($server_paths['poster']);
-      log_message("Постер создан.");
-
-      // --- Обработка десктопной версии ---
-      $desktop_video = clone $video;
-      $desktop_width = $original_dimensions->getWidth();
-      $desktop_height = $original_dimensions->getHeight();
-
-      if ($desktop_width > 1920) {
-        log_message("Десктопное видео будет уменьшено до ширины 1920px.");
-        $desktop_width = 1920;
-        $desktop_height = (int) (($desktop_width / $original_dimensions->getWidth()) * $original_dimensions->getHeight());
-        if ($desktop_height % 2 !== 0) {
-          $desktop_height++;
-        }
-        $desktop_video->filters()->resize(new Dimension($desktop_width, $desktop_height))->synchronize();
-      }
-
-      $format_mp4 = new X264();
-      $format_mp4->setAdditionalParameters(['-crf', '23', '-an']);
-      $desktop_video->save($format_mp4, $server_paths['desktop_mp4']);
-      log_message("Десктопный MP4 создан.");
-
-      $format_webm_desktop = new WebM();
-      $format_webm_desktop->setAdditionalParameters(['-crf', '28', '-b:v', '0', '-an']);
-      $desktop_video->save($format_webm_desktop, $server_paths['desktop_webm']);
-      log_message("Десктопный WebM создан.");
-
-      // --- Обработка мобильной версии ---
-      $mobile_video = clone $video;
-      $mobile_width = $original_dimensions->getWidth();
-      $mobile_height = $original_dimensions->getHeight();
-
-      if ($mobile_width > 1080) {
-        log_message("Мобильное видео будет уменьшено до ширины 1080px.");
-        $mobile_width = 1080;
-        $mobile_height = (int) (($mobile_width / $original_dimensions->getWidth()) * $original_dimensions->getHeight());
-        if ($mobile_height % 2 !== 0) {
-          $mobile_height++;
-        }
-        $mobile_video->filters()->resize(new Dimension($mobile_width, $mobile_height))->synchronize();
-      }
-
-      $format_webm_mobile = new WebM();
-      $format_webm_mobile->setAdditionalParameters(['-crf', '32', '-b:v', '0', '-an']);
-      $mobile_video->save($format_webm_mobile, $server_paths['mob']);
-      log_message("Мобильный WebM создан.");
-
-      // Финальная проверка и возврат результата
-      $results = [];
-      foreach (array_keys($server_paths) as $type) {
-        if (file_exists($server_paths[$type])) {
-          $results[$type] = $paths[$type];
-          log_message("Файл {$type} успешно создан.");
-        } else {
-          $results[$type] = '';
-          log_message("Не удалось создать файл {$type}.");
-        }
-      }
-
-      return $results;
-
-    } catch (Exception $e) {
-      log_message("Ошибка обработки FFmpeg: " . $e->getMessage());
-      error_log("Ошибка обработки FFmpeg: " . $e->getFile() . " " . $e->getLine() . " " . $e->getTraceAsString());
-      // Возвращаем массив с пустыми путями в случае любой ошибки
-      if (!isset($paths)) {
-        $paths = ['poster' => '', 'mob' => '', 'desktop_webm' => '', 'desktop_mp4' => ''];
-      }
-      return array_fill_keys(array_keys($paths), '');
     }
+
+    return $results;
   }
 
   private function success($data, $statusCode = 200)

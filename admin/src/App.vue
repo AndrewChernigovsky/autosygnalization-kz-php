@@ -6,23 +6,17 @@ import Header from './components/layout/Header/Header.vue';
 <template>
   <div class="app-container">
     <Menu />
-
+    <h1 style="text-align: center; margin-bottom: 20px" class="my-title m-0">
+      Админ-панель, здравствуйте Алексей!
+    </h1>
+    <Header />
     <main class="main-content my-page">
-      <Header />
-
-      <h1 style="text-align: center; margin-bottom: 20px" class="my-title m-0">
-        Админ-панель, здравствуйте Алексей!
-      </h1>
       <router-view />
     </main>
   </div>
 </template>
 
 <style scoped lang="scss">
-.app-container {
-  height: 100vh;
-}
-
 .toggle-btn {
   position: absolute;
   top: 50%;
@@ -50,7 +44,6 @@ import Header from './components/layout/Header/Header.vue';
 }
 
 .main-content {
-  flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
   transition: all 0.3s ease;

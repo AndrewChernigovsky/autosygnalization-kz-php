@@ -52,9 +52,18 @@ class NavigationAPI extends DataBase
       $this->pdo->beginTransaction();
 
       foreach ($orderData as $item) {
-        $query = "UPDATE Navigation SET `sort_order` = ? WHERE id = ?";
+        $query = "UPDATE Navigation SET `sort_order` = ?" . 
+                 (isset($item['on_page']) ? ", on_page = ?" : "") . 
+                 " WHERE id = ?";
         $stmt = $this->pdo->prepare($query);
-        $stmt->execute([$item['sort_order'], $item['id']]);
+        
+        $params = [$item['sort_order']];
+        if (isset($item['on_page'])) {
+          $params[] = $item['on_page'] === 'true' || $item['on_page'] === true ? 1 : 0;
+        }
+        $params[] = $item['id'];
+        
+        $stmt->execute($params);
       }
 
       $this->pdo->commit();
@@ -117,14 +126,16 @@ class NavigationAPI extends DataBase
       $orderStmt->execute();
       $nextOrder = $orderStmt->fetch(\PDO::FETCH_ASSOC)['next_order'];
 
-      $query = "INSERT INTO Navigation (title, link, icon_path, `sort_order`) VALUES (?, ?, ?, ?)";
+      $query = "INSERT INTO Navigation (title, content, link, icon_path, `sort_order`, on_page) VALUES (?, ?, ?, ?, ?, ?)";
       $stmt = $this->pdo->prepare($query);
       
       $stmt->execute([
         $data['title'],
+        $data['content'] ?? '',
         $data['link'],
         $iconPath,
-        $nextOrder
+        $nextOrder,
+        $data['on_page'] === 'true' || $data['on_page'] === true ? 1 : 0
       ]);
 
       $navItemId = $this->pdo->lastInsertId();
@@ -197,12 +208,14 @@ class NavigationAPI extends DataBase
         error_log("Файл успешно обновлен: " . $iconPath);
       }
 
-      $query = "UPDATE Navigation SET title = ?, link = ?, icon_path = ? WHERE id = ?";
+      $query = "UPDATE Navigation SET title = ?, content = ?, link = ?, icon_path = ?, on_page = ? WHERE id = ?";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute([
         $data['title'],
+        $data['content'] ?? $currentData['content'],
         $data['link'],
         $iconPath,
+        $data['on_page'] === 'true' || $data['on_page'] === true ? 1 : 0,
         $id
       ]);
 
