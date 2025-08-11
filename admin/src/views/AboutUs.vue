@@ -573,23 +573,8 @@ onMounted(getAboutUsData);
                       Сохранить
                     </MyBtn>
                   </div>
-                </div>
-              </form>
-              <!-- Форма создания для одиночного блока, если он пуст -->
-              <form
-                v-else
-                class="form-add"
-                @submit.prevent="handleCreate($event, type)"
-              >
-                <QuillEditor
-                  theme="snow"
-                  :toolbar="toolbarOptions"
-                  :formats="formatsOptions"
-                  contentType="html"
-                />
-                <button type="submit" class="btn-add">Создать</button>
-              </form>
-            </template>
+                </form>
+              </template>
 
               <!-- Рендеринг для СПИСКА (галереи) -->
               <template v-else>

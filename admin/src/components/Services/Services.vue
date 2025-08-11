@@ -14,59 +14,12 @@
           }"
           :data-service-id="service.id"
         >
-          <summary>{{ service.name }}</summary>
-          <div class="service-details">
-            <div class="form-group">
-              <label>Название:</label>
-              <input type="text" v-model="service.name" />
-            </div>
-            <div class="form-group">
-              <label>Описание:</label>
-              <QuillEditor
-                :key="service.id + '-desc'"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                :formats="formatsOptions"
-                contentType="html"
-                :content="service.description"
-                @update:content="(val) => (service.description = val)"
-              />
-            </div>
-            <div class="form-group">
-              <p>Рекомендуемый размер: 1000x1000px</p>
-              <label>Изображение:</label>
-              <ImageUpload
-                :path="getFullImagePath(service.image.src)"
-                @upload-success="(data) => handleImageUpload(data, service.id)"
-                @image-cleared="service.image.src = ''"
-                :extraData="{ serviceId: service.id }"
-                serviceImage
-              />
-            </div>
-            <div class="form-group">
-              <label>Список услуг:</label>
-              <QuillEditor
-                :key="service.id + '-serv'"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                :formats="formatsOptions"
-                contentType="html"
-                :content="service.services"
-                @update:content="(val) => (service.services = val)"
-              />
-            </div>
-            <div class="form-group">
-              <label>Цена:</label>
-              <input type="number" v-model="service.cost" />
-            </div>
-            <div class="service-actions">
-              <button @click="saveService(service.id)" class="btn-save">
-                Сохранить
-              </button>
-              <button @click="deleteService(service.id)" class="btn-delete">
-                Удалить
-              </button>
-            </div>
+          <div class="summary-header" @click="toggleService(service.id)">
+            <span>{{ service.name }}</span>
+            <span
+              class="accordion-arrow"
+              :class="{ 'is-open': isServiceOpen(service.id) }"
+            ></span>
           </div>
           <Transition
             name="accordion"

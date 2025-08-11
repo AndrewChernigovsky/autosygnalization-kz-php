@@ -396,7 +396,7 @@ onMounted(fetchData);
         <div v-else class="drag-handle">⠿</div>
 
         <button
-          class="btn-delete"
+          class="btn-remove-image"
           @click="handleDelete(sertificate.sertificate_id)"
         >
           ×
@@ -794,8 +794,8 @@ onMounted(fetchData);
 }
 .btn-remove-image {
   position: absolute;
-  top: -10px;
-  right: -10px;
+  top: 0px;
+  right: 0px;
   width: 28px;
   height: 28px;
   background-color: #dc3545;
