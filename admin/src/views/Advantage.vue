@@ -436,11 +436,8 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   }
 
   // 1. Проверка изменения заголовка
-  const titleInput = form.querySelector(
-    'input[name="title"]'
-  ) as HTMLInputElement;
-  if (titleInput && titleInput.value !== (originalVideo.title || '')) {
-    formData.append('title', titleInput.value);
+  if (video.title !== (originalVideo.title || '')) {
+    formData.append('title', video.title || '');
     updatedParts.push('Заголовок');
   }
 
@@ -681,7 +678,7 @@ const leave = (el: Element) => {
                       <input
                         type="text"
                         name="title"
-                        :value="video.title || ''"
+                        v-model="video.title"
                         placeholder="Например, Auto Security - Партнер Starline"
                       />
 

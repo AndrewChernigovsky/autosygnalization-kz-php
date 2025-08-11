@@ -113,7 +113,7 @@ class AdvantageVideoAPI extends DataBase
       // Обработка иконки
       if (isset($post['remove_title_icon']) && $post['remove_title_icon'] == '1') {
         if ($old_paths['title_icon']) {
-          $files_to_delete_on_success[] = $old_paths['title_icon'];
+          $this->deleteFile($old_paths['title_icon']);
         }
         $update_fields[] = 'title_icon = NULL';
       } elseif (isset($files['title_icon'])) {
