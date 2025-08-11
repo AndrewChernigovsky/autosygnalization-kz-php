@@ -415,7 +415,7 @@ onMounted(fetchData);
           type="file"
           accept="application/pdf"
           class="hidden-file-input"
-          :ref="(el) => (fileInputs[`existing-sertificate-${sertificate.sertificate_id}`] = el as HTMLInputElement)"
+          :ref="(el: HTMLInputElement) => (fileInputs[`existing-sertificate-${sertificate.sertificate_id}`] = el)"
           @change="onFileChangeForExisting($event, sertificate.sertificate_id)"
         />
 
@@ -459,7 +459,7 @@ onMounted(fetchData);
             class="hidden-file-input"
             :id="`file-input-new-sertificate-${slot.tempId}`"
             :ref="
-              (el) =>
+              (el: HTMLInputElement) =>
                 (fileInputs[`new-sertificate-${slot.tempId}`] =
                   el as HTMLInputElement)
             "

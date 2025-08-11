@@ -5,8 +5,8 @@ import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyInput from '../components/UI/MyInput.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
 import Swal from 'sweetalert2';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 
 interface IContacts {
   contact_id?: number;
@@ -484,7 +484,7 @@ const handleDragEnd = () => {
                   dragging: draggedItem?.contact_id === item.contact_id,
                   'drag-over': dragOverItem?.contact_id === item.contact_id,
                 }"
-                v-for="item in contacts.filter((item) => item.type === type)"
+                v-for="item in contacts.filter((item: IContacts) => item.type === type)"
                 :key="item.contact_id"
                 @dragover="handleDragOver($event)"
                 @dragenter="handleDragEnter($event, item)"
@@ -574,7 +574,7 @@ const handleDragEnd = () => {
                           variant="primary"
                           :img="getImageUrl(item)"
                           @fileChange="
-                            (file) => handleEditFileChange(file, item)
+                            (file: File | null) => handleEditFileChange(file, item)
                           "
                         />
                       </label>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch, onMounted, defineExpose } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import type { ProductI } from './interfaces/Products';
 import { useProductEditorStore } from '../../stores/productEditorStore';
 import { useProductPricesStore } from '../../stores/productPricesStore';
@@ -187,7 +187,7 @@ defineExpose({ syncPricesToProduct });
               <label>Цена установки:</label>
               <input
                 :value="priceItem.installationPrice"
-                @input="(e) => handleInstallationPriceInput(index, e)"
+                @input="(e: Event) => handleInstallationPriceInput(index, e)"
                 type="text"
                 placeholder="60 000"
               />
@@ -202,7 +202,7 @@ defineExpose({ syncPricesToProduct });
                 contentType="html"
                 :content="priceItem.description"
                 @update:content="
-                  (val) => pricesStore.updatePriceDescription(index, val)
+                  (val: string) => pricesStore.updatePriceDescription(index, val)
                 "
               />
             </div>

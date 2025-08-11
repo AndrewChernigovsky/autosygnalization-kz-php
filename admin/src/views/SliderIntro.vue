@@ -202,7 +202,7 @@ onMounted(async () => {
             </div>
             <UploadButton
               :ref="
-                (el) => {
+                (el: HTMLInputElement) => {
                   if (el) uploadButtonRef[index] = el;
                 }
               "

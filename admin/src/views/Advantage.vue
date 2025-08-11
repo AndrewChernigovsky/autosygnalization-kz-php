@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
@@ -849,7 +849,7 @@ const leave = (el: Element) => {
                           class="hidden-file-input"
                           :id="`file-input-existing-advantage-${item.advantage_id}`"
                           :ref="
-                            (el) =>
+                            (el: HTMLInputElement) =>
                               (fileInputs[
                                 `existing-advantage-${item.advantage_id}`
                               ] = el as HTMLInputElement)
@@ -937,7 +937,7 @@ const leave = (el: Element) => {
                           class="hidden-file-input"
                           :id="`file-input-new-advantage-${slot.tempId}`"
                           :ref="
-                            (el) =>
+                            (el: HTMLInputElement) =>
                               (fileInputs[`new-advantage-${slot.tempId}`] =
                                 el as HTMLInputElement)
                           "
