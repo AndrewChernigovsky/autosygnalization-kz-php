@@ -12,7 +12,6 @@ require_once __DIR__ . '/../../../../vendor/autoload.php';
 
 use DATABASE\DataBase;
 use Exception;
-use HELPERS\PdfConverter;
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
   http_response_code(200);
@@ -21,14 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 class SertificatesAPI extends DataBase
 {
-  private const PDF_UPLOAD_DIR = '/server/uploads/sertificates/pdf/';
+  private const UPLOAD_DIR = '/server/uploads/sertificates/';
   protected $pdo;
 
   public function __construct()
   {
     $db = DataBase::getInstance();
     $this->pdo = $db->getPdo();
-    require_once __DIR__ . '/../../../../php/helpers/pdfToImage.php';
   }
 
   public function handleRequest()
@@ -96,204 +94,141 @@ class SertificatesAPI extends DataBase
 
   private function createSertificate()
   {
-    if (!isset($_FILES['image']) || $_FILES['image']['error'] !== UPLOAD_ERR_OK) {
-        $this->error("Файл не загружен или произошла ошибка загрузки.", 400);
-        return;
+    if (!isset($_FILES['image'])) {
+      $this->error("Изображение не загружено", 400);
+      return;
     }
 
     $file = $_FILES['image'];
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+      $this->error("Ошибка загрузки файла: " . $file['error'], 400);
+      return;
+    }
 
-    // Проверка размера файла (10 МБ = 10 * 1024 * 1024 байт)
-    if ($file['size'] > 10485760) {
-        $this->error("Файл слишком большой. Максимальный размер - 10 МБ.", 400);
-        return;
+    $uploadPath = $_SERVER['DOCUMENT_ROOT'] . self::UPLOAD_DIR;
+    if (!is_dir($uploadPath)) {
+      mkdir($uploadPath, 0755, true);
     }
 
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    // Проверка типа файла
-    if (strtolower($extension) !== 'pdf') {
-        $this->error("Неверный формат файла. Разрешены только PDF.", 400);
-        return;
-    }
-
-    $uploadPath = $_SERVER['DOCUMENT_ROOT'] . self::PDF_UPLOAD_DIR;
-    if (!is_dir($uploadPath)) {
-        mkdir($uploadPath, 0755, true);
-    }
-
     $uniqueName = 'sertificate-' . uniqid() . '.' . $extension;
-    $pdfFilePath = $uploadPath . $uniqueName;
-    $pdfWebPath = self::PDF_UPLOAD_DIR . $uniqueName;
+    $filePath = $uploadPath . $uniqueName;
+    $webPath = self::UPLOAD_DIR . $uniqueName;
 
-    if (!move_uploaded_file($file['tmp_name'], $pdfFilePath)) {
-        $this->error("Не удалось сохранить PDF файл.", 500);
-        return;
-    }
-
-    $imageWebPath = PdfConverter::convert($pdfFilePath);
-    if (!$imageWebPath) {
-        unlink($pdfFilePath);
-        $this->error("Не удалось конвертировать PDF в изображение.", 500);
-        return;
+    if (!move_uploaded_file($file['tmp_name'], $filePath)) {
+      $this->error("Не удалось сохранить файл", 500);
+      return;
     }
 
     try {
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO Sertificates (image_path, pdf_path, position) VALUES (?, ?, (SELECT COALESCE(MAX(position), 0) + 1 FROM Sertificates as temp))"
-        );
-        $stmt->execute([$imageWebPath, $pdfWebPath]);
-        $newId = $this->pdo->lastInsertId();
+      $stmt = $this->pdo->prepare("INSERT INTO Sertificates (image_path, position) VALUES (?, (SELECT COALESCE(MAX(position), 0) + 1 FROM Sertificates as temp))");
+      $stmt->execute([$webPath]);
+      $newId = $this->pdo->lastInsertId();
 
-        $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
-        $selectStmt->execute([$newId]);
-        $newSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
+      $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
+      $selectStmt->execute([$newId]);
+      $newSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
 
-        $this->success($newSertificate);
+      $this->success($newSertificate);
     } catch (Exception $e) {
-        // Удаляем оба файла, если запись в БД не удалась
-        if (file_exists($pdfFilePath)) {
-            unlink($pdfFilePath);
-        }
-        if ($imageWebPath && file_exists($_SERVER['DOCUMENT_ROOT'] . $imageWebPath)) {
-            unlink($_SERVER['DOCUMENT_ROOT'] . $imageWebPath);
-        }
-        error_log("Ошибка создания сертификата: " . $e->getMessage());
-        $this->error("Ошибка базы данных при создании.", 500);
+      unlink($filePath); // Удаляем файл, если запись в БД не удалась
+      error_log("Ошибка создания сертификата: " . $e->getMessage());
+      $this->error("Ошибка базы данных при создании", 500);
     }
-}
+  }
 
   private function updateSertificate()
-{
+  {
     if (!isset($_POST['sertificate_id']) || !isset($_FILES['image'])) {
-        $this->error("Отсутствуют необходимые данные для обновления.", 400);
-        return;
+      $this->error("Отсутствуют необходимые данные для обновления", 400);
+      return;
     }
 
     $id = (int) $_POST['sertificate_id'];
     $file = $_FILES['image'];
 
-    // Проверка размера файла (10 МБ = 10 * 1024 * 1024 байт)
-    if ($file['size'] > 10485760) {
-        $this->error("Файл слишком большой. Максимальный размер - 10 МБ.", 400);
-        return;
-    }
-
-    $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-    // Проверка типа файла
-    if (strtolower($extension) !== 'pdf') {
-        $this->error("Неверный формат файла. Разрешены только PDF.", 400);
-        return;
-    }
-
     // 1. Находим старую запись
-    $stmt = $this->pdo->prepare("SELECT image_path, pdf_path FROM Sertificates WHERE sertificate_id = ?");
+    $stmt = $this->pdo->prepare("SELECT image_path FROM Sertificates WHERE sertificate_id = ?");
     $stmt->execute([$id]);
     $oldSertificate = $stmt->fetch(\PDO::FETCH_ASSOC);
 
     if (!$oldSertificate) {
-        $this->error("Сертификат с ID {$id} не найден.", 404);
-        return;
+      $this->error("Сертификат с ID {$id} не найден", 404);
+      return;
+    }
+    $oldFilePath = $_SERVER['DOCUMENT_ROOT'] . $oldSertificate['image_path'];
+
+    // 2. Загружаем новый файл
+    $uploadPath = $_SERVER['DOCUMENT_ROOT'] . self::UPLOAD_DIR;
+    if (!is_dir($uploadPath)) {
+      mkdir($uploadPath, 0755, true);
     }
 
-    // 2. Загружаем новый PDF файл
-    $uploadPath = $_SERVER['DOCUMENT_ROOT'] . self::PDF_UPLOAD_DIR;
-    if (!is_dir($uploadPath)) {
-        mkdir($uploadPath, 0755, true);
-    }
     $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
     $uniqueName = 'sertificate-' . uniqid() . '.' . $extension;
-    $newPdfFilePath = $uploadPath . $uniqueName;
-    $newPdfWebPath = self::PDF_UPLOAD_DIR . $uniqueName;
+    $newFilePath = $uploadPath . $uniqueName;
+    $newWebPath = self::UPLOAD_DIR . $uniqueName;
 
-    if (!move_uploaded_file($file['tmp_name'], $newPdfFilePath)) {
-        $this->error("Не удалось сохранить новый PDF файл.", 500);
+    if (!move_uploaded_file($file['tmp_name'], $newFilePath)) {
+      $this->error("Не удалось сохранить новый файл", 500);
+      return;
+    }
+
+    // 3. Обновляем запись в БД
+    try {
+      $updateStmt = $this->pdo->prepare("UPDATE Sertificates SET image_path = ? WHERE sertificate_id = ?");
+      $updateStmt->execute([$newWebPath, $id]);
+
+      // 4. Удаляем старый файл, если обновление БД прошло успешно
+      if (file_exists($oldFilePath)) {
+        unlink($oldFilePath);
+      }
+
+      // Возвращаем обновленные данные
+      $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
+      $selectStmt->execute([$id]);
+      $updatedSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
+      $this->success($updatedSertificate);
+
+    } catch (Exception $e) {
+      // Если обновление БД не удалось, удаляем новый загруженный файл
+      if (file_exists($newFilePath)) {
+        unlink($newFilePath);
+      }
+      error_log("Ошибка обновления сертификата: " . $e->getMessage());
+      $this->error("Ошибка базы данных при обновлении", 500);
+    }
+  }
+
+  private function deleteSertificate($id)
+  {
+    try {
+      // Получаем путь к файлу перед удалением записи из БД
+      $stmt = $this->pdo->prepare("SELECT image_path FROM Sertificates WHERE sertificate_id = ?");
+      $stmt->execute([$id]);
+      $sertificate = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+      if (!$sertificate) {
+        $this->error("Сертификат не найден", 404);
         return;
-    }
+      }
 
-    // 3. Конвертируем новый PDF в изображение
-    $newImageWebPath = null;
-    if (strtolower($extension) === 'pdf') {
-        $newImageWebPath = PdfConverter::convert($newPdfFilePath);
-        if (!$newImageWebPath) {
-            unlink($newPdfFilePath);
-            $this->error("Не удалось конвертировать новый PDF.", 500);
-            return;
-        }
-    } else {
-        $newImageWebPath = $newPdfWebPath;
-    }
+      // Удаляем запись из БД
+      $deleteStmt = $this->pdo->prepare("DELETE FROM Sertificates WHERE sertificate_id = ?");
+      $deleteStmt->execute([$id]);
 
+      // Удаляем файл
+      $filePath = $_SERVER['DOCUMENT_ROOT'] . $sertificate['image_path'];
+      if (file_exists($filePath)) {
+        unlink($filePath);
+      }
 
-    // 4. Обновляем запись в БД
-    try {
-        $updateStmt = $this->pdo->prepare("UPDATE Sertificates SET image_path = ?, pdf_path = ? WHERE sertificate_id = ?");
-        $updateStmt->execute([$newImageWebPath, $newPdfWebPath, $id]);
-
-        // 5. Удаляем старые файлы
-        $oldImageFilePath = $_SERVER['DOCUMENT_ROOT'] . $oldSertificate['image_path'];
-        if ($oldSertificate['image_path'] && file_exists($oldImageFilePath)) {
-            unlink($oldImageFilePath);
-        }
-        $oldPdfFilePath = $_SERVER['DOCUMENT_ROOT'] . $oldSertificate['pdf_path'];
-        if ($oldSertificate['pdf_path'] && $oldSertificate['pdf_path'] !== $oldSertificate['image_path'] && file_exists($oldPdfFilePath)) {
-            unlink($oldPdfFilePath);
-        }
-
-
-        // Возвращаем обновленные данные
-        $selectStmt = $this->pdo->prepare("SELECT * FROM Sertificates WHERE sertificate_id = ?");
-        $selectStmt->execute([$id]);
-        $updatedSertificate = $selectStmt->fetch(\PDO::FETCH_ASSOC);
-        $this->success($updatedSertificate);
-
+      $this->success(['sertificate_id' => $id]);
     } catch (Exception $e) {
-        // Если обновление БД не удалось, удаляем новые загруженные файлы
-        if (file_exists($newPdfFilePath)) {
-            unlink($newPdfFilePath);
-        }
-        if ($newImageWebPath && file_exists($_SERVER['DOCUMENT_ROOT'] . $newImageWebPath)) {
-            unlink($_SERVER['DOCUMENT_ROOT'] . $newImageWebPath);
-        }
-        error_log("Ошибка обновления сертификата: " . $e->getMessage());
-        $this->error("Ошибка базы данных при обновлении.", 500);
+      error_log("Ошибка удаления сертификата: " . $e->getMessage());
+      $this->error("Ошибка базы данных при удалении", 500);
     }
-}
-
-private function deleteSertificate($id)
-{
-    try {
-        // Получаем пути к файлам перед удалением записи из БД
-        $stmt = $this->pdo->prepare("SELECT image_path, pdf_path FROM Sertificates WHERE sertificate_id = ?");
-        $stmt->execute([$id]);
-        $sertificate = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        if (!$sertificate) {
-            $this->error("Сертификат не найден", 404);
-            return;
-        }
-
-        // Удаляем запись из БД
-        $deleteStmt = $this->pdo->prepare("DELETE FROM Sertificates WHERE sertificate_id = ?");
-        $deleteStmt->execute([$id]);
-
-        // Удаляем файлы
-        $imageFilePath = $_SERVER['DOCUMENT_ROOT'] . $sertificate['image_path'];
-        if ($sertificate['image_path'] && file_exists($imageFilePath)) {
-            unlink($imageFilePath);
-        }
-        
-        $pdfFilePath = $_SERVER['DOCUMENT_ROOT'] . $sertificate['pdf_path'];
-        // Проверяем, что это не тот же самый файл, чтобы не пытаться удалить его дважды
-        if ($sertificate['pdf_path'] && $sertificate['pdf_path'] !== $sertificate['image_path'] && file_exists($pdfFilePath)) {
-            unlink($pdfFilePath);
-        }
-
-        $this->success(['sertificate_id' => $id]);
-    } catch (Exception $e) {
-        error_log("Ошибка удаления сертификата: " . $e->getMessage());
-        $this->error("Ошибка базы данных при удалении", 500);
-    }
-}
+  }
 
   private function updatePositions($items)
   {

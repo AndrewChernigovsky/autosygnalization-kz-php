@@ -21,6 +21,15 @@ const toolbarOptions = [
   ['clean'],
 ];
 
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'list',
+  'link',
+];
+
 // Инициализация при монтировании
 onMounted(async () => {
   if (editorStore.isEditing(props.product.id)) {
@@ -199,6 +208,7 @@ defineExpose({ syncPricesToProduct });
                 :key="'price-' + index"
                 theme="snow"
                 :toolbar="toolbarOptions"
+                :formats="formatsOptions"
                 contentType="html"
                 :content="priceItem.description"
                 @update:content="

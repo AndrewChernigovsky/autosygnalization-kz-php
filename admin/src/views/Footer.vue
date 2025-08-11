@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick, watch } from 'vue';
+import { ref, onMounted, computed, nextTick } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
-import MySwitch from '../components/UI/MySwitch.vue';
 import LinkSelector from '../components/UI/LinkSelector.vue';
 import MyModal from '../components/UI/MyModal.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
@@ -17,31 +16,15 @@ const activeAccordion = ref<SectionKey | null>('shop');
 const editingLink = ref<Partial<IFooterLink> | null>(null);
 const isModalOpen = ref(false);
 const draggedItem = ref<IFooterLink | null>(null);
-const linkSourceMode = ref<'custom' | 'existing'>('custom');
+const addMode = ref<'custom' | 'existing'>('custom');
 const selectedLinkForModal = ref<LinkData | null>(null);
-
-watch(selectedLinkForModal, (newSelectedLink) => {
-  if (
-    newSelectedLink &&
-    linkSourceMode.value === 'existing' &&
-    editingLink.value
-  ) {
-    editingLink.value.name = newSelectedLink.name;
-  }
-});
 
 const availableLinksForModal = computed(() => {
   const existingSourceIds = new Set(
     footerLinks.value
+      .filter((l) => l.source_table === 'custom')
       .map((l) => l.source_id)
-      .filter((id): id is number => id !== null && id !== undefined)
   );
-
-  // When editing, allow the current link to be in the list
-  if (editingLink.value?.source_id) {
-    existingSourceIds.delete(editingLink.value.source_id);
-  }
-
   return allLinksData.value.filter(
     (l) => !existingSourceIds.has(l.links_data_id)
   );
@@ -168,26 +151,28 @@ const updatePositions = async (items: IFooterLink[]) => {
 const saveLink = async (link: Partial<IFooterLink> | null) => {
   if (!link) return;
 
-  let payload: Partial<IFooterLink>;
+  let payload: Partial<IFooterLink> = {};
 
-  if (linkSourceMode.value === 'existing') {
-    if (!selectedLinkForModal.value) {
-      Swal.fire('Ошибка', 'Пожалуйста, выберите страницу.', 'error');
+  if (addMode.value === 'existing' && !link.footer_id) {
+    if (!selectedLinkForModal.value || !link.section) {
+      Swal.fire(
+        'Ошибка',
+        'Пожалуйста, выберите ссылку и раздел для нее.',
+        'error'
+      );
       return;
     }
     payload = {
       ...link,
       link: selectedLinkForModal.value.link,
-      source_table: 'custom', // Per existing logic
+      section: link.section,
+      source_table: 'custom',
       source_id: selectedLinkForModal.value.links_data_id,
+      position: 99,
+      visible: true,
     };
   } else {
-    // Custom link
-    payload = {
-      ...link,
-      source_table: 'custom',
-      source_id: null,
-    };
+    payload = { ...link };
   }
 
   const formData = new FormData();
@@ -239,32 +224,18 @@ const openModal = (
   link: Partial<IFooterLink> | null = null,
   section: SectionKey | null = null
 ) => {
-  if (link) {
-    // Editing existing link
-    editingLink.value = { ...link };
-    linkSourceMode.value =
-      link.source_table === 'custom' && !link.source_id ? 'custom' : 'existing';
-
-    if (linkSourceMode.value === 'existing' && link.source_id) {
-      selectedLinkForModal.value =
-        allLinksData.value.find((l) => l.links_data_id === link.source_id) ??
-        null;
-    } else {
-      selectedLinkForModal.value = null;
-    }
-  } else {
-    // Adding new link
-    editingLink.value = {
-      name: '',
-      link: '',
-      section: section || 'shop',
-      position: 99,
-      visible: true,
-      source_table: 'custom',
-    };
-    linkSourceMode.value = 'custom';
-    selectedLinkForModal.value = null;
-  }
+  addMode.value = 'custom';
+  selectedLinkForModal.value = null;
+  editingLink.value = link
+    ? { ...link }
+    : {
+        name: '',
+        link: '',
+        section: section || 'shop',
+        position: 99,
+        visible: true,
+        source_table: 'custom',
+      };
   isModalOpen.value = true;
 };
 
@@ -309,29 +280,6 @@ const handleDrop = (event: DragEvent, targetSection: SectionKey) => {
   updatePositions(sectionLinks);
 };
 
-const toggleAccordion = (key: SectionKey) => {
-  const currentOpen = activeAccordion.value;
-
-  // If we're clicking the currently open accordion, just close it.
-  if (currentOpen === key) {
-    activeAccordion.value = null;
-    return;
-  }
-
-  // If another accordion is open, close it first.
-  if (currentOpen !== null) {
-    activeAccordion.value = null;
-    // Wait for the closing animation to start before opening the new one.
-    // A timeout is more reliable than nextTick for this animation scenario.
-    setTimeout(() => {
-      activeAccordion.value = key;
-    }, 10);
-  } else {
-    // If no accordion is open, just open the new one directly.
-    activeAccordion.value = key;
-  }
-};
-
 onMounted(() => {
   getLinksDataFromDB();
   fetchLinks(true);
@@ -342,54 +290,56 @@ onMounted(() => {
   <div class="new-footer-container">
     <div class="accordions-wrapper">
       <div v-for="(section, key) in sectionData" :key="key" class="accordion">
-        <div class="accordion-header" @click="toggleAccordion(key)">
-          <h3 class="accordion-title">{{ section.title }}</h3>
-          <MyBtn variant="primary" class="accordion-icon">{{
-            activeAccordion === key ? 'Закрыть' : 'Открыть'
-          }}</MyBtn>
-        </div>
         <div
-          class="accordion-content"
-          :class="{ 'is-open': activeAccordion === key }"
+          class="accordion-header"
+          @click="activeAccordion = activeAccordion === key ? null : key"
         >
-          <div class="accordion-content-inner">
-            <ul class="links-list">
-              <li
-                v-for="link in section.links"
-                :key="link.footer_id"
-                class="link-item"
-                :class="{
-                  dragging:
-                    draggedItem && draggedItem.footer_id === link.footer_id,
-                }"
-                draggable="true"
-                :data-id="link.footer_id"
-                @dragstart="handleDragStart(link)"
-                @dragend="handleDragEnd"
-                @drop.prevent="handleDrop($event, key)"
-                @dragover.prevent
-              >
-                <div class="link-info">
-                  <span class="drag-handle">⠿</span>
-                  <span>{{ link.name }}</span>
-                </div>
-                <div class="item-controls">
-                  <MyBtn variant="primary" @click="openModal(link)"
-                    >Редактировать</MyBtn
-                  >
-                  <MyBtn
-                    v-if="link.source_table === 'custom'"
-                    variant="secondary"
-                    @click="deleteLink(link.footer_id)"
-                    >Удалить</MyBtn
-                  >
-                </div>
-              </li>
-            </ul>
-            <MyBtn variant="secondary" @click.stop="openModal(null, key)"
-              >Добавить ссылку</MyBtn
+          <h3 class="accordion-title">{{ section.title }}</h3>
+          <span class="accordion-icon">{{
+            activeAccordion === key ? '−' : '+'
+          }}</span>
+        </div>
+        <div v-if="activeAccordion === key" class="accordion-content">
+          <ul class="links-list">
+            <li
+              v-for="link in section.links"
+              :key="link.footer_id"
+              class="link-item"
+              :class="{
+                dragging:
+                  draggedItem && draggedItem.footer_id === link.footer_id,
+              }"
+              draggable="true"
+              :data-id="link.footer_id"
+              @dragstart="handleDragStart(link)"
+              @dragend="handleDragEnd"
+              @drop.prevent="handleDrop($event, key)"
+              @dragover.prevent
             >
-          </div>
+              <div class="link-info">
+                <span class="drag-handle">⠿</span>
+                <span>{{ link.name }}</span>
+              </div>
+              <div class="item-controls">
+                <MySwitch
+                  :model-value="link.visible"
+                  @update:model-value="saveLink({ ...link, visible: $event })"
+                />
+                <MyBtn variant="primary" @click="openModal(link)"
+                  >Редактировать</MyBtn
+                >
+                <MyBtn
+                  v-if="link.source_table === 'custom'"
+                  variant="secondary"
+                  @click="deleteLink(link.footer_id)"
+                  >Удалить</MyBtn
+                >
+              </div>
+            </li>
+          </ul>
+          <MyBtn variant="secondary" @click.stop="openModal(null, key)"
+            >Добавить ссылку</MyBtn
+          >
         </div>
       </div>
     </div>
@@ -401,71 +351,62 @@ onMounted(() => {
               editingLink.footer_id ? 'Редактировать ссылку' : 'Добавить ссылку'
             }}
           </h3>
-          <div class="add-mode-toggle">
-            <label :class="{ active: linkSourceMode === 'custom' }">
+          <div v-if="!editingLink.footer_id" class="add-mode-toggle">
+            <label :class="{ active: addMode === 'custom' }">
               <input
                 type="radio"
                 value="custom"
-                v-model="linkSourceMode"
-                name="link-source-mode"
+                v-model="addMode"
+                name="add-mode"
               />
-              Внешняя ссылка
+              Создать новую
             </label>
-            <label :class="{ active: linkSourceMode === 'existing' }">
+            <label :class="{ active: addMode === 'existing' }">
               <input
                 type="radio"
                 value="existing"
-                v-model="linkSourceMode"
-                name="link-source-mode"
+                v-model="addMode"
+                name="add-mode"
               />
-              Внутренняя страница
+              Выбрать существующую
             </label>
           </div>
         </div>
       </template>
       <template v-slot:body>
         <form @submit.prevent="saveLink(editingLink!)">
-          <!-- Поля для кастомной/внешней ссылки -->
-          <div v-if="linkSourceMode === 'custom'" class="form-group">
+          <div v-if="addMode === 'custom'" class="form-group">
             <label for="name">Название</label>
             <input type="text" id="name" v-model="editingLink.name" required />
             <label for="link">Ссылка</label>
             <input type="text" id="link" v-model="editingLink.link" required />
-          </div>
-
-          <!-- Поля для выбора существующей -->
-          <div v-if="linkSourceMode === 'existing'" class="form-group">
-            <label for="name-existing">Название (можно изменить)</label>
-            <input
-              type="text"
-              id="name-existing"
-              v-model="editingLink.name"
-              required
-            />
-            <LinkSelector
-              v-model="selectedLinkForModal"
-              :links="availableLinksForModal"
-              label="Выберите страницу"
-              id="modal-link-selector"
-            />
-          </div>
-
-          <!-- Общие поля для всех режимов -->
-          <div class="form-group common-fields">
             <label for="section">Раздел</label>
             <select id="section" v-model="editingLink.section" required>
               <option value="shop">Магазин</option>
               <option value="installation">Установочный центр</option>
               <option value="client">Клиенту</option>
             </select>
-            <div class="form-row">
-              <label for="visible">Видимость</label>
-              <MySwitch
-                id="visible"
-                :model-value="editingLink.visible!"
-                @update:model-value="editingLink.visible = $event"
-              />
-            </div>
+          </div>
+          <div v-if="addMode === 'existing'" class="form-group">
+            <LinkSelector
+              v-model="selectedLinkForModal"
+              :links="availableLinksForModal"
+              label="Выберите существующую ссылку"
+              id="modal-link-selector"
+            />
+            <label for="modal-section" v-if="selectedLinkForModal"
+              >Выберите раздел для этой ссылки</label
+            >
+            <select
+              id="modal-section"
+              v-if="selectedLinkForModal"
+              v-model="editingLink.section"
+              required
+            >
+              <option value="shop">Магазин</option>
+              <option value="installation">Установочный центр</option>
+              <option value="client">Клиенту</option>
+            </select>
           </div>
         </form>
       </template>
@@ -520,7 +461,7 @@ onMounted(() => {
 }
 
 .add-mode-toggle label.active {
-  background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
+  background-color: #2e7d32; /* Dark Green */
   color: white;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
 }
@@ -554,18 +495,6 @@ onMounted(() => {
   font-weight: bold;
 }
 .accordion-content {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-in-out;
-  background-color: #2c2c2e;
-}
-
-.accordion-content.is-open {
-  max-height: 1000px; /* Adjust as needed */
-}
-
-.accordion-content-inner {
-  background-color: black;
   padding: 15px;
 }
 .links-list {
@@ -613,12 +542,6 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-.form-row {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  margin-top: 10px;
 }
 
 .form-group label {

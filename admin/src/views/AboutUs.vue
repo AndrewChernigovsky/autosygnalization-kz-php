@@ -22,6 +22,15 @@ const toolbarOptions = [
   ['clean'],
 ];
 
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
+];
+
 const items = ref<AboutUsItem[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
@@ -517,7 +526,7 @@ onMounted(getAboutUsData);
           </MyBtn>
         </div>
         <Transition
-          name="accordion-transition"
+          name="accordion"
           @before-enter="beforeEnter"
           @enter="enter"
           @after-enter="afterEnter"
@@ -538,7 +547,7 @@ onMounted(getAboutUsData);
                     <QuillEditor
                       theme="snow"
                       :toolbar="toolbarOptions"
-                      contentType="html"
+                      :formats="formatsOptions"
                       v-model:content="group[0].content"
                     />
                     <div class="actions">
@@ -557,6 +566,7 @@ onMounted(getAboutUsData);
                   <QuillEditor
                     theme="snow"
                     :toolbar="toolbarOptions"
+                    :formats="formatsOptions"
                     contentType="html"
                   />
                   <button type="submit" class="btn-add">Создать</button>
@@ -591,7 +601,7 @@ onMounted(getAboutUsData);
                         class="hidden-file-input"
                         :id="`file-input-existing-${item.about_us_id}`"
                         :ref="
-                          (el) =>
+                          (el: HTMLInputElement) =>
                             (fileInputs[`existing-${item.about_us_id}`] =
                               el as HTMLInputElement)
                         "
@@ -669,7 +679,7 @@ onMounted(getAboutUsData);
                         class="hidden-file-input"
                         :id="`file-input-new-${slot.tempId}`"
                         :ref="
-                          (el) =>
+                          (el: HTMLInputElement) =>
                             (fileInputs[`new-${slot.tempId}`] =
                               el as HTMLInputElement)
                         "

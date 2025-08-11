@@ -40,6 +40,7 @@
                   :key="service.id + '-desc'"
                   theme="snow"
                   :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
                   contentType="html"
                   :content="service.description"
                   @update:content="(val: string) => (service.description = val)"
@@ -64,6 +65,7 @@
                   :key="service.id + '-serv'"
                   theme="snow"
                   :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
                   contentType="html"
                   :content="service.services"
                   @update:content="(val: string) => (service.services = val)"
@@ -188,6 +190,15 @@ const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
   [{ list: 'ordered' }, { list: 'bullet' }],
   ['clean'],
+];
+
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
 ];
 
 const localServices = ref<{ main: Service[]; added: AddedService[] }>({
