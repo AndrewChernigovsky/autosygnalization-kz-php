@@ -129,7 +129,9 @@ const handleCreate = async (
   slotIndex?: number
 ) => {
   const form = event.target as HTMLFormElement;
-  const formData = new FormData(form);
+  const formData = new FormData(); // Создаем пустой объект для данных
+  formData.append('type', type);
+
   const config = typeConfig[type];
 
   if (config.fields.includes('list')) {
@@ -142,16 +144,28 @@ const handleCreate = async (
     formData.append('content', content);
   }
 
-  // Обновленная логика для изображений
   if (config.fields.includes('image')) {
     if (!slot || !slot.file) {
       Swal.fire('Ошибка', 'Необходимо выбрать изображение.', 'error');
       return;
     }
-    formData.append('image', slot.file);
+    isLoading.value = true;
+    try {
+      const resizedFile = await resizeImage(slot.file, 600, 300);
+      formData.append('image', resizedFile);
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : 'Произошла неизвестная ошибка';
+      Swal.fire(
+        'Ошибка',
+        `Не удалось обработать изображение: ${message}`,
+        'error'
+      );
+      return;
+    } finally {
+      isLoading.value = false;
+    }
   }
-
-  formData.append('type', type);
 
   try {
     const response = await fetchWithCors(API_URL, {
@@ -162,7 +176,6 @@ const handleCreate = async (
     if (response.success && response.data) {
       items.value.push(response.data);
       Swal.fire('Создано!', 'Новый элемент успешно добавлен.', 'success');
-      // Удаляем использованный слот
       if (slotIndex !== undefined) {
         newImageSlots.value.splice(slotIndex, 1);
       }
@@ -178,25 +191,42 @@ const handleCreate = async (
 
 const handleUpdate = async (event: Event, item: AboutUsItem) => {
   const form = event.target as HTMLFormElement;
-  const formData = new FormData(form);
+  const formData = new FormData(); // Создаем пустой объект
   formData.append('about_us_id', item.about_us_id.toString());
 
   const config = typeConfig[item.type];
 
-  // Валидация: для элементов-изображений нельзя сохранять без картинки
+  // Обработка и валидация изображения
   if (config.fields.includes('image')) {
     const inputFile = form.querySelector(
       'input[type="file"]'
     ) as HTMLInputElement;
-    const hasNewFile = inputFile?.files?.[0];
+    const newFile = inputFile?.files?.[0];
 
-    if (!item.image_path && !hasNewFile) {
+    if (newFile) {
+      isLoading.value = true;
+      try {
+        const resizedFile = await resizeImage(newFile, 600, 300);
+        formData.append('image', resizedFile);
+      } catch (err) {
+        const message =
+          err instanceof Error ? err.message : 'Произошла неизвестная ошибка';
+        Swal.fire(
+          'Ошибка',
+          `Не удалось обработать изображение: ${message}`,
+          'error'
+        );
+        return;
+      } finally {
+        isLoading.value = false;
+      }
+    } else if (!item.image_path) {
       Swal.fire(
         'Ошибка',
         'Для этого элемента необходимо изображение.',
         'error'
       );
-      return; // Прерываем сохранение
+      return;
     }
   }
 
@@ -206,7 +236,6 @@ const handleUpdate = async (event: Event, item: AboutUsItem) => {
     formData.append('content', editorContent);
   }
 
-  // Если путь к изображению был сброшен, отправляем флаг на удаление
   if (item.image_path === null) {
     formData.append('remove_image', '1');
   }
@@ -369,6 +398,96 @@ const toggleAccordion = (type: string) => {
   openAccordion.value = openAccordion.value === type ? null : type;
 };
 
+const beforeEnter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = '0';
+  htmlEl.style.opacity = '0';
+};
+
+const enter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = `${el.scrollHeight}px`;
+  htmlEl.style.opacity = '1';
+};
+
+const afterEnter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = 'auto';
+};
+
+const beforeLeave = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = `${el.scrollHeight}px`;
+};
+
+const leave = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  getComputedStyle(el).height;
+  requestAnimationFrame(() => {
+    htmlEl.style.height = '0';
+    htmlEl.style.opacity = '0';
+  });
+};
+
+const resizeImage = (
+  file: File,
+  maxWidth: number,
+  maxHeight: number,
+  quality = 0.8
+): Promise<File> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+
+      if (!ctx) {
+        return reject(new Error('Failed to get canvas context'));
+      }
+
+      const srcWidth = img.width;
+      const srcHeight = img.height;
+
+      canvas.width = maxWidth;
+      canvas.height = maxHeight;
+
+      // Прозрачный фон
+
+      // Новая логика: масштабируем по ширине, обрезаем/центрируем по высоте
+      const ratio = maxWidth / srcWidth;
+      const newWidth = maxWidth;
+      const newHeight = srcHeight * ratio;
+
+      const xOffset = 0;
+      const yOffset = (maxHeight - newHeight) / 2;
+
+      ctx.drawImage(img, xOffset, yOffset, newWidth, newHeight);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const fileName =
+              file.name.substring(0, file.name.lastIndexOf('.')) + '.avif';
+            const newFile = new File([blob], fileName, {
+              type: 'image/avif',
+              lastModified: Date.now(),
+            });
+            resolve(newFile);
+          } else {
+            reject(new Error('Canvas to Blob conversion failed'));
+          }
+        },
+        'image/avif',
+        quality
+      );
+    };
+    img.onerror = (err) => {
+      reject(new Error(`Image load error: ${err}`));
+    };
+  });
+};
+
 onMounted(getAboutUsData);
 </script>
 
@@ -397,204 +516,220 @@ onMounted(getAboutUsData);
             {{ openAccordion === type ? 'Закрыть' : 'Редактировать' }}
           </MyBtn>
         </div>
-        <div
-          class="accordion-content"
-          :class="{ active: openAccordion === type }"
+        <Transition
+          name="accordion-transition"
+          @before-enter="beforeEnter"
+          @enter="enter"
+          @after-enter="afterEnter"
+          @before-leave="beforeLeave"
+          @leave="leave"
         >
-          <div>
-            <!-- Рендеринг для ОДИНОЧНЫХ блоков -->
-            <template v-if="typeConfig[type]?.single">
-              <form
-                v-if="group.length > 0"
-                :key="group[0].about_us_id"
-                class="form-group"
-                @submit.prevent="handleUpdate($event, group[0])"
-              >
-                <div class="content-wrapper">
+          <div v-if="openAccordion === type" class="accordion-content">
+            <div>
+              <!-- Рендеринг для ОДИНОЧНЫХ блоков -->
+              <template v-if="typeConfig[type]?.single">
+                <form
+                  v-if="group.length > 0"
+                  :key="group[0].about_us_id"
+                  class="form-group"
+                  @submit.prevent="handleUpdate($event, group[0])"
+                >
+                  <div class="content-wrapper">
+                    <QuillEditor
+                      theme="snow"
+                      :toolbar="toolbarOptions"
+                      contentType="html"
+                      v-model:content="group[0].content"
+                    />
+                    <div class="actions">
+                      <MyBtn variant="primary" type="submit" class="btn-save">
+                        Сохранить
+                      </MyBtn>
+                    </div>
+                  </div>
+                </form>
+                <!-- Форма создания для одиночного блока, если он пуст -->
+                <form
+                  v-else
+                  class="form-add"
+                  @submit.prevent="handleCreate($event, type)"
+                >
                   <QuillEditor
                     theme="snow"
                     :toolbar="toolbarOptions"
                     contentType="html"
-                    v-model:content="group[0].content"
                   />
-                  <div class="actions">
-                    <MyBtn variant="primary" type="submit" class="btn-save">
-                      Сохранить
-                    </MyBtn>
-                  </div>
-                </div>
-              </form>
-              <!-- Форма создания для одиночного блока, если он пуст -->
-              <form
-                v-else
-                class="form-add"
-                @submit.prevent="handleCreate($event, type)"
-              >
-                <QuillEditor
-                  theme="snow"
-                  :toolbar="toolbarOptions"
-                  contentType="html"
-                />
-                <button type="submit" class="btn-add">Создать</button>
-              </form>
-            </template>
+                  <button type="submit" class="btn-add">Создать</button>
+                </form>
+              </template>
 
-            <!-- Рендеринг для СПИСКА (галереи) -->
-            <template v-else>
-              <form
-                v-for="item in group"
-                :key="item.about_us_id"
-                class="form-group draggable"
-                draggable="true"
-                @dragstart="onDragStart(item.about_us_id)"
-                @dragover.prevent
-                @drop="onDrop(item.about_us_id, type)"
-                @submit.prevent="handleUpdate($event, item)"
-              >
-                <div class="drag-handle">⠿</div>
-                <div class="content-wrapper">
-                  <label>Изображение:</label>
-                  <div class="image-uploader">
-                    <!-- The file input is always in the DOM but hidden -->
-                    <input
-                      type="file"
-                      name="image"
-                      accept="image/*"
-                      class="hidden-file-input"
-                      :id="`file-input-existing-${item.about_us_id}`"
-                      :ref="
-                      (el) =>
-                        (fileInputs[`existing-${item.about_us_id}`] =
-                          el as HTMLInputElement)
-                    "
-                      @change="onFileChange($event, item.about_us_id)"
-                    />
-                    <!-- Preview with remove button, shown if an image exists -->
-                    <div
-                      v-if="imagePreviews[item.about_us_id] || item.image_path"
-                      class="image-preview-wrapper"
-                    >
-                      <img
-                        :src="
-                          imagePreviews[item.about_us_id] ||
-                          item.image_path ||
-                          ''
-                        "
-                        alt="preview"
-                        class="image-preview"
-                      />
-                      <button
-                        type="button"
-                        class="btn-remove-image"
-                        @click="clearExistingImage(item)"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    <!-- Placeholder, shown if no image exists. It's a label for the input. -->
-                    <label
-                      v-else
-                      :for="`file-input-existing-${item.about_us_id}`"
-                      class="image-uploader-placeholder"
-                    >
-                      <span>+</span>
-                    </label>
-                  </div>
-
-                  <div class="actions">
-                    <MyBtn variant="primary" type="submit" class="btn-save">
-                      Сохранить
-                    </MyBtn>
-                    <MyBtn
-                      variant="secondary"
-                      type="button"
-                      @click="handleDelete(item.about_us_id)"
-                      class="btn-delete"
-                    >
-                      Удалить
-                    </MyBtn>
-                  </div>
-                </div>
-              </form>
-
-              <!-- НОВЫЙ БЛОК: Рендеринг новых слотов для изображений -->
-              <form
-                v-for="(slot, index) in newImageSlots"
-                :key="slot.tempId"
-                class="form-add"
-                @submit.prevent="handleCreate($event, type, slot, index)"
-              >
-                <div class="content-wrapper">
-                  <label>Новое изображение:</label>
-                  <div class="image-uploader">
-                    <!-- The file input is always in the DOM but hidden -->
-                    <input
-                      type="file"
-                      name="image"
-                      accept="image/*"
-                      class="hidden-file-input"
-                      :id="`file-input-new-${slot.tempId}`"
-                      :ref="
-                      (el) =>
-                        (fileInputs[`new-${slot.tempId}`] =
-                          el as HTMLInputElement)
-                    "
-                      @change="onNewFileChangeInSlot($event, slot)"
-                    />
-                    <!-- Preview with remove button -->
-                    <div v-if="slot.preview" class="image-preview-wrapper">
-                      <img
-                        :src="slot.preview"
-                        alt="preview"
-                        class="image-preview"
-                      />
-                      <button
-                        type="button"
-                        class="btn-remove-image"
-                        @click="clearNewImageInSlot(slot)"
-                      >
-                        ×
-                      </button>
-                    </div>
-                    <!-- Placeholder -->
-                    <label
-                      v-else
-                      :for="`file-input-new-${slot.tempId}`"
-                      class="image-uploader-placeholder"
-                    >
-                      <span>+</span>
-                    </label>
-                  </div>
-                  <div class="actions">
-                    <MyBtn variant="primary" type="submit" class="btn-save">
-                      Сохранить
-                    </MyBtn>
-                    <MyBtn
-                      variant="secondary"
-                      type="button"
-                      @click="removeNewImageSlot(index)"
-                      class="btn-delete"
-                    >
-                      Удалить слот
-                    </MyBtn>
-                  </div>
-                </div>
-              </form>
-
-              <!-- Кнопка для добавления нового слота -->
-              <div class="add-slot-wrapper">
-                <MyBtn
-                  variant="primary"
-                  type="button"
-                  class="btn-add btn-add-slot"
-                  @click="addNewImageSlot"
+              <!-- Рендеринг для СПИСКА (галереи) -->
+              <template v-else>
+                <form
+                  v-for="item in group"
+                  :key="item.about_us_id"
+                  class="form-group draggable"
+                  draggable="true"
+                  @dragstart="onDragStart(item.about_us_id)"
+                  @dragover.prevent
+                  @drop="onDrop(item.about_us_id, type)"
+                  @submit.prevent="handleUpdate($event, item)"
                 >
-                  Добавить слот для фото
-                </MyBtn>
-              </div>
-            </template>
+                  <div class="drag-handle">⠿</div>
+                  <div class="content-wrapper">
+                    <label>Изображение:</label>
+                    <p class="input-note">
+                      Рекомендуемый размер 600x300px. Изображение будет
+                      автоматически сконвертировано в AVIF.
+                    </p>
+                    <div class="image-uploader">
+                      <!-- The file input is always in the DOM but hidden -->
+                      <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        class="hidden-file-input"
+                        :id="`file-input-existing-${item.about_us_id}`"
+                        :ref="
+                          (el) =>
+                            (fileInputs[`existing-${item.about_us_id}`] =
+                              el as HTMLInputElement)
+                        "
+                        @change="onFileChange($event, item.about_us_id)"
+                      />
+                      <!-- Preview with remove button, shown if an image exists -->
+                      <div
+                        v-if="
+                          imagePreviews[item.about_us_id] || item.image_path
+                        "
+                        class="image-preview-wrapper"
+                      >
+                        <img
+                          :src="
+                            imagePreviews[item.about_us_id] ||
+                            item.image_path ||
+                            ''
+                          "
+                          alt="preview"
+                          class="image-preview"
+                        />
+                        <button
+                          type="button"
+                          class="btn-remove-image"
+                          @click="clearExistingImage(item)"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <!-- Placeholder, shown if no image exists. It's a label for the input. -->
+                      <label
+                        v-else
+                        :for="`file-input-existing-${item.about_us_id}`"
+                        class="image-uploader-placeholder"
+                      >
+                        <span>+</span>
+                      </label>
+                    </div>
+
+                    <div class="actions">
+                      <MyBtn variant="primary" type="submit" class="btn-save">
+                        Сохранить
+                      </MyBtn>
+                      <MyBtn
+                        variant="secondary"
+                        type="button"
+                        @click="handleDelete(item.about_us_id)"
+                        class="btn-delete"
+                      >
+                        Удалить
+                      </MyBtn>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- НОВЫЙ БЛОК: Рендеринг новых слотов для изображений -->
+                <form
+                  v-for="(slot, index) in newImageSlots"
+                  :key="slot.tempId"
+                  class="form-add"
+                  @submit.prevent="handleCreate($event, type, slot, index)"
+                >
+                  <div class="content-wrapper">
+                    <label>Новое изображение:</label>
+                    <p class="input-note">
+                      Рекомендуемый размер 600x300px. Изображение будет
+                      автоматически сконвертировано в AVIF.
+                    </p>
+                    <div class="image-uploader">
+                      <!-- The file input is always in the DOM but hidden -->
+                      <input
+                        type="file"
+                        name="image"
+                        accept="image/*"
+                        class="hidden-file-input"
+                        :id="`file-input-new-${slot.tempId}`"
+                        :ref="
+                          (el) =>
+                            (fileInputs[`new-${slot.tempId}`] =
+                              el as HTMLInputElement)
+                        "
+                        @change="onNewFileChangeInSlot($event, slot)"
+                      />
+                      <!-- Preview with remove button -->
+                      <div v-if="slot.preview" class="image-preview-wrapper">
+                        <img
+                          :src="slot.preview"
+                          alt="preview"
+                          class="image-preview"
+                        />
+                        <button
+                          type="button"
+                          class="btn-remove-image"
+                          @click="clearNewImageInSlot(slot)"
+                        >
+                          ×
+                        </button>
+                      </div>
+                      <!-- Placeholder -->
+                      <label
+                        v-else
+                        :for="`file-input-new-${slot.tempId}`"
+                        class="image-uploader-placeholder"
+                      >
+                        <span>+</span>
+                      </label>
+                    </div>
+                    <div class="actions">
+                      <MyBtn variant="primary" type="submit" class="btn-save">
+                        Сохранить
+                      </MyBtn>
+                      <MyBtn
+                        variant="secondary"
+                        type="button"
+                        @click="removeNewImageSlot(index)"
+                        class="btn-delete"
+                      >
+                        Удалить слот
+                      </MyBtn>
+                    </div>
+                  </div>
+                </form>
+
+                <!-- Кнопка для добавления нового слота -->
+                <div class="add-slot-wrapper">
+                  <MyBtn
+                    variant="primary"
+                    type="button"
+                    class="btn-add btn-add-slot"
+                    @click="addNewImageSlot"
+                  >
+                    Добавить слот для фото
+                  </MyBtn>
+                </div>
+              </template>
+            </div>
           </div>
-        </div>
+        </Transition>
       </div>
     </div>
   </div>
@@ -701,14 +836,9 @@ onMounted(getAboutUsData);
 }
 
 .accordion-content {
-  max-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease;
+  transition: height 0.3s ease, opacity 0.3s ease;
   background-color: inherit;
-}
-
-.accordion-content.active {
-  max-height: 1000px;
 }
 
 .accordion-content > div {
@@ -902,7 +1032,7 @@ textarea:focus {
 
 .btn-remove-image {
   position: absolute;
-  top: -10px;
+  top: 0;
   right: -10px;
   width: 28px;
   height: 28px;
@@ -923,6 +1053,13 @@ textarea:focus {
 .btn-remove-image:hover {
   transform: scale(1.1);
   background-color: #c82333;
+}
+
+.input-note {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
 }
 
 /* Стили для Quill Editor */
