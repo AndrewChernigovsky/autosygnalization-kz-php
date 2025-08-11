@@ -4,119 +4,167 @@
     <div class="theme-dark">
       <Loader v-if="isLoading" />
       <div v-else class="services-list space-y-2">
-        <details
+        <div
           v-for="service in localServices.main"
           :key="service.id"
           class="service-item"
           :class="{
+            'is-open': isServiceOpen(service.id),
             'new-service-highlight': service.id === highlightedServiceId,
           }"
           :data-service-id="service.id"
         >
-          <summary>{{ service.name }}</summary>
-          <div class="service-details">
-            <div class="form-group">
-              <label>Название:</label>
-              <input type="text" v-model="service.name" />
-            </div>
-            <div class="form-group">
-              <label>Описание:</label>
-              <QuillEditor
-                :key="service.id + '-desc'"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                contentType="html"
-                :content="service.description"
-                @update:content="(val) => (service.description = val)"
-              />
-            </div>
-            <div class="form-group">
-              <p>Рекомендуемый размер: 1000x1000px</p>
-              <label>Изображение:</label>
-              <ImageUpload
-                :path="getFullImagePath(service.image.src)"
-                @upload-success="(data) => handleImageUpload(data, service.id)"
-                @image-cleared="service.image.src = ''"
-                :extraData="{ serviceId: service.id }"
-                serviceImage
-              />
-            </div>
-            <div class="form-group">
-              <label>Список услуг:</label>
-              <QuillEditor
-                :key="service.id + '-serv'"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                contentType="html"
-                :content="service.services"
-                @update:content="(val) => (service.services = val)"
-              />
-            </div>
-            <div class="form-group">
-              <label>Цена:</label>
-              <input type="number" v-model="service.cost" />
-            </div>
-            <div class="service-actions">
-              <button @click="saveService(service.id)" class="btn-save">
-                Сохранить
-              </button>
-              <button @click="deleteService(service.id)" class="btn-delete">
-                Удалить
-              </button>
-            </div>
+          <div class="summary-header" @click="toggleService(service.id)">
+            <span>{{ service.name }}</span>
+            <span
+              class="accordion-arrow"
+              :class="{ 'is-open': isServiceOpen(service.id) }"
+            ></span>
           </div>
-        </details>
+          <Transition
+            name="accordion"
+            @before-enter="beforeEnter"
+            @enter="enter"
+            @after-enter="afterEnter"
+            @before-leave="beforeLeave"
+            @leave="leave"
+          >
+            <div v-if="isServiceOpen(service.id)" class="service-details">
+              <div class="form-group">
+                <label>Название:</label>
+                <input type="text" v-model="service.name" />
+              </div>
+              <div class="form-group">
+                <label>Описание:</label>
+                <QuillEditor
+                  :key="service.id + '-desc'"
+                  theme="snow"
+                  :toolbar="toolbarOptions"
+                  contentType="html"
+                  :content="service.description"
+                  @update:content="(val) => (service.description = val)"
+                />
+              </div>
+              <div class="form-group">
+                <p>Рекомендуемый размер: 1000x1000px</p>
+                <label>Изображение:</label>
+                <ImageUpload
+                  :path="getFullImagePath(service.image.src)"
+                  @upload-success="
+                    (data) => handleImageUpload(data, service.id)
+                  "
+                  @image-cleared="service.image.src = ''"
+                  :extraData="{ serviceId: service.id }"
+                  serviceImage
+                />
+              </div>
+              <div class="form-group">
+                <label>Список услуг:</label>
+                <QuillEditor
+                  :key="service.id + '-serv'"
+                  theme="snow"
+                  :toolbar="toolbarOptions"
+                  contentType="html"
+                  :content="service.services"
+                  @update:content="(val) => (service.services = val)"
+                />
+              </div>
+              <div class="form-group">
+                <label>Цена:</label>
+                <input type="number" v-model="service.cost" />
+              </div>
+              <div class="service-actions">
+                <MyBtn
+                  variant="secondary"
+                  @click="saveService(service.id)"
+                  class="btn-save"
+                >
+                  Сохранить
+                </MyBtn>
+                <MyBtn
+                  variant="primary"
+                  @click="deleteService(service.id)"
+                  class="btn-delete"
+                >
+                  Удалить
+                </MyBtn>
+              </div>
+            </div>
+          </Transition>
+        </div>
       </div>
-      <button
+      <MyBtn
+        variant="primary"
         @click="addService"
         type="button"
         class="btn-save with-margin-bottom"
       >
         Добавить услугу
-      </button>
+      </MyBtn>
     </div>
     <h1>Дополнительные услуги</h1>
     <div class="theme-dark">
       <Loader v-if="isLoading" />
       <div v-else class="services-list space-y-2">
-        <details
+        <div
           v-for="service in localServices.added"
           :key="service.id"
           class="service-item"
+          :class="{ 'is-open': isServiceOpen(service.id) }"
           :data-service-id="service.id"
         >
-          <summary>{{ service.title }}</summary>
-          <div class="service-details">
-            <div class="form-group">
-              <label>Название:</label>
-              <input type="text" v-model="service.title" />
-            </div>
-            <div class="form-group">
-              <label>Цена:</label>
-              <input type="number" v-model="service.price" />
-            </div>
-            <div class="service-actions">
-              <button
-                @click="deleteAddedService(service.id)"
-                class="btn-delete"
-              >
-                Удалить
-              </button>
-            </div>
+          <div class="summary-header" @click="toggleService(service.id)">
+            <span>{{ service.title }}</span>
+            <span
+              class="accordion-arrow"
+              :class="{ 'is-open': isServiceOpen(service.id) }"
+            ></span>
           </div>
-        </details>
+          <Transition
+            name="accordion"
+            @before-enter="beforeEnter"
+            @enter="enter"
+            @after-enter="afterEnter"
+            @before-leave="beforeLeave"
+            @leave="leave"
+          >
+            <div v-if="isServiceOpen(service.id)" class="service-details">
+              <div class="form-group">
+                <label>Название:</label>
+                <input type="text" v-model="service.title" />
+              </div>
+              <div class="form-group">
+                <label>Цена:</label>
+                <input type="number" v-model="service.price" />
+              </div>
+              <div class="service-actions">
+                <MyBtn
+                  variant="secondary"
+                  @click="saveAddedService(service)"
+                  class="btn-save"
+                  >Сохранить</MyBtn
+                >
+                <MyBtn
+                  variant="primary"
+                  @click="deleteAddedService(service.id)"
+                  class="btn-delete"
+                >
+                  Удалить
+                </MyBtn>
+              </div>
+            </div>
+          </Transition>
+        </div>
       </div>
       <div class="service-actions">
-        <button
+        <MyBtn
+          variant="primary"
           @click="addAddedService"
           type="button"
           class="btn-save with-margin-bottom"
         >
           Добавить дополнительную услугу
-        </button>
-        <button @click="saveAllAddedServices" class="btn-save">
-          Сохранить
-        </button>
+        </MyBtn>
       </div>
     </div>
   </div>
@@ -133,6 +181,7 @@ import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import ImageUpload from '../../UI/ImageUpload.vue';
 import { nextTick } from 'vue';
+import MyBtn from '../UI/MyBtn.vue';
 
 const toolbarOptions = [
   [{ header: [1, 2, 3, false] }],
@@ -147,6 +196,51 @@ const localServices = ref<{ main: Service[]; added: AddedService[] }>({
 });
 const isLoading = ref(true);
 const highlightedServiceId = ref<string | null>(null);
+const openServiceIds = ref<string[]>([]);
+
+const toggleService = (id: string) => {
+  const index = openServiceIds.value.indexOf(id);
+  if (index === -1) {
+    openServiceIds.value.push(id);
+  } else {
+    openServiceIds.value.splice(index, 1);
+  }
+};
+
+const isServiceOpen = (id: string) => {
+  return openServiceIds.value.includes(id);
+};
+
+const beforeEnter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = '0';
+  htmlEl.style.opacity = '0';
+};
+
+const enter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = `${el.scrollHeight}px`;
+  htmlEl.style.opacity = '1';
+};
+
+const afterEnter = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = 'auto';
+};
+
+const beforeLeave = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  htmlEl.style.height = `${el.scrollHeight}px`;
+};
+
+const leave = (el: Element) => {
+  const htmlEl = el as HTMLElement;
+  getComputedStyle(el).height;
+  requestAnimationFrame(() => {
+    htmlEl.style.height = '0';
+    htmlEl.style.opacity = '0';
+  });
+};
 
 function handleImageUpload(
   data: { path: string; filename: string },
@@ -172,13 +266,13 @@ function handleImageUpload(
 function deleteAddedService(serviceId: string) {
   const index = localServices.value.added.findIndex((s) => s.id === serviceId);
   if (index === -1) return;
-  const service = localServices.value.added[index];
-  // Если это новая услуга (ещё не сохранена на сервере)
-  if (service.id.startsWith('new-')) {
+
+  if (String(serviceId).startsWith('new-')) {
     localServices.value.added.splice(index, 1);
     return;
   }
-  // Для сохранённых услуг — запрос на сервер
+
+  const service = localServices.value.added[index];
   Swal.fire({
     title: 'Вы уверены?',
     text: `Удалить дополнительную услугу "${service.title}"?`,
@@ -226,7 +320,8 @@ function deleteAddedService(serviceId: string) {
   });
 }
 
-async function saveAllAddedServices() {
+async function saveAddedService(service: AddedService) {
+  const isNew = String(service.id).startsWith('new-');
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
@@ -243,19 +338,30 @@ async function saveAllAddedServices() {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ services: localServices.value.added }),
+        body: JSON.stringify(service),
       }
     );
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Ошибка сохранения');
+      const errorText = await response.text();
+      try {
+        const errorData = JSON.parse(errorText);
+        throw new Error(errorData.message || 'Ошибка сохранения');
+      } catch (e) {
+        throw new Error(`Не удалось сохранить услуги. ${errorText}`);
+      }
     }
-    // Можно обновить localServices.added с сервера, если нужно
-    const saved = await response.json();
-    localServices.value.added = saved;
+    const savedService = await response.json();
+    const index = localServices.value.added.findIndex(
+      (s) => s.id === service.id
+    );
+    if (index !== -1) {
+      localServices.value.added[index] = savedService;
+    }
     Swal.fire({
       title: 'Сохранено!',
-      text: 'Все дополнительные услуги успешно сохранены.',
+      text: isNew
+        ? 'Новая дополнительная услуга успешно добавлена.'
+        : 'Дополнительная услуга успешно обновлена.',
       icon: 'success',
       background: '#333',
       color: '#fff',
@@ -263,7 +369,7 @@ async function saveAllAddedServices() {
   } catch (error: any) {
     Swal.fire({
       title: 'Ошибка!',
-      text: 'Не удалось сохранить услуги. ' + error.message,
+      text: error.message,
       icon: 'error',
       background: '#333',
       color: '#fff',
@@ -391,6 +497,7 @@ function addService() {
   };
   localServices.value.main.push(newService);
   highlightedServiceId.value = newId;
+  openServiceIds.value.push(newId); // <-- Открываем аккордеон для нового элемента
 
   setTimeout(() => {
     if (highlightedServiceId.value === newId) {
@@ -521,6 +628,15 @@ async function saveService(serviceId: string) {
 }
 
 async function deleteService(serviceId: string) {
+  // Если это новая, еще не сохраненная услуга, удаляем ее локально
+  if (String(serviceId).startsWith('new-')) {
+    const index = localServices.value.main.findIndex((s) => s.id === serviceId);
+    if (index !== -1) {
+      localServices.value.main.splice(index, 1);
+    }
+    return;
+  }
+
   const serviceToDelete = localServices.value.main.find(
     (s) => s.id === serviceId
   );
@@ -601,7 +717,7 @@ onMounted(fetchServices);
     background-color: #2f4835;
   }
   to {
-    background-color: #333;
+    background-color: black;
   }
 }
 
@@ -628,7 +744,6 @@ onMounted(fetchServices);
 }
 
 .theme-dark {
-  background-color: #333;
   color: #f1f1f1;
   min-height: 100vh;
   padding: 20px;
@@ -650,24 +765,36 @@ onMounted(fetchServices);
 .service-item {
   border: 1px solid #444;
   border-radius: 5px;
-  background-color: #333;
+  background-color: inherit;
 }
 
-.service-item > summary {
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 15px;
   font-weight: bold;
   cursor: pointer;
-  background-color: #3a3a3a;
+  background-color: inherit;
   color: #eee;
   border-radius: 5px;
-  list-style: none;
+  transition: border-radius 0.15s ease-in-out;
 }
 
-.service-item > summary::-webkit-details-marker {
-  display: none;
+.accordion-arrow {
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  transform: rotate(45deg);
+  transition: transform 0.3s ease-out;
 }
 
-.service-item[open] > summary {
+.accordion-arrow.is-open {
+  transform: translateY(2px) rotate(-135deg);
+}
+
+.service-item.is-open > .summary-header {
   border-bottom: 1px solid #444;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
@@ -678,6 +805,8 @@ onMounted(fetchServices);
   display: flex;
   flex-direction: column;
   gap: 15px;
+  overflow: hidden;
+  transition: height 0.3s ease-out, opacity 0.3s ease-out;
 }
 
 .form-group {
@@ -694,7 +823,7 @@ onMounted(fetchServices);
 .form-group input,
 .form-group textarea {
   padding: 10px;
-  background-color: #444;
+  background-color: inherit;
   border: 1px solid #555;
   color: #fff;
   border-radius: 4px;
@@ -737,39 +866,20 @@ onMounted(fetchServices);
 .service-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
   border-top: 1px solid #444;
   padding-top: 20px;
   margin-top: 10px;
 }
 
-.btn-save,
-.btn-delete {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn-save {
-  background-color: #28a745;
-}
-
-.btn-delete {
-  background-color: #ff4d4f;
-}
-
 /* Add styles for Quill editor if needed */
 .form-group :deep(.ql-editor) {
-  background-color: #444;
-  color: #fff;
+  background-color: white;
+  color: black;
   min-height: 150px;
 }
 
 .form-group :deep(.ql-toolbar) {
-  background-color: #555;
+  background-color: black;
   border-color: #666;
 }
 
