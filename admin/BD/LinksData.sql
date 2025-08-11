@@ -218,19 +218,3 @@ INSERT IGNORE INTO `LinksData` (name, link, source_table, source_id)
 SELECT title, link, 'Contacts', contact_id
 FROM `Contacts`
 WHERE link IS NOT NULL AND link != '';
-
-
--- Добавление постоянных (статичных) ссылок, не связанных с триггерами
--- Используем INSERT IGNORE для предотвращения ошибок дублирования, если они уже существуют
-INSERT IGNORE INTO LinksData (name, link, source_table, source_id) VALUES
-('Прайс на материал и установку', '/price', NULL, NULL),
-('Прайс на услуги', '/price', NULL, NULL);
-
-INSERT IGNORE INTO LinksData (name, link, source_table, source_id) VALUES
-('Специальные предложения', '/special', NULL, NULL),
-('Корзина заказа', '/cart', NULL, NULL),
-('Оставить отзыв', 'https://2gis.kz/almaty/geo/70000001027313872', NULL, NULL),
-('Архив выполненных работ', 'https://drive.google.com/drive/folders/1gRjuirVES2pO6EMTNDrL5KNGC4RfBRPb', NULL, NULL),
-('Как к нам добраться', '/contacts#location', NULL, NULL),
-('Наши сертификаты', '/sertificates', NULL, NULL),
-('Оплата и доставка', '#', NULL, NULL);

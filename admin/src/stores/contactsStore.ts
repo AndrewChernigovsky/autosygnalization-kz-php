@@ -1,18 +1,63 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import fetchWithCors from '../utils/fetchWithCors';
-import Swal from 'sweetalert2';
+
+interface INewContact {
+  type: string;
+  title: string;
+  content: string;
+  icon_path?: File | null;
+  link: string;
+  sort_order: number | null;
+  on_page: boolean;
+}
+
+interface IContact {
+  contact_id: number;
+  type: string;
+  title: string;
+  content: string;
+  icon_path: string;
+  link: string;
+  sort_order: number;
+  on_page: boolean;
+}
 
 const contactsStore = defineStore('contactsStore', () => {
-  const contacts = ref([]);
+  const contactsApiUrl = ref('/server/php/admin/api/contacts/contact.php');
+  const contacts = ref<IContact[]>([]);
+  const newContact = ref<INewContact>({
+    type: '',
+    title: '',
+    content: '',
+    icon_path: null,
+    link: '',
+    sort_order: null,
+    on_page: false,
+  });
   const isLoading = ref(false);
   const error = ref<string | null>(null);
 
-  const getContacts = async (url: string) => {
+  const isValid = ref(true);
+
+  const contactsTypes = ref<string[]>([
+    'Основной телефон',
+    'Адрес',
+    'Контактный телефон',
+    'Социальные сети',
+    'Электронная почта',
+    'Расписание',
+    'Карта',
+    'Как к нам добраться',
+    'Сайт',
+    'Мессенджер',
+  ]);
+
+  const getContacts = async () => {
     try {
       isLoading.value = true;
       error.value = null;
-      const response = await fetchWithCors(url);
+      const response = await fetchWithCors(contactsApiUrl.value);
 
       if (response.success && response.data) {
         contacts.value = response.data;
@@ -21,139 +66,51 @@ const contactsStore = defineStore('contactsStore', () => {
       }
     } catch (err) {
       error.value = err instanceof Error ? err.message : 'Unknown error';
-      await Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось загрузить контакты',
-        icon: 'error',
-      });
     } finally {
       isLoading.value = false;
     }
   };
 
-  const addContact = async (url: string, data: any, type: string) => {
-    try {
-      isLoading.value = true;
-      error.value = null;
-
-      const formData = new FormData();
-      formData.append('title', data.title || '');
-      formData.append('content', data.content || '');
-      formData.append('link', data.link || '');
-      formData.append('type', type);
-
-      if (data.icon_path instanceof File) {
-        formData.append('icon_path', data.icon_path);
-      }
-
-      const response = await fetchWithCors(url, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.success) {
-        await Swal.fire({
-          title: 'Успех!',
-          text: 'Контакт добавлен',
-          icon: 'success',
-        });
-        getContacts(url);
-      } else {
-        throw new Error(response.error || 'Failed to add contact');
-      }
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Unknown error';
-      await Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось добавить контакт',
-        icon: 'error',
-      });
-    } finally {
-      isLoading.value = false;
-    }
+  const resetNewContact = () => {
+    newContact.value = {
+      type: '',
+      title: '',
+      content: '',
+      icon_path: null,
+      link: '',
+      sort_order: 0,
+      on_page: false,
+    };
   };
 
-  const updateContact = async (url: string, id: number, data: any) => {
-    try {
-      isLoading.value = true;
-      error.value = null;
-
-      const formData = new FormData();
-      formData.append('title', data.title || '');
-      formData.append('content', data.content || '');
-      formData.append('link', data.link || '');
-      formData.append('type', data.type || '');
-
-      if (data.icon_path instanceof File) {
-        formData.append('icon_path', data.icon_path);
+  const updateContactsOrder = (
+    updateData: Array<{ contact_id: number; sort_order: number }>
+  ) => {
+    const updatedContacts = contacts.value.map((contact) => {
+      const updateItem = updateData.find(
+        (item) => item.contact_id === contact.contact_id
+      );
+      if (updateItem) {
+        return { ...contact, sort_order: updateItem.sort_order };
       }
+      return contact;
+    });
 
-      const response = await fetchWithCors(`${url}?id=${id}`, {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (response.success) {
-        await Swal.fire({
-          title: 'Успех!',
-          text: 'Контакт обновлен',
-          icon: 'success',
-        });
-        getContacts(url);
-      } else {
-        throw new Error(response.error || 'Failed to update contact');
-      }
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Unknown error';
-      await Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось обновить контакт',
-        icon: 'error',
-      });
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
-  const deleteContact = async (url: string, id: number) => {
-    try {
-      isLoading.value = true;
-      error.value = null;
-
-      const response = await fetchWithCors(`${url}?id=${id}`, {
-        method: 'DELETE',
-      });
-
-      if (response.success) {
-        await Swal.fire({
-          title: 'Успех!',
-          text: 'Контакт удален',
-          icon: 'success',
-        });
-        getContacts(url);
-      } else {
-        throw new Error(response.error || 'Failed to delete contact');
-      }
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : 'Unknown error';
-      await Swal.fire({
-        title: 'Ошибка!',
-        text: 'Не удалось удалить контакт',
-        icon: 'error',
-      });
-    } finally {
-      isLoading.value = false;
-    }
+    // Заменяем весь массив для гарантии реактивности
+    contacts.value = updatedContacts;
   };
 
   return {
     contacts,
-    getContacts,
-    addContact,
-    updateContact,
-    deleteContact,
+    contactsTypes,
+    newContact,
+    contactsApiUrl,
     isLoading,
     error,
+    isValid,
+    getContacts,
+    resetNewContact,
+    updateContactsOrder,
   };
 });
 

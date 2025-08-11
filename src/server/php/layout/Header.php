@@ -89,7 +89,9 @@ class Header
                             <use href="$addressSvgPath"></use>
                         </svg>
                     </div>
-                    {$address}
+                    <div>
+                        {$address}
+                    </div>
                 </a>
             </div>
         </div>
@@ -104,8 +106,19 @@ HTML;
     foreach ($links as $link) {
       $uniqueId = 'link_' . preg_replace('/[\/?=&]/', '_', $link['path']);
       $isActive = $this->isActive($link['path'], $this->currentPath);
+      
+      // Убираем HTML теги из контента
+      $cleanContent = isset($link['content']) ? strip_tags($link['content']) : '';
+      
+      // Определяем текст для отображения: content или fallback на name
+      $displayText = !empty($cleanContent) ? $cleanContent : $link['name'];
+      
+      // Если есть контент, добавляем name в title, иначе оставляем пустым
+      $titleText = !empty($cleanContent) ? $link['name'] : '';
+      $titleAttr = !empty($titleText) ? " title='" . htmlspecialchars($titleText) . "'" : '';
+      
       $html .= "<li class='nav-item'>
-                        <a class='link {$isActive}' href='" . htmlspecialchars($link['path']) . "' id='" . htmlspecialchars($uniqueId) . "'>" . htmlspecialchars($link['name']) . "</a>
+                        <a class='link {$isActive}' href='" . htmlspecialchars($link['path']) . "' id='" . htmlspecialchars($uniqueId) . "'{$titleAttr}>" . htmlspecialchars($displayText) . "</a>
                       </li>";
     }
     return $html;
@@ -116,8 +129,11 @@ HTML;
     $html = '';
     if (!empty($phones)) {
       foreach ($phones as $phone) {
-        $cleanedPhone = str_replace(' ', '', $phone['phone']);
-        $html .= "<li><a href='tel:" . htmlspecialchars($cleanedPhone) . "'>" . htmlspecialchars($phone['phone']) . "</a></li>";
+        // Убираем HTML теги из номера телефона
+        $cleanedPhoneText = strip_tags($phone['phone']);
+        // Убираем пробелы для tel: ссылки
+        $cleanedPhoneLink = str_replace(' ', '', $cleanedPhoneText);
+        $html .= "<li><a href='tel:" . htmlspecialchars($cleanedPhoneLink) . "'>" . htmlspecialchars($cleanedPhoneText) . "</a></li>";
       }
     }
     return $html;

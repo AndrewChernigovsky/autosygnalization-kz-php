@@ -1,4 +1,4 @@
-@use 'variables'as var;
+@use 'variables' as var;
 
 .footer {
   padding: 50px 0 20px 0;
@@ -53,7 +53,6 @@
       align-items: center;
       margin-right: auto;
       gap: 10px;
-      flex-direction: row-reverse;
 
       p {
         color: var.$white;
@@ -259,7 +258,7 @@
         display: block;
       }
 
-      &>span {
+      & > span {
         position: relative;
       }
     }
@@ -302,21 +301,21 @@
         linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
     }
 
-    &+ul {
+    & + ul {
       display: none;
     }
 
-    &.active+ul {
+    &.active + ul {
       display: block;
     }
   }
 
   span {
-    &.toggle-list+ul {
+    &.toggle-list + ul {
       display: none;
     }
 
-    &.toggle-list.active+ul {
+    &.toggle-list.active + ul {
       display: grid;
     }
   }
@@ -486,7 +485,7 @@
         padding-left: 0;
         cursor: auto;
 
-        &>span {
+        & > span {
           cursor: auto;
         }
 
@@ -507,7 +506,6 @@
     }
 
     &__menu-title {
-
       &::before,
       &::after {
         display: none;
@@ -530,7 +528,7 @@
       max-width: 1440px;
     }
 
-    &__menu-list>li:not(:has(a:first-of-type)) .toggle-list {
+    &__menu-list > li:not(:has(a:first-of-type)) .toggle-list {
       cursor: auto;
 
       &:hover {
@@ -651,7 +649,7 @@
     }
 
     &__menu-list {
-      li>span:first-of-type:hover {
+      li > span:first-of-type:hover {
         opacity: 1;
       }
     }

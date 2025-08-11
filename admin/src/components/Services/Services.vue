@@ -14,12 +14,59 @@
           }"
           :data-service-id="service.id"
         >
-          <div class="summary-header" @click="toggleService(service.id)">
-            <span>{{ service.name }}</span>
-            <span
-              class="accordion-arrow"
-              :class="{ 'is-open': isServiceOpen(service.id) }"
-            ></span>
+          <summary>{{ service.name }}</summary>
+          <div class="service-details">
+            <div class="form-group">
+              <label>Название:</label>
+              <input type="text" v-model="service.name" />
+            </div>
+            <div class="form-group">
+              <label>Описание:</label>
+              <QuillEditor
+                :key="service.id + '-desc'"
+                theme="snow"
+                :toolbar="toolbarOptions"
+                :formats="formatsOptions"
+                contentType="html"
+                :content="service.description"
+                @update:content="(val) => (service.description = val)"
+              />
+            </div>
+            <div class="form-group">
+              <p>Рекомендуемый размер: 1000x1000px</p>
+              <label>Изображение:</label>
+              <ImageUpload
+                :path="getFullImagePath(service.image.src)"
+                @upload-success="(data) => handleImageUpload(data, service.id)"
+                @image-cleared="service.image.src = ''"
+                :extraData="{ serviceId: service.id }"
+                serviceImage
+              />
+            </div>
+            <div class="form-group">
+              <label>Список услуг:</label>
+              <QuillEditor
+                :key="service.id + '-serv'"
+                theme="snow"
+                :toolbar="toolbarOptions"
+                :formats="formatsOptions"
+                contentType="html"
+                :content="service.services"
+                @update:content="(val) => (service.services = val)"
+              />
+            </div>
+            <div class="form-group">
+              <label>Цена:</label>
+              <input type="number" v-model="service.cost" />
+            </div>
+            <div class="service-actions">
+              <button @click="saveService(service.id)" class="btn-save">
+                Сохранить
+              </button>
+              <button @click="deleteService(service.id)" class="btn-delete">
+                Удалить
+              </button>
+            </div>
           </div>
           <Transition
             name="accordion"
@@ -177,8 +224,8 @@ import { API_URL } from '../../../config';
 import Loader from '../../UI/Loader.vue';
 import Swal from 'sweetalert2';
 // @ts-ignore
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import ImageUpload from '../../UI/ImageUpload.vue';
 import { nextTick } from 'vue';
 import MyBtn from '../UI/MyBtn.vue';
@@ -188,6 +235,15 @@ const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
   [{ list: 'ordered' }, { list: 'bullet' }],
   ['clean'],
+];
+
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
 ];
 
 const localServices = ref<{ main: Service[]; added: AddedService[] }>({

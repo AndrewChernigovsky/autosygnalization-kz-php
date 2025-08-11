@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@rafaeljunioxavier/vue-quill-fix": "^1.2.4",
     "vue": "^3.5.17"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
     "@vue/tsconfig": "^0.7.0",
-    "@vueup/vue-quill": "^1.2.0",
     "pinia": "^3.0.3",
     "sass": "^1.89.2",
     "sweetalert": "^2.1.2",

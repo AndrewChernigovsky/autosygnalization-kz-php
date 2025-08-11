@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch, onMounted, defineExpose } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import type { ProductI } from './interfaces/Products';
 import { useProductEditorStore } from '../../stores/productEditorStore';
 import { useProductPricesStore } from '../../stores/productPricesStore';
@@ -19,6 +19,15 @@ const toolbarOptions = [
   [{ header: [1, 2, 3, false] }],
   ['link'],
   ['clean'],
+];
+
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'list',
+  'link',
 ];
 
 // Инициализация при монтировании
@@ -199,6 +208,7 @@ defineExpose({ syncPricesToProduct });
                 :key="'price-' + index"
                 theme="snow"
                 :toolbar="toolbarOptions"
+                :formats="formatsOptions"
                 contentType="html"
                 :content="priceItem.description"
                 @update:content="

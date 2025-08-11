@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { ref, onMounted, computed, watch } from 'vue';
+import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
+import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
@@ -20,6 +20,15 @@ const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
   [{ list: 'ordered' }, { list: 'bullet' }],
   ['clean'],
+];
+
+const formatsOptions = [
+  'header',
+  'bold',
+  'italic',
+  'underline',
+  'strike',
+  'list',
 ];
 
 const items = ref<AboutUsItem[]>([]);
@@ -559,9 +568,28 @@ onMounted(getAboutUsData);
                     :toolbar="toolbarOptions"
                     contentType="html"
                   />
-                  <button type="submit" class="btn-add">Создать</button>
-                </form>
-              </template>
+                  <div class="actions">
+                    <MyBtn variant="primary" type="submit" class="btn-save">
+                      Сохранить
+                    </MyBtn>
+                  </div>
+                </div>
+              </form>
+              <!-- Форма создания для одиночного блока, если он пуст -->
+              <form
+                v-else
+                class="form-add"
+                @submit.prevent="handleCreate($event, type)"
+              >
+                <QuillEditor
+                  theme="snow"
+                  :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
+                  contentType="html"
+                />
+                <button type="submit" class="btn-add">Создать</button>
+              </form>
+            </template>
 
               <!-- Рендеринг для СПИСКА (галереи) -->
               <template v-else>

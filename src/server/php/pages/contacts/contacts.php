@@ -27,7 +27,7 @@ $social = $contacts->getSocial();
 $schedule = $contacts->getSchedule();
 $map = $contacts->getMap();
 $locationDescription = $contacts->getLocationDescription();
-$allContacts = $contacts->getAllContact(['Контактный телефон', 'Социальные сети','Электронная почта', 'Адрес', 'Расписание']);
+$allContacts = $contacts->getAllContact(['Контактный телефон', 'Социальные сети', 'Мессенджер', 'Электронная почта', 'Адрес', 'Расписание']);
 error_log(print_r($allContacts, true) . 'Я ВЕСЬ МАССИВ КОНТАКТОВ');
 error_log(print_r($allContacts[0]['type'], true) . 'Я ВЕСЬ МАССИВ ТИПОВ КОНТАКТОВ ZALUPA');
 error_log(print_r($allContacts[0]['type'], true) . 'Я ВЕСЬ МАССИВ ТЕЛЕФОНОВ ИЛИ ОСНОВНОЙ ТЕЛЕФОН ZALUPA');
@@ -53,62 +53,65 @@ echo $head->setHead();
                   <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
                     <div class="icon-container">
                       <svg width="25" height="25" aria-hidden="true">
-                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        <use href="<?php echo htmlspecialchars($item['icon_path']) ?>"></use>
                       </svg>
                       <h3><?php echo htmlspecialchars($item['title']) ?></h3>
                     </div>
-                    <p><?php echo htmlspecialchars($item['content']) ?></p>
+                    <p class="m-0"><?php echo htmlspecialchars($item['content']) ?></p>
                   </a>
                 </li>
               <?php endif; ?>
               <?php if ($item['type'] === 'Социальные сети'): ?>
-                <?php if ($item['type'] === 'Социальные сети' && $item['title'] === 'Whatsapp:'): ?>
-                <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
-                  <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                <li class="contacts-section__item contacts-section__item--social">
+                  <a href="<?php echo htmlspecialchars($item['link']) ?>">
                     <div class="icon-container">
                       <svg width="25" height="25" aria-hidden="true">
-                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        <use href="<?php echo htmlspecialchars($item['icon_path']) ?>"></use>
                       </svg>
                       <h3><?php echo htmlspecialchars($item['title']) ?></h3>
                     </div>
-                    <p><?php echo htmlspecialchars($item['content']) ?></p>
+                    <p class="m-0"><?php echo htmlspecialchars($item['content']) ?></p>
                   </a>
                 </li>
-                <?php endif; ?>
-                <?php if ($item['type'] === 'Социальные сети' && $item['title'] === 'Instagramm:'): ?>
-                  <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['title']) ?>">
-                    <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
-                        <h3><?php echo htmlspecialchars($item['title']) ?></h3>
-                        <svg width="25" height="25" aria-hidden="true">
-                          <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
-                        </svg>
-                    </a>
-                  </li>
-                <?php endif; ?>
+              <?php endif; ?>
+              <?php if ($item['type'] === 'Мессенджер'): ?>
+                <li class="contacts-section__item contacts-section__item--messenger">
+                  <a href="<?php echo htmlspecialchars($item['link']) ?>">
+                    <div class="icon-container">
+                      <svg width="25" height="25" aria-hidden="true">
+                        <use href="<?php echo htmlspecialchars($item['icon_path']) ?>"></use>
+                      </svg>
+                      <h3><?php echo htmlspecialchars($item['title']) ?></h3>
+                    </div>
+                    <p class="m-0"><?php echo htmlspecialchars($item['content']) ?></p>
+                  </a>
+                </li>
               <?php endif; ?>
               <?php if ($item['type'] === 'Электронная почта'): ?>
-                <li class="contacts-section__item contacts-section__item--<?= htmlspecialchars($item['type']) ?>">
-                  <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                <li class="contacts-section__item contacts-section__item--email">
+                  <a href="<?php echo htmlspecialchars($item['link']) ?>">
                       <div class="icon-container">
                         <svg width="25" height="25" aria-hidden="true">
-                          <use width="25" height="25" href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                          <use href="<?php echo htmlspecialchars($item['icon_path']) ?>"></use>
                         </svg>
                         <h3><?php echo htmlspecialchars($item['title']) ?></h3>
                       </div>
-                      <p><?php echo htmlspecialchars($item['content']) ?></p>
+                      <p class="m-0"><?php echo htmlspecialchars($item['content']) ?></p>
                   </a>
                 </li>
               <?php endif; ?>
               <?php if ($item['type'] === 'Адрес'): ?>
                 <li class="contacts-section__item contacts-section__item--address">
-                  <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
+                  <a href="<?php echo htmlspecialchars($item['link']) ?>">
                     <div class="icon-container">
                       <svg width="25" height="25" aria-hidden="true">
-                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        <use href="<?php echo htmlspecialchars($item['icon_path']) ?>"></use>
                       </svg>
                       <h3><?php echo htmlspecialchars($item['title']) ?></h3>
                     </div>
-                    <p><?php echo $item['content'] ?></p>
+                    <div class="contacts-section__address">
+                      <?php echo $item['content'] ?>
+                    </div>
                   </a>
                 </li>
               <?php endif; ?>
@@ -116,11 +119,13 @@ echo $head->setHead();
                 <li class="contacts-section__item contacts-section__item--schedule">
                     <div class="icon-container">
                       <svg width="25" height="25" aria-hidden="true">
-                        <use href="<?php echo str_replace(' ', '', $item['icon_path']) ?>"></use>
+                        <use href="<?php echo htmlspecialchars($item['icon_path']) ?>"></use>
                       </svg>
                       <h3><?php echo htmlspecialchars($item['title']) ?></h3>
                     </div>
-                    <p><?php echo $item['content'] ?></p>
+                    <div class="contacts-section__schedule">
+                      <?php echo $item['content'] ?>
+                    </div>
                 </li>
               <?php endif; ?>
             <?php endforeach; ?>

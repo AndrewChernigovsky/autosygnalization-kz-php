@@ -60,7 +60,7 @@ public function getAllContact(array $types = [])
 {
     try {
         if (empty($types)) {
-            $query = "SELECT type, title, content, link, icon_path FROM Contacts ORDER BY contact_id ASC";
+            $query = "SELECT type, title, content, link, icon_path FROM Contacts WHERE on_page = 1 ORDER BY sort_order ASC";
             $stmt = $this->pdo->prepare($query);
             $stmt->execute();
         } else {
@@ -83,8 +83,8 @@ public function getAllContact(array $types = [])
             $query = "
                 SELECT type, title, content, link, icon_path
                 FROM Contacts
-                WHERE type IN ($inClause)
-                ORDER BY FIELD(type, $fieldList)
+                WHERE type IN ($inClause) AND on_page = 1
+                ORDER BY FIELD(type, $fieldList), sort_order ASC
             ";
 
             $stmt = $this->pdo->prepare($query);
@@ -92,6 +92,17 @@ public function getAllContact(array $types = [])
         }
 
         $itemArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+        
+        // Обрабатываем контент по типу: для адреса/расписания добавляем m-0 к <p>,
+        // для социальных сетей удаляем любые HTML-теги
+        foreach ($itemArr as &$item) {
+            if (in_array($item['type'], ['Адрес', 'Расписание'])) {
+                $item['content'] = $this->addClassToPTags($item['content']);
+            } elseif ($item['type'] === 'Социальные сети') {
+                $item['content'] = strip_tags($item['content']);
+            }
+        }
+        
         error_log(print_r($itemArr, true));
 
         if (empty($itemArr)) {
@@ -133,12 +144,18 @@ public function getAllContact(array $types = [])
   public function getEmail()
   {
       try {
-          $query = "SELECT content as email, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Электронная почта' ORDER BY contact_id ASC";
+          $query = "SELECT content as email, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Электронная почта' AND on_page = 1 ORDER BY sort_order ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
           $contactEmail = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                    error_log(print_r($contactEmail, true));
+          
+          // Убираем HTML теги из email
+          foreach ($contactEmail as &$email) {
+              $email['email'] = strip_tags($email['email']);
+          }
+          
+          error_log(print_r($contactEmail, true));
           if (empty($contactEmail)) {
               return [['email' => 'autosecurity.site@mail.ru','title' => 'Почта','link' => 'mailto:autosecurity.site@mail.ru','svg_path' => 'client/vectors/message-icon.svg']];
           }
@@ -153,7 +170,7 @@ public function getAllContact(array $types = [])
   public function getPhones()
   {
       try {
-          $query = "SELECT content as phone FROM Contacts WHERE type = 'Основной телефон' ORDER BY contact_id ASC";
+          $query = "SELECT content as phone FROM Contacts WHERE type = 'Основной телефон' AND on_page = 1 ORDER BY sort_order ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
@@ -167,7 +184,7 @@ public function getAllContact(array $types = [])
           }
           return $phonesArr;
       } catch (\Exception $e) {
-          error_log("Ошибка получения навигации: " . $e->getMessage());
+          error_log("Ошибка получения телефонов: " . $e->getMessage());
           return [
               ['phone' => '+7 7071 747 8212'],
               ['phone' => '+7 7011 747 8212'],
@@ -205,12 +222,19 @@ public function getAllContact(array $types = [])
   public function getSocial()
   {
       try {
-          $query = "SELECT content as content, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Социальные сети' ORDER BY contact_id ASC";
+          $query = "SELECT content as content, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Социальные сети' AND on_page = 1 ORDER BY sort_order ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
           $contactSocial = $stmt->fetchAll(\PDO::FETCH_ASSOC);
-                    error_log(print_r($contactSocial, true));
+          
+          // Убираем HTML теги из контента социальных сетей
+          foreach ($contactSocial as &$social) {
+              $social['content'] = strip_tags($social['content']);
+              $social['title'] = strip_tags($social['title']);
+          }
+          
+          error_log(print_r($contactSocial, true));
           if (empty($contactSocial)) {
               return [[
                 'content' => '+77077478212',
@@ -224,7 +248,7 @@ public function getAllContact(array $types = [])
           }
           return $contactSocial;
       } catch (\Exception $e) {
-          error_log("Ошибка получения навигации: " . $e->getMessage());
+          error_log("Ошибка получения социальных сетей: " . $e->getMessage());
               return [[
                 'content' => '+77077478212',
                 'title' => 'Whatsapp:',
@@ -240,20 +264,53 @@ public function getAllContact(array $types = [])
   public function getAddress()
   {
       try {
-          $query = "SELECT content as address, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Адрес' ORDER BY contact_id ASC";
+          $query = "SELECT content as address, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Адрес' AND on_page = 1 ORDER BY sort_order ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
           $addressArr = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+          
+          // Обрабатываем адрес, добавляя класс m-0 к тегам <p>
+          foreach ($addressArr as &$address) {
+              $address['address'] = $this->addClassToPTags($address['address']);
+          }
+          
           error_log(print_r($addressArr, true));
           if (empty($addressArr)) {
-              return [['address' => 'Казахстан, г.Алматы,<br/> пр.Абая 145/г, бокс №15', 'link' => 'https://2gis.kz/almaty/geo/70000001027313872', 'svg_path' => '/client/vectors/sprite.svg#geo']];
+              return [['address' => '<p class="m-0">Казахстан, г.Алматы,</p><p class="m-0"> пр.Абая 145/г, бокс №15</p>', 'link' => 'https://2gis.kz/almaty/geo/70000001027313872', 'svg_path' => '/client/vectors/sprite.svg#geo']];
           }
           return $addressArr;
       } catch (\Exception $e) {
           error_log("Ошибка получения адресса: " . $e->getMessage());
-          return [['address' => 'Казахстан, г.Алматы,<br/> пр.Абая 145/г, бокс №15', 'link' => 'https://2gis.kz/almaty/geo/70000001027313872', 'svg_path' => '/client/vectors/sprite.svg#geo']];
+          return [['address' => '<p class="m-0">Казахстан, г.Алматы,</p><p class="m-0"> пр.Абая 145/г, бокс №15</p>', 'link' => 'https://2gis.kz/almaty/geo/70000001027313872', 'svg_path' => '/client/vectors/sprite.svg#geo']];
       }
+  }
+
+  // Функция для добавления класса m-0 к тегам <p>
+  private function addClassToPTags($content)
+  {
+      // Заменяем <p> на <p class="m-0"> и <p class="существующий-класс"> на <p class="существующий-класс m-0">
+      $pattern = '/<p(\s+class=["\']([^"\']*)["\'])?([^>]*)>/i';
+      $replacement = function($matches) {
+          $existingClass = isset($matches[2]) ? $matches[2] : '';
+          $otherAttrs = isset($matches[3]) ? $matches[3] : '';
+          
+          if (!empty($existingClass)) {
+              // Если уже есть класс, добавляем m-0
+              if (strpos($existingClass, 'm-0') === false) {
+                  $newClass = $existingClass . ' m-0';
+              } else {
+                  $newClass = $existingClass;
+              }
+          } else {
+              // Если класса нет, добавляем только m-0
+              $newClass = 'm-0';
+          }
+          
+          return '<p class="' . $newClass . '"' . $otherAttrs . '>';
+      };
+      
+      return preg_replace_callback($pattern, $replacement, $content);
   }
 
   // Обновленная функция получение маршрута
@@ -278,13 +335,39 @@ public function getAllContact(array $types = [])
 
   public function getWebsite($link = false)
   {
-    if ($link) {
-      $output = '';
-      $output .= "<a class='link link-site'href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>'; // Используйте экранирование для URL
-      return $output;
-    } else {
-      return htmlspecialchars($this->webSite);
-    }
+      try {
+          $query = "SELECT content as website, link as website_link FROM Contacts WHERE type = 'Сайт' AND on_page = 1 ORDER BY sort_order ASC LIMIT 1";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute();
+
+          $websiteData = $stmt->fetch(\PDO::FETCH_ASSOC);
+          
+          if ($websiteData) {
+              $website = strip_tags($websiteData['website']);
+              $websiteLink = $websiteData['website_link'];
+              
+              if ($link) {
+                  return "<a class='link link-site' href='" . htmlspecialchars($websiteLink) . "'>" . htmlspecialchars($website) . '</a>';
+              } else {
+                  return htmlspecialchars($website);
+              }
+          }
+          
+          // Fallback к старому значению
+          if ($link) {
+              return "<a class='link link-site' href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>';
+          } else {
+              return htmlspecialchars($this->webSite);
+          }
+      } catch (\Exception $e) {
+          error_log("Ошибка получения сайта: " . $e->getMessage());
+          // Fallback к старому значению
+          if ($link) {
+              return "<a class='link link-site' href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>';
+          } else {
+              return htmlspecialchars($this->webSite);
+          }
+      }
   }
 
   public function getLogo()
