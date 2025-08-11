@@ -12,12 +12,8 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 use FFMpeg\FFMpeg;
-use FFMpeg\FFProbe;
-use FFMpeg\TimeCode;
-use DATABASE\DataBase;
-use FFMpeg\FFmpeg;
-use FFMpeg\FFProbe;
 use FFMpeg\Coordinate\TimeCode;
+use DATABASE\DataBase;
 use FFMpeg\Coordinate\Dimension;
 use FFMpeg\Format\Video\X264;
 use FFMpeg\Format\Video\WebM;
@@ -51,7 +47,17 @@ class AdvantageVideoAPI extends DataBase
     if (!is_dir($this->upload_dir)) {
       mkdir($this->upload_dir, 0777, true);
     }
-    $this->ffmpeg = FFmpeg::create();
+
+    // Добавление диагностического логирования
+    log_message("Инициализация FFMpeg");
+
+    try {
+      $this->ffmpeg = FFMpeg::create();
+      log_message("FFMpeg успешно инициализирован");
+    } catch (Exception $e) {
+      log_message("Ошибка инициализации FFMpeg: " . $e->getMessage());
+      throw $e;
+    }
   }
 
   public function getAll()
