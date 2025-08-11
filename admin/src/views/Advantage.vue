@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-// @ts-ignore
-import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
-import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
+import { QuillEditor } from '@vueup/vue-quill';
+import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
+import MyBtn from '../components/UI/MyBtn.vue';
 
 // --- INTERFACES ---
 
@@ -43,15 +43,6 @@ const toolbarOptions = [
   ['bold', 'italic', 'underline', 'strike'],
   [{ list: 'ordered' }, { list: 'bullet' }],
   ['clean'],
-];
-
-const formatsOptions = [
-  'header',
-  'bold',
-  'italic',
-  'underline',
-  'strike',
-  'list',
 ];
 
 // --- STATE ---
@@ -413,6 +404,21 @@ const onNewAdvantageFileChangeInSlot = (
 
 // --- VIDEOS LOGIC ---
 
+const generateSuccessMessage = (parts: string[]): string => {
+  if (parts.length === 0) {
+    return 'Нет изменений для сохранения.';
+  }
+  const formattedParts = parts.map((p, i) => (i === 0 ? p : p.toLowerCase()));
+  if (formattedParts.length === 1) {
+    const part = formattedParts[0];
+    if (part === 'Иконка') return 'Иконка успешно обновлена.';
+    if (part === 'Основное видео') return 'Основное видео успешно обновлено.';
+    return `${part} успешно обновлен.`; // Заголовок
+  }
+  const lastPart = formattedParts.pop();
+  return `${formattedParts.join(', ')} и ${lastPart} успешно обновлены.`;
+};
+
 const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   const form = event.target as HTMLFormElement;
   const formData = new FormData();
@@ -441,10 +447,10 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   ) as HTMLInputElement;
   if (iconInput && iconInput.files && iconInput.files.length > 0) {
     formData.append('title_icon', iconInput.files[0]);
-    updatedParts.push('Иконка');
+    if (!updatedParts.includes('Иконка')) updatedParts.push('Иконка');
   } else if (video.title_icon === null && originalVideo.title_icon !== null) {
     formData.append('remove_title_icon', '1');
-    updatedParts.push('Иконка');
+    if (!updatedParts.includes('Иконка')) updatedParts.push('Иконка');
   }
 
   // 3. Проверка изменения основного видео
@@ -494,7 +500,7 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
         originalVideoItem.value = JSON.parse(JSON.stringify(createdVideo));
         Swal.fire('Создано!', 'Видео-блок успешно создан.', 'success');
       } else {
-        const successMessage = `Успешно обновлено: ${updatedParts.join(', ')}.`;
+        const successMessage = generateSuccessMessage(updatedParts);
         Swal.fire('Сохранено!', successMessage, 'success');
         await getVideosData(); // Перезагружаем для синхронизации
       }
@@ -629,7 +635,7 @@ const leave = (el: Element) => {
 </script>
 
 <template>
-  <div class="container-advantage">
+  <div class="container-advan">
     <h1 class="main-title">Управление секцией 'Качество и преимущества'</h1>
     <div v-if="isLoadingAdvantages || isLoadingVideos" class="loading-overlay">
       <div class="spinner"></div>
@@ -677,12 +683,15 @@ const leave = (el: Element) => {
                       />
 
                       <label>Иконка заголовка (PNG/SVG):</label>
+                      <p class="input-note">
+                        До 5МБ, ~128x128px. Форматы: PNG, SVG, JPG.
+                      </p>
                       <input
                         type="file"
                         name="title_icon"
                         class="hidden-file-input"
                         id="title-icon-input"
-                        accept="image/png, image/svg+xml"
+                        accept="image/png, image/svg+xml, image/jpeg"
                         @change="onFileChange($event, 'icon')"
                       />
                       <label
@@ -750,22 +759,6 @@ const leave = (el: Element) => {
                     <div class="form-column form-column--grow">
                       <div class="video-previews">
                         <div class="video-preview-item">
-                          <label>Превью для мобильных:</label>
-                          <video
-                            v-if="video.video_src_mob"
-                            :key="video.video_src_mob"
-                            :src="video.video_src_mob"
-                            controls
-                            muted
-                            playsinline
-                          >
-                            Ваш браузер не поддерживает тэг video.
-                          </video>
-                          <div v-else class="video-placeholder">
-                            <span>Нет видео</span>
-                          </div>
-                        </div>
-                        <div class="video-preview-item">
                           <label>Превью для десктопа:</label>
                           <video
                             v-if="video.sources && video.sources.length > 0"
@@ -796,9 +789,9 @@ const leave = (el: Element) => {
                   </div>
 
                   <div class="actions">
-                    <button type="submit" class="btn-save">
+                    <MyBtn variant="secondary" type="submit" class="btn-save">
                       Сохранить изменения
-                    </button>
+                    </MyBtn>
                   </div>
                 </div>
               </form>
@@ -903,7 +896,6 @@ const leave = (el: Element) => {
                       <QuillEditor
                         theme="snow"
                         :toolbar="toolbarOptions"
-                        :formats="formatsOptions"
                         contentType="html"
                         v-model:content="item.content"
                       />
@@ -911,14 +903,17 @@ const leave = (el: Element) => {
                   </div>
 
                   <div class="actions">
-                    <button type="submit" class="btn-save">Сохранить</button>
-                    <button
+                    <MyBtn variant="secondary" type="submit" class="btn-save">
+                      Сохранить
+                    </MyBtn>
+                    <MyBtn
+                      variant="primary"
                       type="button"
                       @click="handleAdvantageDelete(item.advantage_id)"
                       class="btn-delete"
                     >
                       Удалить
-                    </button>
+                    </MyBtn>
                   </div>
                 </div>
               </form>
@@ -976,7 +971,6 @@ const leave = (el: Element) => {
                       <QuillEditor
                         theme="snow"
                         :toolbar="toolbarOptions"
-                        :formats="formatsOptions"
                         contentType="html"
                         v-model:content="slot.content"
                       />
@@ -984,26 +978,30 @@ const leave = (el: Element) => {
                   </div>
 
                   <div class="actions">
-                    <button type="submit" class="btn-save">Сохранить</button>
-                    <button
+                    <MyBtn variant="secondary" type="submit" class="btn-save"
+                      >Сохранить</MyBtn
+                    >
+                    <MyBtn
+                      variant="primary"
                       type="button"
                       @click="removeNewAdvantageSlot(index)"
                       class="btn-delete"
                     >
                       Удалить слот
-                    </button>
+                    </MyBtn>
                   </div>
                 </div>
               </form>
 
               <div class="add-slot-wrapper">
-                <button
+                <MyBtn
+                  variant="secondary"
                   type="button"
                   class="btn-add btn-add-slot"
                   @click="addNewAdvantageSlot"
                 >
                   Добавить преимущество
-                </button>
+                </MyBtn>
               </div>
             </div>
           </div>
@@ -1014,7 +1012,7 @@ const leave = (el: Element) => {
 </template>
 
 <style scoped>
-.container-advantage {
+.container-advan-advan {
   background-color: #2d2d2d;
   color: #e0e0e0;
   padding: 2rem;
@@ -1071,7 +1069,7 @@ const leave = (el: Element) => {
   padding: 1.5rem;
   border: 1px solid #444;
   border-radius: 8px;
-  background-color: #3c3c3c;
+  background-color: black;
 }
 .form-add {
   margin-top: 0;
@@ -1097,7 +1095,7 @@ textarea {
   margin-bottom: 1rem;
 }
 input:disabled {
-  background-color: #333;
+  background-color: black;
   color: #888;
 }
 input:focus,
@@ -1136,14 +1134,8 @@ textarea:focus {
   transform: translateY(-2px);
   filter: brightness(1.1);
 }
-.btn-save {
-  background-image: linear-gradient(45deg, #28a745, #218838);
-}
-.btn-delete {
-  background-image: linear-gradient(45deg, #dc3545, #c82333);
-}
+
 .btn-add {
-  background-image: linear-gradient(45deg, #007bff, #0069d9);
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
@@ -1192,7 +1184,7 @@ textarea:focus {
 }
 .accordion-header {
   width: 100%;
-  background-color: #3a3a3a;
+  background-color: black;
   border: none;
   padding: 1rem 1.5rem;
   text-align: left;
@@ -1220,7 +1212,7 @@ textarea:focus {
   transform: translateY(2px) rotate(-135deg);
 }
 .accordion-content {
-  background-color: #333;
+  background-color: black;
   overflow: hidden;
   transition: height 0.4s ease-out, padding 0.4s ease-out, opacity 0.4s ease-out;
   padding-left: 1.5rem;
@@ -1244,6 +1236,7 @@ textarea:focus {
   position: relative;
   width: 150px;
   height: 150px;
+  cursor: pointer;
 }
 .image-uploader--small {
   height: 50px;
@@ -1257,7 +1250,7 @@ textarea:focus {
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  background-color: #3a3a3a;
+  background-color: black;
   transition: background-color 0.3s, border-color 0.3s;
 }
 .image-uploader-placeholder:hover {
@@ -1350,6 +1343,12 @@ textarea:focus {
   cursor: pointer;
   margin-top: 0.5rem;
 }
+.input-note {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
+}
 .source-note {
   font-size: 0.8rem;
   color: #888;
@@ -1367,7 +1366,6 @@ textarea:focus {
 }
 .video-preview-item video {
   width: 100%;
-  max-width: 400px;
   border-radius: 8px;
   border: 1px solid #555;
   background-color: #2c2c2c;
@@ -1375,24 +1373,23 @@ textarea:focus {
 }
 .video-preview-item .video-placeholder {
   width: 100%;
-  max-width: 400px;
   aspect-ratio: 16 / 9;
   border-radius: 8px;
   border: 2px dashed #555;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #3a3a3a;
+  background-color: black;
   color: #888;
 }
 :deep(.ql-toolbar) {
-  background: #3c3c3c;
+  background: black;
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-color: #555;
   border-bottom: 0;
 }
-:deep(.ql-container-advantage.ql-snow) {
+:deep(.ql-container-advan-advan.ql-snow) {
   border-color: #555;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -1409,7 +1406,7 @@ textarea:focus {
   color: #e0e0e0;
 }
 :deep(.ql-snow .ql-picker-options) {
-  background-color: #3c3c3c;
+  background-color: black;
   border-color: #555;
   color: #e0e0e0;
 }
