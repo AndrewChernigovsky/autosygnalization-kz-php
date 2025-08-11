@@ -179,7 +179,6 @@ const saveLink = async (link: Partial<IFooterLink> | null) => {
     }
     payload = {
       ...link,
-      name: selectedLinkForModal.value.name,
       link: selectedLinkForModal.value.link,
       source_table: 'custom', // Per existing logic
       source_id: selectedLinkForModal.value.links_data_id,
