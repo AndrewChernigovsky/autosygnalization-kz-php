@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+// @ts-ignore
 import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
 import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
@@ -526,7 +527,7 @@ onMounted(getAboutUsData);
           </MyBtn>
         </div>
         <Transition
-          name="accordion-transition"
+          name="accordion"
           @before-enter="beforeEnter"
           @enter="enter"
           @after-enter="afterEnter"
@@ -547,7 +548,7 @@ onMounted(getAboutUsData);
                     <QuillEditor
                       theme="snow"
                       :toolbar="toolbarOptions"
-                      contentType="html"
+                      :formats="formatsOptions"
                       v-model:content="group[0].content"
                     />
                     <div class="actions">
@@ -566,6 +567,7 @@ onMounted(getAboutUsData);
                   <QuillEditor
                     theme="snow"
                     :toolbar="toolbarOptions"
+                    :formats="formatsOptions"
                     contentType="html"
                   />
                   <button type="submit" class="btn-add">Создать</button>

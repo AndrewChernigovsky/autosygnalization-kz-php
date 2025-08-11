@@ -40,9 +40,10 @@
                   :key="service.id + '-desc'"
                   theme="snow"
                   :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
                   contentType="html"
                   :content="service.description"
-                  @update:content="(val) => (service.description = val)"
+                  @update:content="(val: string) => (service.description = val)"
                 />
               </div>
               <div class="form-group">
@@ -64,9 +65,10 @@
                   :key="service.id + '-serv'"
                   theme="snow"
                   :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
                   contentType="html"
                   :content="service.services"
-                  @update:content="(val) => (service.services = val)"
+                  @update:content="(val: string) => (service.services = val)"
                 />
               </div>
               <div class="form-group">

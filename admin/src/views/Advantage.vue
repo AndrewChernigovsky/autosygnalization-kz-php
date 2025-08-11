@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+// @ts-ignore
 import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
 import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
@@ -415,7 +416,7 @@ const onNewAdvantageFileChangeInSlot = (
 const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   const form = event.target as HTMLFormElement;
   const formData = new FormData();
-  let hasChanges = false;
+  const updatedParts: string[] = [];
 
   const originalVideo = originalVideoItem.value;
 
@@ -440,10 +441,10 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   ) as HTMLInputElement;
   if (iconInput && iconInput.files && iconInput.files.length > 0) {
     formData.append('title_icon', iconInput.files[0]);
-    hasChanges = true;
+    updatedParts.push('Иконка');
   } else if (video.title_icon === null && originalVideo.title_icon !== null) {
     formData.append('remove_title_icon', '1');
-    hasChanges = true;
+    updatedParts.push('Иконка');
   }
 
   // 3. Проверка изменения основного видео
@@ -493,7 +494,7 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
         originalVideoItem.value = JSON.parse(JSON.stringify(createdVideo));
         Swal.fire('Создано!', 'Видео-блок успешно создан.', 'success');
       } else {
-        const successMessage = generateSuccessMessage(updatedParts);
+        const successMessage = `Успешно обновлено: ${updatedParts.join(', ')}.`;
         Swal.fire('Сохранено!', successMessage, 'success');
         await getVideosData(); // Перезагружаем для синхронизации
       }
