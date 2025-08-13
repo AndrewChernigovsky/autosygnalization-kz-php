@@ -196,7 +196,7 @@ defineExpose({ syncPricesToProduct });
               <label>Цена установки:</label>
               <input
                 :value="priceItem.installationPrice"
-                @input="(e) => handleInstallationPriceInput(index, e)"
+                @input="(e: Event) => handleInstallationPriceInput(index, e)"
                 type="text"
                 placeholder="60 000"
               />
@@ -212,7 +212,7 @@ defineExpose({ syncPricesToProduct });
                 contentType="html"
                 :content="priceItem.description"
                 @update:content="
-                  (val) => pricesStore.updatePriceDescription(index, val)
+                  (val: string) => pricesStore.updatePriceDescription(index, val)
                 "
               />
             </div>

@@ -29,7 +29,7 @@ const presetQuillOptions = {
 };
 
 watch(content, (newVal) => {
-  emit('update:content', newVal);
+  emit('update:content', newVal ?? '');
 });
 </script>
 

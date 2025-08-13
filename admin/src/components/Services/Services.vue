@@ -40,9 +40,10 @@
                   :key="service.id + '-desc'"
                   theme="snow"
                   :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
                   contentType="html"
                   :content="service.description"
-                  @update:content="(val) => (service.description = val)"
+                  @update:content="(val: string) => (service.description = val)"
                 />
               </div>
               <div class="form-group">
@@ -51,7 +52,7 @@
                 <ImageUpload
                   :path="getFullImagePath(service.image.src)"
                   @upload-success="
-                    (data) => handleImageUpload(data, service.id)
+                    (data: { path: string; filename: string }) => handleImageUpload(data, service.id)
                   "
                   @image-cleared="service.image.src = ''"
                   :extraData="{ serviceId: service.id }"
@@ -64,9 +65,10 @@
                   :key="service.id + '-serv'"
                   theme="snow"
                   :toolbar="toolbarOptions"
+                  :formats="formatsOptions"
                   contentType="html"
                   :content="service.services"
-                  @update:content="(val) => (service.services = val)"
+                  @update:content="(val: string) => (service.services = val)"
                 />
               </div>
               <div class="form-group">

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
 import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
+import MyQuill from '../components/UI/MyQuill.vue';
 
 interface AboutUsItem {
   about_us_id: number;
@@ -29,6 +30,8 @@ const formatsOptions = [
   'underline',
   'strike',
   'list',
+  'bullet',
+  'ordered',
 ];
 
 const items = ref<AboutUsItem[]>([]);
@@ -114,7 +117,9 @@ const getAboutUsData = async () => {
   isLoading.value = true;
   error.value = null;
   try {
-    const response = await fetchWithCors(API_URL);
+    const response = await fetchWithCors(
+      `${API_URL}?_=${new Date().getTime()}`
+    );
     if (response.success) {
       items.value = response.data;
       newImageSlots.value = []; // Сбрасываем временные слоты при перезагрузке
@@ -526,7 +531,7 @@ onMounted(getAboutUsData);
           </MyBtn>
         </div>
         <Transition
-          name="accordion-transition"
+          name="accordion"
           @before-enter="beforeEnter"
           @enter="enter"
           @after-enter="afterEnter"
@@ -544,11 +549,12 @@ onMounted(getAboutUsData);
                   @submit.prevent="handleUpdate($event, group[0])"
                 >
                   <div class="content-wrapper">
-                    <QuillEditor
+                    <MyQuill
                       theme="snow"
                       :toolbar="toolbarOptions"
+                      :formats="formatsOptions"
+                      :content="group[0].content"
                       contentType="html"
-                      v-model:content="group[0].content"
                     />
                     <div class="actions">
                       <MyBtn variant="primary" type="submit" class="btn-save">
@@ -563,16 +569,8 @@ onMounted(getAboutUsData);
                   class="form-add"
                   @submit.prevent="handleCreate($event, type)"
                 >
-                  <QuillEditor
-                    theme="snow"
-                    :toolbar="toolbarOptions"
-                    contentType="html"
-                  />
-                  <div class="actions">
-                    <MyBtn variant="primary" type="submit" class="btn-save">
-                      Сохранить
-                    </MyBtn>
-                  </div>
+                  <MyQuill :content="null" />
+                  <button type="submit" class="btn-add">Создать</button>
                 </form>
               </template>
 
