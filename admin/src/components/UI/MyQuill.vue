@@ -5,7 +5,7 @@ import { ref, watch } from 'vue';
 
 const props = defineProps<{
   content: string | null;
-  quillOptions?: any;
+  quillOptions?: any | null;
 }>();
 
 const content = ref(props.content);
@@ -38,10 +38,28 @@ watch(content, (newVal) => {
     <QuillEditor
       v-model:content="content"
       theme="snow"
-      :options="presetQuillOptions ? presetQuillOptions : props.quillOptions"
+      :options="props.quillOptions ? props.quillOptions : presetQuillOptions"
       content-type="html"
     />
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.my-quill-wrapper :deep(.ql-editor) {
+  list-style: none;
+  padding-left: 1.5em;
+
+  /* Маркеры для bullet-списков */
+  li[data-list='bullet']::before {
+    content: '•';
+    margin-right: 0.5em;
+    color: inherit;
+  }
+
+  /* Нумерация для обычных <li> (без data-list) — ordered списки */
+  li:not([data-list])::before {
+    content: counter(ql-list, decimal) '. ';
+    margin-right: 0.5em;
+  }
+}
+</style>

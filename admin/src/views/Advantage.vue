@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
-import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
+import MyQuill from '../components/UI/MyQuill.vue';
 
 // --- INTERFACES ---
 
@@ -37,13 +36,6 @@ interface VideoItem {
   position: number;
   sources: VideoSource[];
 }
-
-const toolbarOptions = [
-  [{ header: [1, 2, 3, false] }],
-  ['bold', 'italic', 'underline', 'strike'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  ['clean'],
-];
 
 // --- STATE ---
 
@@ -849,7 +841,7 @@ const leave = (el: Element) => {
                           class="hidden-file-input"
                           :id="`file-input-existing-advantage-${item.advantage_id}`"
                           :ref="
-                            (el: HTMLInputElement) =>
+                            (el) =>
                               (fileInputs[
                                 `existing-advantage-${item.advantage_id}`
                               ] = el as HTMLInputElement)
@@ -893,12 +885,7 @@ const leave = (el: Element) => {
                     </div>
                     <div class="form-column form-column--grow">
                       <label>Описание:</label>
-                      <QuillEditor
-                        theme="snow"
-                        :toolbar="toolbarOptions"
-                        contentType="html"
-                        v-model:content="item.content"
-                      />
+                      <MyQuill v-model:content="item.content" />
                     </div>
                   </div>
 
@@ -937,7 +924,7 @@ const leave = (el: Element) => {
                           class="hidden-file-input"
                           :id="`file-input-new-advantage-${slot.tempId}`"
                           :ref="
-                            (el: HTMLInputElement) =>
+                            (el) =>
                               (fileInputs[`new-advantage-${slot.tempId}`] =
                                 el as HTMLInputElement)
                           "
@@ -968,12 +955,7 @@ const leave = (el: Element) => {
                     </div>
                     <div class="form-column form-column--grow">
                       <label>Описание:</label>
-                      <QuillEditor
-                        theme="snow"
-                        :toolbar="toolbarOptions"
-                        contentType="html"
-                        v-model:content="slot.content"
-                      />
+                      <MyQuill v-model:content="slot.content" />
                     </div>
                   </div>
 

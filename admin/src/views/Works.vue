@@ -309,7 +309,6 @@ onMounted(() => {
           <p class="work-card-title">{{ work.title }}</p>
           <div class="work-card-actions">
             <MyBtn variant="primary" type="button" @click="startEdit(work)">
-              <MyIcon name="edit" />
               РЕДАКТИРОВАТЬ
             </MyBtn>
             <MyBtn

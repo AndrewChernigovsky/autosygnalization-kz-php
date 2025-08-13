@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { watch, onMounted, defineExpose } from 'vue';
-import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
-import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import type { ProductI } from './interfaces/Products';
 import { useProductEditorStore } from '../../stores/productEditorStore';
 import { useProductPricesStore } from '../../stores/productPricesStore';
+import MyQuill from '../UI/MyQuill.vue';
 
 const props = defineProps<{
   product: ProductI;
@@ -12,24 +11,6 @@ const props = defineProps<{
 
 const editorStore = useProductEditorStore();
 const pricesStore = useProductPricesStore();
-
-const toolbarOptions = [
-  ['bold', 'italic', 'underline'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  [{ header: [1, 2, 3, false] }],
-  ['link'],
-  ['clean'],
-];
-
-const formatsOptions = [
-  'header',
-  'bold',
-  'italic',
-  'underline',
-  'list',
-  'link',
-];
-
 // Инициализация при монтировании
 onMounted(async () => {
   if (editorStore.isEditing(props.product.id)) {
@@ -204,12 +185,8 @@ defineExpose({ syncPricesToProduct });
 
             <div class="field-group">
               <label>Описание (список преимуществ):</label>
-              <QuillEditor
+              <MyQuill
                 :key="'price-' + index"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                :formats="formatsOptions"
-                contentType="html"
                 :content="priceItem.description"
                 @update:content="
                   (val: string) => pricesStore.updatePriceDescription(index, val)

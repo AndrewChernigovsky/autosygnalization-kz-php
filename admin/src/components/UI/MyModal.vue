@@ -44,9 +44,10 @@ const closeModal = () => {
 }
 
 .modal-container {
-  background-color: #2c2c2e;
+  background-color: black;
   color: #f0f0f0;
   border-radius: 8px;
+  border: 1px solid #4b4b4b;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   min-width: 500px;
   max-width: 90%;
@@ -55,10 +56,11 @@ const closeModal = () => {
 }
 
 .modal-header {
+  position: relative;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 16px;
+  align-items: flex-start;
+  padding: 16px 16px 16px 16px;
   border-bottom: 1px solid #4b4b4b;
 }
 
@@ -68,11 +70,21 @@ const closeModal = () => {
 }
 
 .close-button {
+  position: absolute;
+  top: 14px;
+  right: 16px;
   background: none;
   border: none;
-  font-size: 1.5rem;
-  color: #f0f0f0;
+  font-size: 2rem;
+  line-height: 1;
+  color: #aaa;
   cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+}
+
+.close-button:hover {
+  color: #fff;
 }
 
 .modal-body {
@@ -82,7 +94,7 @@ const closeModal = () => {
 
 .modal-footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 12px;
   padding: 16px;
   border-top: 1px solid #4b4b4b;
