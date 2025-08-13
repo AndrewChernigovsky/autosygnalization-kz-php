@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
+import MyBtn from '../components/UI/MyBtn.vue';
 
 // --- ИНТЕРФЕЙСЫ ---
 interface Sertificate {
@@ -399,18 +400,20 @@ onMounted(fetchData);
           v-if="filesToUpdate[sertificate.sertificate_id]"
           class="actions-update"
         >
-          <button
+          <MyBtn
+            variant="primary"
             class="btn-save"
             @click="handleUpdate(sertificate.sertificate_id)"
           >
             Сохранить
-          </button>
-          <button
+          </MyBtn>
+          <MyBtn
+            variant="secondary"
             class="btn-cancel"
             @click="cancelUpdate(sertificate.sertificate_id)"
           >
             Отмена
-          </button>
+          </MyBtn>
         </div>
         <div v-else class="drag-handle">⠿</div>
 
@@ -474,16 +477,21 @@ onMounted(fetchData);
           </label>
         </div>
         <div class="actions-new">
-          <button
+          <MyBtn
+            variant="primary"
             class="btn-save"
             @click="handleCreate(slot, index)"
             :disabled="!slot.file"
           >
             Сохранить
-          </button>
-          <button class="btn-delete-slot" @click="removeNewSlot(index)">
+          </MyBtn>
+          <MyBtn
+            variant="secondary"
+            class="btn-delete-slot"
+            @click="removeNewSlot(index)"
+          >
             Удалить
-          </button>
+          </MyBtn>
         </div>
       </div>
 
@@ -783,6 +791,7 @@ onMounted(fetchData);
 }
 .btn-save,
 .btn-delete-slot {
+  min-width: 0;
   flex-grow: 1;
   padding: 0.5rem;
   border: none;
@@ -790,6 +799,7 @@ onMounted(fetchData);
   color: white;
   cursor: pointer;
   font-weight: bold;
+  border-radius: 0;
 }
 .btn-save {
   background-color: #28a745;
