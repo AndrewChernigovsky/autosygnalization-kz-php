@@ -11,6 +11,7 @@ import MyMainNav from '../views/MyMainNav.vue';
 import Works from '../views/Works.vue';
 import Footer from '../views/Footer.vue';
 import Registrations from '../views/Registrations.vue';
+import IntroSlide from '../components/IntroSlide/IntroSlide.vue';
 
 export const routes = [
   {
@@ -72,6 +73,11 @@ export const routes = [
     path: '/registrations-page',
     name: 'Профиль',
     component: Registrations,
+  },
+  {
+    path: '/intro-slide-page',
+    name: 'Intro Slide',
+    component: IntroSlide,
   },
 ];
 
