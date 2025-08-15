@@ -72,11 +72,122 @@ const useIntroSlideStore = defineStore('introSlideStore', () => {
     }
   };
 
+  const createIntroSlide = async (
+    slideData: IntroSlideData,
+    files: { video?: File; poster?: File }
+  ) => {
+    isLoading.value = true;
+    try {
+      const formData = new FormData();
+      formData.append('action', 'create');
+      formData.append('title', slideData.title);
+      formData.append('button_text', slideData.button_text);
+      formData.append('button_link', slideData.button_link);
+      formData.append('advantages', JSON.stringify(slideData.advantages));
+
+      if (files.video) {
+        formData.append('video', files.video);
+      }
+      if (files.poster) {
+        formData.append('poster', files.poster);
+      }
+
+      const response = await fetchWithCors(API_BASE_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Не удалось создать слайд');
+      }
+
+      await getIntroSlideData();
+    } catch (err) {
+      throw new Error(
+        err instanceof Error
+          ? err.message
+          : 'Неизвестная ошибка при создании слайда'
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const deleteIntroSlide = async (slideId: number) => {
+    isLoading.value = true;
+    try {
+      const formData = new FormData();
+      formData.append('action', 'delete');
+      formData.append('id', String(slideId));
+
+      const response = await fetchWithCors(API_BASE_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.success) {
+        throw new Error(response.error || 'Не удалось удалить слайд');
+      }
+
+      await getIntroSlideData();
+    } catch (err) {
+      throw new Error(
+        err instanceof Error
+          ? err.message
+          : 'Неизвестная ошибка при удалении слайда'
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const updateSlideOrder = async (
+    orderData: { id: number; position: number }[]
+  ) => {
+    // Optimistic update
+    const originalOrder = JSON.parse(JSON.stringify(introSlideData.value));
+    const newOrderedSlides = orderData
+      .map((data) => {
+        const slide = introSlideData.value.find((s) => s.id === data.id);
+        return { ...slide, position: data.position };
+      })
+      .sort((a, b) => a.position - b.position);
+    introSlideData.value = newOrderedSlides as IntroSlideData[];
+
+    try {
+      const formData = new FormData();
+      formData.append('action', 'update_order');
+      formData.append('order', JSON.stringify(orderData));
+
+      const response = await fetchWithCors(API_BASE_URL, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.success) {
+        throw new Error(
+          response.error || 'Не удалось обновить порядок слайдов'
+        );
+      }
+    } catch (err) {
+      // Revert on error
+      introSlideData.value = originalOrder;
+      throw new Error(
+        err instanceof Error
+          ? err.message
+          : 'Неизвестная ошибка при обновлении порядка'
+      );
+    }
+  };
+
   return {
     introSlideData,
     isLoading,
     getIntroSlideData,
     updateIntroSlide,
+    createIntroSlide,
+    deleteIntroSlide,
+    updateSlideOrder,
   };
 });
 
