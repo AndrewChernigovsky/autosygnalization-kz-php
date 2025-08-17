@@ -13,7 +13,6 @@ const useIntroSlideStore = defineStore('introSlideStore', () => {
     try {
       const response = await fetchWithCors(API_BASE_URL);
       if (response.success) {
-        console.log(response.data);
         introSlideData.value = response.data;
       } else {
         throw new Error(response.error || 'Не удалось загрузить данные');
@@ -144,16 +143,7 @@ const useIntroSlideStore = defineStore('introSlideStore', () => {
   const updateSlideOrder = async (
     orderData: { id: number; position: number }[]
   ) => {
-    // Optimistic update
-    const originalOrder = JSON.parse(JSON.stringify(introSlideData.value));
-    const newOrderedSlides = orderData
-      .map((data) => {
-        const slide = introSlideData.value.find((s) => s.id === data.id);
-        return { ...slide, position: data.position };
-      })
-      .sort((a, b) => a.position - b.position);
-    introSlideData.value = newOrderedSlides as IntroSlideData[];
-
+    isLoading.value = true;
     try {
       const formData = new FormData();
       formData.append('action', 'update_order');
@@ -169,14 +159,18 @@ const useIntroSlideStore = defineStore('introSlideStore', () => {
           response.error || 'Не удалось обновить порядок слайдов'
         );
       }
+      // После успешного обновления, получаем актуальный порядок с сервера
+      await getIntroSlideData();
     } catch (err) {
-      // Revert on error
-      introSlideData.value = originalOrder;
+      // При ошибке так же стоит перезапросить данные, чтобы вернуть к актуальному состоянию
+      await getIntroSlideData();
       throw new Error(
         err instanceof Error
           ? err.message
           : 'Неизвестная ошибка при обновлении порядка'
       );
+    } finally {
+      isLoading.value = false;
     }
   };
 

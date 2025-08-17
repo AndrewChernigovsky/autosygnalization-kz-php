@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import MyBtn from '../UI/MyBtn.vue';
 import useIntroSlideStore from '../../stores/introSlideStore';
@@ -21,6 +21,9 @@ const newSlide = ref<IntroSlideData | null>(null);
 const isAddingNewSlide = ref(false);
 const draggedItem = ref<IntroSlideData | null>(null);
 const dragOverItem = ref<IntroSlideData | null>(null);
+const loadingAction = ref<'loading' | 'saving' | 'deleting' | 'reordering'>(
+  'loading'
+);
 
 const setFileInputRef = (el: any, itemId: number, type: 'video' | 'poster') => {
   if (el) {
@@ -181,6 +184,7 @@ const handleSave = async (item: IntroSlideData) => {
     const files = filesToUpload.value[item.id] || {};
     const toDelete = filesToDelete.value[item.id] || {};
 
+    loadingAction.value = 'saving';
     await introSlideStore.updateIntroSlide(itemToSave, files, toDelete);
 
     // After successful save, clear temporary states and refresh data
@@ -260,6 +264,7 @@ const handleSaveNewSlide = async () => {
   const files = filesToUpload.value[0] || {};
 
   try {
+    loadingAction.value = 'saving';
     await introSlideStore.createIntroSlide(slideToCreate, files);
     Swal.fire({
       toast: true,
@@ -293,6 +298,7 @@ const handleDeleteSlide = async (slideId: number) => {
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
+        loadingAction.value = 'deleting';
         await introSlideStore.deleteIntroSlide(slideId);
         Swal.fire('Удалено!', 'Слайд был успешно удален.', 'success');
       } catch (error) {
@@ -314,6 +320,27 @@ const handleDragStart = (event: DragEvent, item: IntroSlideData) => {
   if (event.dataTransfer) {
     event.dataTransfer.effectAllowed = 'move';
     event.dataTransfer.setData('text/plain', item.id.toString());
+
+    const itemElement = (event.target as HTMLElement).closest('.main-item');
+    if (itemElement) {
+      const clone = itemElement.cloneNode(true) as HTMLElement;
+
+      // Скрываем открытое содержимое в клоне для корректного вида при перетаскивании
+      const content = clone.querySelector('.main-item-content');
+      if (content) {
+        (content as HTMLElement).style.display = 'none';
+      }
+
+      clone.style.position = 'absolute';
+      clone.style.left = '-9999px';
+      clone.style.width = `${itemElement.clientWidth}px`;
+      document.body.appendChild(clone);
+      event.dataTransfer.setDragImage(clone, event.offsetX, event.offsetY);
+
+      setTimeout(() => {
+        document.body.removeChild(clone);
+      }, 0);
+    }
   }
 };
 
@@ -326,6 +353,11 @@ const handleDragOver = (event: DragEvent, item: IntroSlideData) => {
 };
 
 const handleDragLeave = () => {
+  dragOverItem.value = null;
+};
+
+const handleDragEnd = () => {
+  draggedItem.value = null;
   dragOverItem.value = null;
 };
 
@@ -360,6 +392,7 @@ const reorderSlides = async (
       position: index + 1,
     }));
 
+    loadingAction.value = 'reordering';
     await introSlideStore.updateSlideOrder(updateData);
 
     Swal.fire({
@@ -383,7 +416,43 @@ const reorderSlides = async (
 };
 
 onMounted(() => {
+  loadingAction.value = 'loading';
   introSlideStore.getIntroSlideData();
+});
+
+watchEffect(() => {
+  if (isLoading.value) {
+    let title = '';
+    let html = '';
+    switch (loadingAction.value) {
+      case 'saving':
+        title = 'Сохранение данных';
+        html =
+          'Пожалуйста, подождите...<br>Это может занять некоторое время при загрузке видео.';
+        break;
+      case 'deleting':
+        title = 'Удаление слайда';
+        html = 'Пожалуйста, подождите...';
+        break;
+      case 'reordering':
+        title = 'Обновление порядка';
+        html = 'Пожалуйста, подождите...';
+        break;
+      default:
+        title = 'Загрузка данных';
+        html = 'Пожалуйста, подождите...';
+    }
+    Swal.fire({
+      title: title,
+      html: html,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else {
+    Swal.close();
+  }
 });
 
 // --- Transition Hooks for Accordion ---
@@ -426,11 +495,6 @@ const leave = (el: Element) => {
 </script>
 <template>
   <div>
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="spinner"></div>
-      <p>Сохранение данных, пожалуйста, подождите...</p>
-      <p>Это может занять некоторое время при загрузке видео.</p>
-    </div>
     <h1 class="main-title">Главный слайдер на главной странице</h1>
     <div class="add-new-item-bar">
       <span>Добавить новый слайд</span>
@@ -452,15 +516,27 @@ const leave = (el: Element) => {
         <div class="main-item-inputs">
           <div class="main-item-input">
             <label class="main-item-input-label">Заголовок</label>
-            <input type="text" v-model="newSlide.title" />
+            <input
+              class="main-item-input-field"
+              type="text"
+              v-model="newSlide.title"
+            />
           </div>
           <div class="main-item-input">
             <label class="main-item-input-label">Текст кнопки</label>
-            <input type="text" v-model="newSlide.button_text" />
+            <input
+              class="main-item-input-field"
+              type="text"
+              v-model="newSlide.button_text"
+            />
           </div>
           <div class="main-item-input">
             <label class="main-item-input-label">Ссылка кнопки</label>
-            <input type="text" v-model="newSlide.button_link" />
+            <input
+              class="main-item-input-field"
+              type="text"
+              v-model="newSlide.button_link"
+            />
           </div>
         </div>
 
@@ -480,6 +556,7 @@ const leave = (el: Element) => {
                   class="advantage-item"
                 >
                   <input
+                    class="input-advantage"
                     type="text"
                     v-model="newSlide.advantages[advIndex]"
                     placeholder="Введите преимущество"
@@ -617,34 +694,25 @@ const leave = (el: Element) => {
         @dragleave="handleDragLeave"
         @drop="handleDrop($event, item)"
       >
-        <!-- <div
-          class="drag-handle"
-          draggable="true"
-          @dragstart="handleDragStart($event, item)"
-        >
-          <img
-            style="display: block; margin-right: 10px"
-            src="./../../assets/d-and-d.svg"
-            alt="Перетащить"
-            width="40"
-            height="40"
-          />
-        </div> -->
-        <label class="main-item-label" :for="`intro-slide-${item.id}`"
-          >{{ item.title }}
-          <div
-            class="drag-handle"
-            draggable="true"
-            @dragstart="handleDragStart($event, item)"
-          >
-            <img
-              style="display: block; margin-right: 10px"
-              src="./../../assets/d-and-d.svg"
-              alt="Перетащить"
-              width="40"
-              height="40"
-            />
+        <label class="main-item-label" :for="`intro-slide-${item.id}`">
+          <div class="main-item-label-content">
+            <div
+              class="drag-handle"
+              draggable="true"
+              @dragstart="handleDragStart($event, item)"
+              @dragend="handleDragEnd"
+            >
+              <img
+                style="display: block"
+                src="./../../assets/d-and-d.svg"
+                alt="Перетащить"
+                width="40"
+                height="40"
+              />
+            </div>
+            {{ item.title }}
           </div>
+
           <MyBtn variant="primary" @click.prevent="togleAccardion(item.id)">{{
             openAccardion[item.id] ? 'Закрыть' : 'Редактировать'
           }}</MyBtn>
@@ -664,11 +732,16 @@ const leave = (el: Element) => {
             <div class="main-item-inputs">
               <div class="main-item-input">
                 <label class="main-item-input-label">Заголовок</label>
-                <input type="text" v-model="editableItemData[item.id].title" />
+                <input
+                  class="main-item-input-field"
+                  type="text"
+                  v-model="editableItemData[item.id].title"
+                />
               </div>
               <div class="main-item-input">
                 <label class="main-item-input-label">Текст кнопки</label>
                 <input
+                  class="main-item-input-field"
                   type="text"
                   v-model="editableItemData[item.id].button_text"
                 />
@@ -676,6 +749,7 @@ const leave = (el: Element) => {
               <div class="main-item-input">
                 <label class="main-item-input-label">Ссылка кнопки</label>
                 <input
+                  class="main-item-input-field"
                   type="text"
                   v-model="editableItemData[item.id].button_link"
                 />
@@ -718,6 +792,7 @@ const leave = (el: Element) => {
                         class="advantage-item"
                       >
                         <input
+                          class="input-advantage"
                           type="text"
                           v-model="
                             editableItemData[item.id].advantages[advIndex]
@@ -885,11 +960,9 @@ const leave = (el: Element) => {
   margin-bottom: 10px;
   border-radius: 10px;
   gap: 20px;
+  transition: all 0.2s ease;
 }
 .drag-handle {
-  position: absolute;
-  top: 10px;
-  left: 0;
   cursor: grab;
   padding: 5px;
 }
@@ -898,9 +971,14 @@ const leave = (el: Element) => {
 }
 .main-item.dragging {
   opacity: 0.5;
+  transform: scale(0.95);
 }
 .main-item.drag-over {
   border-color: #3498db;
+}
+.main-item-label-content {
+  display: flex;
+  align-items: center;
 }
 .main-item-label {
   display: flex;
@@ -909,7 +987,7 @@ const leave = (el: Element) => {
   font-size: 24px;
   font-weight: bold;
   padding: 3px;
-  padding-left: 35px;
+  padding-right: 10px;
 }
 .advantages {
   margin-top: 15px;
@@ -980,16 +1058,20 @@ const leave = (el: Element) => {
   display: flex;
   gap: 10px;
   font-size: 24px;
+  padding: 15px;
 }
 
-.main-item-input > input {
+.main-item-input-field {
   flex: 1;
   padding: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #333;
-  color: white;
+  color: black;
+  background-color: white;
+  font-size: 24px;
+  box-shadow: 0 0 0 5px #363535;
 }
+
 .main-item-input-label {
   min-width: 200px;
   font-weight: bold;
@@ -998,18 +1080,24 @@ const leave = (el: Element) => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding-top: 10px;
+  border-top: 1px solid #444;
 }
 
 .main-item-advantages {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #444;
 }
 
 .main-item-content {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  padding: 15px;
+  padding-top: 0;
 }
 
 .main-item-advantages-header {
@@ -1034,7 +1122,7 @@ const leave = (el: Element) => {
 .advantages-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   margin-bottom: 15px;
 }
 .no-advantages {
@@ -1051,49 +1139,15 @@ const leave = (el: Element) => {
 .advantage-item input {
   font-size: 24px;
   flex-grow: 1;
-  padding: 8px;
+  padding: 5px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #333;
-  color: white;
+  color: black;
+  background-color: white;
+  box-shadow: 0 0 0 5px #363535;
 }
 .save-all-btn {
   align-self: center;
-}
-
-.loading-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  color: white;
-  text-align: center;
-}
-
-.spinner {
-  border: 8px solid #f3f3f3;
-  border-top: 8px solid #3498db;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: spin 1s linear infinite;
-  margin-bottom: 20px;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 
 .accordion-enter-active,
@@ -1110,11 +1164,12 @@ const leave = (el: Element) => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px;
+  padding: 20px;
   border: 1px solid white;
   border-radius: 10px;
   margin-bottom: 20px;
-  font-size: 20px;
+  font-size: 26px;
+  font-weight: bold;
 }
 .new-slide-form {
   border-color: #3498db;
@@ -1122,5 +1177,11 @@ const leave = (el: Element) => {
 .slides-list {
   /* Space for the drag handle */
   padding-top: 10px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
 }
 </style>
