@@ -36,12 +36,8 @@
               </div>
               <div class="form-group">
                 <label>Описание:</label>
-                <QuillEditor
+                <MyQuill
                   :key="service.id + '-desc'"
-                  theme="snow"
-                  :toolbar="toolbarOptions"
-                  :formats="formatsOptions"
-                  contentType="html"
                   :content="service.description"
                   @update:content="(val: string) => (service.description = val)"
                 />
@@ -61,12 +57,8 @@
               </div>
               <div class="form-group">
                 <label>Список услуг:</label>
-                <QuillEditor
+                <MyQuill
                   :key="service.id + '-serv'"
-                  theme="snow"
-                  :toolbar="toolbarOptions"
-                  :formats="formatsOptions"
-                  contentType="html"
                   :content="service.services"
                   @update:content="(val: string) => (service.services = val)"
                 />
@@ -178,28 +170,10 @@ import type { Service, AddedService } from './interfaces/Service';
 import { API_URL } from '../../../config';
 import Loader from '../../UI/Loader.vue';
 import Swal from 'sweetalert2';
-// @ts-ignore
-import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
-import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import ImageUpload from '../../UI/ImageUpload.vue';
 import { nextTick } from 'vue';
 import MyBtn from '../UI/MyBtn.vue';
-
-const toolbarOptions = [
-  [{ header: [1, 2, 3, false] }],
-  ['bold', 'italic', 'underline', 'strike'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  ['clean'],
-];
-
-const formatsOptions = [
-  'header',
-  'bold',
-  'italic',
-  'underline',
-  'strike',
-  'list',
-];
+import MyQuill from '../UI/MyQuill.vue';
 
 const localServices = ref<{ main: Service[]; added: AddedService[] }>({
   main: [],

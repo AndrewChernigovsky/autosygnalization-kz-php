@@ -5,7 +5,7 @@ import { ref, watch } from 'vue';
 
 const props = defineProps<{
   content: string | null;
-  quillOptions?: any;
+  quillOptions?: any | null;
 }>();
 
 const content = ref(props.content);
@@ -38,7 +38,7 @@ watch(content, (newVal) => {
     <QuillEditor
       v-model:content="content"
       theme="snow"
-      :options="presetQuillOptions ? presetQuillOptions : props.quillOptions"
+      :options="props.quillOptions ? props.quillOptions : presetQuillOptions"
       content-type="html"
     />
   </div>

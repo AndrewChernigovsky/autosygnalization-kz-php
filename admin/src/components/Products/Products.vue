@@ -18,30 +18,44 @@
       <div v-if="!loading && !error" class="space-y-2">
         <div v-for="(group, category) in groupedProducts" :key="category">
           <div class="category-header">
-            <h2 class="text-2xl font-bold my-4">
-              {{ getCategoryName(category) }}
-            </h2>
-            <button @click="addProduct(category)" class="btn-add">
-              Добавить товар
-            </button>
-          </div>
-          <div class="space-y-2">
-            <Product
-              v-for="product in group"
-              :key="product.id"
-              :product="product"
-              :all-categories="allCategories"
-              :is-image-uploading="isImageUploading"
-              :get-category-name="getCategoryName"
-              @save-product="saveChanges"
-              @delete-product="deleteProductHandler"
-              @delete-image="handleDeleteImage"
-              @trigger-file-upload="triggerFileUpload"
-              @handle-toggle="handleToggle"
-              @cancel-editing="handleCancelEditing"
-              @stage-tab-icon="handleStageTabIcon"
-              @delete-tab-icon="handleDeleteTabIcon"
-            />
+            <div class="category-header-content">
+              <h2 class="text-2xl font-bold my-4">
+                {{ getCategoryName(category) }}
+              </h2>
+              <MyBtn variant="primary" @click="toggleAccardion(category)">
+                {{ openAccardions[category] ? 'Скрыть' : 'Показать' }}
+              </MyBtn>
+            </div>
+            <MyTransition>
+              <div
+                class="space-y-2 product-list"
+                v-if="openAccardions[category]"
+              >
+                <Product
+                  v-for="product in group"
+                  :key="product.id"
+                  :product="product"
+                  :all-categories="allCategories"
+                  :is-image-uploading="isImageUploading"
+                  :get-category-name="getCategoryName"
+                  @save-product="saveChanges"
+                  @delete-product="deleteProductHandler"
+                  @delete-image="handleDeleteImage"
+                  @trigger-file-upload="triggerFileUpload"
+                  @handle-toggle="handleToggle"
+                  @cancel-editing="handleCancelEditing"
+                  @stage-tab-icon="handleStageTabIcon"
+                  @delete-tab-icon="handleDeleteTabIcon"
+                />
+                <MyBtn
+                  variant="secondary"
+                  @click="addProduct(category)"
+                  class="btn-add"
+                >
+                  Добавить товар
+                </MyBtn>
+              </div>
+            </MyTransition>
           </div>
         </div>
       </div>
@@ -57,6 +71,8 @@ import Swal from 'sweetalert2';
 import Loader from '../../UI/Loader.vue';
 import Product from './Product.vue';
 import { useProductEditorStore } from '../../stores/productEditorStore';
+import MyBtn from '../UI/MyBtn.vue';
+import MyTransition from '../UI/MyTransition.vue';
 
 const {
   products,
@@ -96,6 +112,12 @@ const tabIconsToUpload = ref<
     }[]
   >
 >(new Map());
+
+const openAccardions = ref<Record<string, boolean>>({});
+
+const toggleAccardion = (productId: string) => {
+  openAccardions.value[productId] = !openAccardions.value[productId];
+};
 
 const isImageUploading = (productId: string, index: number | null) => {
   if (!imageUploadStatus.value) return false;
@@ -398,7 +420,6 @@ onMounted(() => {
   }
 }
 .theme-dark {
-  background-color: #333;
   color: #f1f1f1;
   min-height: 100vh;
   padding: 20px;
@@ -413,18 +434,29 @@ onMounted(() => {
   gap: 20px;
 }
 
-.category-header {
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.category-header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 15px;
-  padding-right: 60px;
-  background-color: #2a2a2a;
+}
+
+.category-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
   border-radius: 5px;
   position: sticky;
   top: -20px;
   z-index: 100;
+  gap: 20px;
+  border: 1px solid white;
 }
 
 .theme-dark h2 {
@@ -438,15 +470,12 @@ onMounted(() => {
 }
 
 .btn-add {
-  background-color: #007bff;
-  padding: 8px 12px;
-  border-radius: 5px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  max-width: 100%;
+  width: 100%;
+  min-height: 60px;
+  align-self: flex-end;
+  flex-grow: 1;
 }
-
 .btn-add:hover {
   background-color: #0069d9;
 }

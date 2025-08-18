@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { watch, onMounted, defineExpose } from 'vue';
-import { QuillEditor } from '@rafaeljunioxavier/vue-quill-fix';
-import '@rafaeljunioxavier/vue-quill-fix/dist/vue-quill.snow.css';
 import type { ProductI } from './interfaces/Products';
 import { useProductEditorStore } from '../../stores/productEditorStore';
 import { useProductPricesStore } from '../../stores/productPricesStore';
+import MyQuill from '../UI/MyQuill.vue';
+import MyBtn from '../UI/MyBtn.vue';
 
 const props = defineProps<{
   product: ProductI;
@@ -12,24 +12,6 @@ const props = defineProps<{
 
 const editorStore = useProductEditorStore();
 const pricesStore = useProductPricesStore();
-
-const toolbarOptions = [
-  ['bold', 'italic', 'underline'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  [{ header: [1, 2, 3, false] }],
-  ['link'],
-  ['clean'],
-];
-
-const formatsOptions = [
-  'header',
-  'bold',
-  'italic',
-  'underline',
-  'list',
-  'link',
-];
-
 // Инициализация при монтировании
 onMounted(async () => {
   if (editorStore.isEditing(props.product.id)) {
@@ -161,37 +143,6 @@ defineExpose({ syncPricesToProduct });
               <span class="item-number">{{ index + 1 }}</span>
             </div>
 
-            <!-- <div class="price-item-fields">
-              <div class="field-group">
-                <label>Название товара:</label>
-                <input
-                  :value="priceItem.title"
-                  @input="(e) => handleTitleInput(index, e)"
-                  type="text"
-                  placeholder="Установка автосигнализации"
-                />
-              </div>
-
-              <div class="field-group">
-                <label>Цена товара:</label>
-                <input
-                  :value="priceItem.productPrice"
-                  @input="(e) => handleProductPriceInput(index, e)"
-                  type="text"
-                  placeholder="259 600"
-                />
-              </div> -->
-
-            <!-- <div class="field-group">
-                <label>Валюта:</label>
-                <input
-                  :value="priceItem.currency"
-                  @input="(e) => handleCurrencyInput(index, e)"
-                  type="text"
-                  placeholder="₸"
-                />
-              </div> -->
-
             <div class="field-group">
               <label>Цена установки:</label>
               <input
@@ -204,12 +155,8 @@ defineExpose({ syncPricesToProduct });
 
             <div class="field-group">
               <label>Описание (список преимуществ):</label>
-              <QuillEditor
+              <MyQuill
                 :key="'price-' + index"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                :formats="formatsOptions"
-                contentType="html"
                 :content="priceItem.description"
                 @update:content="
                   (val: string) => pricesStore.updatePriceDescription(index, val)
@@ -219,13 +166,14 @@ defineExpose({ syncPricesToProduct });
           </div>
         </div>
 
-        <button
+        <MyBtn
+          variant="secondary"
           type="button"
           class="add-item-btn"
           @click="pricesStore.addPriceItem"
         >
-          + Добавить элемент цены
-        </button>
+          Добавить элемент цены
+        </MyBtn>
       </div>
     </div>
 
@@ -264,9 +212,9 @@ defineExpose({ syncPricesToProduct });
 .prices-editor {
   margin-top: 20px;
   padding: 20px;
-  border: 1px solid #444;
+  border: 1px dashed #444;
   border-radius: 8px;
-  background-color: #2a2a2a;
+  background-color: black;
 }
 
 .prices-editor h1 {
@@ -297,7 +245,7 @@ defineExpose({ syncPricesToProduct });
   padding: 15px;
   border: 1px solid #555;
   border-radius: 6px;
-  background-color: #333;
+  background-color: inherit;
   position: relative;
 }
 
@@ -359,9 +307,9 @@ defineExpose({ syncPricesToProduct });
 
 .field-group input {
   padding: 8px 12px;
-  background-color: #444;
+  background-color: white;
   border: 1px solid #555;
-  color: #fff;
+  color: black;
   border-radius: 4px;
   font-size: 14px;
 }
@@ -372,19 +320,9 @@ defineExpose({ syncPricesToProduct });
 }
 
 .add-item-btn {
-  padding: 12px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.add-item-btn:hover {
-  background-color: #218838;
+  align-self: center;
+  padding: 0;
+  padding: 15px 40px;
 }
 
 /* Display Mode Styles */
@@ -404,7 +342,7 @@ defineExpose({ syncPricesToProduct });
   padding: 15px;
   border: 1px solid #444;
   border-radius: 6px;
-  background-color: #333;
+  background-color: inherit;
 }
 
 .price-header {
@@ -459,19 +397,19 @@ defineExpose({ syncPricesToProduct });
   border-top: 1px solid #555;
   border-left: 1px solid #555;
   border-right: 1px solid #555;
-  background-color: #444;
+  background-color: inherit;
 }
 
 :deep(.ql-container) {
   border-bottom: 1px solid #555;
   border-left: 1px solid #555;
   border-right: 1px solid #555;
-  background-color: #333;
-  color: #fff;
+  background-color: white;
+  color: black;
 }
 
 :deep(.ql-editor) {
-  color: #fff;
+  color: black;
   min-height: 120px;
 }
 
