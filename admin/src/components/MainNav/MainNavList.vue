@@ -115,6 +115,13 @@ const handleDragLeave = () => {
   dragOverItem.value = null;
 };
 
+// Добавляем новую функцию для завершения drag-операции
+const handleDragEnd = () => {
+  // Принудительно сбрасываем все состояния при завершении drag
+  draggedItem.value = null;
+  dragOverItem.value = null;
+};
+
 const handleDrop = async (event: DragEvent, targetNavItem: any) => {
   event.preventDefault();
 
@@ -198,12 +205,14 @@ const reorderNavItems = async (draggedNavItem: any, targetNavItem: any) => {
         @dragover="handleDragOver($event, navItem)"
         @dragleave="handleDragLeave"
         @drop="handleDrop($event, navItem)"
+        @dragend="handleDragEnd"
       >
         <div class="nav-item-header">
           <div
             class="nav-item-header-btn drag-btn"
             draggable="true"
             @dragstart="handleDragStart($event, navItem)"
+            @dragend="handleDragEnd"
           >
             <img
               style="display: block; margin-right: 10px"

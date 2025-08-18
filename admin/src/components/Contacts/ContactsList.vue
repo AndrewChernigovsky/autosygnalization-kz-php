@@ -106,6 +106,13 @@ const handleDragLeave = () => {
   dragOverItem.value = null;
 };
 
+// Добавляем новую функцию для завершения drag-операции
+const handleDragEnd = () => {
+  // Принудительно сбрасываем все состояния при завершении drag
+  draggedItem.value = null;
+  dragOverItem.value = null;
+};
+
 const handleDrop = async (event: DragEvent, targetContact: any) => {
   event.preventDefault();
 
@@ -214,12 +221,14 @@ const reorderContacts = async (draggedContact: any, targetContact: any) => {
             @dragover="handleDragOver($event, contact)"
             @dragleave="handleDragLeave"
             @drop="handleDrop($event, contact)"
+            @dragend="handleDragEnd"
           >
             <div class="contact-item-header">
               <div
                 class="contact-item-header-btn drag-btn"
                 draggable="true"
                 @dragstart="handleDragStart($event, contact)"
+                @dragend="handleDragEnd"
               >
                 <img
                   style="display: block; margin-right: 10px"
