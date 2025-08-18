@@ -6,7 +6,7 @@ CREATE TABLE `LinksData` (
   `links_data_id` INT AUTO_INCREMENT PRIMARY KEY,
   `name` VARCHAR(255) NOT NULL COMMENT 'Название ссылки',
   `link` VARCHAR(255) NOT NULL COMMENT 'URL ссылки',
-  `source_table` ENUM('Sections-Product', 'Services', 'Contacts') NULL COMMENT 'Источник данных (для синхронизации)',
+  `source_table` ENUM('Services', 'Contacts') NULL COMMENT 'Источник данных (для синхронизации)',
   `source_id` INT NULL COMMENT 'ID из исходной таблицы (для синхронизации)',
   `created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -14,53 +14,8 @@ CREATE TABLE `LinksData` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
--- Триггеры для таблицы Sections-Product
+-- Триггеры для таблицы Sections-Product (УДАЛЕНЫ - таблица не существует)
 -- --------------------------------------------------------
-
--- Триггер на ДОБАВЛЕНИЕ записи в Sections-Product
-DROP TRIGGER IF EXISTS `after_sections_product_insert_to_linksdata`;
-DELIMITER $$
-CREATE TRIGGER `after_sections_product_insert_to_linksdata`
-AFTER INSERT ON `Sections-Product`
-FOR EACH ROW
-BEGIN
-  IF NEW.link IS NOT NULL AND NEW.link != '' THEN
-    INSERT INTO `LinksData` (name, link, source_table, source_id)
-    VALUES (NEW.name, NEW.link, 'Sections-Product', NEW.section_product_id)
-    ON DUPLICATE KEY UPDATE name=NEW.name, link=NEW.link;
-  END IF;
-END$$
-DELIMITER ;
-
--- Триггер на ОБНОВЛЕНИЕ записи в Sections-Product
-DROP TRIGGER IF EXISTS `after_sections_product_update_to_linksdata`;
-DELIMITER $$
-CREATE TRIGGER `after_sections_product_update_to_linksdata`
-AFTER UPDATE ON `Sections-Product`
-FOR EACH ROW
-BEGIN
-  IF NEW.link IS NULL OR NEW.link = '' THEN
-    DELETE FROM `LinksData`
-    WHERE source_table = 'Sections-Product' AND source_id = OLD.section_product_id;
-  ELSE
-    INSERT INTO `LinksData` (name, link, source_table, source_id)
-    VALUES (NEW.name, NEW.link, 'Sections-Product', NEW.section_product_id)
-    ON DUPLICATE KEY UPDATE name = VALUES(name), link = VALUES(link);
-  END IF;
-END$$
-DELIMITER ;
-
--- Триггер на УДАЛЕНИЕ записи из Sections-Product
-DROP TRIGGER IF EXISTS `after_sections_product_delete_to_linksdata`;
-DELIMITER $$
-CREATE TRIGGER `after_sections_product_delete_to_linksdata`
-AFTER DELETE ON `Sections-Product`
-FOR EACH ROW
-BEGIN
-  DELETE FROM `LinksData`
-  WHERE source_table = 'Sections-Product' AND source_id = OLD.section_product_id;
-END$$
-DELIMITER ;
 
 -- --------------------------------------------------------
 -- Триггеры для таблицы Services
@@ -197,13 +152,7 @@ DELIMITER ;
 -- Первоначальное заполнение таблицы
 -- --------------------------------------------------------
 
--- Заполнение данными из Sections-Product
--- Используем IGNORE, чтобы пропустить дубликаты, если они уже есть
--- Добавлено условие WHERE для фильтрации пустых ссылок
-INSERT IGNORE INTO `LinksData` (name, link, source_table, source_id)
-SELECT name, link, 'Sections-Product', section_product_id
-FROM `Sections-Product`
-WHERE link IS NOT NULL AND link != '';
+-- Заполнение данными из Sections-Product (ПРОПУЩЕНО - таблица не существует)
 
 -- Заполнение данными из Services
 -- Добавлено условие WHERE для фильтрации пустых ссылок
