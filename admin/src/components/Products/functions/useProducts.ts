@@ -80,7 +80,6 @@ export function useProducts() {
   }
 
   async function updateProduct(product: ProductI): Promise<boolean> {
-    console.log('[useProducts.ts] updateProduct called', product);
     try {
       const productData = {
         id: product.id,
@@ -100,12 +99,7 @@ export function useProducts() {
         tabs: product.tabs,
       };
 
-      console.log('productData', productData);
-
       if (product.is_new) {
-        console.log(
-          '[useProducts] Это НОВЫЙ товар. Выполняется API-запрос на создание...'
-        );
         const createdProduct = await apiCall(
           'create_product.php',
           'POST',
@@ -119,18 +113,12 @@ export function useProducts() {
           products.value[index].is_new = false;
         }
       } else {
-        console.log(
-          '[useProducts] Это СУЩЕСТВУЮЩИЙ товар. Выполняется API-запрос на обновление...'
-        );
         const updatedData = await apiCall(
           'update_product.php',
           'POST',
           productData
         );
-        console.log(
-          '[useProducts.ts] update_product.php response',
-          updatedData
-        );
+
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].link = updatedData.link;
@@ -138,10 +126,7 @@ export function useProducts() {
       }
 
       // --- Новый вызов API для сохранения цен-услуг ---
-      console.log(
-        '[useProducts.ts] product.prices before sending',
-        product.prices
-      );
+
       let prices = [];
       if (Array.isArray(product.prices)) {
         prices = product.prices
@@ -153,7 +138,6 @@ export function useProducts() {
             description: item.description,
             installationPrice: item.installationPrice || '',
           }));
-        console.log('[useProducts.ts] prices to send', prices);
         await apiCall('update_prices_products.php', 'POST', {
           id: product.id,
           prices,
@@ -200,9 +184,6 @@ export function useProducts() {
   }
 
   async function addProduct(category: string) {
-    console.log(
-      '[useProducts] addProduct вызван. Только локальные изменения, без API-запроса.'
-    );
     // Эта функция теперь работает только на клиенте
     const newProduct: ProductI = {
       id: `new_${Date.now()}`, // Временный ID

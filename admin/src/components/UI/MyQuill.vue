@@ -21,7 +21,7 @@ const presetQuillOptions = {
     toolbar: [
       [{ header: [false] }],
       ['bold', 'italic', 'underline'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ list: 'bullet' }, { list: 'ordered' }],
       ['link'],
       ['clean'],
     ],
