@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick, watch } from 'vue';
+import { ref, onMounted, computed, nextTick, watch, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MySwitch from '../components/UI/MySwitch.vue';
 import LinkSelector from '../components/UI/LinkSelector.vue';
-import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyModal from '../components/UI/MyModal.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
 import type { LinkData, IFooterLink, SectionKey } from '../types/FooterLinks';
@@ -338,10 +337,26 @@ onMounted(() => {
   getLinksDataFromDB();
   fetchLinks(true);
 });
+
+watchEffect(() => {
+  if (isInitialLoading.value) {
+    Swal.fire({
+      title: 'Загрузка данных футера...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else if (!isUpdating.value) {
+    Swal.close();
+  }
+});
 </script>
 
 <template>
   <div class="new-footer-container">
+    <h1 class="my-title">Футер</h1>
     <div class="accordions-wrapper">
       <div v-for="(section, key) in sectionData" :key="key" class="accordion">
         <div class="accordion-header" @click="toggleAccordion(key)">
@@ -525,6 +540,12 @@ onMounted(() => {
   background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
   color: white;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.my-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0;
 }
 
 .new-footer-container {

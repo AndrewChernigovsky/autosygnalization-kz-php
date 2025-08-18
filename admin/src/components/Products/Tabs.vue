@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useProductEditorStore } from '../../stores/productEditorStore';
 import MyBtn from '../UI/MyBtn.vue';
 import MyTransition from '../UI/MyTransition.vue';
 import MyQuill from '../UI/MyQuill.vue';
+import type { ProductI } from './interfaces/Products';
 
 defineOptions({
   name: 'Tabs',
@@ -11,128 +11,187 @@ defineOptions({
 
 defineEmits(['upload-icon', 'delete-icon']);
 
-const editorStore = useProductEditorStore();
+const props = defineProps<{
+  product: ProductI;
+}>();
+
 const openTabs = ref<Record<number, boolean>>({});
+const openAccardion = ref<Record<number, boolean>>({});
 const toggleTab = (index: number) => {
   openTabs.value[index] = !openTabs.value[index];
+};
+const toggleAccardion = (index: number) => {
+  openAccardion.value[index] = !openAccardion.value[index];
+};
+
+const addTab = () => {
+  if (!props.product.tabs) {
+    props.product.tabs = [];
+  }
+  props.product.tabs.push({
+    title: 'Новая вкладка',
+    content: [],
+  });
+};
+
+const removeTab = (tabIndex: number) => {
+  props.product.tabs?.splice(tabIndex, 1);
+};
+
+const addDescriptionItem = (tabIndex: number) => {
+  props.product.tabs?.[tabIndex].content.push({
+    title: 'Новый пункт',
+    description: '',
+    icon: '',
+  });
+};
+
+const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
+  props.product.tabs?.[tabIndex].content.splice(itemIndex, 1);
 };
 </script>
 
 <template>
-  <div class="tabs-editor" v-if="editorStore.editingProduct">
-    <div
-      v-for="(tab, tabIndex) in editorStore.editingProduct.tabs"
-      :key="tabIndex"
-      class="tab-item"
-    >
-      <div>
-        <div class="tab-header">
-          <div class="form-group">
-            <label>Заголовок вкладки:</label>
-            <input type="text" v-model="tab.title" />
-          </div>
-          <div class="tab-header-buttons">
-            <MyBtn
-              variant="secondary"
-              @click="toggleTab(tabIndex)"
-              class="btn-toggle-tab"
-            >
-              {{ openTabs[tabIndex] ? 'Свернуть' : 'Развернуть' }}
-            </MyBtn>
-            <MyBtn
-              variant="primary"
-              @click="editorStore.removeTab(tabIndex)"
-              class="btn-delete-tab"
-            >
-              Удалить вкладку
-            </MyBtn>
-          </div>
-        </div>
-
-        <MyTransition>
-          <div v-if="openTabs[tabIndex]">
-            <div class="description-items-list">
-              <h4>Пункты описания:</h4>
-              <div
-                v-for="(item, itemIndex) in tab.content"
-                :key="itemIndex"
-                class="description-item"
+  <div class="tabs-editor-header">
+    <label class="tabs-editor-header-label">
+      Вкладки
+      <MyBtn
+        variant="primary"
+        @click="toggleAccardion(0)"
+        class="btn-toggle-accardion"
+      >
+        {{ openAccardion[0] ? 'Свернуть' : 'Развернуть' }}
+      </MyBtn>
+    </label>
+  </div>
+  <MyTransition>
+    <div class="tabs-editor" v-if="product && openAccardion[0]">
+      <div
+        v-for="(tab, tabIndex) in product.tabs"
+        :key="tabIndex"
+        class="tab-item"
+      >
+        <div>
+          <div class="tab-header">
+            <div class="form-group">
+              <label>Заголовок вкладки:</label>
+              <input type="text" v-model="tab.title" />
+            </div>
+            <div class="tab-header-buttons">
+              <MyBtn
+                variant="secondary"
+                @click="toggleTab(tabIndex)"
+                class="btn-toggle-tab"
               >
-                <div class="description-item-inputs">
-                  <div class="form-group">
-                    <label>Заголовок пункта:</label>
-                    <input type="text" v-model="item.title" />
-                  </div>
-                  <div class="form-group">
-                    <label>Иконка:</label>
-                    <div class="icon-management">
-                      <img
-                        v-if="item.icon"
-                        :src="item.icon"
-                        alt="Иконка"
-                        class="icon-preview"
-                      />
-                      <input
-                        type="text"
-                        v-model="item.icon"
-                        readonly
-                        class="icon-input"
-                      />
-                      <MyBtn
-                        variant="secondary"
-                        @click="$emit('upload-icon', tabIndex, itemIndex)"
-                        class="btn-upload-image"
-                      >
-                        Загрузить новую
-                      </MyBtn>
-                      <button
-                        @click="$emit('delete-icon', tabIndex, itemIndex)"
-                        class="btn-delete-icon"
-                        v-if="item.icon"
-                      >
-                        Удалить
-                      </button>
+                {{ openTabs[tabIndex] ? 'Свернуть' : 'Развернуть' }}
+              </MyBtn>
+              <MyBtn
+                variant="primary"
+                @click="removeTab(tabIndex)"
+                class="btn-delete-tab"
+              >
+                Удалить вкладку
+              </MyBtn>
+            </div>
+          </div>
+
+          <MyTransition>
+            <div v-if="openTabs[tabIndex]">
+              <div class="description-items-list">
+                <h4>Пункты описания:</h4>
+                <div
+                  v-for="(item, itemIndex) in tab.content"
+                  :key="itemIndex"
+                  class="description-item"
+                >
+                  <div class="description-item-inputs">
+                    <div class="form-group">
+                      <label>Заголовок пункта:</label>
+                      <input type="text" v-model="item.title" />
+                    </div>
+                    <div class="form-group">
+                      <label>Иконка:</label>
+                      <div class="icon-management">
+                        <img
+                          v-if="item.icon"
+                          :src="item.icon"
+                          alt="Иконка"
+                          class="icon-preview"
+                        />
+                        <input
+                          type="text"
+                          v-model="item.icon"
+                          readonly
+                          class="icon-input"
+                        />
+                        <MyBtn
+                          variant="secondary"
+                          @click="$emit('upload-icon', tabIndex, itemIndex)"
+                          class="btn-upload-image"
+                        >
+                          Загрузить новую
+                        </MyBtn>
+                        <button
+                          @click="$emit('delete-icon', tabIndex, itemIndex)"
+                          class="btn-delete-icon"
+                          v-if="item.icon"
+                        >
+                          Удалить
+                        </button>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label>Описание пункта:</label>
+                      <MyQuill v-model:content="item.description"></MyQuill>
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label>Описание пункта:</label>
-                    <MyQuill v-model:content="item.description"></MyQuill>
-                  </div>
+                  <MyBtn
+                    variant="primary"
+                    @click="removeDescriptionItem(tabIndex, itemIndex)"
+                    class="btn-delete-item"
+                  >
+                    Удалить пункт
+                  </MyBtn>
                 </div>
-                <MyBtn
-                  variant="primary"
-                  @click="
-                    editorStore.removeDescriptionItem(tabIndex, itemIndex)
-                  "
-                  class="btn-delete-item"
-                >
-                  Удалить пункт
-                </MyBtn>
               </div>
+              <MyBtn
+                variant="secondary"
+                @click="addDescriptionItem(tabIndex)"
+                class="btn-add"
+              >
+                Добавить пункт описания
+              </MyBtn>
             </div>
-            <MyBtn
-              variant="secondary"
-              @click="editorStore.addDescriptionItem(tabIndex)"
-              class="btn-add"
-            >
-              Добавить пункт описания
-            </MyBtn>
-          </div>
-        </MyTransition>
+          </MyTransition>
+        </div>
       </div>
-    </div>
 
-    <MyBtn
-      variant="secondary"
-      @click="editorStore.addTab()"
-      class="btn-add btn-add-tab"
-    >
-      Добавить вкладку
-    </MyBtn>
-  </div>
+      <MyBtn variant="secondary" @click="addTab()" class="btn-add btn-add-tab">
+        Добавить вкладку
+      </MyBtn>
+    </div></MyTransition
+  >
 </template>
 
 <style scoped>
+.tabs-editor-header {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+}
+.tabs-editor-header-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 28px;
+  flex-grow: 1;
+  width: 100%;
+  gap: 10px;
+}
+.btn-toggle-accardion {
+  transform: scale(0.9);
+}
 .tabs-editor {
   border: 1px solid #555;
   padding: 15px;
@@ -227,14 +286,19 @@ const toggleTab = (index: number) => {
 }
 
 .btn-add {
-  background-color: #007bff;
+  width: 100%;
+  max-width: 100%;
 }
 .btn-add-tab {
   width: 100%;
   margin-top: 15px;
 }
 .btn-upload-image {
-  background-color: #17a2b8;
+  transform: scale(0.9);
+}
+
+.btn-delete-item {
+  transform: scale(0.9);
 }
 .btn-delete-icon {
   background-color: #ffc107;

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
 import MyQuill from '../components/UI/MyQuill.vue';
+import MyTransition from '../components/UI/MyTransition.vue';
 
 interface AboutUsItem {
   about_us_id: number;
@@ -322,6 +323,14 @@ const handleUpdatePositions = async (updatedGroup: AboutUsItem[]) => {
         items: itemsToUpdate,
       }),
     });
+    Swal.fire({
+      toast: true,
+      position: 'top',
+      icon: 'success',
+      title: 'Порядок успешно обновлен',
+      showConfirmButton: false,
+      timer: 1500,
+    });
   } catch (err) {
     Swal.fire('Ошибка', 'Не удалось обновить порядок элементов.', 'error');
   }
@@ -329,6 +338,10 @@ const handleUpdatePositions = async (updatedGroup: AboutUsItem[]) => {
 
 const onDragStart = (id: number) => {
   draggingItem.value = id;
+};
+
+const onDragEnd = () => {
+  draggingItem.value = null;
 };
 
 const onDrop = (targetId: number, type: string) => {
@@ -410,37 +423,6 @@ const toggleAccordion = (type: string) => {
   openAccordion.value = openAccordion.value === type ? null : type;
 };
 
-const beforeEnter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = '0';
-  htmlEl.style.opacity = '0';
-};
-
-const enter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = `${el.scrollHeight}px`;
-  htmlEl.style.opacity = '1';
-};
-
-const afterEnter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = 'auto';
-};
-
-const beforeLeave = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = `${el.scrollHeight}px`;
-};
-
-const leave = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  getComputedStyle(el).height;
-  requestAnimationFrame(() => {
-    htmlEl.style.height = '0';
-    htmlEl.style.opacity = '0';
-  });
-};
-
 const resizeImage = (
   file: File,
   maxWidth: number,
@@ -500,15 +482,28 @@ const resizeImage = (
   });
 };
 
+watchEffect(() => {
+  if (isLoading.value) {
+    Swal.fire({
+      title: 'Загрузка...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else {
+    Swal.close();
+  }
+});
+
 onMounted(getAboutUsData);
 </script>
 
 <template>
+  <h1 class="my-title">О нас</h1>
   <div class="container-about-us">
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
-    <div v-else-if="error" class="error-message">
+    <div v-if="error" class="error-message">
       <p>{{ error }}</p>
       <button @click="getAboutUsData">Попробовать снова</button>
     </div>
@@ -528,14 +523,7 @@ onMounted(getAboutUsData);
             {{ openAccordion === type ? 'Закрыть' : 'Редактировать' }}
           </MyBtn>
         </div>
-        <Transition
-          name="accordion"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @after-enter="afterEnter"
-          @before-leave="beforeLeave"
-          @leave="leave"
-        >
+        <MyTransition>
           <div v-if="openAccordion === type" class="accordion-content">
             <div>
               <!-- Рендеринг для ОДИНОЧНЫХ блоков -->
@@ -548,14 +536,13 @@ onMounted(getAboutUsData);
                 >
                   <div class="content-wrapper">
                     <MyQuill
-                      theme="snow"
                       :toolbar="toolbarOptions"
                       :formats="formatsOptions"
                       :content="group[0].content"
                       contentType="html"
                     />
                     <div class="actions">
-                      <MyBtn variant="primary" type="submit" class="btn-save">
+                      <MyBtn variant="secondary" type="submit" class="btn-save">
                         Сохранить
                       </MyBtn>
                     </div>
@@ -578,13 +565,18 @@ onMounted(getAboutUsData);
                   v-for="item in group"
                   :key="item.about_us_id"
                   class="form-group draggable"
-                  draggable="true"
-                  @dragstart="onDragStart(item.about_us_id)"
                   @dragover.prevent
                   @drop="onDrop(item.about_us_id, type)"
                   @submit.prevent="handleUpdate($event, item)"
                 >
-                  <div class="drag-handle">⠿</div>
+                  <div
+                    class="drag-handle"
+                    draggable="true"
+                    @dragstart="onDragStart(item.about_us_id)"
+                    @dragend="onDragEnd"
+                  >
+                    ⠿
+                  </div>
                   <div class="content-wrapper">
                     <label>Изображение:</label>
                     <p class="input-note">
@@ -727,7 +719,7 @@ onMounted(getAboutUsData);
                 <!-- Кнопка для добавления нового слота -->
                 <div class="add-slot-wrapper">
                   <MyBtn
-                    variant="primary"
+                    variant="secondary"
                     type="button"
                     class="btn-add btn-add-slot"
                     @click="addNewImageSlot"
@@ -738,7 +730,7 @@ onMounted(getAboutUsData);
               </template>
             </div>
           </div>
-        </Transition>
+        </MyTransition>
       </div>
     </div>
   </div>
@@ -797,7 +789,6 @@ onMounted(getAboutUsData);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem;
 }
 
 .accordion {
@@ -820,10 +811,15 @@ onMounted(getAboutUsData);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1.2rem;
+  font-size: 24px;
   font-weight: 600;
   color: white;
+  padding: 20px 20px;
   transition: all 0.3s ease;
+}
+
+.accordion-header h3 {
+  margin: 0;
 }
 
 .accordion-header:hover {
@@ -916,36 +912,11 @@ textarea:focus {
   gap: 1rem;
 }
 
-.btn-save,
-.btn-delete,
-.btn-add {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-  transition: all 0.3s ease;
-}
-
 .btn-save:hover,
 .btn-delete:hover,
 .btn-add:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.btn-save {
-  background-color: #28a745;
-}
-
-.btn-delete {
-  background-color: #dc3545;
-}
-
-.btn-add {
-  background-color: #007bff;
-  margin-top: 1rem;
 }
 
 .add-slot-wrapper {
@@ -954,12 +925,14 @@ textarea:focus {
 }
 
 .btn-add-slot {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
   padding: 0.8rem 2rem;
   font-size: 1rem;
 }
 
 .draggable {
-  cursor: grab;
   position: relative;
   display: flex;
   align-items: flex-start;
@@ -971,6 +944,7 @@ textarea:focus {
 }
 
 .drag-handle {
+  cursor: grab;
   font-size: 24px;
   color: #777;
   padding-top: 2.5rem;
@@ -979,6 +953,9 @@ textarea:focus {
 
 .draggable:hover .drag-handle {
   color: #007bff;
+}
+.drag-handle:active {
+  cursor: grabbing;
 }
 
 .content-wrapper {
@@ -1072,8 +1049,47 @@ textarea:focus {
 }
 
 /* Стили для Quill Editor */
-:deep(.ql-toolbar) {
-  background: #ffffff;
+.form-group :deep(.ql-editor) {
+  background-color: white;
+  color: black;
+  min-height: 150px;
+}
+
+.form-group :deep(.ql-toolbar) {
+  background-color: black;
+  border-color: #666;
+}
+
+:deep(.ql-toolbar .ql-picker-label) {
+  color: #fff;
+}
+
+:deep(.ql-toolbar .ql-stroke) {
+  stroke: #ccc;
+}
+:deep(.ql-toolbar .ql-fill) {
+  fill: #ccc;
+}
+:deep(.ql-toolbar button:hover .ql-stroke),
+:deep(.ql-toolbar .ql-picker-label:hover .ql-stroke) {
+  stroke: #fff;
+}
+:deep(.ql-toolbar button:hover .ql-fill),
+:deep(.ql-toolbar .ql-picker-label:hover .ql-fill) {
+  fill: #fff;
+}
+:deep(.ql-toolbar button.ql-active .ql-stroke),
+:deep(.ql-toolbar .ql-picker-label.ql-active .ql-stroke) {
+  stroke: #007bff;
+}
+:deep(.ql-toolbar button.ql-active .ql-fill),
+:deep(.ql-toolbar .ql-picker-label.ql-active .ql-fill) {
+  fill: #007bff;
+}
+
+/* :deep(.ql-toolbar) {
+  background: inherit;
+  color: white;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
   border: 1px solid #dee2e6;
@@ -1107,5 +1123,15 @@ textarea:focus {
 
 :deep(.ql-snow .ql-picker-label) {
   color: #000;
+} */
+
+.my-title {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 32px;
+  font-weight: bold;
+  padding-left: 20px;
+  margin: 0;
 }
 </style>

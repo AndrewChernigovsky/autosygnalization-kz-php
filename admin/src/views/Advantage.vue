@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
 import MyQuill from '../components/UI/MyQuill.vue';
+import MyTransition from '../components/UI/MyTransition.vue';
 
 // --- INTERFACES ---
 
@@ -304,6 +305,10 @@ const onAdvantageDragStart = (id: number) => {
   draggingAdvantageItem.value = id;
 };
 
+const onAdvantageDragEnd = () => {
+  draggingAdvantageItem.value = null;
+};
+
 const onAdvantageDrop = (targetId: number) => {
   if (draggingAdvantageItem.value === null) return;
 
@@ -582,78 +587,50 @@ const toggleAccordion = (section: string) => {
   openAccordion.value = openAccordion.value === section ? null : section;
 };
 
+watchEffect(() => {
+  if (isLoadingAdvantages.value || isLoadingVideos.value) {
+    Swal.fire({
+      title: 'Загрузка...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else {
+    Swal.close();
+  }
+});
+
 onMounted(() => {
   getAdvantageData();
   getVideosData();
 });
-
-// Transition Hooks
-const beforeEnter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = '0';
-  htmlEl.style.paddingTop = '0';
-  htmlEl.style.paddingBottom = '0';
-  htmlEl.style.opacity = '0';
-};
-
-const enter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = `${htmlEl.scrollHeight}px`;
-  htmlEl.style.paddingTop = '1.5rem';
-  htmlEl.style.paddingBottom = '1.5rem';
-  htmlEl.style.opacity = '1';
-};
-
-const afterEnter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = '';
-};
-
-const beforeLeave = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = `${htmlEl.scrollHeight}px`;
-};
-
-const leave = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  getComputedStyle(htmlEl).height;
-  requestAnimationFrame(() => {
-    htmlEl.style.height = '0';
-    htmlEl.style.paddingTop = '0';
-    htmlEl.style.paddingBottom = '0';
-    htmlEl.style.opacity = '0';
-  });
-};
 </script>
 
 <template>
   <div class="container-advan">
-    <h1 class="main-title">Управление секцией 'Качество и преимущества'</h1>
-    <div v-if="isLoadingAdvantages || isLoadingVideos" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
-    <div v-else-if="errorAdvantages || errorVideos" class="error-message">
+    <h1 class="my-title">Качество и преимущества</h1>
+
+    <div v-if="errorAdvantages || errorVideos" class="error-message">
       <p>{{ errorAdvantages || errorVideos }}</p>
       <button @click="getAdvantageData">Попробовать снова</button>
     </div>
     <div v-else class="accordion">
       <!-- Секция Видео -->
       <div class="accordion-item">
-        <button class="accordion-header" @click="toggleAccordion('videos')">
+        <div class="accordion-header">
           <span>Управление видео</span>
-          <span
-            class="accordion-arrow"
+          <MyBtn
+            variant="primary"
+            class="accordion-toggle-btn"
             :class="{ 'is-open': openAccordion === 'videos' }"
-          ></span>
-        </button>
-        <Transition
-          name="accordion-transition"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @after-enter="afterEnter"
-          @before-leave="beforeLeave"
-          @leave="leave"
-        >
+            @click="toggleAccordion('videos')"
+          >
+            {{ openAccordion === 'videos' ? 'Закрыть' : 'Открыть' }}
+          </MyBtn>
+        </div>
+        <MyTransition>
           <div v-if="openAccordion === 'videos'" class="accordion-content">
             <div class="video-list">
               <form
@@ -671,6 +648,7 @@ const leave = (el: Element) => {
                         type="text"
                         name="title"
                         v-model="video.title"
+                        class="input-text"
                         placeholder="Например, Auto Security - Партнер Starline"
                       />
 
@@ -795,26 +773,23 @@ const leave = (el: Element) => {
               </div>
             </div>
           </div>
-        </Transition>
+        </MyTransition>
       </div>
 
       <!-- Секция Преимуществ -->
       <div class="accordion-item">
-        <button class="accordion-header" @click="toggleAccordion('advantages')">
+        <div class="accordion-header">
           <span>Список преимуществ</span>
-          <span
-            class="accordion-arrow"
+          <MyBtn
+            variant="primary"
+            class="accordion-toggle-btn"
+            @click="toggleAccordion('advantages')"
             :class="{ 'is-open': openAccordion === 'advantages' }"
-          ></span>
-        </button>
-        <Transition
-          name="accordion-transition"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @after-enter="afterEnter"
-          @before-leave="beforeLeave"
-          @leave="leave"
-        >
+          >
+            {{ openAccordion === 'advantages' ? 'Закрыть' : 'Открыть' }}
+          </MyBtn>
+        </div>
+        <MyTransition>
           <div v-if="openAccordion === 'advantages'" class="accordion-content">
             <div class="advantages-list">
               <!-- Рендеринг списка -->
@@ -822,13 +797,18 @@ const leave = (el: Element) => {
                 v-for="item in advantageItems"
                 :key="item.advantage_id"
                 class="form-group draggable"
-                draggable="true"
-                @dragstart="onAdvantageDragStart(item.advantage_id)"
                 @dragover.prevent
                 @drop="onAdvantageDrop(item.advantage_id)"
                 @submit.prevent="handleAdvantageUpdate($event, item)"
               >
-                <div class="drag-handle">⠿</div>
+                <div
+                  class="drag-handle"
+                  draggable="true"
+                  @dragstart="onAdvantageDragStart(item.advantage_id)"
+                  @dragend="onAdvantageDragEnd"
+                >
+                  ⠿
+                </div>
                 <div class="content-wrapper">
                   <div class="form-layout">
                     <div class="form-column">
@@ -987,51 +967,26 @@ const leave = (el: Element) => {
               </div>
             </div>
           </div>
-        </Transition>
+        </MyTransition>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.container-advan-advan {
-  background-color: #2d2d2d;
+.container-advan {
   color: #e0e0e0;
-  padding: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  min-height: 100vh;
+  padding: 20px;
   width: 100%;
-}
-.main-title {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #444;
-}
-.loading-overlay {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+  flex-direction: column;
+  gap: 16px;
 }
-.spinner {
-  border: 4px solid #444;
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.my-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
 }
 .error-message {
   color: #ff6b6b;
@@ -1049,7 +1004,7 @@ const leave = (el: Element) => {
 .form-group {
   margin-bottom: 0;
   padding: 1.5rem;
-  border: 1px solid #444;
+  border: 1px solid white;
   border-radius: 8px;
   background-color: black;
 }
@@ -1068,11 +1023,11 @@ label {
 input,
 textarea {
   width: 100%;
-  padding: 0.75rem;
+  font-size: 20px;
   border: 1px solid #555;
   border-radius: 4px;
-  background-color: #2c2c2c;
-  color: #e0e0e0;
+  background-color: white;
+  color: black;
   transition: border-color 0.3s, box-shadow 0.3s;
   margin-bottom: 1rem;
 }
@@ -1094,11 +1049,6 @@ textarea:focus {
 .btn-save,
 .btn-delete,
 .btn-add {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
   font-weight: bold;
   transition: transform 0.2s, filter 0.2s;
 }
@@ -1128,22 +1078,25 @@ textarea:focus {
 .btn-add-slot {
   padding: 0.8rem 2rem;
   font-size: 1rem;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 100%;
 }
 .draggable {
-  cursor: grab;
   position: relative;
   display: flex;
   align-items: flex-start;
   gap: 15px;
 }
-.draggable:active {
-  cursor: grabbing;
-}
 .drag-handle {
+  cursor: grab;
   font-size: 24px;
   color: #777;
   padding-top: 2.5rem;
   transition: color 0.3s;
+}
+.drag-handle:active {
+  cursor: grabbing;
 }
 .draggable:hover .drag-handle {
   color: #ccc;
@@ -1156,13 +1109,15 @@ textarea:focus {
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .accordion-item {
-  border-bottom: 1px solid #444;
-}
-.accordion-item:last-child {
-  border-bottom: none;
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 8px;
+  overflow: hidden;
 }
 .accordion-header {
   width: 100%;
@@ -1170,7 +1125,6 @@ textarea:focus {
   border: none;
   padding: 1rem 1.5rem;
   text-align: left;
-  cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1179,26 +1133,11 @@ textarea:focus {
   color: #fff;
   transition: background-color 0.3s;
 }
-.accordion-header:hover {
-  background-color: #4a4a4a;
-}
-.accordion-arrow {
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid #ccc;
-  border-bottom: 2px solid #ccc;
-  transform: rotate(45deg);
-  transition: transform 0.3s;
-}
-.accordion-arrow.is-open {
-  transform: translateY(2px) rotate(-135deg);
-}
+
 .accordion-content {
   background-color: black;
   overflow: hidden;
-  transition: height 0.4s ease-out, padding 0.4s ease-out, opacity 0.4s ease-out;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .form-layout {
@@ -1371,7 +1310,7 @@ textarea:focus {
   border-color: #555;
   border-bottom: 0;
 }
-:deep(.ql-container-advan-advan.ql-snow) {
+:deep(.ql-container-advan.ql-snow) {
   border-color: #555;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -1379,7 +1318,8 @@ textarea:focus {
 }
 :deep(.ql-editor) {
   min-height: 250px;
-  background-color: #2c2c2c;
+  background-color: white;
+  color: black;
 }
 :deep(.ql-snow .ql-stroke) {
   stroke: #e0e0e0;
@@ -1397,5 +1337,10 @@ textarea:focus {
 }
 :deep(.ql-snow .ql-picker-item.ql-selected) {
   background-color: #5a5a5a;
+}
+
+.input-text {
+  background-color: white;
+  color: black;
 }
 </style>

@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '../views/Home.vue';
-import SliderIntro from '../views/SliderIntro.vue';
 import Products from '../views/Products.vue';
 import Services from '../views/Services.vue';
 import MyContacts from '../views/MyContacts.vue';
@@ -20,9 +19,9 @@ export const routes = [
     component: Home,
   },
   {
-    path: '/slider-intro-page',
+    path: '/intro-slide-page',
     name: 'Слайдер',
-    component: SliderIntro,
+    component: IntroSlide,
   },
   {
     path: '/navigation-page',
@@ -73,11 +72,6 @@ export const routes = [
     path: '/registrations-page',
     name: 'Профиль',
     component: Registrations,
-  },
-  {
-    path: '/intro-slide-page',
-    name: 'Intro Slide',
-    component: IntroSlide,
   },
 ];
 

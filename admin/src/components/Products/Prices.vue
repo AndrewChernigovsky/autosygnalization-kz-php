@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import { watch, onMounted, defineExpose } from 'vue';
+import { watch, onMounted, defineExpose, computed } from 'vue';
 import type { ProductI } from './interfaces/Products';
-import { useProductEditorStore } from '../../stores/productEditorStore';
 import { useProductPricesStore } from '../../stores/productPricesStore';
 import MyQuill from '../UI/MyQuill.vue';
 import MyBtn from '../UI/MyBtn.vue';
 
 const props = defineProps<{
   product: ProductI;
+  isEditing: boolean;
 }>();
 
-const editorStore = useProductEditorStore();
 const pricesStore = useProductPricesStore();
+
+const editingProduct = computed(() => (props.isEditing ? props.product : null));
+
 // Инициализация при монтировании
 onMounted(async () => {
-  if (editorStore.isEditing(props.product.id)) {
+  if (props.isEditing) {
     loadPricesFromProduct();
     try {
       await pricesStore.getAllProductsItems();
@@ -26,7 +28,7 @@ onMounted(async () => {
 
 // Отслеживание изменений в редактируемом продукте
 watch(
-  () => editorStore.editingProduct,
+  () => editingProduct.value,
   (newEditingProduct, oldEditingProduct) => {
     if (newEditingProduct?.id === props.product.id) {
       loadPricesFromProduct();
@@ -44,8 +46,7 @@ watch(
 );
 
 const loadPricesFromProduct = () => {
-  let productPrices =
-    editorStore.editingProduct?.prices || props.product.prices;
+  let productPrices = editingProduct.value?.prices || props.product.prices;
 
   // Преобразуем массив объектов с content в массив с description и автозаполнением остальных полей
   if (Array.isArray(productPrices) && productPrices.length > 0) {
@@ -81,12 +82,12 @@ const loadPricesFromProduct = () => {
 
 const syncPricesToProduct = () => {
   if (
-    editorStore.editingProduct &&
+    editingProduct.value &&
     pricesStore.editingProductId === props.product.id
   ) {
     const prices = pricesStore.getSerializedPrices();
     console.log('[Prices.vue] syncPricesToProduct', prices);
-    editorStore.editingProduct.prices = prices;
+    editingProduct.value.prices = prices;
   }
 };
 
@@ -122,7 +123,7 @@ defineExpose({ syncPricesToProduct });
   <div class="prices-editor">
     <h1>Цены на установку автосигнализаций</h1>
 
-    <div v-if="editorStore.isEditing(product.id)" class="editing-mode">
+    <div v-if="isEditing" class="editing-mode">
       <div class="form-group">
         <label>Список цен:</label>
         <div class="price-items">
@@ -322,7 +323,10 @@ defineExpose({ syncPricesToProduct });
 .add-item-btn {
   align-self: center;
   padding: 0;
-  padding: 15px 40px;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 0;
 }
 
 /* Display Mode Styles */

@@ -203,7 +203,7 @@ export function useProducts() {
       autosygnals: [],
       tabs: [],
     };
-    products.value.unshift(newProduct);
+    products.value.push(newProduct);
     return newProduct;
   }
 

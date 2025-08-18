@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
@@ -332,16 +332,28 @@ const cancelUpdate = (id: number) => {
 
 // --- LIFECYCLE HOOKS ---
 onMounted(fetchData);
+
+watchEffect(() => {
+  if (isLoading.value) {
+    Swal.fire({
+      title: 'Загрузка...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else {
+    Swal.close();
+  }
+});
 </script>
 
 <template>
   <div class="container-sertificates">
-    <h1 class="main-title">Управление сертификатами</h1>
+    <h1 class="my-title">Сертификаты</h1>
 
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
-    <div v-else-if="error" class="error-message">
+    <div v-if="error" class="error-message">
       <p>{{ error }}</p>
       <button @click="fetchData">Попробовать снова</button>
     </div>
@@ -526,28 +538,11 @@ onMounted(fetchData);
 }
 
 /* Стили загрузки и ошибок */
-.loading-overlay,
 .error-message {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
-}
-.spinner {
-  border: 4px solid #444;
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
 }
 .error-message {
   color: #ff6b6b;
@@ -820,5 +815,12 @@ onMounted(fetchData);
   font-weight: 500;
   color: #777;
   text-align: center;
+}
+
+.my-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0;
+  padding-bottom: 30px;
 }
 </style>
