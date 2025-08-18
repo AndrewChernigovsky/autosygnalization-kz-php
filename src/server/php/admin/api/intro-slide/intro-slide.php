@@ -19,8 +19,7 @@ use Exception;
 
 function log_message($message)
 {
-  $log_file = sys_get_temp_dir() . '/intro-slide-debug.log';
-  error_log(print_r($log_file, true) . " - log_file");
+  $log_file = __DIR__ . '/intro-slide-debug.log';
   $timestamp = date('Y-m-d H:i:s');
   file_put_contents($log_file, "[$timestamp] " . $message . "\n", FILE_APPEND);
 }
@@ -38,22 +37,30 @@ class IntroSlideAPI extends DataBase
 
   public function __construct()
   {
-    $db = DataBase::getInstance();
-    $this->pdo = $db->getPdo();
-    $this->upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/intro-slide/';
-    if (!is_dir($this->upload_dir)) {
-      mkdir($this->upload_dir, 0777, true);
-    }
     try {
+      $db = DataBase::getInstance();
+      $this->pdo = $db->getPdo();
+      $this->upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/intro-slide/';
+      if (!is_dir($this->upload_dir)) {
+        mkdir($this->upload_dir, 0777, true);
+      }
+      
+      try {
         $this->ffmpeg = FFMpeg::create();
         log_message("FFMpeg успешно инициализирован");
       } catch (Exception $e) {
         log_message("Ошибка инициализации FFMpeg: " . $e->getMessage());
         log_message("Ошибка инициализации FFMpeg: " . $e->getLine());
         log_message("Ошибка инициализации FFMpeg: " . $e->getFile());
-        http_response_code(500);
-        throw $e;
+        // Не бросаем исключение, а возвращаем JSON-ошибку
+        $this->ffmpeg = null;
       }
+    } catch (Exception $e) {
+      // Если произошла критическая ошибка, возвращаем JSON-ответ
+      http_response_code(500);
+      echo json_encode(['success' => false, 'error' => 'Ошибка инициализации сервера: ' . $e->getMessage()]);
+      exit;
+    }
   }
 
   private function success($data, $statusCode = 200)
@@ -121,6 +128,10 @@ class IntroSlideAPI extends DataBase
 
   private function processVideoWithFFmpeg($temp_path, $generatePoster = true)
   {
+    if ($this->ffmpeg === null) {
+      throw new Exception('FFMpeg не доступен на сервере');
+    }
+    
     $video = $this->ffmpeg->open($temp_path);
     $base_name = 'video_' . uniqid();
 
@@ -218,7 +229,7 @@ class IntroSlideAPI extends DataBase
       }
 
       // 3. Decide on Poster Generation
-      if ($final_paths['video_path'] && !$final_paths['poster_path']) {
+      if ($final_paths['video_path'] && !$final_paths['poster_path'] && $this->ffmpeg !== null) {
         $video_full_path = $_SERVER['DOCUMENT_ROOT'] . $final_paths['video_path'];
         if (file_exists($video_full_path)) {
             $video = $this->ffmpeg->open($video_full_path);
@@ -277,8 +288,13 @@ class IntroSlideAPI extends DataBase
       try {
           $this->pdo->beginTransaction();
 
+          // Debug logging
+          log_message("createSlide: POST data: " . print_r($post, true));
+          log_message("createSlide: FILES data: " . print_r($files, true));
+
           // Validation (can be expanded)
           if (empty($post['title']) || empty($post['button_text']) || empty($post['button_link'])) {
+              log_message("Validation failed: title='" . ($post['title'] ?? 'null') . "', button_text='" . ($post['button_text'] ?? 'null') . "', button_link='" . ($post['button_link'] ?? 'null') . "'");
               throw new Exception("Основные текстовые поля не могут быть пустыми.");
           }
 
@@ -308,7 +324,7 @@ class IntroSlideAPI extends DataBase
               $final_paths['poster_path'] = $poster_path;
           }
 
-          if ($final_paths['video_path'] && !$final_paths['poster_path']) {
+          if ($final_paths['video_path'] && !$final_paths['poster_path'] && $this->ffmpeg !== null) {
               $video_full_path = $_SERVER['DOCUMENT_ROOT'] . $final_paths['video_path'];
               if (file_exists($video_full_path)) {
                   $video = $this->ffmpeg->open($video_full_path);
