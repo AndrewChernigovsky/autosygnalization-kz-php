@@ -6,6 +6,8 @@ import MySwitch from '../components/UI/MySwitch.vue';
 import LinkSelector from '../components/UI/LinkSelector.vue';
 import MyModal from '../components/UI/MyModal.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
+import MyTransition from '../components/UI/MyTransition.vue';
 import type { LinkData, IFooterLink, SectionKey } from '../types/FooterLinks';
 
 const allLinksData = ref<LinkData[]>([]);
@@ -17,7 +19,6 @@ const error = ref<string | null>(null);
 const activeAccordion = ref<SectionKey | null>('shop');
 const editingLink = ref<Partial<IFooterLink> | null>(null);
 const isModalOpen = ref(false);
-const draggedItem = ref<IFooterLink | null>(null);
 const linkSourceMode = ref<'custom' | 'existing'>('custom');
 const selectedLinkForModal = ref<LinkData | null>(null);
 
@@ -138,15 +139,6 @@ const sendRequest = async (
 };
 
 const updatePositions = async (items: IFooterLink[]) => {
-  // Optimistic update for reordering
-  const currentOrder = JSON.parse(JSON.stringify(footerLinks.value));
-  const newOrder = [...footerLinks.value];
-  items.forEach((item, index) => {
-    const linkInNewOrder = newOrder.find((l) => l.footer_id === item.footer_id);
-    if (linkInNewOrder) linkInNewOrder.position = index + 1;
-  });
-  footerLinks.value = newOrder;
-
   const payload = items.map((item, index) => ({
     footer_id: item.footer_id,
     position: index + 1,
@@ -161,8 +153,9 @@ const updatePositions = async (items: IFooterLink[]) => {
     if (!result.success) throw new Error(result.error);
     Swal.fire('Успех!', 'Порядок ссылок обновлен!', 'success');
   } catch (e: any) {
-    footerLinks.value = currentOrder; // Revert on error
     Swal.fire('Ошибка!', 'Не удалось сохранить порядок.', 'error');
+    // Revert on error by refetching from server
+    await fetchLinks(true);
   }
 };
 
@@ -274,40 +267,24 @@ const closeModal = () => {
   editingLink.value = null;
 };
 
-// --- Drag and Drop Logic ---
-const handleDragStart = (item: IFooterLink) => {
-  draggedItem.value = item;
-};
-const handleDragEnd = () => {
-  draggedItem.value = null;
-};
-const handleDrop = (event: DragEvent, targetSection: SectionKey) => {
-  const targetElement = event.currentTarget as HTMLElement;
-  if (
-    !targetElement ||
-    !draggedItem.value ||
-    draggedItem.value.section !== targetSection
-  )
-    return;
+const handleSectionReorder = (
+  reorderedLinks: IFooterLink[],
+  sectionKey: SectionKey
+) => {
+  // Create a new array with updated positions for optimistic UI update
+  const updatedLinks = reorderedLinks.map((link, index) => ({
+    ...link,
+    position: index + 1,
+  }));
 
-  const sectionLinks = [...sectionData.value[targetSection].links];
-  const toIndex = sectionLinks.findIndex(
-    (l) => l.footer_id === Number(targetElement.getAttribute('data-id'))
-  );
-  const fromIndex = sectionLinks.findIndex(
-    (l) => l.footer_id === draggedItem.value!.footer_id
-  );
-
-  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
-
-  const [movedItem] = sectionLinks.splice(fromIndex, 1);
-  sectionLinks.splice(toIndex, 0, movedItem);
-
+  // 1. Optimistic update of the main array
   const otherSectionsLinks = footerLinks.value.filter(
-    (link) => link.section !== targetSection
+    (link) => link.section !== sectionKey
   );
-  footerLinks.value = [...otherSectionsLinks, ...sectionLinks];
-  updatePositions(sectionLinks);
+  footerLinks.value = [...otherSectionsLinks, ...updatedLinks];
+
+  // 2. Call the function that handles API communication
+  updatePositions(updatedLinks);
 };
 
 const toggleAccordion = (key: SectionKey) => {
@@ -365,49 +342,42 @@ watchEffect(() => {
             activeAccordion === key ? 'Закрыть' : 'Открыть'
           }}</MyBtn>
         </div>
-        <div
-          class="accordion-content"
-          :class="{ 'is-open': activeAccordion === key }"
-        >
-          <div class="accordion-content-inner">
-            <ul class="links-list">
-              <li
-                v-for="link in section.links"
-                :key="link.footer_id"
-                class="link-item"
-                :class="{
-                  dragging:
-                    draggedItem && draggedItem.footer_id === link.footer_id,
-                }"
-                draggable="true"
-                :data-id="link.footer_id"
-                @dragstart="handleDragStart(link)"
-                @dragend="handleDragEnd"
-                @drop.prevent="handleDrop($event, key)"
-                @dragover.prevent
-              >
-                <div class="link-info">
-                  <span class="drag-handle">⠿</span>
-                  <span>{{ link.name }}</span>
-                </div>
-                <div class="item-controls">
-                  <MyBtn variant="primary" @click="openModal(link)"
-                    >Редактировать</MyBtn
-                  >
-                  <MyBtn
-                    v-if="link.source_table === 'custom'"
-                    variant="secondary"
-                    @click="deleteLink(link.footer_id)"
-                    >Удалить</MyBtn
-                  >
-                </div>
-              </li>
-            </ul>
+        <MyTransition>
+          <div v-if="activeAccordion === key" class="accordion-content-inner">
+            <DraggableList
+              :model-value="section.links"
+              item-key="footer_id"
+              tag="ul"
+              class="links-list"
+              @reorder="
+                (reorderedLinks) => handleSectionReorder(reorderedLinks, key)
+              "
+            >
+              <template #item="{ item, dragHandleProps, isDragOver }">
+                <li class="link-item" :class="{ 'drag-over': isDragOver }">
+                  <div class="link-info">
+                    <span class="drag-handle" v-bind="dragHandleProps">⠿</span>
+                    <span>{{ item.name }}</span>
+                  </div>
+                  <div class="item-controls">
+                    <MyBtn variant="primary" @click="openModal(item)"
+                      >Редактировать</MyBtn
+                    >
+                    <MyBtn
+                      v-if="item.source_table === 'custom'"
+                      variant="secondary"
+                      @click="deleteLink(item.footer_id)"
+                      >Удалить</MyBtn
+                    >
+                  </div>
+                </li>
+              </template>
+            </DraggableList>
             <MyBtn variant="secondary" @click.stop="openModal(null, key)"
               >Добавить ссылку</MyBtn
             >
           </div>
-        </div>
+        </MyTransition>
       </div>
     </div>
     <MyModal v-if="isModalOpen && editingLink" @close="closeModal">
@@ -572,10 +542,6 @@ watchEffect(() => {
   margin: 0;
   font-size: 1.1rem;
 }
-.accordion-icon {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
 .accordion-content {
   max-height: 0;
   overflow: hidden;
@@ -594,7 +560,7 @@ watchEffect(() => {
 .links-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 15px 0;
 }
 .link-item {
   display: flex;
@@ -603,6 +569,10 @@ watchEffect(() => {
   padding: 8px 5px;
   border-bottom: 1px solid #444;
   transition: background-color 0.2s ease;
+}
+.link-item.drag-over {
+  background: #3a3a3c;
+  border-radius: 4px;
 }
 .link-item:last-child {
   border-bottom: none;

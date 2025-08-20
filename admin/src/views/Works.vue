@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
 
 // --- Interfaces ---
 interface Work {
@@ -32,8 +33,6 @@ const formState = ref({
   image_preview: '',
 });
 const editingWorkId = ref<number | null>(null);
-
-const draggedIndex = ref<number | null>(null);
 
 const API_URL = '/server/php/admin/api/works/works.php';
 
@@ -214,29 +213,27 @@ const startEdit = (work: Work) => {
 
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0]) {
-    formState.value.image_file = target.files[0];
-    formState.value.image_preview = URL.createObjectURL(target.files[0]);
+  const file = target.files?.[0];
+
+  if (!file) {
+    formState.value.image_file = null;
+    formState.value.image_preview = '';
+    return;
   }
-};
 
-// --- Drag and Drop Handlers ---
-const onDragStart = (index: number) => {
-  draggedIndex.value = index;
-};
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+  if (!allowedTypes.includes(file.type)) {
+    Swal.fire(
+      'Ошибка',
+      'Неверный формат файла. Пожалуйста, выберите изображение (PNG, JPG, WEBP).',
+      'error'
+    );
+    target.value = ''; // Сбрасываем выбор файла
+    return;
+  }
 
-const onDragEnd = () => {
-  draggedIndex.value = null;
-};
-
-const onDrop = (targetIndex: number) => {
-  if (draggedIndex.value === null) return;
-
-  const draggedItem = works.value.splice(draggedIndex.value, 1)[0];
-  works.value.splice(targetIndex, 0, draggedItem);
-
-  draggedIndex.value = null;
-  updatePositions();
+  formState.value.image_file = file;
+  formState.value.image_preview = URL.createObjectURL(file);
 };
 
 // --- Lifecycle Hooks ---
@@ -324,55 +321,52 @@ watchEffect(() => {
       </div>
     </div>
 
-    <div class="works-list">
-      <div
-        v-for="(work, index) in works"
-        :key="work.work_id"
-        class="work-card card"
-        @dragover.prevent
-        @drop="onDrop(index)"
-      >
-        <div
-          class="drag-handle"
-          draggable="true"
-          @dragstart="onDragStart(index)"
-          @dragend="onDragEnd"
-        >
-          ⠿
-        </div>
-        <div
-          class="work-card-img"
-          :style="{ backgroundImage: `url(${work.image_path})` }"
-        ></div>
-        <div class="work-card-content">
-          <p class="work-card-title">{{ work.title }}</p>
-          <div class="work-card-actions">
-            <MyBtn
-              class="btn-edit"
-              variant="secondary"
-              type="button"
-              @click="startEdit(work)"
-            >
-              РЕДАКТИРОВАТЬ
-            </MyBtn>
-            <MyBtn
-              class="btn-delete"
-              variant="primary"
-              @click="handleDelete(work.work_id)"
-            >
-              УДАЛИТЬ
-            </MyBtn>
+    <DraggableList
+      v-model="works"
+      item-key="work_id"
+      tag="div"
+      class="works-list"
+      @reorder="updatePositions"
+    >
+      <template #item="{ item, dragHandleProps, isDragOver }">
+        <div class="work-card card" :class="{ 'drag-over': isDragOver }">
+          <div class="drag-handle" v-bind="dragHandleProps">⠿</div>
+          <div
+            class="work-card-img"
+            :style="{ backgroundImage: `url(${item.image_path})` }"
+          ></div>
+          <div class="work-card-content">
+            <p class="work-card-title">{{ item.title }}</p>
+            <div class="work-card-actions">
+              <MyBtn
+                class="btn-edit"
+                variant="secondary"
+                type="button"
+                @click="startEdit(item)"
+              >
+                РЕДАКТИРОВАТЬ
+              </MyBtn>
+              <MyBtn
+                class="btn-delete"
+                variant="primary"
+                @click="handleDelete(item.work_id)"
+              >
+                УДАЛИТЬ
+              </MyBtn>
+            </div>
           </div>
         </div>
-      </div>
-      <!-- Карточка добавления -->
-      <div class="add-new-card card" @click="openCreateModal">
-        <div class="add-new-placeholder">
-          <span>+</span>
-          <p>Добавить работу</p>
+      </template>
+      <template #footer>
+        <!-- Карточка добавления -->
+        <div class="add-new-card card" @click="openCreateModal">
+          <div class="add-new-placeholder">
+            <span>+</span>
+            <p>Добавить работу</p>
+          </div>
         </div>
-      </div>
-    </div>
+      </template>
+    </DraggableList>
   </div>
 </template>
 
@@ -541,6 +535,8 @@ select:focus {
   border-radius: 8px;
   transform: translateZ(0); /* Добавлено для исправления бага с обрезкой */
   position: relative;
+  height: 100%;
+  min-height: 250px;
 }
 .work-card:hover {
   transform: translateY(-5px);
@@ -548,6 +544,10 @@ select:focus {
 }
 .work-card:active {
   cursor: grabbing;
+}
+.work-card.drag-over {
+  border-color: #3498db;
+  outline: 2px dashed #3498db;
 }
 .work-card-img {
   width: 100%;
@@ -641,7 +641,7 @@ select.form-input option {
   align-items: center;
   border-style: dashed;
   transition: background-color 0.2s, border-color 0.2s;
-  min-height: 250px;
+  min-height: 375px;
 }
 .add-new-card:hover {
   background-color: rgba(255, 255, 255, 0.05);

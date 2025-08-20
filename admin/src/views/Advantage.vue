@@ -5,6 +5,7 @@ import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
 import MyQuill from '../components/UI/MyQuill.vue';
 import MyTransition from '../components/UI/MyTransition.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
 
 // --- INTERFACES ---
 
@@ -50,7 +51,6 @@ const newAdvantageSlots = ref<NewAdvantageSlot[]>([]);
 const isLoadingAdvantages = ref(false);
 const errorAdvantages = ref<string | null>(null);
 const advantageImagePreviews = ref<Record<number, string>>({});
-const draggingAdvantageItem = ref<number | null>(null);
 
 // Video State
 const videoItems = ref<VideoItem[]>([]);
@@ -58,6 +58,7 @@ const originalVideoItem = ref<VideoItem | null>(null);
 const isLoadingVideos = ref(false);
 const errorVideos = ref<string | null>(null);
 const videoPreviews = ref<Record<string, string | null>>({}); // Для превью
+const videoLoadErrors = ref<Record<number, boolean>>({});
 
 // --- API ---
 
@@ -299,34 +300,6 @@ const handleAdvantageUpdatePositions = async (
       'error'
     );
   }
-};
-
-const onAdvantageDragStart = (id: number) => {
-  draggingAdvantageItem.value = id;
-};
-
-const onAdvantageDragEnd = () => {
-  draggingAdvantageItem.value = null;
-};
-
-const onAdvantageDrop = (targetId: number) => {
-  if (draggingAdvantageItem.value === null) return;
-
-  const group = advantageItems.value;
-  const fromIndex = group.findIndex(
-    (it) => it.advantage_id === draggingAdvantageItem.value
-  );
-  const toIndex = group.findIndex((it) => it.advantage_id === targetId);
-
-  if (fromIndex !== -1 && toIndex !== -1) {
-    const [movedItem] = group.splice(fromIndex, 1);
-    group.splice(toIndex, 0, movedItem);
-    group.forEach((item, index) => {
-      item.position = index + 1;
-    });
-    handleAdvantageUpdatePositions(group);
-  }
-  draggingAdvantageItem.value = null;
 };
 
 const addNewAdvantageSlot = () => {
@@ -731,11 +704,16 @@ onMounted(() => {
                         <div class="video-preview-item">
                           <label>Превью для десктопа:</label>
                           <video
-                            v-if="video.sources && video.sources.length > 0"
+                            v-if="
+                              video.sources &&
+                              video.sources.length > 0 &&
+                              !videoLoadErrors[video.video_id]
+                            "
                             :key="video.sources[0].src_path"
                             controls
                             muted
                             playsinline
+                            @error="videoLoadErrors[video.video_id] = true"
                           >
                             <source
                               v-for="source in video.sources"
@@ -793,97 +771,100 @@ onMounted(() => {
           <div v-if="openAccordion === 'advantages'" class="accordion-content">
             <div class="advantages-list">
               <!-- Рендеринг списка -->
-              <form
-                v-for="item in advantageItems"
-                :key="item.advantage_id"
-                class="form-group draggable"
-                @dragover.prevent
-                @drop="onAdvantageDrop(item.advantage_id)"
-                @submit.prevent="handleAdvantageUpdate($event, item)"
+              <DraggableList
+                v-model="advantageItems"
+                item-key="advantage_id"
+                tag="div"
+                @reorder="handleAdvantageUpdatePositions"
               >
-                <div
-                  class="drag-handle"
-                  draggable="true"
-                  @dragstart="onAdvantageDragStart(item.advantage_id)"
-                  @dragend="onAdvantageDragEnd"
-                >
-                  ⠿
-                </div>
-                <div class="content-wrapper">
-                  <div class="form-layout">
-                    <div class="form-column">
-                      <label>Изображение:</label>
-                      <div class="image-uploader">
-                        <input
-                          type="file"
-                          name="image"
-                          accept="image/*"
-                          class="hidden-file-input"
-                          :id="`file-input-existing-advantage-${item.advantage_id}`"
-                          :ref="
-                            (el) =>
-                              (fileInputs[
-                                `existing-advantage-${item.advantage_id}`
-                              ] = el as HTMLInputElement)
-                          "
-                          @change="
-                            onAdvantageFileChange($event, item.advantage_id)
-                          "
-                        />
-                        <div
-                          v-if="
-                            advantageImagePreviews[item.advantage_id] ||
-                            item.image_path
-                          "
-                          class="image-preview-wrapper"
-                        >
-                          <img
-                            :src="
-                              advantageImagePreviews[item.advantage_id] ||
-                              item.image_path ||
-                              ''
-                            "
-                            alt="preview"
-                            class="image-preview"
-                          />
-                          <button
-                            type="button"
-                            class="btn-remove-image"
-                            @click="clearExistingAdvantageImage(item)"
-                          >
-                            ×
-                          </button>
+                <template #item="{ item, dragHandleProps, isDragOver }">
+                  <form
+                    class="form-group draggable"
+                    :class="{ 'drag-over': isDragOver }"
+                    @submit.prevent="handleAdvantageUpdate($event, item)"
+                  >
+                    <div class="drag-handle" v-bind="dragHandleProps">⠿</div>
+                    <div class="content-wrapper">
+                      <div class="form-layout">
+                        <div class="form-column">
+                          <label>Изображение:</label>
+                          <div class="image-uploader">
+                            <input
+                              type="file"
+                              name="image"
+                              accept="image/*"
+                              class="hidden-file-input"
+                              :id="`file-input-existing-advantage-${item.advantage_id}`"
+                              :ref="
+                                (el) =>
+                                  (fileInputs[
+                                    `existing-advantage-${item.advantage_id}`
+                                  ] = el as HTMLInputElement)
+                              "
+                              @change="
+                                onAdvantageFileChange($event, item.advantage_id)
+                              "
+                            />
+                            <div
+                              v-if="
+                                advantageImagePreviews[item.advantage_id] ||
+                                item.image_path
+                              "
+                              class="image-preview-wrapper"
+                            >
+                              <img
+                                :src="
+                                  advantageImagePreviews[item.advantage_id] ||
+                                  item.image_path ||
+                                  ''
+                                "
+                                alt="preview"
+                                class="image-preview"
+                              />
+                              <button
+                                type="button"
+                                class="btn-remove-image"
+                                @click="clearExistingAdvantageImage(item)"
+                              >
+                                ×
+                              </button>
+                            </div>
+                            <label
+                              v-else
+                              :for="`file-input-existing-advantage-${item.advantage_id}`"
+                              class="image-uploader-placeholder"
+                            >
+                              <span>+</span>
+                            </label>
+                          </div>
                         </div>
-                        <label
-                          v-else
-                          :for="`file-input-existing-advantage-${item.advantage_id}`"
-                          class="image-uploader-placeholder"
+                        <div class="form-column form-column--grow">
+                          <label>Описание:</label>
+                          <MyQuill v-model:content="item.content" />
+                        </div>
+                      </div>
+
+                      <div class="actions">
+                        <MyBtn
+                          variant="secondary"
+                          type="submit"
+                          class="btn-save"
                         >
-                          <span>+</span>
-                        </label>
+                          Сохранить
+                        </MyBtn>
+                        <MyBtn
+                          variant="primary"
+                          type="button"
+                          @click="handleAdvantageDelete(item.advantage_id)"
+                          class="btn-delete"
+                        >
+                          Удалить
+                        </MyBtn>
                       </div>
                     </div>
-                    <div class="form-column form-column--grow">
-                      <label>Описание:</label>
-                      <MyQuill v-model:content="item.content" />
-                    </div>
-                  </div>
-
-                  <div class="actions">
-                    <MyBtn variant="secondary" type="submit" class="btn-save">
-                      Сохранить
-                    </MyBtn>
-                    <MyBtn
-                      variant="primary"
-                      type="button"
-                      @click="handleAdvantageDelete(item.advantage_id)"
-                      class="btn-delete"
-                    >
-                      Удалить
-                    </MyBtn>
-                  </div>
-                </div>
-              </form>
+                  </form>
+                </template>
+              </DraggableList>
 
               <!-- Создание нового преимущества -->
               <form
@@ -974,6 +955,12 @@ onMounted(() => {
 </template>
 
 <style scoped>
+.draggable-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .container-advan {
   color: #e0e0e0;
   padding: 20px;
@@ -1088,10 +1075,15 @@ textarea:focus {
   align-items: flex-start;
   gap: 15px;
 }
+
+.draggable.drag-over {
+  border-style: dashed;
+  border-color: #3498db;
+}
 .drag-handle {
   cursor: grab;
   font-size: 24px;
-  color: #777;
+  color: white;
   padding-top: 2.5rem;
   transition: color 0.3s;
 }

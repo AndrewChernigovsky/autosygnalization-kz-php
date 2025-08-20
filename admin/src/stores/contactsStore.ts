@@ -60,7 +60,10 @@ const contactsStore = defineStore('contactsStore', () => {
       const response = await fetchWithCors(contactsApiUrl.value);
 
       if (response.success && response.data) {
-        contacts.value = response.data;
+        contacts.value = response.data.map((contact: any) => ({
+          ...contact,
+          on_page: !!parseInt(String(contact.on_page), 10),
+        }));
       } else {
         throw new Error(response.error || 'Failed to load contacts');
       }

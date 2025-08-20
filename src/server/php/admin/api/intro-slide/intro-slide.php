@@ -2,6 +2,27 @@
 
 namespace API\ADMIN;
 
+// Error handling to ensure JSON response even on fatal errors
+set_exception_handler(function ($exception) {
+    header('Content-Type: application/json');
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Server Exception: ' . $exception->getMessage(),
+        'file' => $exception->getFile(),
+        'line' => $exception->getLine()
+    ]);
+    exit;
+});
+
+set_error_handler(function ($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return;
+    }
+    throw new \ErrorException($message, 0, $severity, $file, $line);
+});
+
+
 header("Access-control-allow-origin: http://localhost:5173");
 header("Access-control-allow-methods: GET, POST, DELETE, OPTIONS");
 header("Access-control-allow-headers: Content-Type, Authorization, X-Requested-With");
@@ -397,19 +418,20 @@ class IntroSlideAPI extends DataBase
   public function updateOrder($post)
   {
       try {
-          if (!isset($post['order'])) {
+          if (empty($post)) {
               return $this->error("Отсутствуют данные о порядке", 400);
           }
-          $orderData = json_decode($post['order'], true);
-          if (json_last_error() !== JSON_ERROR_NONE) {
-              return $this->error("Неверный формат данных о порядке", 400);
-          }
+          
+          $orderData = $post;
 
           $this->pdo->beginTransaction();
           $query = "UPDATE Videos_intro_slider SET position = :position WHERE id = :id";
           $stmt = $this->pdo->prepare($query);
 
           foreach ($orderData as $item) {
+              if (!isset($item['id']) || !isset($item['position'])) {
+                  throw new Exception("Неверный формат элемента порядка");
+              }
               $stmt->execute([':position' => $item['position'], ':id' => $item['id']]);
           }
 
@@ -432,14 +454,27 @@ class IntroSlideAPI extends DataBase
         echo $this->sendAll();
         break;
       case 'POST':
-        if (isset($_POST['action']) && $_POST['action'] === 'create') {
-            echo $this->createSlide($_POST, $_FILES);
-        } else if (isset($_POST['action']) && $_POST['action'] === 'delete') {
-            echo $this->deleteSlide($_POST);
-        } else if (isset($_POST['action']) && $_POST['action'] === 'update_order') {
-            echo $this->updateOrder($_POST);
+        $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
+
+        if ($contentType === "application/json") {
+            $content = trim(file_get_contents("php://input"));
+            $decoded = json_decode($content, true);
+
+            if (is_array($decoded)) {
+                // Предполагаем, что это запрос на обновление порядка
+                echo $this->updateOrder($decoded);
+            } else {
+                echo $this->error("Неверный JSON", 400);
+            }
         } else {
-            echo $this->updateSlide($_POST, $_FILES);
+            // Обработка multipart/form-data
+            if (isset($_POST['action']) && $_POST['action'] === 'create') {
+                echo $this->createSlide($_POST, $_FILES);
+            } else if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+                echo $this->deleteSlide($_POST);
+            } else {
+                echo $this->updateSlide($_POST, $_FILES);
+            }
         }
         break;
     }

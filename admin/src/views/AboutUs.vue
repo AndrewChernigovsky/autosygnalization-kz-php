@@ -5,6 +5,7 @@ import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
 import MyQuill from '../components/UI/MyQuill.vue';
 import MyTransition from '../components/UI/MyTransition.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
 
 interface AboutUsItem {
   about_us_id: number;
@@ -47,9 +48,6 @@ interface NewImageSlot {
   preview: string | null;
 }
 const newImageSlots = ref<NewImageSlot[]>([]);
-
-// Для отслеживания перетаскиваемого элемента
-const draggingItem = ref<number | null>(null);
 
 const API_URL = '/server/php/admin/api/aboutUs/aboutUs.php';
 
@@ -336,32 +334,22 @@ const handleUpdatePositions = async (updatedGroup: AboutUsItem[]) => {
   }
 };
 
-const onDragStart = (id: number) => {
-  draggingItem.value = id;
-};
+const handleGroupReorder = (
+  reorderedGroup: AboutUsItem[],
+  groupType: string
+) => {
+  // Создаем новый массив с обновленными позициями для оптимистичного обновления
+  const updatedGroup = reorderedGroup.map((item, index) => ({
+    ...item,
+    position: index + 1, // Переиндексируем позиции для локального состояния
+  }));
 
-const onDragEnd = () => {
-  draggingItem.value = null;
-};
+  // 1. Отправляем обновление на сервер (сервер также пересчитает позиции по индексу)
+  handleUpdatePositions(reorderedGroup);
 
-const onDrop = (targetId: number, type: string) => {
-  if (draggingItem.value === null) return;
-
-  const group = groupedItems.value[type];
-  const fromIndex = group.findIndex(
-    (it) => it.about_us_id === draggingItem.value
-  );
-  const toIndex = group.findIndex((it) => it.about_us_id === targetId);
-
-  if (fromIndex !== -1 && toIndex !== -1) {
-    const [movedItem] = group.splice(fromIndex, 1);
-    group.splice(toIndex, 0, movedItem);
-    group.forEach((item, index) => {
-      item.position = index + 1;
-    });
-    handleUpdatePositions(group);
-  }
-  draggingItem.value = null;
+  // 2. Обновляем локальное состояние, используя группу с уже правильными позициями
+  const otherItems = items.value.filter((item) => item.type !== groupType);
+  items.value = [...otherItems, ...updatedGroup];
 };
 
 // НОВОЕ: Функции для управления слотами
@@ -561,92 +549,96 @@ onMounted(getAboutUsData);
 
               <!-- Рендеринг для СПИСКА (галереи) -->
               <template v-else>
-                <form
-                  v-for="item in group"
-                  :key="item.about_us_id"
-                  class="form-group draggable"
-                  @dragover.prevent
-                  @drop="onDrop(item.about_us_id, type)"
-                  @submit.prevent="handleUpdate($event, item)"
+                <DraggableList
+                  :model-value="group"
+                  item-key="about_us_id"
+                  @reorder="
+                    (reorderedGroup) => handleGroupReorder(reorderedGroup, type)
+                  "
                 >
-                  <div
-                    class="drag-handle"
-                    draggable="true"
-                    @dragstart="onDragStart(item.about_us_id)"
-                    @dragend="onDragEnd"
-                  >
-                    ⠿
-                  </div>
-                  <div class="content-wrapper">
-                    <label>Изображение:</label>
-                    <p class="input-note">
-                      Рекомендуемый размер 600x300px. Изображение будет
-                      автоматически сконвертировано в AVIF.
-                    </p>
-                    <div class="image-uploader">
-                      <!-- The file input is always in the DOM but hidden -->
-                      <input
-                        type="file"
-                        name="image"
-                        accept="image/*"
-                        class="hidden-file-input"
-                        :id="`file-input-existing-${item.about_us_id}`"
-                        :ref="
-                          (el) =>
-                            (fileInputs[`existing-${item.about_us_id}`] =
-                              el as HTMLInputElement)
-                        "
-                        @change="onFileChange($event, item.about_us_id)"
-                      />
-                      <!-- Preview with remove button, shown if an image exists -->
-                      <div
-                        v-if="
-                          imagePreviews[item.about_us_id] || item.image_path
-                        "
-                        class="image-preview-wrapper"
-                      >
-                        <img
-                          :src="
-                            imagePreviews[item.about_us_id] ||
-                            item.image_path ||
-                            ''
-                          "
-                          alt="preview"
-                          class="image-preview"
-                        />
-                        <button
-                          type="button"
-                          class="btn-remove-image"
-                          @click="clearExistingImage(item)"
-                        >
-                          ×
-                        </button>
-                      </div>
-                      <!-- Placeholder, shown if no image exists. It's a label for the input. -->
-                      <label
-                        v-else
-                        :for="`file-input-existing-${item.about_us_id}`"
-                        class="image-uploader-placeholder"
-                      >
-                        <span>+</span>
-                      </label>
-                    </div>
+                  <template #item="{ item, dragHandleProps, isDragOver }">
+                    <form
+                      class="form-group draggable"
+                      :class="{ 'drag-over': isDragOver }"
+                      @submit.prevent="handleUpdate($event, item)"
+                    >
+                      <div class="drag-handle" v-bind="dragHandleProps">⠿</div>
+                      <div class="content-wrapper">
+                        <label>Изображение:</label>
+                        <p class="input-note">
+                          Рекомендуемый размер 600x300px. Изображение будет
+                          автоматически сконвертировано в AVIF.
+                        </p>
+                        <div class="image-uploader">
+                          <!-- The file input is always in the DOM but hidden -->
+                          <input
+                            type="file"
+                            name="image"
+                            accept="image/*"
+                            class="hidden-file-input"
+                            :id="`file-input-existing-${item.about_us_id}`"
+                            :ref="
+                              (el) =>
+                                (fileInputs[`existing-${item.about_us_id}`] =
+                                  el as HTMLInputElement)
+                            "
+                            @change="onFileChange($event, item.about_us_id)"
+                          />
+                          <!-- Preview with remove button, shown if an image exists -->
+                          <div
+                            v-if="
+                              imagePreviews[item.about_us_id] || item.image_path
+                            "
+                            class="image-preview-wrapper"
+                          >
+                            <img
+                              :src="
+                                imagePreviews[item.about_us_id] ||
+                                item.image_path ||
+                                ''
+                              "
+                              alt="preview"
+                              class="image-preview"
+                            />
+                            <button
+                              type="button"
+                              class="btn-remove-image"
+                              @click="clearExistingImage(item)"
+                            >
+                              ×
+                            </button>
+                          </div>
+                          <!-- Placeholder, shown if no image exists. It's a label for the input. -->
+                          <label
+                            v-else
+                            :for="`file-input-existing-${item.about_us_id}`"
+                            class="image-uploader-placeholder"
+                          >
+                            <span>+</span>
+                          </label>
+                        </div>
 
-                    <div class="actions">
-                      <MyBtn variant="primary" type="submit" class="btn-save">
-                        Сохранить
-                      </MyBtn>
-                      <MyBtn
-                        variant="secondary"
-                        type="button"
-                        @click="handleDelete(item.about_us_id)"
-                        class="btn-delete"
-                      >
-                        Удалить
-                      </MyBtn>
-                    </div>
-                  </div>
-                </form>
+                        <div class="actions">
+                          <MyBtn
+                            variant="primary"
+                            type="submit"
+                            class="btn-save"
+                          >
+                            Сохранить
+                          </MyBtn>
+                          <MyBtn
+                            variant="secondary"
+                            type="button"
+                            @click="handleDelete(item.about_us_id)"
+                            class="btn-delete"
+                          >
+                            Удалить
+                          </MyBtn>
+                        </div>
+                      </div>
+                    </form>
+                  </template>
+                </DraggableList>
 
                 <!-- НОВЫЙ БЛОК: Рендеринг новых слотов для изображений -->
                 <form
@@ -938,9 +930,12 @@ textarea:focus {
   align-items: flex-start;
   gap: 15px;
 }
-
 .draggable:active {
   cursor: grabbing;
+}
+.draggable.drag-over {
+  border-style: dashed;
+  border-color: #3498db;
 }
 
 .drag-handle {

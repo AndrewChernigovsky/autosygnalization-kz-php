@@ -145,13 +145,12 @@ const useIntroSlideStore = defineStore('introSlideStore', () => {
   ) => {
     isLoading.value = true;
     try {
-      const formData = new FormData();
-      formData.append('action', 'update_order');
-      formData.append('order', JSON.stringify(orderData));
-
       const response = await fetchWithCors(API_BASE_URL, {
         method: 'POST',
-        body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
       });
 
       if (!response.success) {

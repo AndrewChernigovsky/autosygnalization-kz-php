@@ -2,6 +2,7 @@
 import { onMounted, ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import MyBtn from '../UI/MyBtn.vue';
+import DraggableList from '../UI/DraggableList.vue';
 import useIntroSlideStore from '../../stores/introSlideStore';
 import Swal from 'sweetalert2';
 import type { IntroSlideData } from './interfaces/introSlideData';
@@ -19,8 +20,6 @@ const filesToDelete = ref<
 const editableItemData = ref<Record<number, IntroSlideData>>({});
 const newSlide = ref<IntroSlideData | null>(null);
 const isAddingNewSlide = ref(false);
-const draggedItem = ref<IntroSlideData | null>(null);
-const dragOverItem = ref<IntroSlideData | null>(null);
 const loadingAction = ref<'loading' | 'saving' | 'deleting' | 'reordering'>(
   'loading'
 );
@@ -315,79 +314,9 @@ const handleDeleteSlide = async (slideId: number) => {
   });
 };
 
-const handleDragStart = (event: DragEvent, item: IntroSlideData) => {
-  draggedItem.value = item;
-  if (event.dataTransfer) {
-    event.dataTransfer.effectAllowed = 'move';
-    event.dataTransfer.setData('text/plain', item.id.toString());
-
-    const itemElement = (event.target as HTMLElement).closest('.main-item');
-    if (itemElement) {
-      const clone = itemElement.cloneNode(true) as HTMLElement;
-
-      // Скрываем открытое содержимое в клоне для корректного вида при перетаскивании
-      const content = clone.querySelector('.main-item-content');
-      if (content) {
-        (content as HTMLElement).style.display = 'none';
-      }
-
-      clone.style.position = 'absolute';
-      clone.style.left = '-9999px';
-      clone.style.width = `${itemElement.clientWidth}px`;
-      document.body.appendChild(clone);
-      event.dataTransfer.setDragImage(clone, event.offsetX, event.offsetY);
-
-      setTimeout(() => {
-        document.body.removeChild(clone);
-      }, 0);
-    }
-  }
-};
-
-const handleDragOver = (event: DragEvent, item: IntroSlideData) => {
-  event.preventDefault();
-  if (event.dataTransfer) {
-    event.dataTransfer.dropEffect = 'move';
-  }
-  dragOverItem.value = item;
-};
-
-const handleDragLeave = () => {
-  dragOverItem.value = null;
-};
-
-const handleDragEnd = () => {
-  draggedItem.value = null;
-  dragOverItem.value = null;
-};
-
-const handleDrop = async (event: DragEvent, targetItem: IntroSlideData) => {
-  event.preventDefault();
-  if (!draggedItem.value || draggedItem.value.id === targetItem.id) {
-    draggedItem.value = null;
-    dragOverItem.value = null;
-    return;
-  }
-  await reorderSlides(draggedItem.value, targetItem);
-  draggedItem.value = null;
-  dragOverItem.value = null;
-};
-
-const reorderSlides = async (
-  draggedSlide: IntroSlideData,
-  targetSlide: IntroSlideData
-) => {
+const reorderSlides = async (reorderedSlides: IntroSlideData[]) => {
   try {
-    const slides = [...introSlideData.value];
-    const draggedIndex = slides.findIndex((s) => s.id === draggedSlide.id);
-    const targetIndex = slides.findIndex((s) => s.id === targetSlide.id);
-
-    if (draggedIndex === -1 || targetIndex === -1) return;
-
-    const [removed] = slides.splice(draggedIndex, 1);
-    slides.splice(targetIndex, 0, removed);
-
-    const updateData = slides.map((slide, index) => ({
+    const updateData = reorderedSlides.map((slide, index) => ({
       id: slide.id,
       position: index + 1,
     }));
@@ -682,253 +611,253 @@ const leave = (el: Element) => {
       </div>
     </form>
 
-    <div v-if="introSlideData && introSlideData.length > 0" class="slides-list">
-      <form
-        v-for="item in introSlideData"
-        :key="item.id"
-        class="main-item"
-        :name="`intro-slide-${item.id}`"
-        :class="{
-          dragging: draggedItem?.id === item.id,
-          'drag-over': dragOverItem?.id === item.id,
-        }"
-        @dragover="handleDragOver($event, item)"
-        @dragleave="handleDragLeave"
-        @drop="handleDrop($event, item)"
-      >
-        <label class="main-item-label" :for="`intro-slide-${item.id}`">
-          <div class="main-item-label-content">
-            <div
-              class="drag-handle"
-              draggable="true"
-              @dragstart="handleDragStart($event, item)"
-              @dragend="handleDragEnd"
-            >
-              <img
-                style="display: block"
-                src="./../../assets/d-and-d.svg"
-                alt="Перетащить"
-                width="40"
-                height="40"
-              />
-            </div>
-            {{ item.title }}
-          </div>
-
-          <MyBtn variant="primary" @click.prevent="togleAccardion(item.id)">{{
-            openAccardion[item.id] ? 'Закрыть' : 'Редактировать'
-          }}</MyBtn>
-        </label>
-        <Transition
-          name="accordion"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @after-enter="afterEnter"
-          @before-leave="beforeLeave"
-          @leave="leave"
+    <DraggableList
+      v-if="introSlideData && introSlideData.length > 0"
+      v-model="introSlideData"
+      item-key="id"
+      class="slides-list"
+      tag="div"
+      @reorder="reorderSlides"
+    >
+      <template #item="{ item, dragHandleProps, isDragOver }">
+        <form
+          class="main-item"
+          :name="`intro-slide-${item.id}`"
+          :class="{ 'drag-over': isDragOver }"
         >
-          <div
-            v-if="openAccardion[item.id] && editableItemData[item.id]"
-            class="main-item-content"
-          >
-            <div class="main-item-inputs">
-              <div class="main-item-input">
-                <label class="main-item-input-label">Заголовок</label>
-                <input
-                  class="main-item-input-field"
-                  type="text"
-                  v-model="editableItemData[item.id].title"
+          <label class="main-item-label" :for="`intro-slide-${item.id}`">
+            <div class="main-item-label-content">
+              <div class="drag-handle" v-bind="dragHandleProps">
+                <img
+                  style="display: block"
+                  src="./../../assets/d-and-d.svg"
+                  alt="Перетащить"
+                  width="40"
+                  height="40"
                 />
               </div>
-              <div class="main-item-input">
-                <label class="main-item-input-label">Текст кнопки</label>
-                <input
-                  class="main-item-input-field"
-                  type="text"
-                  v-model="editableItemData[item.id].button_text"
-                />
-              </div>
-              <div class="main-item-input">
-                <label class="main-item-input-label">Ссылка кнопки</label>
-                <input
-                  class="main-item-input-field"
-                  type="text"
-                  v-model="editableItemData[item.id].button_link"
-                />
-              </div>
+              {{ item.title }}
             </div>
-            <div class="main-item-advantages">
-              <div class="main-item-advantages-header">
-                <label class="main-item-input-label">Преимущества</label>
-                <MyBtn
-                  variant="primary"
-                  @click.prevent="togleAdvantageAccardion(item.id)"
-                  >{{
-                    openAdvantageAccardion[item.id] ? 'Скрыть' : 'Показать'
-                  }}
-                  преимущества</MyBtn
-                >
-              </div>
-              <Transition
-                name="accordion"
-                @before-enter="beforeEnter"
-                @enter="enter"
-                @after-enter="afterEnter"
-                @before-leave="beforeLeave"
-                @leave="leave"
-              >
-                <div
-                  class="advantages-content"
-                  v-if="openAdvantageAccardion[item.id]"
-                >
-                  <div>
-                    <div
-                      v-if="editableItemData[item.id].advantages.length > 0"
-                      class="advantages-list"
-                    >
-                      <div
-                        v-for="(advantage, advIndex) in editableItemData[
-                          item.id
-                        ].advantages"
-                        :key="advIndex"
-                        class="advantage-item"
-                      >
-                        <input
-                          class="input-advantage"
-                          type="text"
-                          v-model="
-                            editableItemData[item.id].advantages[advIndex]
-                          "
-                          placeholder="Введите преимущество"
-                        />
-                        <MyBtn
-                          variant="primary"
-                          @click.prevent="
-                            removeAdvantage(editableItemData[item.id], advIndex)
-                          "
-                          class="btn-remove"
-                          >Удалить</MyBtn
-                        >
-                      </div>
-                    </div>
-                    <p v-else class="no-advantages">Сейчас нет преимуществ</p>
-                  </div>
 
-                  <div class="advantage-actions">
+            <MyBtn variant="primary" @click.prevent="togleAccardion(item.id)">{{
+              openAccardion[item.id] ? 'Закрыть' : 'Редактировать'
+            }}</MyBtn>
+          </label>
+          <Transition
+            name="accordion"
+            @before-enter="beforeEnter"
+            @enter="enter"
+            @after-enter="afterEnter"
+            @before-leave="beforeLeave"
+            @leave="leave"
+          >
+            <div
+              v-if="openAccardion[item.id] && editableItemData[item.id]"
+              class="main-item-content"
+              data-drag-preview-hide="true"
+            >
+              <div class="main-item-inputs">
+                <div class="main-item-input">
+                  <label class="main-item-input-label">Заголовок</label>
+                  <input
+                    class="main-item-input-field"
+                    type="text"
+                    v-model="editableItemData[item.id].title"
+                  />
+                </div>
+                <div class="main-item-input">
+                  <label class="main-item-input-label">Текст кнопки</label>
+                  <input
+                    class="main-item-input-field"
+                    type="text"
+                    v-model="editableItemData[item.id].button_text"
+                  />
+                </div>
+                <div class="main-item-input">
+                  <label class="main-item-input-label">Ссылка кнопки</label>
+                  <input
+                    class="main-item-input-field"
+                    type="text"
+                    v-model="editableItemData[item.id].button_link"
+                  />
+                </div>
+              </div>
+              <div class="main-item-advantages">
+                <div class="main-item-advantages-header">
+                  <label class="main-item-input-label">Преимущества</label>
+                  <MyBtn
+                    variant="primary"
+                    @click.prevent="togleAdvantageAccardion(item.id)"
+                    >{{
+                      openAdvantageAccardion[item.id] ? 'Скрыть' : 'Показать'
+                    }}
+                    преимущества</MyBtn
+                  >
+                </div>
+                <Transition
+                  name="accordion"
+                  @before-enter="beforeEnter"
+                  @enter="enter"
+                  @after-enter="afterEnter"
+                  @before-leave="beforeLeave"
+                  @leave="leave"
+                >
+                  <div
+                    class="advantages-content"
+                    v-if="openAdvantageAccardion[item.id]"
+                  >
+                    <div>
+                      <div
+                        v-if="editableItemData[item.id].advantages.length > 0"
+                        class="advantages-list"
+                      >
+                        <div
+                          v-for="(advantage, advIndex) in editableItemData[
+                            item.id
+                          ].advantages"
+                          :key="advIndex"
+                          class="advantage-item"
+                        >
+                          <input
+                            class="input-advantage"
+                            type="text"
+                            v-model="
+                              editableItemData[item.id].advantages[advIndex]
+                            "
+                            placeholder="Введите преимущество"
+                          />
+                          <MyBtn
+                            variant="primary"
+                            @click.prevent="
+                              removeAdvantage(
+                                editableItemData[item.id],
+                                advIndex
+                              )
+                            "
+                            class="btn-remove"
+                            >Удалить</MyBtn
+                          >
+                        </div>
+                      </div>
+                      <p v-else class="no-advantages">Сейчас нет преимуществ</p>
+                    </div>
+
+                    <div class="advantage-actions">
+                      <MyBtn
+                        variant="secondary"
+                        @click.prevent="addAdvantage(editableItemData[item.id])"
+                        class="btn-add"
+                        >Добавить преимущество</MyBtn
+                      >
+                    </div>
+                  </div>
+                </Transition>
+              </div>
+
+              <div class="media-uploads">
+                <!-- Video Upload -->
+                <div class="upload-group">
+                  <label>Видео для слайда (не более ~50 МБ, формат mp4):</label>
+                  <input
+                    type="file"
+                    class="hidden-file-input"
+                    :ref="(el) => setFileInputRef(el, item.id, 'video')"
+                    accept="video/mp4"
+                    @change="onFileChange($event, item.id, 'video')"
+                  />
+                  <div class="uploader-preview video-uploader">
+                    <video
+                      v-if="videoPreviews[item.id]?.video || item.video_path"
+                      :src="videoPreviews[item.id]?.video || item.video_path"
+                      class="video-preview"
+                      controls
+                      muted
+                    ></video>
+                    <div v-else class="uploader-placeholder">
+                      <span>Нет видео</span>
+                    </div>
+                  </div>
+                  <div class="upload-actions">
                     <MyBtn
                       variant="secondary"
-                      @click.prevent="addAdvantage(editableItemData[item.id])"
-                      class="btn-add"
-                      >Добавить преимущество</MyBtn
+                      type="button"
+                      @click="triggerFileInput(item.id, 'video')"
+                      >Выбрать видео</MyBtn
+                    >
+                    <MyBtn
+                      variant="primary"
+                      type="button"
+                      @click="clearFile(item.id, 'video')"
+                      >Удалить видео</MyBtn
                     >
                   </div>
                 </div>
-              </Transition>
-            </div>
 
-            <div class="media-uploads">
-              <!-- Video Upload -->
-              <div class="upload-group">
-                <label>Видео для слайда (не более ~50 МБ, формат mp4):</label>
-                <input
-                  type="file"
-                  class="hidden-file-input"
-                  :ref="(el) => setFileInputRef(el, item.id, 'video')"
-                  accept="video/mp4"
-                  @change="onFileChange($event, item.id, 'video')"
-                />
-                <div class="uploader-preview video-uploader">
-                  <video
-                    v-if="videoPreviews[item.id]?.video || item.video_path"
-                    :src="videoPreviews[item.id]?.video || item.video_path"
-                    class="video-preview"
-                    controls
-                    muted
-                  ></video>
-                  <div v-else class="uploader-placeholder">
-                    <span>Нет видео</span>
-                  </div>
-                </div>
-                <div class="upload-actions">
-                  <MyBtn
-                    variant="secondary"
-                    type="button"
-                    @click="triggerFileInput(item.id, 'video')"
-                    >Выбрать видео</MyBtn
-                  >
-                  <MyBtn
-                    variant="primary"
-                    type="button"
-                    @click="clearFile(item.id, 'video')"
-                    >Удалить видео</MyBtn
-                  >
-                </div>
-              </div>
-
-              <!-- Poster Upload -->
-              <div class="upload-group">
-                <label>
-                  Постер (не более ~5 МБ, формат jpg, если не выбрать, создастся
-                  из видео):
-                </label>
-                <input
-                  type="file"
-                  class="hidden-file-input"
-                  :ref="(el) => setFileInputRef(el, item.id, 'poster')"
-                  accept="image/*"
-                  @change="onFileChange($event, item.id, 'poster')"
-                />
-                <div class="uploader-preview image-uploader">
-                  <img
-                    v-if="videoPreviews[item.id]?.poster || item.poster_path"
-                    :src="videoPreviews[item.id]?.poster || item.poster_path"
-                    alt="Постер"
-                    class="image-preview"
+                <!-- Poster Upload -->
+                <div class="upload-group">
+                  <label>
+                    Постер (не более ~5 МБ, формат jpg, если не выбрать,
+                    создастся из видео):
+                  </label>
+                  <input
+                    type="file"
+                    class="hidden-file-input"
+                    :ref="(el) => setFileInputRef(el, item.id, 'poster')"
+                    accept="image/*"
+                    @change="onFileChange($event, item.id, 'poster')"
                   />
-                  <div v-else class="uploader-placeholder">
-                    <span>Нет постера</span>
+                  <div class="uploader-preview image-uploader">
+                    <img
+                      v-if="videoPreviews[item.id]?.poster || item.poster_path"
+                      :src="videoPreviews[item.id]?.poster || item.poster_path"
+                      alt="Постер"
+                      class="image-preview"
+                    />
+                    <div v-else class="uploader-placeholder">
+                      <span>Нет постера</span>
+                    </div>
+                  </div>
+                  <div class="upload-actions">
+                    <MyBtn
+                      variant="secondary"
+                      type="button"
+                      @click="triggerFileInput(item.id, 'poster')"
+                      >Выбрать постер</MyBtn
+                    >
+                    <MyBtn
+                      variant="primary"
+                      type="button"
+                      @click="clearFile(item.id, 'poster')"
+                      >Удалить постер</MyBtn
+                    >
                   </div>
                 </div>
-                <div class="upload-actions">
-                  <MyBtn
-                    variant="secondary"
-                    type="button"
-                    @click="triggerFileInput(item.id, 'poster')"
-                    >Выбрать постер</MyBtn
-                  >
-                  <MyBtn
-                    variant="primary"
-                    type="button"
-                    @click="clearFile(item.id, 'poster')"
-                    >Удалить постер</MyBtn
-                  >
-                </div>
               </div>
-            </div>
 
-            <div class="form-actions">
-              <MyBtn
-                variant="secondary"
-                @click.prevent="handleSave(editableItemData[item.id])"
-                :disabled="isLoading"
-                class="save-all-btn"
-              >
-                {{ isLoading ? 'Сохранение...' : 'Сохранить слайд' }}
-              </MyBtn>
-              <MyBtn
-                variant="primary"
-                @click.prevent="handleDeleteSlide(item.id)"
-                :disabled="isLoading"
-                class="delete-slide-btn"
-                >Удалить слайд</MyBtn
-              >
+              <div class="form-actions">
+                <MyBtn
+                  variant="secondary"
+                  @click.prevent="handleSave(editableItemData[item.id])"
+                  :disabled="isLoading"
+                  class="save-all-btn"
+                >
+                  {{ isLoading ? 'Сохранение...' : 'Сохранить слайд' }}
+                </MyBtn>
+                <MyBtn
+                  variant="primary"
+                  @click.prevent="handleDeleteSlide(item.id)"
+                  :disabled="isLoading"
+                  class="delete-slide-btn"
+                  >Удалить слайд</MyBtn
+                >
+              </div>
+              <!-- <p>Это position: {{ item.position }}</p> -->
+              <!-- <p>Это created_at: {{ item.created_at }}</p> -->
             </div>
-            <!-- <p>Это position: {{ item.position }}</p> -->
-            <!-- <p>Это created_at: {{ item.created_at }}</p> -->
-          </div>
-        </Transition>
-      </form>
-    </div>
+          </Transition>
+        </form>
+      </template>
+    </DraggableList>
   </div>
 </template>
 
@@ -970,6 +899,10 @@ const leave = (el: Element) => {
   padding: 5px;
 }
 .drag-handle:active {
+  cursor: grabbing;
+}
+
+.draggable:active {
   cursor: grabbing;
 }
 .main-item.dragging {

@@ -46,7 +46,10 @@ const mainNavStore = defineStore('mainNavStore', () => {
       const response = await fetchWithCors(API_BASE_URL);
 
       if (response.success && response.data) {
-        navItems.value = response.data;
+        navItems.value = response.data.map((item: any) => ({
+          ...item,
+          on_page: !!parseInt(String(item.on_page), 10),
+        }));
       } else {
         throw new Error(response.error || 'Failed to load navigation items');
       }
@@ -89,7 +92,9 @@ const mainNavStore = defineStore('mainNavStore', () => {
     isValid.value = true;
   };
 
-  const updateNavItemsOrder = (orderData: { id: number; sort_order: number }[]) => {
+  const updateNavItemsOrder = (
+    orderData: { id: number; sort_order: number }[]
+  ) => {
     // Обновляем локальные данные на основе нового порядка
     orderData.forEach((item) => {
       const navItem = navItems.value.find((nav) => nav.id === item.id);
@@ -97,7 +102,7 @@ const mainNavStore = defineStore('mainNavStore', () => {
         navItem.sort_order = item.sort_order;
       }
     });
-    
+
     // Пересортировываем массив
     navItems.value.sort((a, b) => a.sort_order - b.sort_order);
   };

@@ -3,6 +3,7 @@ import { ref, onMounted, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
 
 // --- ИНТЕРФЕЙСЫ ---
 interface Sertificate {
@@ -25,7 +26,6 @@ const sertificates = ref<Sertificate[]>([]);
 const newSlots = ref<NewSertificateSlot[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
-const draggingItem = ref<number | null>(null);
 const fileInputs = ref<Record<string, HTMLInputElement | null>>({});
 const filesToUpdate = ref<Record<number, File | null>>({});
 const previewsForUpdate = ref<Record<number, string | null>>({});
@@ -202,33 +202,6 @@ const handleUpdatePositions = async (itemsToUpdate: Sertificate[]) => {
   }
 };
 
-// --- DRAG-AND-DROP ЛОГИКА ---
-
-const onDragStart = (id: number) => {
-  draggingItem.value = id;
-};
-
-const onDrop = (targetId: number) => {
-  if (draggingItem.value === null || draggingItem.value === targetId) {
-    draggingItem.value = null;
-    return;
-  }
-
-  const fromIndex = sertificates.value.findIndex(
-    (it) => it.sertificate_id === draggingItem.value
-  );
-  const toIndex = sertificates.value.findIndex(
-    (it) => it.sertificate_id === targetId
-  );
-
-  if (fromIndex !== -1 && toIndex !== -1) {
-    const [movedItem] = sertificates.value.splice(fromIndex, 1);
-    sertificates.value.splice(toIndex, 0, movedItem);
-    handleUpdatePositions(sertificates.value);
-  }
-  draggingItem.value = null;
-};
-
 // --- УПРАВЛЕНИЕ ВЫБОРОМ ФАЙЛОВ ---
 
 const addNewSlot = () => {
@@ -358,163 +331,168 @@ watchEffect(() => {
       <button @click="fetchData">Попробовать снова</button>
     </div>
 
-    <div v-else class="sertificates-grid">
-      <!-- Существующие сертификаты -->
-      <div
-        v-for="sertificate in sertificates"
-        :key="sertificate.sertificate_id"
-        class="sertificate-card"
-        :class="{ 'is-updating': filesToUpdate[sertificate.sertificate_id] }"
-        draggable="true"
-        @dragstart="onDragStart(sertificate.sertificate_id)"
-        @dragover.prevent
-        @drop="onDrop(sertificate.sertificate_id)"
-      >
+    <DraggableList
+      v-else
+      v-model="sertificates"
+      item-key="sertificate_id"
+      tag="div"
+      class="sertificates-grid"
+      @reorder="handleUpdatePositions"
+    >
+      <template #item="{ item, dragHandleProps, isDragOver }">
         <div
-          class="image-container"
-          @click="triggerFileSelect(sertificate.sertificate_id)"
+          class="sertificate-card"
+          :class="{
+            'is-updating': filesToUpdate[item.sertificate_id],
+            'drag-over': isDragOver,
+          }"
         >
-          <iframe
-            v-if="
-              filesToUpdate[sertificate.sertificate_id]?.type ===
-                'application/pdf' || sertificate.image_path?.endsWith('.pdf')
-            "
-            :src="
-              previewsForUpdate[sertificate.sertificate_id] ||
-              sertificate.image_path
-            "
-            class="sertificate-pdf-preview"
-            frameborder="0"
-          ></iframe>
-          <img
-            v-else
-            :src="
-              previewsForUpdate[sertificate.sertificate_id] ||
-              sertificate.image_path
-            "
-            alt="Сертификат"
-            class="sertificate-image"
-          />
-          <div class="overlay-edit">
-            <span class="icon-edit">✎</span>
-            <span>Заменить</span>
-          </div>
-        </div>
-        <input
-          type="file"
-          accept="application/pdf"
-          class="hidden-file-input"
-          :ref="(el) => (fileInputs[`existing-sertificate-${sertificate.sertificate_id}`] = el as HTMLInputElement)"
-          @change="onFileChangeForExisting($event, sertificate.sertificate_id)"
-        />
-
-        <div
-          v-if="filesToUpdate[sertificate.sertificate_id]"
-          class="actions-update"
-        >
-          <MyBtn
-            variant="primary"
-            class="btn-save"
-            @click="handleUpdate(sertificate.sertificate_id)"
+          <div
+            class="image-container"
+            @click="triggerFileSelect(item.sertificate_id)"
           >
-            Сохранить
-          </MyBtn>
-          <MyBtn
-            variant="secondary"
-            class="btn-cancel"
-            @click="cancelUpdate(sertificate.sertificate_id)"
-          >
-            Отмена
-          </MyBtn>
-        </div>
-        <div v-else class="drag-handle">⠿</div>
-
-        <button
-          class="btn-remove-image"
-          @click="handleDelete(sertificate.sertificate_id)"
-        >
-          ×
-        </button>
-      </div>
-
-      <!-- Слоты для новых сертификатов -->
-      <div
-        v-for="(slot, index) in newSlots"
-        :key="slot.tempId"
-        class="sertificate-card sertificate-card--new"
-      >
-        <div class="image-uploader">
-          <input
-            type="file"
-            accept="application/pdf"
-            class="hidden-file-input"
-            :id="`file-input-new-sertificate-${slot.tempId}`"
-            :ref="
-              (el) =>
-                (fileInputs[`new-sertificate-${slot.tempId}`] =
-                  el as HTMLInputElement)
-            "
-            @change="onFileChangeForNew($event, slot)"
-          />
-          <div v-if="slot.preview" class="image-preview-wrapper">
             <iframe
-              v-if="slot.file?.type === 'application/pdf'"
-              :src="slot.preview"
+              v-if="
+                filesToUpdate[item.sertificate_id]?.type ===
+                  'application/pdf' || item.image_path?.endsWith('.pdf')
+              "
+              :src="previewsForUpdate[item.sertificate_id] || item.image_path"
               class="sertificate-pdf-preview"
               frameborder="0"
             ></iframe>
             <img
               v-else
-              :src="slot.preview"
-              alt="preview"
+              :src="previewsForUpdate[item.sertificate_id] || item.image_path"
+              alt="Сертификат"
               class="sertificate-image"
             />
-            <button class="btn-remove-image" @click="clearImageInNewSlot(slot)">
-              ×
-            </button>
-          </div>
-          <label
-            v-else
-            :for="`file-input-new-sertificate-${slot.tempId}`"
-            class="image-uploader-placeholder"
-          >
-            <div class="image-uploader-placeholder-content">
-              <span class="download-icon"
-                >Кликните сюда для загрузки сертификата</span
-              >
-              <span class="download-icon"
-                >Загрузите можно только в формате PDF, но не более 10 МБ</span
-              >
+            <div class="overlay-edit">
+              <span class="icon-edit">✎</span>
+              <span>Заменить</span>
             </div>
-          </label>
-        </div>
-        <div class="actions-new">
-          <MyBtn
-            variant="primary"
-            class="btn-save"
-            @click="handleCreate(slot, index)"
-            :disabled="!slot.file"
-          >
-            Сохранить
-          </MyBtn>
-          <MyBtn
-            variant="secondary"
-            class="btn-delete-slot"
-            @click="removeNewSlot(index)"
-          >
-            Удалить
-          </MyBtn>
-        </div>
-      </div>
+          </div>
+          <input
+            type="file"
+            accept="application/pdf"
+            class="hidden-file-input"
+            :ref="
+              (el) =>
+                (fileInputs[`existing-sertificate-${item.sertificate_id}`] =
+                  el as HTMLInputElement)
+            "
+            @change="onFileChangeForExisting($event, item.sertificate_id)"
+          />
 
-      <!-- Кнопка добавления -->
-      <div class="sertificate-card add-new-card" @click="addNewSlot">
-        <div class="add-new-placeholder">
-          <span>+</span>
-          <p>Добавить сертификат</p>
+          <div v-if="filesToUpdate[item.sertificate_id]" class="actions-update">
+            <MyBtn
+              variant="primary"
+              class="btn-save"
+              @click="handleUpdate(item.sertificate_id)"
+            >
+              Сохранить
+            </MyBtn>
+            <MyBtn
+              variant="secondary"
+              class="btn-cancel"
+              @click="cancelUpdate(item.sertificate_id)"
+            >
+              Отмена
+            </MyBtn>
+          </div>
+          <div v-else class="drag-handle" v-bind="dragHandleProps">⠿</div>
+
+          <button
+            class="btn-remove-image"
+            @click="handleDelete(item.sertificate_id)"
+          >
+            ×
+          </button>
         </div>
-      </div>
-    </div>
+      </template>
+
+      <template #footer>
+        <!-- Слоты для новых сертификатов -->
+        <div
+          v-for="(slot, index) in newSlots"
+          :key="slot.tempId"
+          class="sertificate-card sertificate-card--new"
+        >
+          <div class="image-uploader">
+            <input
+              type="file"
+              accept="application/pdf"
+              class="hidden-file-input"
+              :id="`file-input-new-sertificate-${slot.tempId}`"
+              :ref="
+                (el) =>
+                  (fileInputs[`new-sertificate-${slot.tempId}`] =
+                    el as HTMLInputElement)
+              "
+              @change="onFileChangeForNew($event, slot)"
+            />
+            <div v-if="slot.preview" class="image-preview-wrapper">
+              <iframe
+                v-if="slot.file?.type === 'application/pdf'"
+                :src="slot.preview"
+                class="sertificate-pdf-preview"
+                frameborder="0"
+              ></iframe>
+              <img
+                v-else
+                :src="slot.preview"
+                alt="preview"
+                class="sertificate-image"
+              />
+              <button
+                class="btn-remove-image"
+                @click="clearImageInNewSlot(slot)"
+              >
+                ×
+              </button>
+            </div>
+            <label
+              v-else
+              :for="`file-input-new-sertificate-${slot.tempId}`"
+              class="image-uploader-placeholder"
+            >
+              <div class="image-uploader-placeholder-content">
+                <span class="download-icon"
+                  >Кликните сюда для загрузки сертификата</span
+                >
+                <span class="download-icon"
+                  >Загрузите можно только в формате PDF, но не более 10 МБ</span
+                >
+              </div>
+            </label>
+          </div>
+          <div class="actions-new">
+            <MyBtn
+              variant="primary"
+              class="btn-save"
+              @click="handleCreate(slot, index)"
+              :disabled="!slot.file"
+            >
+              Сохранить
+            </MyBtn>
+            <MyBtn
+              variant="secondary"
+              class="btn-delete-slot"
+              @click="removeNewSlot(index)"
+            >
+              Удалить
+            </MyBtn>
+          </div>
+        </div>
+
+        <!-- Кнопка добавления -->
+        <div class="sertificate-card add-new-card" @click="addNewSlot">
+          <div class="add-new-placeholder">
+            <span>+</span>
+            <p>Добавить сертификат</p>
+          </div>
+        </div>
+      </template>
+    </DraggableList>
   </div>
 </template>
 
@@ -623,34 +601,10 @@ watchEffect(() => {
   border-color: #007bff;
   box-shadow: 0 0 10px rgba(0, 123, 255, 0.5);
 }
-
-.actions-update {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  display: flex;
-  gap: 0;
-  padding: 0;
-  z-index: 11;
-}
-.actions-update .btn-save,
-.actions-update .btn-cancel {
-  min-width: 0;
-  flex-grow: 1;
-  padding: 0.75rem;
-  border: none;
-  border-radius: 0;
-  color: white;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 0.9rem;
-}
-.actions-update .btn-save {
-  background-color: #28a745;
-}
-.actions-update .btn-cancel {
-  background-color: #6c757d;
+.sertificate-card.drag-over {
+  border-color: #3498db;
+  outline: 2px dashed #3498db;
+  outline-offset: -2px;
 }
 
 /* Ручка для перетаскивания */
