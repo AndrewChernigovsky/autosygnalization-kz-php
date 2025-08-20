@@ -50,8 +50,6 @@ class IntroSlideAPI extends DataBase
         log_message("FFMpeg успешно инициализирован");
       } catch (Exception $e) {
         log_message("Ошибка инициализации FFMpeg: " . $e->getMessage());
-        log_message("Ошибка инициализации FFMpeg: " . $e->getLine());
-        log_message("Ошибка инициализации FFMpeg: " . $e->getFile());
         // Не бросаем исключение, а возвращаем JSON-ошибку
         $this->ffmpeg = null;
       }

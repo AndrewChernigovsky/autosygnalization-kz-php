@@ -667,6 +667,7 @@ const leave = (el: Element) => {
             variant="secondary"
             @click.prevent="handleSaveNewSlide"
             :disabled="isLoading"
+            class="save-all-btn"
           >
             {{ isLoading ? 'Сохранение...' : 'Сохранить новый слайд' }}
           </MyBtn>
@@ -674,7 +675,8 @@ const leave = (el: Element) => {
             variant="primary"
             @click.prevent="cancelNewSlide"
             :disabled="isLoading"
-            >Отмена</MyBtn
+            class="delete-slide-btn"
+            >Отменить создание слайда</MyBtn
           >
         </div>
       </div>
@@ -911,12 +913,13 @@ const leave = (el: Element) => {
                 :disabled="isLoading"
                 class="save-all-btn"
               >
-                {{ isLoading ? 'Сохранение...' : 'Сохранить' }}
+                {{ isLoading ? 'Сохранение...' : 'Сохранить слайд' }}
               </MyBtn>
               <MyBtn
                 variant="primary"
                 @click.prevent="handleDeleteSlide(item.id)"
                 :disabled="isLoading"
+                class="delete-slide-btn"
                 >Удалить слайд</MyBtn
               >
             </div>
@@ -1002,7 +1005,10 @@ const leave = (el: Element) => {
   align-items: center;
 }
 .btn-add {
-  align-self: flex-start;
+  width: 100%;
+  max-width: 100%;
+  flex-grow: 1;
+  padding: 20px 20px;
 }
 .btn-remove {
   padding: 8px 12px;
@@ -1146,9 +1152,6 @@ const leave = (el: Element) => {
   background-color: white;
   box-shadow: 0 0 0 5px #363535;
 }
-.save-all-btn {
-  align-self: center;
-}
 
 .accordion-enter-active,
 .accordion-leave-active {
@@ -1183,5 +1186,14 @@ const leave = (el: Element) => {
   display: flex;
   justify-content: center;
   gap: 20px;
+}
+
+.delete-slide-btn,
+.save-all-btn {
+  align-self: center;
+  width: 100%;
+  max-width: 100%;
+  flex-grow: 1;
+  padding: 20px 20px;
 }
 </style>
