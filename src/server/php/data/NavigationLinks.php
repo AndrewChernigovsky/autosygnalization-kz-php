@@ -136,7 +136,7 @@ class NavigationLinks extends DataBase
       ],
       [
         'type' => "without-auto",
-        'link' => "/autosygnal?SELECT=name&ype=without-auto",
+        'link' => "/autosygnal?SELECT=name&type=without-auto",
         'name' => 'Автосигнализации без автозапуска',
         'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
         'src' => "/client/images/autosygnals/autosygnals-3.avif"

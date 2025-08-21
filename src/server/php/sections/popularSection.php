@@ -10,7 +10,7 @@ function popularSection(): string
   // Инициализация данных
   $products = (new Products())->getData();
   $card = new PopularCard();
-  $pathHref = "/catalog?SELECT=name&PAGE=1";
+  $pathHref = "/catalog";
 
   // Если товаров нет, возвращаем сообщение об отсутствии товаров
   if (empty($products)) {

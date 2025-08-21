@@ -18,6 +18,25 @@ class Header
 
   public function getHeader(): string
   {
+    if (session_status() === PHP_SESSION_NONE) {
+      // Настройка session cookie (гарантированно удаляется при закрытии браузера)
+      session_set_cookie_params([
+        'lifetime' => 0, // Session cookie - удаляется при закрытии
+        'path' => '/',
+        'secure' => false, // Для localhost
+        'httponly' => true,
+        'samesite' => 'Lax'
+      ]);
+      
+      // Устанавливаем время жизни сессии
+      ini_set('session.gc_maxlifetime', 1440); // 24 минуты
+      
+      session_start();
+      
+      // Принудительная очистка старых файлов сессий (только файлы, не текущую сессию)
+      $this->cleanOldSessionFiles();
+    }
+    
     // Инициализация компонентов
     $logo = new Logo();
     $cart = new Cart();
@@ -98,6 +117,34 @@ class Header
     </div>
 </header>
 HTML;
+  }
+
+  private function cleanOldSessionFiles(): void
+  {
+    // Очищаем только старые файлы сессий, НЕ текущую активную сессию
+    $sessionPath = ini_get('session.save_path') ?: sys_get_temp_dir();
+    $maxLifetime = 1440; // 24 минуты
+    
+    if (is_dir($sessionPath)) {
+      $currentSessionId = session_id();
+      $files = glob($sessionPath . '/sess_*');
+      $currentTime = time();
+      
+      foreach ($files as $file) {
+        if (is_file($file)) {
+          $fileName = basename($file);
+          $fileSessionId = str_replace('sess_', '', $fileName);
+          
+          // НЕ удаляем текущую активную сессию
+          if ($fileSessionId !== $currentSessionId) {
+            $fileTime = filemtime($file);
+            if (($currentTime - $fileTime) > $maxLifetime) {
+              unlink($file); // Удаляем только старые файлы
+            }
+          }
+        }
+      }
+    }
   }
 
   private function generateNavigationLinks($links): string

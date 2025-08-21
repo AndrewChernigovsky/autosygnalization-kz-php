@@ -64,7 +64,6 @@
       "./php/functions/getProductCard.php",
       "./php/functions/renderPhoneButton.php",
       "./php/auth/sessions/get_session_data.php",
-      "./php/auth/sessions/session-destroy.php",
       "./php/auth/sessions/session.php"
     ]
   },

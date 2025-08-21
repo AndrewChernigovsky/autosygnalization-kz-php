@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/logger.php';
+
 // Запуск сессии в самом начале файла
 use DATABASE\DataBase;
+use function AUTH\log_message;
+
+log_message('google-auth-callback.php 4');
 
 session_start();
 // Загружаем .env из корня server, безопасно

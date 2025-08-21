@@ -1,14 +1,18 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/logger.php';
+
 use LAYOUT\Head;
 use LAYOUT\Header;
 use LAYOUT\Footer;
+use function AUTH\log_message;
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 // header('Content-Type: application/json');
 
+log_message('google_auth.php 5');
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
