@@ -84,11 +84,32 @@ $logoutUrl = '/google_auth?action=logout';
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
-error_log('GOOGLE_AUTH_VIEW: sid=' . session_id() . '; auth_ok=' . (!empty($_SESSION['auth_ok']) ? '1' : '0') . '; token=' . (!empty($_SESSION['google_access_token']) ? '1' : '0'));
-if (empty($_SESSION['auth_ok'])) {
+
+// Дополнительная проверка безопасности
+if (empty($_SESSION['auth_ok']) || !isset($_SESSION['auth_ok']) || $_SESSION['auth_ok'] !== true) {
+  // Логируем попытку несанкционированного доступа
+  error_log('GOOGLE_AUTH_SECURITY: Unauthorized access attempt from IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+  
+  // Очищаем сессию для безопасности
+  $_SESSION = [];
+  session_destroy();
+  
   header('Location: /login');
   exit;
 }
+
+// Проверяем время последней активности (30 минут)
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
+  $_SESSION = [];
+  session_destroy();
+  header('Location: /login?expired=1');
+  exit;
+}
+
+// Обновляем время последней активности
+$_SESSION['last_activity'] = time();
+
+error_log('GOOGLE_AUTH_VIEW: sid=' . session_id() . '; auth_ok=' . (!empty($_SESSION['auth_ok']) ? '1' : '0') . '; token=' . (!empty($_SESSION['google_access_token']) ? '1' : '0'));
 // Обработчик выхода
 if (isset($_GET['action']) && $_GET['action'] === 'logout') {
   session_start();

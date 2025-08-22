@@ -1,10 +1,21 @@
 <script setup lang="ts">
 import Menu from './UI/Menu.vue';
 import Header from './components/layout/Header/Header.vue';
+import {
+  isAuthenticated,
+  checkAuthStatus,
+  refreshAuthStatus,
+} from './router/authGuard';
+import MyBtn from './components/UI/MyBtn.vue';
+import { onMounted } from 'vue';
+
+onMounted(async () => {
+  await checkAuthStatus();
+});
 </script>
 
 <template>
-  <div class="app-container">
+  <div v-if="isAuthenticated" class="app-container">
     <Menu />
     <h1 style="text-align: center; margin-bottom: 20px" class="my-title m-0">
       Админ-панель, здравствуйте Алексей!
@@ -13,6 +24,12 @@ import Header from './components/layout/Header/Header.vue';
     <main class="main-content my-page">
       <router-view />
     </main>
+  </div>
+  <div v-else class="app-container-error">
+    <h1>НО НО МИСТЕР ФИШ</h1>
+    <MyBtn variant="primary" @click="refreshAuthStatus">
+      Проверить авторизацию
+    </MyBtn>
   </div>
 </template>
 
@@ -47,5 +64,14 @@ import Header from './components/layout/Header/Header.vue';
   padding: 20px;
   overflow-y: auto;
   transition: all 0.3s ease;
+}
+
+.app-container-error {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

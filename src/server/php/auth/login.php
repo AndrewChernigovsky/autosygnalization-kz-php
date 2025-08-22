@@ -4,6 +4,9 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/logger.php';
 
 use DATABASE\DataBase;
+use LAYOUT\Head;
+use LAYOUT\Header;
+use LAYOUT\Footer;
 use function AUTH\log_message;
 
 log_message('login.php 1');
@@ -19,6 +22,10 @@ if (!empty($_SESSION['success_message'])) {
   unset($_SESSION['success_message']);
 }
 $title = 'Админ панель | Auto Security';
+
+$head = new Head();
+$header = new Header();
+$footer = new Footer();
 
 // Проверяем, была ли отправлена форма
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -59,18 +66,121 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="ru">
 <style>
+  .container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
+
+  form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
   .form-group {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    width: 300px;
+    gap: 16px;
+    width: 100%;
   }
+
+  .form-group label {
+    font-weight: 500;
+    text-align: left;
+    font-size: 14px;
+  }
+
+  .form-group input {
+    padding: 12px 16px;
+    border: 2px solid #e1e5e9;
+    border-radius: 10px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #667eea;
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  }
+
+  button {
+    background: linear-gradient(#280000, #ff0000);
+    width: 260px;
+    min-height: 40px;
+    border-radius: 5px;
+    border: 1px solid white;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    font-weight: 700;
+    font-size: 20px;
+    text-transform: uppercase;
+  }
+
+  button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+    cursor: pointer;
+  }
+
+  button:active {
+    transform: translateY(0);
+  }
+
+  .error {
+    background: #fee;
+    border: 1px solid #fcc;
+    color: #b00020;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  .success {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    color: #008000;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  .auth-title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+  }
+
 </style>
 
+<head>
+  <?= $head->setHead(); ?>
+  <title>Войдите через Admin Panel</title>
+  <style>
+    .main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      height: 100%;
+    }
+  </style>
+</head>
+
 <body>
+<?= (new Header())->getHeader() ?>
   <main class="main">
     <div class="container">
-      <h1>Админ панель</h1>
+      <h1 class="auth-title">Авторизация</h1>
       <form action="/sign_up" method="post">
         <div class="form-group">
           <label for="email">Введите email</label>
@@ -108,6 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <?php endif; ?>
     </div>
   </main>
+  <?= (new Footer())->getFooter() ?>
 </body>
 
 </html>
