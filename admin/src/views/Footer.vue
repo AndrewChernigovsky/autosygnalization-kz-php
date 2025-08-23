@@ -11,7 +11,6 @@ import MyTransition from '../components/UI/MyTransition.vue';
 import type { LinkData, IFooterLink, SectionKey } from '../types/FooterLinks';
 
 const allLinksData = ref<LinkData[]>([]);
-const selectedLink = ref<LinkData | null>(null);
 const footerLinks = ref<IFooterLink[]>([]);
 const isInitialLoading = ref(false);
 const isUpdating = ref(false);
@@ -344,15 +343,9 @@ watchEffect(() => {
         </div>
         <MyTransition>
           <div v-if="activeAccordion === key" class="accordion-content-inner">
-            <DraggableList
-              :model-value="section.links"
-              item-key="footer_id"
-              tag="ul"
-              class="links-list"
-              @reorder="
-                (reorderedLinks) => handleSectionReorder(reorderedLinks, key)
-              "
-            >
+            <DraggableList :model-value="section.links" item-key="footer_id" tag="ul" class="links-list" @reorder="
+              (reorderedLinks) => handleSectionReorder(reorderedLinks, key)
+            ">
               <template #item="{ item, dragHandleProps, isDragOver }">
                 <li class="link-item" :class="{ 'drag-over': isDragOver }">
                   <div class="link-info">
@@ -360,22 +353,14 @@ watchEffect(() => {
                     <span>{{ item.name }}</span>
                   </div>
                   <div class="item-controls">
-                    <MyBtn variant="primary" @click="openModal(item)"
-                      >Редактировать</MyBtn
-                    >
-                    <MyBtn
-                      v-if="item.source_table === 'custom'"
-                      variant="secondary"
-                      @click="deleteLink(item.footer_id)"
-                      >Удалить</MyBtn
-                    >
+                    <MyBtn variant="primary" @click="openModal(item)">Редактировать</MyBtn>
+                    <MyBtn v-if="item.source_table === 'custom'" variant="secondary"
+                      @click="deleteLink(item.footer_id)">Удалить</MyBtn>
                   </div>
                 </li>
               </template>
             </DraggableList>
-            <MyBtn variant="secondary" @click.stop="openModal(null, key)"
-              >Добавить ссылку</MyBtn
-            >
+            <MyBtn variant="secondary" @click.stop="openModal(null, key)">Добавить ссылку</MyBtn>
           </div>
         </MyTransition>
       </div>
@@ -390,21 +375,11 @@ watchEffect(() => {
           </h3>
           <div class="add-mode-toggle">
             <label :class="{ active: linkSourceMode === 'custom' }">
-              <input
-                type="radio"
-                value="custom"
-                v-model="linkSourceMode"
-                name="link-source-mode"
-              />
+              <input type="radio" value="custom" v-model="linkSourceMode" name="link-source-mode" />
               Внешняя ссылка
             </label>
             <label :class="{ active: linkSourceMode === 'existing' }">
-              <input
-                type="radio"
-                value="existing"
-                v-model="linkSourceMode"
-                name="link-source-mode"
-              />
+              <input type="radio" value="existing" v-model="linkSourceMode" name="link-source-mode" />
               Внутренняя страница
             </label>
           </div>
@@ -423,18 +398,9 @@ watchEffect(() => {
           <!-- Поля для выбора существующей -->
           <div v-if="linkSourceMode === 'existing'" class="form-group">
             <label for="name-existing">Название (можно изменить)</label>
-            <input
-              type="text"
-              id="name-existing"
-              v-model="editingLink.name"
-              required
-            />
-            <LinkSelector
-              v-model="selectedLinkForModal"
-              :links="availableLinksForModal"
-              label="Выберите страницу"
-              id="modal-link-selector"
-            />
+            <input type="text" id="name-existing" v-model="editingLink.name" required />
+            <LinkSelector v-model="selectedLinkForModal" :links="availableLinksForModal" label="Выберите страницу"
+              id="modal-link-selector" />
           </div>
 
           <!-- Общие поля для всех режимов -->
@@ -447,20 +413,15 @@ watchEffect(() => {
             </select>
             <div class="form-row">
               <label for="visible">Видимость</label>
-              <MySwitch
-                id="visible"
-                :model-value="editingLink.visible!"
-                @update:model-value="editingLink.visible = $event"
-              />
+              <MySwitch id="visible" :model-value="editingLink.visible!"
+                @update:model-value="editingLink.visible = $event" />
             </div>
           </div>
         </form>
       </template>
       <template v-slot:footer>
         <MyBtn variant="secondary" @click="closeModal">Отмена</MyBtn>
-        <MyBtn variant="primary" @click="saveLink(editingLink!)"
-          >Сохранить</MyBtn
-        >
+        <MyBtn variant="primary" @click="saveLink(editingLink!)">Сохранить</MyBtn>
       </template>
     </MyModal>
   </div>
@@ -521,16 +482,19 @@ watchEffect(() => {
 .new-footer-container {
   padding: 20px;
 }
+
 .accordions-wrapper {
   margin-top: 20px;
   background-color: black;
 }
+
 .accordion {
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 10px;
   background-color: black;
 }
+
 .accordion-header {
   display: flex;
   justify-content: space-between;
@@ -538,10 +502,12 @@ watchEffect(() => {
   padding: 10px 15px;
   cursor: pointer;
 }
+
 .accordion-title {
   margin: 0;
   font-size: 1.1rem;
 }
+
 .accordion-content {
   max-height: 0;
   overflow: hidden;
@@ -550,18 +516,21 @@ watchEffect(() => {
 }
 
 .accordion-content.is-open {
-  max-height: 1000px; /* Adjust as needed */
+  max-height: 1000px;
+  /* Adjust as needed */
 }
 
 .accordion-content-inner {
   background-color: black;
   padding: 15px;
 }
+
 .links-list {
   list-style: none;
   padding: 0;
   margin: 0 0 15px 0;
 }
+
 .link-item {
   display: flex;
   justify-content: space-between;
@@ -570,31 +539,38 @@ watchEffect(() => {
   border-bottom: 1px solid #444;
   transition: background-color 0.2s ease;
 }
+
 .link-item.drag-over {
   background: #3a3a3c;
   border-radius: 4px;
 }
+
 .link-item:last-child {
   border-bottom: none;
 }
+
 .link-item[draggable='true'] {
   cursor: grab;
 }
+
 .link-item.dragging {
   opacity: 0.5;
   background: #3a3a3c;
 }
+
 .link-info {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .drag-handle {
   font-size: 1.4rem;
   color: #888;
   cursor: grab;
   padding: 0 5px;
 }
+
 .item-controls {
   display: flex;
   gap: 10px;
@@ -607,6 +583,7 @@ watchEffect(() => {
   flex-direction: column;
   gap: 10px;
 }
+
 .form-row {
   display: flex;
   align-items: center;

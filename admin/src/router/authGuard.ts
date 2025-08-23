@@ -6,8 +6,8 @@ export const isAuthenticated = ref(false);
 
 // Функция проверки авторизации
 export async function checkAuthGuard(
-  to: RouteLocationNormalized,
-  from: RouteLocationNormalized,
+  _to: RouteLocationNormalized,
+  _from: RouteLocationNormalized,
   next: NavigationGuardNext
 ) {
   try {
@@ -21,17 +21,12 @@ export async function checkAuthGuard(
       isAuthenticated.value = true;
       next();
     } else {
-      // Пользователь не авторизован - перенаправляем на страницу входа
-      console.log('Пошел нахуй:', response.message);
 
       window.location.href = 'http://localhost:3000/login';
     }
   } catch (error) {
     isAuthenticated.value = false;
     console.error('Ошибка проверки авторизации:', error);
-
-    // При ошибке перенаправляем на страницу входа
-    // window.location.href = 'http://localhost:3000/login';
   }
 }
 
@@ -42,7 +37,7 @@ export async function checkAuthStatus(): Promise<boolean> {
       '/server/php/admin/api/auth/check-auth.php'
     );
     isAuthenticated.value = response.authenticated;
-    return response.authenticated;
+    return response.data;
   } catch (error) {
     isAuthenticated.value = false;
     console.error('Ошибка проверки статуса авторизации:', error);

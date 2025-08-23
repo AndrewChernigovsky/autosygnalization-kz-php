@@ -42,13 +42,6 @@ const paths = {
   dist: './dist',
 };
 
-// --- Новая задача для копирования Vendor ---
-const copyVendor = () => {
-  return src(['./src/server/vendor/**/*'], { encoding: false }).pipe(
-    dest(paths.dist + '/server/vendor')
-  );
-};
-
 const esbuildTask = async (done) => {
   await esbuildFooWatch();
   browserSync.reload();
@@ -328,7 +321,7 @@ const fonts = (cb) => {
 };
 
 // --- Обновленные цепочки задач ---
-const buildPhp = series(phpTask, copyVendor);
+const buildPhp = series(phpTask);
 
 const statics = series(
   () => cleanDist(['dist']),

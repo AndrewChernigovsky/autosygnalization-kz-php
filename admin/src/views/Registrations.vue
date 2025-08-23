@@ -5,20 +5,13 @@
     <input type="text" v-model="username" name="username" />
     <p>Поменять пароль</p>
     <div class="password-input">
-      <input
-        :type="showPassword ? 'text' : 'password'"
-        v-model="password"
-        name="password"
-      />
+      <input :type="showPassword ? 'text' : 'password'" v-model="password" name="password" />
       <button @click="togglePasswordVisibility" class="toggle-password">
         {{ showPassword ? '👁️' : '👁️‍🗨️' }}
       </button>
     </div>
-    <p>Поменять email</p>
-    <input type="email" v-model="email" name="email" />
     <div class="buttons">
       <button @click="updateProfile" class="btn-primary">Изменить</button>
-      <button @click="logout" class="btn-logout">Выйти из аккаунта</button>
     </div>
   </div>
 </template>
@@ -38,7 +31,7 @@ interface ProfileI {
 
 const data = ref<ProfileI | null>(null);
 const password = ref('');
-const email = ref('');
+// const email = ref('');
 const username = ref('');
 const showPassword = ref(false);
 
@@ -49,16 +42,16 @@ function togglePasswordVisibility() {
 const loadProfile = async () => {
   try {
     const response = await fetchWithCors(
-      '/server/php/admin/api/profile/profile.php'
+      '/profile'
     );
     if (response.success) {
       data.value = response.data;
 
-      if (response.data.email) {
-        email.value = response.data.email;
-      }
       if (response.data.username) {
         username.value = response.data.username;
+      }
+      if (response.data.password) {
+        password.value = response.data.password;
       }
     } else {
       console.error('Ошибка загрузки профиля:', response);
@@ -69,7 +62,7 @@ const loadProfile = async () => {
 };
 
 const updateProfile = async () => {
-  if (!username.value && !email.value && !password.value) {
+  if (!username.value && !password.value) {
     Swal.fire({
       icon: 'warning',
       title: 'Внимание',
@@ -77,18 +70,17 @@ const updateProfile = async () => {
     });
     return;
   }
-  if (!username.value && !email.value) {
+  if (!username.value) {
     Swal.fire({
       icon: 'warning',
       title: 'Внимание',
-      text: 'Поля username и email не могут быть пустыми.',
+      text: 'Поле username не может быть пустым.',
     });
     return;
   }
   try {
     const formData = new FormData();
     if (password.value) formData.append('password', password.value);
-    if (email.value) formData.append('email', email.value);
     if (username.value) formData.append('username', username.value);
 
     const response = await fetchWithCors(
@@ -124,60 +116,6 @@ const updateProfile = async () => {
   }
 };
 
-const logout = async () => {
-  try {
-    // Показываем подтверждение выхода
-    const result = await Swal.fire({
-      icon: 'question',
-      title: 'Выход из аккаунта',
-      text: 'Вы уверены, что хотите выйти?',
-      showCancelButton: true,
-      confirmButtonText: 'Да, выйти',
-      cancelButtonText: 'Отмена',
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-    });
-
-    if (result.isConfirmed) {
-      // Выполняем выход через Google Auth
-      const response = await fetch('/google_auth?action=logout', {
-        method: 'GET',
-      });
-
-      if (response.ok) {
-        // Очищаем локальные данные
-        data.value = null;
-        username.value = '';
-        email.value = '';
-        password.value = '';
-
-        // Показываем сообщение об успешном выходе
-        Swal.fire({
-          icon: 'success',
-          title: 'Вы вышли из аккаунта',
-          text: 'Перенаправление на страницу входа...',
-          timer: 2000,
-          showConfirmButton: false,
-        });
-
-        // Перенаправляем на страницу входа
-        setTimeout(() => {
-          window.location.href = 'http://localhost:3000/login';
-        }, 2000);
-      } else {
-        throw new Error('Ошибка при выходе');
-      }
-    }
-  } catch (error: any) {
-    console.error('Ошибка выхода:', error);
-    Swal.fire({
-      icon: 'error',
-      title: 'Ошибка',
-      text: 'Не удалось выйти из аккаунта. Попробуйте еще раз.',
-    });
-  }
-};
-
 // Загружаем профиль при монтировании
 onMounted(() => {
   loadProfile();
@@ -204,7 +142,8 @@ onMounted(() => {
 
 input[type='password'],
 input[type='text'] {
-  padding-right: 30px; /* Оставляем место для кнопки */
+  padding-right: 30px;
+  /* Оставляем место для кнопки */
 }
 
 .buttons {

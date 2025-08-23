@@ -2,13 +2,7 @@
   <div class="products-admin">
     <h1 class="my-title">Товары</h1>
     <div class="p-4 md:p-6 theme-dark">
-      <input
-        type="file"
-        ref="fileInput"
-        @change="handleFileSelected"
-        style="display: none"
-        accept="image/*"
-      />
+      <input type="file" ref="fileInput" @change="handleFileSelected" style="display: none" accept="image/*" />
       <div v-if="error" class="text-red-500 text-center">
         Ошибка при загрузке данных: {{ error }}
       </div>
@@ -24,33 +18,16 @@
               </MyBtn>
             </div>
             <MyTransition>
-              <div
-                class="space-y-2 product-list"
-                v-if="openAccardions[category]"
-              >
-                <Product
-                  v-for="product in group"
-                  :key="product.id"
-                  :product="product"
-                  :all-categories="allCategories"
-                  :is-image-uploading="isImageUploading"
-                  :get-category-name="getCategoryName"
-                  :is-adding-new-product="isAddingNewProduct"
-                  @save-product="saveChanges"
-                  @delete-product="deleteProductHandler"
-                  @delete-image="handleDeleteImage"
-                  @trigger-file-upload="triggerFileUpload"
-                  @handle-toggle="handleToggle"
-                  @cancel-editing="handleCancelEditing"
-                  @stage-tab-icon="handleStageTabIcon"
-                  @delete-tab-icon="handleDeleteTabIcon"
-                />
-                <MyBtn
-                  variant="secondary"
-                  @click="handleAddProduct(category)"
-                  class="btn-add"
-                  :disabled="isAddingNewProduct"
-                >
+              <div class="space-y-2 product-list" v-if="openAccardions[category]">
+                <Product v-for="product in group" :key="product.id" :product="product" :all-categories="allCategories"
+                  :is-image-uploading="isImageUploading" :get-category-name="getCategoryName"
+                  :is-adding-new-product="isAddingNewProduct" @save-product="saveChanges"
+                  @delete-product="deleteProductHandler" @delete-image="handleDeleteImage"
+                  @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggle"
+                  @cancel-editing="handleCancelEditing" @stage-tab-icon="handleStageTabIcon"
+                  @delete-tab-icon="handleDeleteTabIcon" />
+                <MyBtn variant="secondary" @click="handleAddProduct(category)" class="btn-add"
+                  :disabled="isAddingNewProduct">
                   Добавить товар
                 </MyBtn>
               </div>
@@ -67,7 +44,6 @@ import { onMounted, computed, ref, watchEffect } from 'vue';
 import { useProducts } from './functions/useProducts';
 import type { ProductI } from './interfaces/Products';
 import Swal from 'sweetalert2';
-import Loader from '../../UI/Loader.vue';
 import Product from './Product.vue';
 import MyBtn from '../UI/MyBtn.vue';
 import MyTransition from '../UI/MyTransition.vue';
@@ -443,6 +419,7 @@ onMounted(() => {
     text-align: center;
   }
 }
+
 .theme-dark {
   color: #f1f1f1;
   min-height: 100vh;
@@ -500,6 +477,7 @@ onMounted(() => {
   align-self: flex-end;
   flex-grow: 1;
 }
+
 .btn-add:hover {
   background-color: #0069d9;
 }

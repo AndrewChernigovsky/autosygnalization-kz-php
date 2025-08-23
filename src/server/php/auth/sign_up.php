@@ -3,32 +3,32 @@ session_start();
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/logger.php';
 
+use DATABASE\DataBase;
+use function AUTH\log_message;
+
 // Защита от брутфорса - ограничение попыток входа
 $max_attempts = 5;
 $lockout_time = 300; // 5 минут
 
 if (!isset($_SESSION['login_attempts'])) {
-    $_SESSION['login_attempts'] = 0;
-    $_SESSION['first_attempt_time'] = time();
+  $_SESSION['login_attempts'] = 0;
+  $_SESSION['first_attempt_time'] = time();
 }
 
 // Проверяем, не заблокирован ли пользователь
 if ($_SESSION['login_attempts'] >= $max_attempts) {
-    $time_passed = time() - $_SESSION['first_attempt_time'];
-    if ($time_passed < $lockout_time) {
-        $remaining_time = $lockout_time - $time_passed;
-        $_SESSION['error_message'] = "Слишком много попыток входа. Попробуйте через " . ceil($remaining_time / 60) . " минут.";
-        header('Location: /login');
-        exit;
-    } else {
-        // Сбрасываем счетчик после истечения времени
-        $_SESSION['login_attempts'] = 0;
-        $_SESSION['first_attempt_time'] = time();
-    }
+  $time_passed = time() - $_SESSION['first_attempt_time'];
+  if ($time_passed < $lockout_time) {
+    $remaining_time = $lockout_time - $time_passed;
+    $_SESSION['error_message'] = "Слишком много попыток входа. Попробуйте через " . ceil($remaining_time / 60) . " минут.";
+    header('Location: /login');
+    exit;
+  } else {
+    // Сбрасываем счетчик после истечения времени
+    $_SESSION['login_attempts'] = 0;
+    $_SESSION['first_attempt_time'] = time();
+  }
 }
-
-use DATABASE\DataBase;
-use function AUTH\log_message;
 
 log_message('sign_up.php 3');
 
@@ -71,14 +71,14 @@ $password = $data['password'] ?? '';
 
 // Валидация email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $_SESSION['error_message'] = 'Некорректный формат email.';
-    $_SESSION['login_attempts']++;
-    if ($_SESSION['login_attempts'] >= 3) {
-      sleep(2);
-    }
-    session_write_close();
-    header('Location: /login');
-    exit;
+  $_SESSION['error_message'] = 'Некорректный формат email.';
+  $_SESSION['login_attempts']++;
+  if ($_SESSION['login_attempts'] >= 3) {
+    sleep(2);
+  }
+  session_write_close();
+  header('Location: /login');
+  exit;
 }
 
 // Очистка пароля от лишних символов
@@ -97,20 +97,22 @@ try {
   $dbConnection = DataBase::getConnection();
   $pdo = $dbConnection->getPdo();
 
-  $sql = "SELECT id, password FROM users WHERE email = :email";
+  $sql = "SELECT id, password, email FROM users WHERE email = :email";
   $stmt = $pdo->prepare($sql);
   $stmt->execute(['email' => $email]);
   $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
+  error_log('sign_up.php1111: ' . print_r($user, true));
   if ($user && password_verify($password, $user['password'])) {
     // Успешный вход - сбрасываем счетчик попыток
     $_SESSION['login_attempts'] = 0;
     $_SESSION['first_attempt_time'] = time();
-    
+    $_SESSION['email'] = $user['email'];
+
     $_SESSION['success_message'] = 'Вы являетесь администратором. Перевожу вас на страницу авторизации Google.';
     $_SESSION['auth_ok'] = true;
     $_SESSION['last_activity'] = time(); // Время последней активности
-    session_write_close();
+    // session_write_close();
     header('Location: /login');
     exit;
   } else if (($user && !password_verify($password, $user['password'])) || !$user) {

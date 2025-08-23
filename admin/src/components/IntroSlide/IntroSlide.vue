@@ -427,45 +427,24 @@ const leave = (el: Element) => {
     <h1 class="main-title">Главный слайдер на главной странице</h1>
     <div class="add-new-item-bar">
       <span>Добавить новый слайд</span>
-      <MyBtn
-        variant="primary"
-        @click="prepareNewSlide"
-        :disabled="isAddingNewSlide"
-        >Добавить</MyBtn
-      >
+      <MyBtn variant="primary" @click="prepareNewSlide" :disabled="isAddingNewSlide">Добавить</MyBtn>
     </div>
 
     <!-- Form for new slide -->
-    <form
-      v-if="newSlide"
-      class="main-item new-slide-form"
-      name="intro-slide-new"
-    >
+    <form v-if="newSlide" class="main-item new-slide-form" name="intro-slide-new">
       <div class="main-item-content">
         <div class="main-item-inputs">
           <div class="main-item-input">
             <label class="main-item-input-label">Заголовок</label>
-            <input
-              class="main-item-input-field"
-              type="text"
-              v-model="newSlide.title"
-            />
+            <input class="main-item-input-field" type="text" v-model="newSlide.title" />
           </div>
           <div class="main-item-input">
             <label class="main-item-input-label">Текст кнопки</label>
-            <input
-              class="main-item-input-field"
-              type="text"
-              v-model="newSlide.button_text"
-            />
+            <input class="main-item-input-field" type="text" v-model="newSlide.button_text" />
           </div>
           <div class="main-item-input">
             <label class="main-item-input-label">Ссылка кнопки</label>
-            <input
-              class="main-item-input-field"
-              type="text"
-              v-model="newSlide.button_link"
-            />
+            <input class="main-item-input-field" type="text" v-model="newSlide.button_link" />
           </div>
         </div>
 
@@ -475,38 +454,20 @@ const leave = (el: Element) => {
           </div>
           <div class="advantages-content">
             <div>
-              <div
-                v-if="newSlide.advantages.length > 0"
-                class="advantages-list"
-              >
-                <div
-                  v-for="(advantage, advIndex) in newSlide.advantages"
-                  :key="advIndex"
-                  class="advantage-item"
-                >
-                  <input
-                    class="input-advantage"
-                    type="text"
-                    v-model="newSlide.advantages[advIndex]"
-                    placeholder="Введите преимущество"
-                  />
-                  <MyBtn
-                    variant="primary"
-                    @click.prevent="removeAdvantage(newSlide, advIndex)"
-                    class="btn-remove"
-                    >Удалить</MyBtn
-                  >
+              <div v-if="newSlide.advantages.length > 0" class="advantages-list">
+                <div v-for="(advantage, advIndex) in newSlide.advantages" :key="advantage + advIndex"
+                  class="advantage-item">
+                  <input class="input-advantage" type="text" v-model="newSlide.advantages[advIndex]"
+                    placeholder="Введите преимущество" />
+                  <MyBtn variant="primary" @click.prevent="removeAdvantage(newSlide, advIndex)" class="btn-remove">
+                    Удалить</MyBtn>
                 </div>
               </div>
               <p v-else class="no-advantages">Сейчас нет преимуществ</p>
             </div>
             <div class="advantage-actions">
-              <MyBtn
-                variant="secondary"
-                @click.prevent="addAdvantage(newSlide)"
-                class="btn-add"
-                >Добавить преимущество</MyBtn
-              >
+              <MyBtn variant="secondary" @click.prevent="addAdvantage(newSlide)" class="btn-add">Добавить преимущество
+              </MyBtn>
             </div>
           </div>
         </div>
@@ -515,38 +476,18 @@ const leave = (el: Element) => {
           <!-- Video Upload for new slide -->
           <div class="upload-group">
             <label>Видео для слайда (не более ~50 МБ, формат mp4):</label>
-            <input
-              type="file"
-              class="hidden-file-input"
-              :ref="(el) => setFileInputRef(el, 0, 'video')"
-              accept="video/mp4"
-              @change="onFileChange($event, 0, 'video')"
-            />
+            <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, 0, 'video')"
+              accept="video/mp4" @change="onFileChange($event, 0, 'video')" />
             <div class="uploader-preview video-uploader">
-              <video
-                v-if="videoPreviews[0]?.video"
-                :src="videoPreviews[0]?.video"
-                class="video-preview"
-                controls
-                muted
-              ></video>
+              <video v-if="videoPreviews[0]?.video" :src="videoPreviews[0]?.video" class="video-preview" controls
+                muted></video>
               <div v-else class="uploader-placeholder">
                 <span>Нет видео</span>
               </div>
             </div>
             <div class="upload-actions">
-              <MyBtn
-                variant="secondary"
-                type="button"
-                @click="triggerFileInput(0, 'video')"
-                >Выбрать видео</MyBtn
-              >
-              <MyBtn
-                variant="primary"
-                type="button"
-                @click="clearFile(0, 'video')"
-                >Удалить видео</MyBtn
-              >
+              <MyBtn variant="secondary" type="button" @click="triggerFileInput(0, 'video')">Выбрать видео</MyBtn>
+              <MyBtn variant="primary" type="button" @click="clearFile(0, 'video')">Удалить видео</MyBtn>
             </div>
           </div>
 
@@ -556,85 +497,39 @@ const leave = (el: Element) => {
               Постер (не более ~5 МБ, формат jpg, если не выбрать, создастся из
               видео):
             </label>
-            <input
-              type="file"
-              class="hidden-file-input"
-              :ref="(el) => setFileInputRef(el, 0, 'poster')"
-              accept="image/*"
-              @change="onFileChange($event, 0, 'poster')"
-            />
+            <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, 0, 'poster')"
+              accept="image/*" @change="onFileChange($event, 0, 'poster')" />
             <div class="uploader-preview image-uploader">
-              <img
-                v-if="videoPreviews[0]?.poster"
-                :src="videoPreviews[0]?.poster"
-                alt="Постер"
-                class="image-preview"
-              />
+              <img v-if="videoPreviews[0]?.poster" :src="videoPreviews[0]?.poster" alt="Постер" class="image-preview" />
               <div v-else class="uploader-placeholder">
                 <span>Нет постера</span>
               </div>
             </div>
             <div class="upload-actions">
-              <MyBtn
-                variant="secondary"
-                type="button"
-                @click="triggerFileInput(0, 'poster')"
-                >Выбрать постер</MyBtn
-              >
-              <MyBtn
-                variant="primary"
-                type="button"
-                @click="clearFile(0, 'poster')"
-                >Удалить постер</MyBtn
-              >
+              <MyBtn variant="secondary" type="button" @click="triggerFileInput(0, 'poster')">Выбрать постер</MyBtn>
+              <MyBtn variant="primary" type="button" @click="clearFile(0, 'poster')">Удалить постер</MyBtn>
             </div>
           </div>
         </div>
 
         <div class="form-actions">
-          <MyBtn
-            variant="secondary"
-            @click.prevent="handleSaveNewSlide"
-            :disabled="isLoading"
-            class="save-all-btn"
-          >
+          <MyBtn variant="secondary" @click.prevent="handleSaveNewSlide" :disabled="isLoading" class="save-all-btn">
             {{ isLoading ? 'Сохранение...' : 'Сохранить новый слайд' }}
           </MyBtn>
-          <MyBtn
-            variant="primary"
-            @click.prevent="cancelNewSlide"
-            :disabled="isLoading"
-            class="delete-slide-btn"
-            >Отменить создание слайда</MyBtn
-          >
+          <MyBtn variant="primary" @click.prevent="cancelNewSlide" :disabled="isLoading" class="delete-slide-btn">
+            Отменить создание слайда</MyBtn>
         </div>
       </div>
     </form>
 
-    <DraggableList
-      v-if="introSlideData && introSlideData.length > 0"
-      v-model="introSlideData"
-      item-key="id"
-      class="slides-list"
-      tag="div"
-      @reorder="reorderSlides"
-    >
+    <DraggableList v-if="introSlideData && introSlideData.length > 0" v-model="introSlideData" item-key="id"
+      class="slides-list" tag="div" @reorder="reorderSlides">
       <template #item="{ item, dragHandleProps, isDragOver }">
-        <form
-          class="main-item"
-          :name="`intro-slide-${item.id}`"
-          :class="{ 'drag-over': isDragOver }"
-        >
+        <form class="main-item" :name="`intro-slide-${item.id}`" :class="{ 'drag-over': isDragOver }">
           <label class="main-item-label" :for="`intro-slide-${item.id}`">
             <div class="main-item-label-content">
               <div class="drag-handle" v-bind="dragHandleProps">
-                <img
-                  style="display: block"
-                  src="./../../assets/d-and-d.svg"
-                  alt="Перетащить"
-                  width="40"
-                  height="40"
-                />
+                <img style="display: block" src="./../../assets/d-and-d.svg" alt="Перетащить" width="40" height="40" />
               </div>
               {{ item.title }}
             </div>
@@ -643,112 +538,56 @@ const leave = (el: Element) => {
               openAccardion[item.id] ? 'Закрыть' : 'Редактировать'
             }}</MyBtn>
           </label>
-          <Transition
-            name="accordion"
-            @before-enter="beforeEnter"
-            @enter="enter"
-            @after-enter="afterEnter"
-            @before-leave="beforeLeave"
-            @leave="leave"
-          >
-            <div
-              v-if="openAccardion[item.id] && editableItemData[item.id]"
-              class="main-item-content"
-              data-drag-preview-hide="true"
-            >
+          <Transition name="accordion" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"
+            @before-leave="beforeLeave" @leave="leave">
+            <div v-if="openAccardion[item.id] && editableItemData[item.id]" class="main-item-content"
+              data-drag-preview-hide="true">
               <div class="main-item-inputs">
                 <div class="main-item-input">
                   <label class="main-item-input-label">Заголовок</label>
-                  <input
-                    class="main-item-input-field"
-                    type="text"
-                    v-model="editableItemData[item.id].title"
-                  />
+                  <input class="main-item-input-field" type="text" v-model="editableItemData[item.id].title" />
                 </div>
                 <div class="main-item-input">
                   <label class="main-item-input-label">Текст кнопки</label>
-                  <input
-                    class="main-item-input-field"
-                    type="text"
-                    v-model="editableItemData[item.id].button_text"
-                  />
+                  <input class="main-item-input-field" type="text" v-model="editableItemData[item.id].button_text" />
                 </div>
                 <div class="main-item-input">
                   <label class="main-item-input-label">Ссылка кнопки</label>
-                  <input
-                    class="main-item-input-field"
-                    type="text"
-                    v-model="editableItemData[item.id].button_link"
-                  />
+                  <input class="main-item-input-field" type="text" v-model="editableItemData[item.id].button_link" />
                 </div>
               </div>
               <div class="main-item-advantages">
                 <div class="main-item-advantages-header">
                   <label class="main-item-input-label">Преимущества</label>
-                  <MyBtn
-                    variant="primary"
-                    @click.prevent="togleAdvantageAccardion(item.id)"
-                    >{{
-                      openAdvantageAccardion[item.id] ? 'Скрыть' : 'Показать'
-                    }}
-                    преимущества</MyBtn
-                  >
+                  <MyBtn variant="primary" @click.prevent="togleAdvantageAccardion(item.id)">{{
+                    openAdvantageAccardion[item.id] ? 'Скрыть' : 'Показать'
+                  }}
+                    преимущества</MyBtn>
                 </div>
-                <Transition
-                  name="accordion"
-                  @before-enter="beforeEnter"
-                  @enter="enter"
-                  @after-enter="afterEnter"
-                  @before-leave="beforeLeave"
-                  @leave="leave"
-                >
-                  <div
-                    class="advantages-content"
-                    v-if="openAdvantageAccardion[item.id]"
-                  >
+                <Transition name="accordion" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"
+                  @before-leave="beforeLeave" @leave="leave">
+                  <div class="advantages-content" v-if="openAdvantageAccardion[item.id]">
                     <div>
-                      <div
-                        v-if="editableItemData[item.id].advantages.length > 0"
-                        class="advantages-list"
-                      >
-                        <div
-                          v-for="(advantage, advIndex) in editableItemData[
-                            item.id
-                          ].advantages"
-                          :key="advIndex"
-                          class="advantage-item"
-                        >
-                          <input
-                            class="input-advantage"
-                            type="text"
-                            v-model="
-                              editableItemData[item.id].advantages[advIndex]
-                            "
-                            placeholder="Введите преимущество"
-                          />
-                          <MyBtn
-                            variant="primary"
-                            @click.prevent="
-                              removeAdvantage(
-                                editableItemData[item.id],
-                                advIndex
-                              )
-                            "
-                            class="btn-remove"
-                            >Удалить</MyBtn
-                          >
+                      <div v-if="editableItemData[item.id].advantages.length > 0" class="advantages-list">
+                        <div v-for="(advantage, advIndex) in editableItemData[
+                          item.id
+                        ].advantages" :key="advantage + advIndex" class="advantage-item">
+                          <input class="input-advantage" type="text" v-model="editableItemData[item.id].advantages[advIndex]
+                            " placeholder="Введите преимущество" />
+                          <MyBtn variant="primary" @click.prevent="
+                            removeAdvantage(
+                              editableItemData[item.id],
+                              advIndex
+                            )
+                            " class="btn-remove">Удалить</MyBtn>
                         </div>
                       </div>
                       <p v-else class="no-advantages">Сейчас нет преимуществ</p>
                     </div>
 
                     <div class="advantage-actions">
-                      <MyBtn
-                        variant="secondary"
-                        @click.prevent="addAdvantage(editableItemData[item.id])"
-                        class="btn-add"
-                        >Добавить преимущество</MyBtn
-                      >
+                      <MyBtn variant="secondary" @click.prevent="addAdvantage(editableItemData[item.id])"
+                        class="btn-add">Добавить преимущество</MyBtn>
                     </div>
                   </div>
                 </Transition>
@@ -758,38 +597,20 @@ const leave = (el: Element) => {
                 <!-- Video Upload -->
                 <div class="upload-group">
                   <label>Видео для слайда (не более ~50 МБ, формат mp4):</label>
-                  <input
-                    type="file"
-                    class="hidden-file-input"
-                    :ref="(el) => setFileInputRef(el, item.id, 'video')"
-                    accept="video/mp4"
-                    @change="onFileChange($event, item.id, 'video')"
-                  />
+                  <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, item.id, 'video')"
+                    accept="video/mp4" @change="onFileChange($event, item.id, 'video')" />
                   <div class="uploader-preview video-uploader">
-                    <video
-                      v-if="videoPreviews[item.id]?.video || item.video_path"
-                      :src="videoPreviews[item.id]?.video || item.video_path"
-                      class="video-preview"
-                      controls
-                      muted
-                    ></video>
+                    <video v-if="videoPreviews[item.id]?.video || item.video_path"
+                      :src="videoPreviews[item.id]?.video || item.video_path" class="video-preview" controls
+                      muted></video>
                     <div v-else class="uploader-placeholder">
                       <span>Нет видео</span>
                     </div>
                   </div>
                   <div class="upload-actions">
-                    <MyBtn
-                      variant="secondary"
-                      type="button"
-                      @click="triggerFileInput(item.id, 'video')"
-                      >Выбрать видео</MyBtn
-                    >
-                    <MyBtn
-                      variant="primary"
-                      type="button"
-                      @click="clearFile(item.id, 'video')"
-                      >Удалить видео</MyBtn
-                    >
+                    <MyBtn variant="secondary" type="button" @click="triggerFileInput(item.id, 'video')">Выбрать видео
+                    </MyBtn>
+                    <MyBtn variant="primary" type="button" @click="clearFile(item.id, 'video')">Удалить видео</MyBtn>
                   </div>
                 </div>
 
@@ -799,57 +620,30 @@ const leave = (el: Element) => {
                     Постер (не более ~5 МБ, формат jpg, если не выбрать,
                     создастся из видео):
                   </label>
-                  <input
-                    type="file"
-                    class="hidden-file-input"
-                    :ref="(el) => setFileInputRef(el, item.id, 'poster')"
-                    accept="image/*"
-                    @change="onFileChange($event, item.id, 'poster')"
-                  />
+                  <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, item.id, 'poster')"
+                    accept="image/*" @change="onFileChange($event, item.id, 'poster')" />
                   <div class="uploader-preview image-uploader">
-                    <img
-                      v-if="videoPreviews[item.id]?.poster || item.poster_path"
-                      :src="videoPreviews[item.id]?.poster || item.poster_path"
-                      alt="Постер"
-                      class="image-preview"
-                    />
+                    <img v-if="videoPreviews[item.id]?.poster || item.poster_path"
+                      :src="videoPreviews[item.id]?.poster || item.poster_path" alt="Постер" class="image-preview" />
                     <div v-else class="uploader-placeholder">
                       <span>Нет постера</span>
                     </div>
                   </div>
                   <div class="upload-actions">
-                    <MyBtn
-                      variant="secondary"
-                      type="button"
-                      @click="triggerFileInput(item.id, 'poster')"
-                      >Выбрать постер</MyBtn
-                    >
-                    <MyBtn
-                      variant="primary"
-                      type="button"
-                      @click="clearFile(item.id, 'poster')"
-                      >Удалить постер</MyBtn
-                    >
+                    <MyBtn variant="secondary" type="button" @click="triggerFileInput(item.id, 'poster')">Выбрать постер
+                    </MyBtn>
+                    <MyBtn variant="primary" type="button" @click="clearFile(item.id, 'poster')">Удалить постер</MyBtn>
                   </div>
                 </div>
               </div>
 
               <div class="form-actions">
-                <MyBtn
-                  variant="secondary"
-                  @click.prevent="handleSave(editableItemData[item.id])"
-                  :disabled="isLoading"
-                  class="save-all-btn"
-                >
+                <MyBtn variant="secondary" @click.prevent="handleSave(editableItemData[item.id])" :disabled="isLoading"
+                  class="save-all-btn">
                   {{ isLoading ? 'Сохранение...' : 'Сохранить слайд' }}
                 </MyBtn>
-                <MyBtn
-                  variant="primary"
-                  @click.prevent="handleDeleteSlide(item.id)"
-                  :disabled="isLoading"
-                  class="delete-slide-btn"
-                  >Удалить слайд</MyBtn
-                >
+                <MyBtn variant="primary" @click.prevent="handleDeleteSlide(item.id)" :disabled="isLoading"
+                  class="delete-slide-btn">Удалить слайд</MyBtn>
               </div>
               <!-- <p>Это position: {{ item.position }}</p> -->
               <!-- <p>Это created_at: {{ item.created_at }}</p> -->
@@ -870,11 +664,13 @@ const leave = (el: Element) => {
   font-weight: bold;
   margin-bottom: 20px;
 }
+
 .add-slide-actions {
   display: flex;
   justify-content: center;
   margin-bottom: 20px;
 }
+
 .main-loading {
   display: flex;
   justify-content: center;
@@ -883,6 +679,7 @@ const leave = (el: Element) => {
   font-weight: bold;
   margin-bottom: 20px;
 }
+
 .main-item {
   position: relative;
   display: flex;
@@ -894,10 +691,12 @@ const leave = (el: Element) => {
   gap: 20px;
   transition: all 0.2s ease;
 }
+
 .drag-handle {
   cursor: grab;
   padding: 5px;
 }
+
 .drag-handle:active {
   cursor: grabbing;
 }
@@ -905,17 +704,21 @@ const leave = (el: Element) => {
 .draggable:active {
   cursor: grabbing;
 }
+
 .main-item.dragging {
   opacity: 0.5;
   transform: scale(0.95);
 }
+
 .main-item.drag-over {
   border-color: #3498db;
 }
+
 .main-item-label-content {
   display: flex;
   align-items: center;
 }
+
 .main-item-label {
   display: flex;
   justify-content: space-between;
@@ -925,6 +728,7 @@ const leave = (el: Element) => {
   padding: 3px;
   padding-right: 10px;
 }
+
 .advantages {
   margin-top: 15px;
   margin-bottom: 15px;
@@ -932,21 +736,25 @@ const leave = (el: Element) => {
   flex-direction: column;
   gap: 10px;
 }
+
 .advantage-item {
   display: flex;
   gap: 10px;
   align-items: center;
 }
+
 .btn-add {
   width: 100%;
   max-width: 100%;
   flex-grow: 1;
   padding: 20px 20px;
 }
+
 .btn-remove {
   padding: 8px 12px;
   font-size: 14px;
 }
+
 .media-uploads {
   display: flex;
   gap: 20px;
@@ -954,18 +762,22 @@ const leave = (el: Element) => {
   padding-bottom: 20px;
   border-bottom: 1px solid #444;
 }
+
 .upload-group {
   flex: 1;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
-.upload-group > label {
+
+.upload-group>label {
   font-weight: bold;
 }
+
 .hidden-file-input {
   display: none;
 }
+
 .uploader-preview {
   width: 100%;
   aspect-ratio: 16 / 9;
@@ -977,15 +789,18 @@ const leave = (el: Element) => {
   background-color: #333;
   overflow: hidden;
 }
+
 .uploader-placeholder {
   color: #777;
 }
+
 .image-preview,
 .video-preview {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
+
 .upload-actions {
   padding-top: 20px;
   display: flex;
@@ -1015,6 +830,7 @@ const leave = (el: Element) => {
   min-width: 200px;
   font-weight: bold;
 }
+
 .main-item-inputs {
   display: flex;
   flex-direction: column;
@@ -1049,6 +865,7 @@ const leave = (el: Element) => {
   padding-right: 0;
   border-top: 1px solid #444;
 }
+
 .advantages-content {
   display: flex;
   flex-direction: column;
@@ -1058,23 +875,27 @@ const leave = (el: Element) => {
   border-radius: 8px;
   background-color: black;
 }
+
 .advantages-list {
   display: flex;
   flex-direction: column;
   gap: 20px;
   margin-bottom: 15px;
 }
+
 .no-advantages {
   color: #888;
   font-style: italic;
   margin-bottom: 15px;
   text-align: center;
 }
+
 .advantage-actions {
   display: flex;
   justify-content: center;
   gap: 10px;
 }
+
 .advantage-item input {
   font-size: 24px;
   flex-grow: 1;
@@ -1096,6 +917,7 @@ const leave = (el: Element) => {
   /* Add this for a smooth transition */
   transition: all 0.4s ease-out;
 }
+
 .add-new-item-bar {
   display: flex;
   justify-content: space-between;
@@ -1107,9 +929,11 @@ const leave = (el: Element) => {
   font-size: 26px;
   font-weight: bold;
 }
+
 .new-slide-form {
   border-color: #3498db;
 }
+
 .slides-list {
   /* Space for the drag handle */
   padding-top: 10px;

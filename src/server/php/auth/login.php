@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/logger.php';
 
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['auth_ok'] = true;
         error_log('LOGIN_OK: sid=' . session_id() . '; set auth_ok=1');
         $_SESSION['success_message'] = 'Вы являетесь администратором. Перевожу вас на страницу авторизации Google.';
-        session_write_close();
+        // session_write_close();
         header('Location: /login');
         exit();
       } else {
@@ -74,11 +75,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   form {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      width: 100%;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+  }
 
   .form-group {
     display: flex;
@@ -158,7 +159,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     font-weight: 700;
     text-align: center;
   }
-
 </style>
 
 <head>
@@ -177,7 +177,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-<?= (new Header())->getHeader() ?>
+  <?= (new Header())->getHeader() ?>
   <main class="main">
     <div class="container">
       <h1 class="auth-title">Авторизация</h1>

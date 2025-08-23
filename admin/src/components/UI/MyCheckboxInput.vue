@@ -6,7 +6,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void;
+  (e: 'update:modelValue', value: boolean | number): void;
 }>();
 
 const handleChange = (event: Event) => {
@@ -16,16 +16,10 @@ const handleChange = (event: Event) => {
 </script>
 
 <template>
-  <input
-    class="my-checkbox-input"
-    :class="{
-      primary: variant === 'primary',
-      secondary: variant === 'secondary',
-    }"
-    type="checkbox"
-    :checked="modelValue === value"
-    @change="handleChange"
-  />
+  <input class="my-checkbox-input" :class="{
+    primary: props.variant === 'primary',
+    secondary: props.variant === 'secondary',
+  }" type="checkbox" :checked="props.modelValue === props.value" @change="handleChange" />
 </template>
 
 <style scoped>
@@ -59,6 +53,7 @@ const handleChange = (event: Event) => {
 
     &:checked {
       background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
+
       &::before {
         left: 2px;
       }
