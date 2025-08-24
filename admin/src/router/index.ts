@@ -12,6 +12,7 @@ import Works from '../views/Works.vue';
 import Footer from '../views/Footer.vue';
 import Registrations from '../views/Registrations.vue';
 import IntroSlide from '../components/IntroSlide/IntroSlide.vue';
+import Docs from '../views/Docs.vue';
 
 export const routes = [
   {
@@ -85,6 +86,12 @@ export const routes = [
     name: 'Профиль',
     component: Registrations,
     beforeEnter: checkAuthGuard, // Защищаем профиль
+  },
+  {
+    path: '/docs-page',
+    name: 'Документы',
+    component: Docs,
+    beforeEnter: checkAuthGuard, // Защищаем документы
   },
 ];
 
