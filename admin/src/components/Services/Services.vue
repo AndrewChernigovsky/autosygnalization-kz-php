@@ -129,7 +129,7 @@
 <script setup lang="ts">
 import { ref, onMounted, watchEffect } from 'vue';
 import type { Service, AddedService } from './interfaces/Service';
-import { API_URL } from '../../../config';
+// import { API_URL } from '../../../config';
 import Swal from 'sweetalert2';
 import ImageUpload from '../../UI/ImageUpload.vue';
 import { nextTick } from 'vue';
@@ -184,12 +184,8 @@ function handleImageUpload(data: {
   path: string;
   filename: string;
 }) {
-  console.log(data, 'DATA111');
-  const service = localServices.value.main.find((s) => s.id.toString() === data.id);
-  console.log(service, 'SERVICE111');
   if (data.path && localServices.value.main.find((s) => s.id.toString() === data.id)) {
     const service = localServices.value.main.find((s) => s.id.toString() === data.id);
-    console.log(service?.image.src, 'SERVICE2');
     if (service) {
       service.image.src = data.path;
       Swal.fire({
@@ -656,7 +652,7 @@ function getFullImagePath(path: string): string {
   if (path.startsWith('blob:') || path.startsWith('http')) {
     return path;
   }
-  return `${API_URL}${path}`;
+  return path;
 }
 
 onMounted(fetchServices);
