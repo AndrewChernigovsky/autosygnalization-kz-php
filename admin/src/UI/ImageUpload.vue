@@ -1,28 +1,13 @@
 <template>
   <div class="image-upload-wrapper">
     <label class="image-upload-box">
-      <input
-        ref="inputRef"
-        type="file"
-        accept="image/*"
-        @change="handleImageUpload"
-        class="upload-input"
-      />
-      <img
-        v-if="imagePreview"
-        :src="imagePreview"
-        alt="Предпросмотр"
-        class="image-preview-img"
-      />
+      <input ref="inputRef" type="file" accept="image/*" @change="handleImageUpload" class="upload-input" />
+      <img v-if="imagePreview" :src="imagePreview" alt="Предпросмотр" class="image-preview-img" />
       <div v-else class="placeholder">
         <span class="plus-icon">+</span>
       </div>
     </label>
-    <button
-      v-if="imagePreview"
-      class="btn-delete-img"
-      @click.stop="clearInput"
-    ></button>
+    <button v-if="imagePreview" class="btn-delete-img" @click.stop="clearInput"></button>
   </div>
 </template>
 
@@ -110,8 +95,11 @@ function handleImageUpload(event: Event) {
 
     imageFile.value = file;
     imageFileName.value = file.name;
+
     const preview = URL.createObjectURL(imageFile.value);
+
     imagePreview.value = preview;
+
     emit('image-preview', preview);
     uploadImage();
   } else {
@@ -119,8 +107,7 @@ function handleImageUpload(event: Event) {
   }
 }
 
-// Отправка видео на сервер
-function uploadImage() {
+async function uploadImage() {
   if (!imageFile.value) return;
 
   emit('status-update', 'Загрузка...');
@@ -131,49 +118,51 @@ function uploadImage() {
   formData.append('path', props.path);
 
   if (props.data?.id) {
-    formData.append('id', props.data.id);
-    console.log(props.data.id, 'IMAGE ID');
+    formData.append('id', props.data.id.toString());
   }
 
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', endpointUrl.value, true);
+  try {
+    const response = await fetch(endpointUrl.value, {
+      method: 'POST',
+      body: formData,
+    });
 
-  xhr.upload.onprogress = function (event) {
-    if (event.lengthComputable) {
-      const progress = Math.round((event.loaded * 100) / event.total);
-      emit('progress-update', progress);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
 
-  xhr.onload = function () {
-    console.log(props.data?.id, 'IMAGE ID');
-    console.log('Response status:', xhr.status);
-    console.log('Response text:', xhr.responseText);
+    const data = await response.json();
+    console.log('Response data:', data);
+    console.log('Image ID:', props.data?.id);
 
-    if (xhr.status === 200) {
-      try {
-        const response = JSON.parse(xhr.responseText);
-        console.log(response, 'RESPONSE');
-        emit('upload-success', {
-          id: response.id,
-          filename: response.filename,
-          path: response.path,
+    emit('upload-success', {
+      id: data.id || props.data?.id,
+      filename: data.filename,
+      path: data.path,
+    });
+
+    emit('status-update', 'Загрузка завершена. ID записи: ' + (data.id || props.data?.id));
+
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error('Upload error:', error);
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        emit('status-update', 'Ошибка соединения с сервером');
+        Swal.fire({
+          icon: 'error',
+          title: 'Ошибка соединения',
+          text: 'Не удалось подключиться к серверу. Проверьте URL: ' + endpointUrl.value,
         });
-        emit('status-update', 'Загрузка завершена. ID записи: ' + response.id);
-      } catch (e: any) {
-        console.error('JSON parse error:', e);
-        emit('status-update', 'Ошибка обработки ответа сервера: ' + e.message);
+      } else {
+        emit('status-update', 'Ошибка загрузки: ' + error.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Ошибка загрузки',
+          text: error.message,
+        });
       }
-    } else {
-      emit('status-update', 'Ошибка загрузки: ' + xhr.statusText);
     }
-  };
-
-  xhr.onerror = function () {
-    emit('status-update', 'Ошибка соединения с сервером');
-  };
-
-  xhr.send(formData);
+  }
 }
 
 // Метод для очистки input file (вызывается извне)
