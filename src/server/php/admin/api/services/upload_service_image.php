@@ -52,6 +52,7 @@ $newFileName = 'service-' . $sanitizedFileName . '-' . time() . '.' . $fileExten
 $uploadFilePath = $uploadDir . $newFileName;
 $newImagePath = '/server/uploads/services/' . $newFileName;
 
+error_log(print_r($file, true) . 'FILEFEFE');
 
 try {
   if (!move_uploaded_file($file['tmp_name'], $uploadFilePath)) {

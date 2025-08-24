@@ -12,84 +12,51 @@
         <MyTransition>
           <div class="theme-dark" v-if="openAccordionIds.main">
             <div v-if="!isLoading" class="services-list space-y-2">
-              <div
-                v-for="service in localServices.main"
-                :key="service.id"
-                class="service-item"
-                :class="{
-                  'is-open': isMainServiceOpen(service.id),
-                  'new-service-highlight': service.id === highlightedServiceId,
-                }"
-                :data-service-id="service.id"
-              >
+              <div v-for="service in localServices.main" :key="service.id" class="service-item" :class="{
+                'is-open': isMainServiceOpen(service.id),
+                'new-service-highlight': service.id === highlightedServiceId,
+              }" :data-service-id="service.id">
                 <div class="summary-header">
                   <span>{{ service.name }}</span>
-                  <MyBtn
-                    variant="primary"
-                    class="accordion-arrow"
-                    :class="{ 'is-open': isMainServiceOpen(service.id) }"
-                    @click="toggleMainService(service.id)"
-                  >
+                  <MyBtn variant="primary" class="accordion-arrow" :class="{ 'is-open': isMainServiceOpen(service.id) }"
+                    @click="toggleMainService(service.id)">
                     {{
                       isMainServiceOpen(service.id)
                         ? 'Свернуть'
                         : 'Редактировать'
-                    }}</MyBtn
-                  >
+                    }}</MyBtn>
                 </div>
                 <MyTransition>
-                  <div
-                    v-if="isMainServiceOpen(service.id)"
-                    class="service-details"
-                  >
+                  <div v-if="isMainServiceOpen(service.id)" class="service-details">
                     <div class="form-group">
                       <label>Название:</label>
                       <input type="text" v-model="service.name" />
                     </div>
                     <div class="form-group">
                       <label>Описание:</label>
-                      <MyQuill
-                        :key="service.id + '-desc'"
-                        :content="service.description"
-                        @update:content="(val: string) => (service.description = val)"
-                      />
+                      <MyQuill :key="service.id + '-desc'" :content="service.description"
+                        @update:content="(val: string) => (service.description = val)" />
                     </div>
                     <div class="form-group">
                       <p>Рекомендуемый размер: 1000x1000px</p>
                       <label>Изображение:</label>
-                      <ImageUpload
-                        :path="getFullImagePath(service.image.src)"
-                        @upload-success="handleImageUpload"
-                        @image-cleared="service.image.src = ''"
-                        :data="{ id: service.id }"
-                        serviceImage
-                      />
+                      <ImageUpload :path="getFullImagePath(service.image.src)" @upload-success="handleImageUpload"
+                        @image-cleared="service.image.src = ''" :data="{ id: service.id }" serviceImage />
                     </div>
                     <div class="form-group">
                       <label>Список услуг:</label>
-                      <MyQuill
-                        :key="service.id + '-serv'"
-                        :content="service.services"
-                        @update:content="(val: string) => (service.services = val)"
-                      />
+                      <MyQuill :key="service.id + '-serv'" :content="service.services"
+                        @update:content="(val: string) => (service.services = val)" />
                     </div>
                     <div class="form-group">
                       <label>Цена:</label>
                       <input type="number" v-model="service.cost" />
                     </div>
                     <div class="service-actions">
-                      <MyBtn
-                        variant="secondary"
-                        @click="saveService(service.id)"
-                        class="btn-save"
-                      >
+                      <MyBtn variant="secondary" @click="saveService(service.id)" class="btn-save">
                         Сохранить услугу
                       </MyBtn>
-                      <MyBtn
-                        variant="primary"
-                        @click="deleteService(service.id)"
-                        class="btn-delete"
-                      >
+                      <MyBtn variant="primary" @click="deleteService(service.id)" class="btn-delete">
                         Удалить услугу
                       </MyBtn>
                     </div>
@@ -97,13 +64,8 @@
                 </MyTransition>
               </div>
             </div>
-            <MyBtn
-              variant="secondary"
-              @click="addService"
-              type="button"
-              class="btn-save btn-add-service"
-              :disabled="isAddingMainService"
-            >
+            <MyBtn variant="secondary" @click="addService" type="button" class="btn-save btn-add-service"
+              :disabled="isAddingMainService">
               Добавить услугу
             </MyBtn>
           </div>
@@ -119,32 +81,19 @@
         <MyTransition>
           <div class="theme-dark" v-if="openAccordionIds.added">
             <div v-if="!isLoading" class="services-list space-y-2">
-              <div
-                v-for="service in localServices.added"
-                :key="service.id"
-                class="service-item"
-                :class="{ 'is-open': isAddedServiceOpen(service.id) }"
-                :data-service-id="service.id"
-              >
+              <div v-for="service in localServices.added" :key="service.id" class="service-item"
+                :class="{ 'is-open': isAddedServiceOpen(service.id) }" :data-service-id="service.id">
                 <div class="summary-header">
                   <span>{{ service.title }}</span>
-                  <MyBtn
-                    variant="primary"
-                    class="accordion-arrow"
-                    :class="{ 'is-open': isAddedServiceOpen(service.id) }"
-                    @click="toggleAddedService(service.id)"
-                    >{{
+                  <MyBtn variant="primary" class="accordion-arrow"
+                    :class="{ 'is-open': isAddedServiceOpen(service.id) }" @click="toggleAddedService(service.id)">{{
                       isAddedServiceOpen(service.id)
                         ? 'Свернуть'
                         : 'Редактировать'
-                    }}</MyBtn
-                  >
+                    }}</MyBtn>
                 </div>
                 <MyTransition>
-                  <div
-                    v-if="isAddedServiceOpen(service.id)"
-                    class="service-details"
-                  >
+                  <div v-if="isAddedServiceOpen(service.id)" class="service-details">
                     <div class="form-group">
                       <label>Название:</label>
                       <input type="text" v-model="service.title" />
@@ -154,17 +103,9 @@
                       <input type="number" v-model="service.price" />
                     </div>
                     <div class="service-actions">
-                      <MyBtn
-                        variant="secondary"
-                        @click="saveAddedService(service)"
-                        class="btn-save"
-                        >Сохранить дополнительную услугу</MyBtn
-                      >
-                      <MyBtn
-                        variant="primary"
-                        @click="deleteAddedService(service.id)"
-                        class="btn-delete"
-                      >
+                      <MyBtn variant="secondary" @click="saveAddedService(service)" class="btn-save">Сохранить
+                        дополнительную услугу</MyBtn>
+                      <MyBtn variant="primary" @click="deleteAddedService(service.id)" class="btn-delete">
                         Удалить дополнительную услугу
                       </MyBtn>
                     </div>
@@ -173,13 +114,8 @@
               </div>
             </div>
             <div class="service-actions">
-              <MyBtn
-                variant="secondary"
-                @click="addAddedService"
-                type="button"
-                class="btn-save btn-add-service"
-                :disabled="isAddingAddedService"
-              >
+              <MyBtn variant="secondary" @click="addAddedService" type="button" class="btn-save btn-add-service"
+                :disabled="isAddingAddedService">
                 Добавить дополнительную услугу
               </MyBtn>
             </div>
@@ -248,24 +184,24 @@ function handleImageUpload(data: {
   path: string;
   filename: string;
 }) {
-  console.log(data, 'DATA');
-  const service = localServices.value.main.find((s) => s.id === data.id);
-  console.log(service, 'SERVICE');
-  if (data.path && localServices.value.main.find((s) => s.id === data.id)) {
-    const service = localServices.value.main.find((s) => s.id === data.id);
+  console.log(data, 'DATA111');
+  const service = localServices.value.main.find((s) => s.id.toString() === data.id);
+  console.log(service, 'SERVICE111');
+  if (data.path && localServices.value.main.find((s) => s.id.toString() === data.id)) {
+    const service = localServices.value.main.find((s) => s.id.toString() === data.id);
     console.log(service?.image.src, 'SERVICE2');
     if (service) {
-      alert(data.path);
       service.image.src = data.path;
       Swal.fire({
         title: 'Успешно!',
-        text: `Изображение ${data.filename} загружено.`,
+        text: `Изображение ${data.filename} загружено. Обязательно сохраните услугу.`,
         icon: 'success',
         background: 'white',
         color: 'black',
         timer: 2000,
         showConfirmButton: false,
       });
+      saveService(service.id);
     }
   }
 }
