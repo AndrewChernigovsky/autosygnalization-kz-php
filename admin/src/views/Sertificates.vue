@@ -739,8 +739,18 @@ watchEffect(() => {
   left: 0;
   height: 45px; /* Задаем фиксированную высоту */
 }
+.actions-update {
+  display: flex;
+  gap: 0;
+  width: 100%;
+  position: absolute; /* Позиционируем абсолютно */
+  bottom: 0; /* Прижимаем к низу */
+  left: 0;
+  height: 45px; /* Задаем фиксированную высоту */
+}
 .btn-save,
-.btn-delete-slot {
+.btn-delete-slot,
+.btn-cancel {
   min-width: 0;
   flex-grow: 1;
   padding: 0.5rem;
@@ -750,9 +760,6 @@ watchEffect(() => {
   cursor: pointer;
   font-weight: bold;
   border-radius: 0;
-}
-.btn-save {
-  background-color: #28a745;
 }
 .btn-save:disabled {
   background-color: #555;

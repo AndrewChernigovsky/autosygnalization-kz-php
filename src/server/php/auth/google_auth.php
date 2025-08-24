@@ -17,7 +17,7 @@ log_message('google_auth.php 5');
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
 // Корректный Redirect URI, указывающий на обработчик
-$redirectUri = 'https://starline-service.kz/google_auth_callback';
+$redirectUri = 'http://localhost:3000/google_auth_callback';
 
 // Загружаем .env из корня server, безопасно (без исключений, если файла нет)
 $primaryEnvDir = dirname(__DIR__, 2); // при запуске из dist → .../dist/server, при запуске из src → .../src/server

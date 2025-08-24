@@ -58,7 +58,7 @@ watch(content, (newVal) => {
 
   /* Нумерация для обычных <li> (без data-list) — ordered списки */
   li:not([data-list])::before {
-    content: counter(ql-list, decimal) '. ';
+    content: '•';
     margin-right: 0.5em;
   }
 }

@@ -1,13 +1,28 @@
 <template>
   <div class="image-upload-wrapper">
     <label class="image-upload-box">
-      <input ref="inputRef" type="file" accept="image/*" @change="handleImageUpload" class="upload-input" />
-      <img v-if="imagePreview" :src="imagePreview" alt="Предпросмотр" class="image-preview-img" />
+      <input
+        ref="inputRef"
+        type="file"
+        accept="image/*"
+        @change="handleImageUpload"
+        class="upload-input"
+      />
+      <img
+        v-if="imagePreview"
+        :src="imagePreview"
+        alt="Предпросмотр"
+        class="image-preview-img"
+      />
       <div v-else class="placeholder">
         <span class="plus-icon">+</span>
       </div>
     </label>
-    <button v-if="imagePreview" class="btn-delete-img" @click.stop="clearInput"></button>
+    <button
+      v-if="imagePreview"
+      class="btn-delete-img"
+      @click.stop="clearInput"
+    ></button>
   </div>
 </template>
 
@@ -183,8 +198,6 @@ export default {
   name: 'ImageUpload',
 };
 </script>
-
-
 
 <style scoped lang="scss">
 .image-upload-wrapper {
