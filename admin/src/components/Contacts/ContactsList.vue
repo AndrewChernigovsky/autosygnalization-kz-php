@@ -74,12 +74,16 @@ const handleSaveContact = async (contact: any) => {
     return;
   }
   await uppdateItemOnDB(contact, store.contactsApiUrl);
-  await store.getContacts();
+  store.contacts.map((el) => {
+    if (el.contact_id === contact.contact_id) {
+      el = contact;
+    }
+  });
 };
 
 const handleDeleteContact = async (contact: any) => {
   await deleteItemOnDB(contact, store.contactsApiUrl);
-  await store.getContacts();
+  store.contacts.splice(store.contacts.indexOf(contact), 1);
 };
 
 const handleReorder = async (reorderedContactsForType: any[]) => {

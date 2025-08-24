@@ -83,12 +83,16 @@ const handleSaveNavItem = async (navItem: any) => {
   }
 
   await updateNavItemOnDB(navItem, store.API_BASE_URL);
-  await store.getNavItems();
+  store.navItems.map((el) => {
+    if (el.id === navItem.id) {
+      el = navItem;
+    }
+  });
 };
 
 const handleDeleteNavItem = async (navItem: any) => {
   await deleteNavItemOnDB(navItem, store.API_BASE_URL);
-  await store.getNavItems();
+  store.navItems.splice(store.navItems.indexOf(navItem), 1);
 };
 
 const handleReorder = async (reorderedNavItems: any[]) => {
