@@ -32,7 +32,7 @@ import Swal from 'sweetalert2';
 
 interface Props {
   data?: {
-    imageID?: string;
+    id?: string;
     filename?: string;
     path?: string;
   };
@@ -44,7 +44,7 @@ interface Props {
 interface Emits {
   (
     event: 'upload-success',
-    data: { imageID: string, filename: string; path: string }
+    data: { id: string; filename: string; path: string }
   ): void;
   (event: 'status-update', status: string): void;
   (event: 'progress-update', progress: number): void;
@@ -130,8 +130,9 @@ function uploadImage() {
   formData.append('image', imageFile.value);
   formData.append('path', props.path);
 
-  if (props.data?.imageID) {
-    formData.append('id', props.data.imageID.toString());
+  if (props.data?.id) {
+    formData.append('id', props.data.id);
+    console.log(props.data.id, 'IMAGE ID');
   }
 
   const xhr = new XMLHttpRequest();
@@ -145,6 +146,7 @@ function uploadImage() {
   };
 
   xhr.onload = function () {
+    console.log(props.data?.id, 'IMAGE ID');
     console.log('Response status:', xhr.status);
     console.log('Response text:', xhr.responseText);
 
@@ -153,7 +155,7 @@ function uploadImage() {
         const response = JSON.parse(xhr.responseText);
         console.log(response, 'RESPONSE');
         emit('upload-success', {
-          imageID: response.id,
+          id: response.id,
           filename: response.filename,
           path: response.path,
         });

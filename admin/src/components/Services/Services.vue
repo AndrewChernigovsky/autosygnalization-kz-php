@@ -57,8 +57,13 @@
                     <div class="form-group">
                       <p>Рекомендуемый размер: 1000x1000px</p>
                       <label>Изображение:</label>
-                      <ImageUpload :path="getFullImagePath(service.image.src)" @upload-success="handleImageUpload"
-                        @image-cleared="service.image.src = ''" :data="{ imageID: service.id }" serviceImage />
+                      <ImageUpload
+                        :path="getFullImagePath(service.image.src)"
+                        @upload-success="handleImageUpload"
+                        @image-cleared="service.image.src = ''"
+                        :data="{ id: service.id }"
+                        serviceImage
+                      />
                     </div>
                     <div class="form-group">
                       <label>Список услуг:</label>
@@ -238,14 +243,17 @@ const isAddedServiceOpen = (id: string) => {
   return openAddedServiceIds.value.includes(id);
 };
 
-function handleImageUpload(
-  data: { id: number, path: string; filename: string },
-) {
-  console.log(data.id, 'ID');
-  const service = localServices.value.main.find((s) => s.id === data.id.toString());
-  console.log(service);
-  if (data.path && localServices.value.main.find((s) => s.id === data.id.toString())) {
-    const service = localServices.value.main.find((s) => s.id === data.id.toString());
+function handleImageUpload(data: {
+  id: string;
+  path: string;
+  filename: string;
+}) {
+  console.log(data, 'DATA');
+  const service = localServices.value.main.find((s) => s.id === data.id);
+  console.log(service, 'SERVICE');
+  if (data.path && localServices.value.main.find((s) => s.id === data.id)) {
+    const service = localServices.value.main.find((s) => s.id === data.id);
+    console.log(service?.image.src, 'SERVICE2');
     if (service) {
       alert(data.path);
       service.image.src = data.path;
@@ -563,6 +571,7 @@ async function saveService(serviceId: string) {
     const serviceToSave = localServices.value.main.find(
       (s) => s.id === serviceId
     );
+    console.log(serviceToSave, 'SERVICE TO SAVE');
     if (!serviceToSave) {
       throw new Error('Service not found');
     }

@@ -32,7 +32,7 @@ if (!isset($_FILES['image'])) {
 }
 
 $file = $_FILES['image'];
-$serviceId = $_POST['serviceId'] ?? 'service'; // Fallback if serviceId is not provided
+$serviceId = $_POST['id'] ?? 'service'; // Fallback if serviceId is not provided
 
 if ($file['error'] !== UPLOAD_ERR_OK) {
   http_response_code(500);
