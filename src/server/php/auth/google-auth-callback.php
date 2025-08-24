@@ -74,6 +74,7 @@ $client = new Google\Client();
 $client->setClientId($clientID);
 $client->setClientSecret($clientSecret);
 // Redirect URI должен быть идентичен тому, что используется для генерации ссылки
+// $client->setRedirectUri('https://starline-service.kz/google_auth_callback');
 $client->setRedirectUri('http://localhost:3000/google_auth_callback');
 $client->addScope(['email', 'profile']);
 

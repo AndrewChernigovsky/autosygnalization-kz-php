@@ -24,7 +24,3 @@ define('DB_NAME', 'autosygnals');
 define('DB_USER', 'root');
 define('DB_PASSWORD', '');
 define('BASE_URL', 'https://localhost:3000');
-
-// Пути к FFmpeg и FFProbe
-define('FFMPEG_PATH', 'C:\Users\ADMIN\AppData\Local\Microsoft\WinGet\Links\ffmpeg.exe');
-define('FFPROBE_PATH', 'C:\Users\ADMIN\AppData\Local\Microsoft\WinGet\Links\ffprobe.exe');

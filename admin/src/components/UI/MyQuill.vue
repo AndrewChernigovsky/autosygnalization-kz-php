@@ -35,12 +35,8 @@ watch(content, (newVal) => {
 
 <template>
   <div class="my-quill-wrapper">
-    <QuillEditor
-      v-model:content="content"
-      theme="snow"
-      :options="props.quillOptions ? props.quillOptions : presetQuillOptions"
-      content-type="html"
-    />
+    <QuillEditor v-model:content="content" theme="snow"
+      :options="props.quillOptions ? props.quillOptions : presetQuillOptions" content-type="html" />
   </div>
 </template>
 

@@ -8,9 +8,14 @@ import {
 } from './router/authGuard';
 import MyBtn from './components/UI/MyBtn.vue';
 import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 onMounted(async () => {
   await checkAuthStatus();
+  if (!isAuthenticated.value) {
+    router.push('/login');
+  }
 });
 </script>
 
@@ -26,7 +31,7 @@ onMounted(async () => {
     </main>
   </div>
   <div v-else class="app-container-error">
-    <h1>НО НО МИСТЕР ФИШ</h1>
+    <h1>Вы не авторизованы</h1>
     <MyBtn variant="primary" @click="refreshAuthStatus">
       Проверить авторизацию
     </MyBtn>

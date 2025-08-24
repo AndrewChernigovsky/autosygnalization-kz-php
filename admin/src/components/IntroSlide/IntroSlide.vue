@@ -494,8 +494,7 @@ const leave = (el: Element) => {
           <!-- Poster Upload for new slide -->
           <div class="upload-group">
             <label>
-              Постер (не более ~5 МБ, формат jpg, если не выбрать, создастся из
-              видео):
+              Постер (не более ~5 МБ, формат jpg, обязательно загрузите, это важно для плавного появления видео):
             </label>
             <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, 0, 'poster')"
               accept="image/*" @change="onFileChange($event, 0, 'poster')" />
