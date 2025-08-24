@@ -59,7 +59,7 @@ try {
   }
 
   http_response_code(200);
-  echo json_encode(['path' => $newImagePath, 'filename' => $newFileName]);
+  echo json_encode(['id' => $serviceId, 'path' => $newImagePath, 'filename' => $newFileName]);
 } catch (Exception $e) {
   if (file_exists($uploadFilePath)) {
     unlink($uploadFilePath);

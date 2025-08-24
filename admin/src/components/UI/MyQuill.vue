@@ -35,12 +35,8 @@ watch(content, (newVal) => {
 
 <template>
   <div class="my-quill-wrapper">
-    <QuillEditor
-      v-model:content="content"
-      theme="snow"
-      :options="props.quillOptions ? props.quillOptions : presetQuillOptions"
-      content-type="html"
-    />
+    <QuillEditor v-model:content="content" theme="snow"
+      :options="props.quillOptions ? props.quillOptions : presetQuillOptions" content-type="html" />
   </div>
 </template>
 
@@ -58,7 +54,7 @@ watch(content, (newVal) => {
 
   /* Нумерация для обычных <li> (без data-list) — ordered списки */
   li:not([data-list])::before {
-    content: counter(ql-list, decimal) '. ';
+    content: '•';
     margin-right: 0.5em;
   }
 }

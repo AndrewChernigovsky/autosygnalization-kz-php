@@ -41,7 +41,7 @@
                       <p>Рекомендуемый размер: 1000x1000px</p>
                       <label>Изображение:</label>
                       <ImageUpload :path="getFullImagePath(service.image.src)" @upload-success="handleImageUpload"
-                        @image-cleared="service.image.src = ''" :extraData="{ serviceId: service.id }" serviceImage />
+                        @image-cleared="service.image.src = ''" :data="{ imageID: service.id }" serviceImage />
                     </div>
                     <div class="form-group">
                       <label>Список услуг:</label>
@@ -149,23 +149,6 @@ const openAccordionIds = ref<Record<string, boolean>>({});
 const isAddingMainService = ref(false);
 const isAddingAddedService = ref(false);
 
-watchEffect(() => {
-  if (isLoading.value) {
-    Swal.fire({
-      title: 'Загрузка услуг...',
-      text: 'Пожалуйста, подождите',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      background: 'white',
-      color: 'black',
-    });
-  } else {
-    Swal.close();
-  }
-});
-
 const toggleAccordion = (id: string) => {
   openAccordionIds.value[id] = !openAccordionIds.value[id];
 };
@@ -199,9 +182,13 @@ const isAddedServiceOpen = (id: string) => {
 function handleImageUpload(
   data: { id: number, path: string; filename: string },
 ) {
+  console.log(data.id, 'ID');
+  const service = localServices.value.main.find((s) => s.id === data.id.toString());
+  console.log(service);
   if (data.path && localServices.value.main.find((s) => s.id === data.id.toString())) {
     const service = localServices.value.main.find((s) => s.id === data.id.toString());
     if (service) {
+      alert(data.path);
       service.image.src = data.path;
       Swal.fire({
         title: 'Успешно!',
@@ -669,6 +656,23 @@ function getFullImagePath(path: string): string {
 }
 
 onMounted(fetchServices);
+
+watchEffect(() => {
+  if (isLoading.value) {
+    Swal.fire({
+      title: 'Загрузка услуг...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: 'white',
+      color: 'black',
+    });
+  } else {
+    Swal.close();
+  }
+});
 </script>
 
 <style scoped>

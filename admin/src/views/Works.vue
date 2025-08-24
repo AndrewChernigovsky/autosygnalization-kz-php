@@ -221,11 +221,11 @@ const handleFileChange = (event: Event) => {
     return;
   }
 
-  const allowedTypes = ['image/png', 'image/jpeg', 'image/webp'];
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/avif'];
   if (!allowedTypes.includes(file.type)) {
     Swal.fire(
       'Ошибка',
-      'Неверный формат файла. Пожалуйста, выберите изображение (PNG, JPG, WEBP).',
+      'Неверный формат файла. Пожалуйста, выберите изображение (PNG, JPG, WEBP, AVIF).',
       'error'
     );
     target.value = ''; // Сбрасываем выбор файла
@@ -270,36 +270,21 @@ watchEffect(() => {
         <form @submit.prevent="handleSubmit" class="form-grid">
           <div class="form-group">
             <label for="title">Заголовок</label>
-            <input
-              id="title"
-              type="text"
-              v-model="formState.title"
-              placeholder="Название работы"
-              class="form-input"
-            />
+            <input id="title" type="text" v-model="formState.title" placeholder="Название работы" class="form-input" />
           </div>
           <div class="form-group">
             <label for="link">Ссылка на услугу</label>
             <select id="link" v-model="formState.link" class="form-input">
               <option disabled value="">-- Выберите услугу --</option>
-              <option
-                v-for="service in services"
-                :key="service.link"
-                :value="service.link"
-              >
+              <option v-for="service in services" :key="service.link" :value="service.link">
                 {{ service.title }}
               </option>
             </select>
           </div>
           <div class="form-group form-group-full">
             <label for="image">Изображение</label>
-            <input
-              id="image"
-              type="file"
-              @change="handleFileChange"
-              accept="image/png, image/jpeg, image/webp"
-              class="form-input-file"
-            />
+            <input id="image" type="file" @change="handleFileChange"
+              accept="image/png, image/jpeg, image/webp, image/avif" class="form-input-file" />
             <div v-if="formState.image_preview" class="image-preview">
               <img :src="formState.image_preview" alt="Предпросмотр" />
             </div>
@@ -308,12 +293,7 @@ watchEffect(() => {
             <MyBtn variant="secondary" type="submit">
               {{ isEditing ? 'Обновить' : 'Создать' }}
             </MyBtn>
-            <MyBtn
-              type="button"
-              @click="closeModal"
-              variant="primary"
-              class="btn"
-            >
+            <MyBtn type="button" @click="closeModal" variant="primary" class="btn">
               Отмена
             </MyBtn>
           </div>
@@ -321,36 +301,18 @@ watchEffect(() => {
       </div>
     </div>
 
-    <DraggableList
-      v-model="works"
-      item-key="work_id"
-      tag="div"
-      class="works-list"
-      @reorder="updatePositions"
-    >
+    <DraggableList v-model="works" item-key="work_id" tag="div" class="works-list" @reorder="updatePositions">
       <template #item="{ item, dragHandleProps, isDragOver }">
         <div class="work-card card" :class="{ 'drag-over': isDragOver }">
           <div class="drag-handle" v-bind="dragHandleProps">⠿</div>
-          <div
-            class="work-card-img"
-            :style="{ backgroundImage: `url(${item.image_path})` }"
-          ></div>
+          <div class="work-card-img" :style="{ backgroundImage: `url(${item.image_path})` }"></div>
           <div class="work-card-content">
             <p class="work-card-title">{{ item.title }}</p>
             <div class="work-card-actions">
-              <MyBtn
-                class="btn-edit"
-                variant="secondary"
-                type="button"
-                @click="startEdit(item)"
-              >
+              <MyBtn class="btn-edit" variant="secondary" type="button" @click="startEdit(item)">
                 РЕДАКТИРОВАТЬ
               </MyBtn>
-              <MyBtn
-                class="btn-delete"
-                variant="primary"
-                @click="handleDelete(item.work_id)"
-              >
+              <MyBtn class="btn-delete" variant="primary" @click="handleDelete(item.work_id)">
                 УДАЛИТЬ
               </MyBtn>
             </div>
@@ -441,6 +403,7 @@ select {
   border: 1px solid #ffffff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+
 .form-input:focus,
 select:focus {
   outline: none;
@@ -471,14 +434,17 @@ select:focus {
   background-color: transparent;
   color: #ffffff;
 }
+
 .btn-primary:hover {
   background-color: #ffffff;
   color: #121010;
 }
+
 .btn-secondary {
   border-color: #6c757d;
   color: #6c757d;
 }
+
 .btn-secondary:hover {
   background-color: #6c757d;
   color: #ffffff;
@@ -492,6 +458,7 @@ select:focus {
 .btn-sm {
   padding: 0.25rem 0.5rem;
 }
+
 .btn-icon {
   background: none;
   border: none;
@@ -499,12 +466,15 @@ select:focus {
   padding: 0.5rem;
   color: #cccccc;
 }
+
 .btn-icon:hover {
   color: #ffffff;
 }
+
 .btn-icon.btn-danger {
   color: #dc3545;
 }
+
 .btn-icon.btn-danger:hover {
   color: #ff6b81;
 }
@@ -513,6 +483,7 @@ select:focus {
   margin-top: 1rem;
   max-width: 200px;
 }
+
 .image-preview img {
   width: 100%;
   border-radius: 4px;
@@ -533,40 +504,48 @@ select:focus {
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: inset 0 0 0 1px #ffffff;
   border-radius: 8px;
-  transform: translateZ(0); /* Добавлено для исправления бага с обрезкой */
+  transform: translateZ(0);
+  /* Добавлено для исправления бага с обрезкой */
   position: relative;
   height: 100%;
   min-height: 250px;
 }
+
 .work-card:hover {
   transform: translateY(-5px);
   box-shadow: inset 0 0 0 1px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .work-card:active {
   cursor: grabbing;
 }
+
 .work-card.drag-over {
   border-color: #3498db;
   outline: 2px dashed #3498db;
 }
+
 .work-card-img {
   width: 100%;
   height: 150px;
   background-size: cover;
   background-position: center;
 }
+
 .work-card-content {
   padding: 1rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
+
 .work-card-title {
   flex-grow: 1;
   font-weight: 600;
   margin: 0 0 1rem 0;
   color: #ffffff;
 }
+
 .work-card-actions {
   display: flex;
   flex-direction: column;
@@ -604,6 +583,7 @@ select.form-input option {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -622,6 +602,7 @@ select.form-input option {
   align-items: center;
   z-index: 1000;
 }
+
 .modal-content {
   width: 90%;
   max-width: 900px;
@@ -629,6 +610,7 @@ select.form-input option {
   flex-direction: column;
   gap: 1rem;
 }
+
 .modal-content h2 {
   margin-top: 0;
 }
@@ -643,18 +625,22 @@ select.form-input option {
   transition: background-color 0.2s, border-color 0.2s;
   min-height: 375px;
 }
+
 .add-new-card:hover {
   background-color: rgba(255, 255, 255, 0.05);
   border-color: #007bff;
 }
+
 .add-new-placeholder {
   text-align: center;
   color: #888;
 }
+
 .add-new-placeholder span {
   font-size: 48px;
   line-height: 1;
 }
+
 .add-new-placeholder p {
   margin-top: 0.5rem;
   font-weight: 500;
@@ -678,6 +664,7 @@ select.form-input option {
   cursor: grab;
   transition: color 0.3s;
 }
+
 .work-card:active {
   cursor: grabbing;
 }

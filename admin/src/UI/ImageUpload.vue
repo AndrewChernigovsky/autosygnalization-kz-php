@@ -16,21 +16,20 @@ import { ref, computed, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 
 interface Props {
-  imageId?: number;
   data?: {
-    filename: string;
-    path: string;
-  } | null;
+    imageID?: string;
+    filename?: string;
+    path?: string;
+  };
   path: string;
   serviceImage?: boolean;
   advantageImage?: boolean;
-  extraData?: { [key: string]: string };
 }
 
 interface Emits {
   (
     event: 'upload-success',
-    data: { id: number; filename: string; path: string }
+    data: { imageID: string, filename: string; path: string }
   ): void;
   (event: 'status-update', status: string): void;
   (event: 'progress-update', progress: number): void;
@@ -116,10 +115,8 @@ function uploadImage() {
   formData.append('image', imageFile.value);
   formData.append('path', props.path);
 
-  if (props.extraData) {
-    for (const key in props.extraData) {
-      formData.append(key, props.extraData[key]);
-    }
+  if (props.data?.imageID) {
+    formData.append('id', props.data.imageID.toString());
   }
 
   const xhr = new XMLHttpRequest();
@@ -139,8 +136,9 @@ function uploadImage() {
     if (xhr.status === 200) {
       try {
         const response = JSON.parse(xhr.responseText);
+        console.log(response, 'RESPONSE');
         emit('upload-success', {
-          id: response.id,
+          imageID: response.id,
           filename: response.filename,
           path: response.path,
         });

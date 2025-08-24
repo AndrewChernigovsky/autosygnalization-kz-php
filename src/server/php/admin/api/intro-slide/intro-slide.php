@@ -4,24 +4,23 @@ namespace API\ADMIN;
 
 // Error handling to ensure JSON response even on fatal errors
 set_exception_handler(function ($exception) {
-    header('Content-Type: application/json');
-    http_response_code(500);
-    echo json_encode([
-        'success' => false,
-        'error' => 'Server Exception: ' . $exception->getMessage(),
-        'file' => $exception->getFile(),
-        'line' => $exception->getLine()
-    ]);
-    exit;
+  header('Content-Type: application/json');
+  http_response_code(500);
+  echo json_encode([
+    'success' => false,
+    'error' => 'Server Exception: ' . $exception->getMessage(),
+    'file' => $exception->getFile(),
+    'line' => $exception->getLine()
+  ]);
+  exit;
 });
 
 set_error_handler(function ($severity, $message, $file, $line) {
-    if (!(error_reporting() & $severity)) {
-        return;
-    }
-    throw new \ErrorException($message, 0, $severity, $file, $line);
+  if (!(error_reporting() & $severity)) {
+    return;
+  }
+  throw new \ErrorException($message, 0, $severity, $file, $line);
 });
-
 
 header("Access-control-allow-origin: http://localhost:5173");
 header("Access-control-allow-methods: GET, POST, DELETE, OPTIONS");
@@ -30,12 +29,7 @@ header('Content-Type: application/json');
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use FFMpeg\FFMpeg;
-use FFMpeg\Coordinate\TimeCode;
 use DATABASE\DataBase;
-use FFMpeg\Coordinate\Dimension;
-use FFMpeg\Format\Video\X264;
-use FFMpeg\Format\Video\WebM;
 use Exception;
 
 function log_message($message)
@@ -54,7 +48,6 @@ class IntroSlideAPI extends DataBase
 {
   protected $pdo;
   private $upload_dir;
-  private $ffmpeg;
 
   public function __construct()
   {
@@ -65,20 +58,14 @@ class IntroSlideAPI extends DataBase
       if (!is_dir($this->upload_dir)) {
         mkdir($this->upload_dir, 0777, true);
       }
-      
-      try {
-        $this->ffmpeg = FFMpeg::create();
-        log_message("FFMpeg успешно инициализирован");
-      } catch (Exception $e) {
-        log_message("Ошибка инициализации FFMpeg: " . $e->getMessage());
-        // Не бросаем исключение, а возвращаем JSON-ошибку
-        $this->ffmpeg = null;
+
+      // Создаем подпапку для постеров
+      if (!is_dir($this->upload_dir . "posters/")) {
+        mkdir($this->upload_dir . "posters/", 0777, true);
       }
+
     } catch (Exception $e) {
-      // Если произошла критическая ошибка, возвращаем JSON-ответ
-      http_response_code(500);
-      echo json_encode(['success' => false, 'error' => 'Ошибка инициализации сервера: ' . $e->getMessage()]);
-      exit;
+      throw new Exception("Ошибка инициализации: " . $e->getMessage());
     }
   }
 
@@ -107,6 +94,7 @@ class IntroSlideAPI extends DataBase
           $item['advantages'] = json_decode($item['advantages'], true);
         }
       }
+
       unset($item);
 
       return $this->success($data);
@@ -118,7 +106,7 @@ class IntroSlideAPI extends DataBase
 
   private function getVideoFilePaths($id)
   {
-    $stmt = $this->pdo->prepare("SELECT video_path, poster_path, video_path_mob FROM Videos_intro_slider WHERE id = :id");
+    $stmt = $this->pdo->prepare("SELECT video_path, poster_path FROM Videos_intro_slider WHERE id = :id");
     $stmt->execute([':id' => $id]);
     return $stmt->fetch(\PDO::FETCH_ASSOC);
   }
@@ -145,44 +133,79 @@ class IntroSlideAPI extends DataBase
     }
   }
 
-  private function processVideoWithFFmpeg($temp_path, $generatePoster = true)
+  private function createFallbackPoster($outputPath)
   {
-    if ($this->ffmpeg === null) {
-      throw new Exception('FFMpeg не доступен на сервере');
-    }
-    
-    $video = $this->ffmpeg->open($temp_path);
-    $base_name = 'video_' . uniqid();
+    // Создаем простое изображение-заглушку
+    $width = 800;
+    $height = 450;
 
-    $paths = [
-      'video_path' => "/server/uploads/intro-slide/{$base_name}.mp4",
-      'poster_path' => null, // Default to null
-      'video_path_mob' => "/server/uploads/intro-slide/{$base_name}_mob.webm",
+    $image = imagecreatetruecolor($width, $height);
+
+    // Цвета
+    $bgColor = imagecolorallocate($image, 40, 40, 70);    // Темно-синий фон
+    $textColor = imagecolorallocate($image, 255, 255, 255); // Белый текст
+    $accentColor = imagecolorallocate($image, 0, 150, 255); // Синий акцент
+
+    // Заполняем фон
+    imagefilledrectangle($image, 0, 0, $width, $height, $bgColor);
+
+    // Рисуем иконку "play" (треугольник)
+    $centerX = $width / 2;
+    $centerY = $height / 2;
+
+    $points = [
+      $centerX - 20,
+      $centerY - 30,  // Левая точка
+      $centerX + 40,
+      $centerY,       // Правая точка  
+      $centerX - 20,
+      $centerY + 30   // Нижняя точка
     ];
 
-    $server_paths = [
-      'video_path' => $this->upload_dir . "{$base_name}.mp4",
-      'poster_path' => $this->upload_dir . "posters/{$base_name}.avif",
-      'video_path_mob' => $this->upload_dir . "{$base_name}_mob.webm",
+    imagefilledpolygon($image, $points, 3, $accentColor);
+
+    // Добавляем текст
+    $texts = [
+      'VIDEO PREVIEW',
+      date('Y-m-d H:i:s')
     ];
 
-    if ($generatePoster) {
-      if (!is_dir($this->upload_dir . "posters/")) {
-        mkdir($this->upload_dir . "posters/", 0777, true);
-      }
-      $video->frame(TimeCode::fromSeconds(1))->save($server_paths['poster_path']);
-      $paths['poster_path'] = "/server/uploads/intro-slide/posters/{$base_name}.avif";
+    $yPosition = $centerY + 60;
+    foreach ($texts as $text) {
+      $textWidth = imagefontwidth(4) * strlen($text);
+      $textX = $centerX - ($textWidth / 2);
+      imagestring($image, 4, $textX, $yPosition, $text, $textColor);
+      $yPosition += 25;
     }
 
-    $format_mp4 = new X264();
-    $format_mp4->setAdditionalParameters(['-an']); // No audio
-    $video->save($format_mp4, $server_paths['video_path']);
+    // Сохраняем как JPEG
+    if (!imagejpeg($image, $outputPath, 85)) {
+      imagedestroy($image);
+      throw new Exception('Не удалось сохранить постер');
+    }
 
-    $format_webm_mobile = new WebM();
-    $format_webm_mobile->setAdditionalParameters(['-crf', '32', '-b:v', '0', '-an']);
-    $video->save($format_webm_mobile, $server_paths['video_path_mob']);
+    imagedestroy($image);
+    return true;
+  }
 
-    return $paths;
+  private function saveUploadedFile($file, $target_dir, $prefix = 'file')
+  {
+    if ($file['error'] !== UPLOAD_ERR_OK) {
+      throw new Exception('Ошибка при загрузке файла. Код: ' . $file['error']);
+    }
+
+    $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $filename = $prefix . '_' . uniqid() . '.' . $ext;
+    $target_path = $target_dir . $filename;
+
+    if (!move_uploaded_file($file['tmp_name'], $target_path)) {
+      throw new Exception('Не удалось сохранить файл');
+    }
+
+    return [
+      'filename' => $filename,
+      'path' => str_replace($_SERVER['DOCUMENT_ROOT'], '', $target_path)
+    ];
   }
 
   public function updateSlide($post, $files)
@@ -200,12 +223,6 @@ class IntroSlideAPI extends DataBase
       $update_params = [':id' => $id];
 
       // --- File Validation ---
-      if (isset($files['video']) && $files['video']['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception('Ошибка при загрузке видео. Код: ' . $files['video']['error']);
-      }
-      if (isset($files['poster']) && $files['poster']['error'] !== UPLOAD_ERR_OK) {
-        throw new Exception('Ошибка при загрузке постера. Код: ' . $files['poster']['error']);
-      }
       if (isset($files['video']) && $files['video']['size'] > 50 * 1024 * 1024) {
         throw new Exception('Размер видеофайла не должен превышать 50 МБ.');
       }
@@ -217,9 +234,8 @@ class IntroSlideAPI extends DataBase
       // 1. Handle Deletions
       if (!empty($post['remove_video'])) {
         $this->deleteFile($current_paths['video_path']);
-        $this->deleteFile($current_paths['video_path_mob']);
         $final_paths['video_path'] = '';
-        $final_paths['video_path_mob'] = '';
+        $final_paths['video_filename'] = '';
       }
       if (!empty($post['remove_poster'])) {
         $this->deleteFile($current_paths['poster_path']);
@@ -227,38 +243,30 @@ class IntroSlideAPI extends DataBase
       }
 
       // 2. Handle Uploads
-      if (isset($files['video']['tmp_name'])) {
+      if (isset($files['video']['tmp_name']) && $files['video']['error'] === UPLOAD_ERR_OK) {
         $this->deleteFile($current_paths['video_path']);
-        $this->deleteFile($current_paths['video_path_mob']);
-        $video_paths = $this->processVideoWithFFmpeg($files['video']['tmp_name'], false); // Never generate poster here
-        $final_paths['video_path'] = $video_paths['video_path'];
-        $final_paths['video_path_mob'] = $video_paths['video_path_mob'];
+        $video_info = $this->saveUploadedFile($files['video'], $this->upload_dir, 'video');
+        $final_paths['video_path'] = $video_info['path'];
+        $final_paths['video_filename'] = $files['video']['name'];
       }
 
-      if (isset($files['poster']['tmp_name'])) {
+      if (isset($files['poster']['tmp_name']) && $files['poster']['error'] === UPLOAD_ERR_OK) {
         $this->deleteFile($current_paths['poster_path']);
-        $ext = pathinfo($files['poster']['name'], PATHINFO_EXTENSION);
-        $poster_filename = 'poster_' . uniqid() . '.' . $ext;
-        $poster_path = '/server/uploads/intro-slide/posters/' . $poster_filename;
-        if (!is_dir($this->upload_dir . "posters/")) {
-          mkdir($this->upload_dir . "posters/", 0777, true);
-        }
-        move_uploaded_file($files['poster']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $poster_path);
-        $final_paths['poster_path'] = $poster_path;
+        $poster_info = $this->saveUploadedFile($files['poster'], $this->upload_dir . 'posters/', 'poster');
+        $final_paths['poster_path'] = $poster_info['path'];
       }
 
-      // 3. Decide on Poster Generation
-      if ($final_paths['video_path'] && !$final_paths['poster_path'] && $this->ffmpeg !== null) {
-        $video_full_path = $_SERVER['DOCUMENT_ROOT'] . $final_paths['video_path'];
-        if (file_exists($video_full_path)) {
-            $video = $this->ffmpeg->open($video_full_path);
-            $base_name = pathinfo($final_paths['video_path'], PATHINFO_FILENAME);
-            $poster_server_path = $this->upload_dir . "posters/{$base_name}.avif";
-            if (!is_dir($this->upload_dir . "posters/")) {
-                mkdir($this->upload_dir . "posters/", 0777, true);
-            }
-            $video->frame(TimeCode::fromSeconds(1))->save($poster_server_path);
-            $final_paths['poster_path'] = "/server/uploads/intro-slide/posters/{$base_name}.avif";
+      // 3. Create poster from video if needed and GD is available
+      if ($final_paths['video_path'] && !$final_paths['poster_path'] && extension_loaded('gd')) {
+        try {
+          $base_name = pathinfo($final_paths['video_path'], PATHINFO_FILENAME);
+          $poster_filename = 'poster_' . $base_name . '.jpg';
+          $poster_path = $this->upload_dir . 'posters/' . $poster_filename;
+
+          $this->createFallbackPoster($poster_path);
+          $final_paths['poster_path'] = '/server/uploads/intro-slide/posters/' . $poster_filename;
+        } catch (Exception $e) {
+          log_message("Не удалось создать постер: " . $e->getMessage());
         }
       }
 
@@ -271,19 +279,19 @@ class IntroSlideAPI extends DataBase
           $update_params[":$field"] = $post[$field];
         }
       }
-      
-      $path_fields = ['video_path', 'video_path_mob', 'poster_path'];
-       foreach($path_fields as $field) {
-           $update_fields[] = "$field = :$field";
-           $update_params[":$field"] = $final_paths[$field];
-       }
-       if (isset($files['video']['name'])) {
-           $update_fields[] = "video_filename = :video_filename";
-           $update_params[':video_filename'] = $files['video']['name'];
-       } else if (!empty($post['remove_video'])) {
-            $update_fields[] = "video_filename = ''";
-       }
 
+      // Обновляем пути к файлам
+      $update_fields[] = "video_path = :video_path";
+      $update_params[":video_path"] = $final_paths['video_path'];
+
+      $update_fields[] = "poster_path = :poster_path";
+      $update_params[":poster_path"] = $final_paths['poster_path'];
+
+      $update_fields[] = "video_filename = :video_filename";
+      $update_params[":video_filename"] = $final_paths['video_filename'] ?? '';
+
+      // Удаляем поле video_path_mob из БД если оно существует
+      $update_fields[] = "video_path_mob = ''";
 
       if (!empty($update_fields)) {
         $query = "UPDATE Videos_intro_slider SET " . implode(', ', $update_fields) . " WHERE id = :id";
@@ -297,153 +305,143 @@ class IntroSlideAPI extends DataBase
       if ($this->pdo->inTransaction()) {
         $this->pdo->rollBack();
       }
-      log_message("Ошибка обновления слайда: " . $e->getMessage() . " in " . $e->getFile() . " on line " . $e->getLine());
+      log_message("Ошибка обновления слайда: " . $e->getMessage());
       return $this->error("Ошибка на сервере при обновлении слайда: " . $e->getMessage(), 500);
     }
   }
 
   public function createSlide($post, $files)
   {
-      try {
-          $this->pdo->beginTransaction();
+    try {
+      $this->pdo->beginTransaction();
 
-          // Debug logging
-          log_message("createSlide: POST data: " . print_r($post, true));
-          log_message("createSlide: FILES data: " . print_r($files, true));
-
-          // Validation (can be expanded)
-          if (empty($post['title']) || empty($post['button_text']) || empty($post['button_link'])) {
-              log_message("Validation failed: title='" . ($post['title'] ?? 'null') . "', button_text='" . ($post['button_text'] ?? 'null') . "', button_link='" . ($post['button_link'] ?? 'null') . "'");
-              throw new Exception("Основные текстовые поля не могут быть пустыми.");
-          }
-
-          // File processing (similar to update)
-          $final_paths = [
-              'video_path' => '',
-              'poster_path' => '',
-              'video_path_mob' => '',
-              'video_filename' => ''
-          ];
-
-          if (isset($files['video']['tmp_name'])) {
-              $video_paths = $this->processVideoWithFFmpeg($files['video']['tmp_name'], false);
-              $final_paths['video_path'] = $video_paths['video_path'];
-              $final_paths['video_path_mob'] = $video_paths['video_path_mob'];
-              $final_paths['video_filename'] = $files['video']['name'];
-          }
-
-          if (isset($files['poster']['tmp_name'])) {
-              $ext = pathinfo($files['poster']['name'], PATHINFO_EXTENSION);
-              $poster_filename = 'poster_' . uniqid() . '.' . $ext;
-              $poster_path = '/server/uploads/intro-slide/posters/' . $poster_filename;
-              if (!is_dir($this->upload_dir . "posters/")) {
-                  mkdir($this->upload_dir . "posters/", 0777, true);
-              }
-              move_uploaded_file($files['poster']['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $poster_path);
-              $final_paths['poster_path'] = $poster_path;
-          }
-
-          if ($final_paths['video_path'] && !$final_paths['poster_path'] && $this->ffmpeg !== null) {
-              $video_full_path = $_SERVER['DOCUMENT_ROOT'] . $final_paths['video_path'];
-              if (file_exists($video_full_path)) {
-                  $video = $this->ffmpeg->open($video_full_path);
-                  $base_name = pathinfo($final_paths['video_path'], PATHINFO_FILENAME);
-                  $poster_server_path = $this->upload_dir . "posters/{$base_name}.avif";
-                  $video->frame(TimeCode::fromSeconds(1))->save($poster_server_path);
-                  $final_paths['poster_path'] = "/server/uploads/intro-slide/posters/{$base_name}.avif";
-              }
-          }
-          
-          $stmt = $this->pdo->query("SELECT MAX(position) as max_position FROM Videos_intro_slider");
-          $max_position = $stmt->fetchColumn();
-          $new_position = ($max_position === null) ? 1 : $max_position + 1;
-
-          $query = "INSERT INTO Videos_intro_slider (title, button_text, button_link, advantages, position, video_filename, video_path, poster_path, video_path_mob) VALUES (:title, :button_text, :button_link, :advantages, :position, :video_filename, :video_path, :poster_path, :video_path_mob)";
-          $stmt = $this->pdo->prepare($query);
-          $params = [
-              ':title' => $post['title'],
-              ':button_text' => $post['button_text'],
-              ':button_link' => $post['button_link'],
-              ':advantages' => $post['advantages'],
-              ':position' => $new_position,
-              ':video_filename' => $final_paths['video_filename'],
-              ':video_path' => $final_paths['video_path'],
-              ':poster_path' => $final_paths['poster_path'],
-              ':video_path_mob' => $final_paths['video_path_mob']
-          ];
-          $stmt->execute($params);
-          $new_id = $this->pdo->lastInsertId();
-
-          $this->pdo->commit();
-          return $this->success(['id' => $new_id, 'status' => 'created'], 201);
-      } catch (Exception $e) {
-          if ($this->pdo->inTransaction()) {
-              $this->pdo->rollBack();
-          }
-          log_message("Ошибка создания слайда: " . $e->getMessage());
-          return $this->error("Ошибка на сервере при создании слайда: " . $e->getMessage(), 500);
+      // Validation
+      if (empty($post['title']) || empty($post['button_text']) || empty($post['button_link'])) {
+        throw new Exception("Основные текстовые поля не могут быть пустыми.");
       }
+
+      if (!isset($files['video']) || $files['video']['error'] !== UPLOAD_ERR_OK) {
+        throw new Exception("Видео файл обязателен для создания слайда");
+      }
+
+      $final_paths = [
+        'video_path' => '',
+        'poster_path' => '',
+        'video_filename' => $files['video']['name']
+      ];
+
+      // Сохраняем видео
+      $video_info = $this->saveUploadedFile($files['video'], $this->upload_dir, 'video');
+      $final_paths['video_path'] = $video_info['path'];
+
+      // Сохраняем постер если загружен
+      if (isset($files['poster']) && $files['poster']['error'] === UPLOAD_ERR_OK) {
+        $poster_info = $this->saveUploadedFile($files['poster'], $this->upload_dir . 'posters/', 'poster');
+        $final_paths['poster_path'] = $poster_info['path'];
+      } elseif (extension_loaded('gd')) {
+        // Создаем постер-заглушку если GD доступен
+        try {
+          $base_name = pathinfo($final_paths['video_path'], PATHINFO_FILENAME);
+          $poster_filename = 'poster_' . $base_name . '.jpg';
+          $poster_path = $this->upload_dir . 'posters/' . $poster_filename;
+
+          $this->createFallbackPoster($poster_path);
+          $final_paths['poster_path'] = '/server/uploads/intro-slide/posters/' . $poster_filename;
+        } catch (Exception $e) {
+          log_message("Не удалось создать постер: " . $e->getMessage());
+        }
+      }
+
+      // Получаем следующую позицию
+      $stmt = $this->pdo->query("SELECT MAX(position) as max_position FROM Videos_intro_slider");
+      $max_position = $stmt->fetchColumn();
+      $new_position = ($max_position === null) ? 1 : $max_position + 1;
+
+      // Сохраняем в БД
+      $query = "INSERT INTO Videos_intro_slider (title, button_text, button_link, advantages, position, video_filename, video_path, poster_path) VALUES (:title, :button_text, :button_link, :advantages, :position, :video_filename, :video_path, :poster_path)";
+      $stmt = $this->pdo->prepare($query);
+      $params = [
+        ':title' => $post['title'],
+        ':button_text' => $post['button_text'],
+        ':button_link' => $post['button_link'],
+        ':advantages' => $post['advantages'] ?? '[]',
+        ':position' => $new_position,
+        ':video_filename' => $final_paths['video_filename'],
+        ':video_path' => $final_paths['video_path'],
+        ':poster_path' => $final_paths['poster_path']
+      ];
+      $stmt->execute($params);
+      $new_id = $this->pdo->lastInsertId();
+
+      $this->pdo->commit();
+      return $this->success(['id' => $new_id, 'status' => 'created'], 201);
+    } catch (Exception $e) {
+      if ($this->pdo->inTransaction()) {
+        $this->pdo->rollBack();
+      }
+      log_message("Ошибка создания слайда: " . $e->getMessage());
+      return $this->error("Ошибка на сервере при создании слайда: " . $e->getMessage(), 500);
+    }
   }
 
   public function deleteSlide($post)
   {
-      try {
-          if (!isset($post['id'])) {
-              return $this->error("Отсутствует ID для удаления", 400);
-          }
-          $id = $post['id'];
-          $this->pdo->beginTransaction();
-
-          $paths = $this->getVideoFilePaths($id);
-          if ($paths) {
-              $this->deleteFile($paths['video_path']);
-              $this->deleteFile($paths['video_path_mob']);
-              $this->deleteFile($paths['poster_path']);
-          }
-
-          $stmt = $this->pdo->prepare("DELETE FROM Videos_intro_slider WHERE id = :id");
-          $stmt->execute([':id' => $id]);
-
-          $this->pdo->commit();
-          return $this->success(['id' => $id, 'status' => 'deleted']);
-      } catch (Exception $e) {
-          if ($this->pdo->inTransaction()) {
-              $this->pdo->rollBack();
-          }
-          log_message("Ошибка удаления слайда: " . $e->getMessage());
-          return $this->error("Ошибка на сервере при удалении слайда: " . $e->getMessage(), 500);
+    try {
+      if (!isset($post['id'])) {
+        return $this->error("Отсутствует ID для удаления", 400);
       }
+      $id = $post['id'];
+      $this->pdo->beginTransaction();
+
+      $paths = $this->getVideoFilePaths($id);
+      if ($paths) {
+        $this->deleteFile($paths['video_path']);
+        $this->deleteFile($paths['poster_path']);
+      }
+
+      $stmt = $this->pdo->prepare("DELETE FROM Videos_intro_slider WHERE id = :id");
+      $stmt->execute([':id' => $id]);
+
+      $this->pdo->commit();
+      return $this->success(['id' => $id, 'status' => 'deleted']);
+    } catch (Exception $e) {
+      if ($this->pdo->inTransaction()) {
+        $this->pdo->rollBack();
+      }
+      log_message("Ошибка удаления слайда: " . $e->getMessage());
+      return $this->error("Ошибка на сервере при удалении слайда: " . $e->getMessage(), 500);
+    }
   }
 
   public function updateOrder($post)
   {
-      try {
-          if (empty($post)) {
-              return $this->error("Отсутствуют данные о порядке", 400);
-          }
-          
-          $orderData = $post;
-
-          $this->pdo->beginTransaction();
-          $query = "UPDATE Videos_intro_slider SET position = :position WHERE id = :id";
-          $stmt = $this->pdo->prepare($query);
-
-          foreach ($orderData as $item) {
-              if (!isset($item['id']) || !isset($item['position'])) {
-                  throw new Exception("Неверный формат элемента порядка");
-              }
-              $stmt->execute([':position' => $item['position'], ':id' => $item['id']]);
-          }
-
-          $this->pdo->commit();
-          return $this->success(['status' => 'order updated']);
-      } catch (Exception $e) {
-          if ($this->pdo->inTransaction()) {
-              $this->pdo->rollBack();
-          }
-          log_message("Ошибка обновления порядка слайдов: " . $e->getMessage());
-          return $this->error("Ошибка на сервере при обновлении порядка: " . $e->getMessage(), 500);
+    try {
+      if (empty($post)) {
+        return $this->error("Отсутствуют данные о порядке", 400);
       }
+
+      $orderData = $post;
+
+      $this->pdo->beginTransaction();
+      $query = "UPDATE Videos_intro_slider SET position = :position WHERE id = :id";
+      $stmt = $this->pdo->prepare($query);
+
+      foreach ($orderData as $item) {
+        if (!isset($item['id']) || !isset($item['position'])) {
+          throw new Exception("Неверный формат элемента порядка");
+        }
+        $stmt->execute([':position' => $item['position'], ':id' => $item['id']]);
+      }
+
+      $this->pdo->commit();
+      return $this->success(['status' => 'order updated']);
+    } catch (Exception $e) {
+      if ($this->pdo->inTransaction()) {
+        $this->pdo->rollBack();
+      }
+      log_message("Ошибка обновления порядка слайдов: " . $e->getMessage());
+      return $this->error("Ошибка на сервере при обновлении порядка: " . $e->getMessage(), 500);
+    }
   }
 
   public function handleRequest()
@@ -457,24 +455,22 @@ class IntroSlideAPI extends DataBase
         $contentType = isset($_SERVER["CONTENT_TYPE"]) ? trim($_SERVER["CONTENT_TYPE"]) : '';
 
         if ($contentType === "application/json") {
-            $content = trim(file_get_contents("php://input"));
-            $decoded = json_decode($content, true);
+          $content = trim(file_get_contents("php://input"));
+          $decoded = json_decode($content, true);
 
-            if (is_array($decoded)) {
-                // Предполагаем, что это запрос на обновление порядка
-                echo $this->updateOrder($decoded);
-            } else {
-                echo $this->error("Неверный JSON", 400);
-            }
+          if (is_array($decoded)) {
+            echo $this->updateOrder($decoded);
+          } else {
+            echo $this->error("Неверный JSON", 400);
+          }
         } else {
-            // Обработка multipart/form-data
-            if (isset($_POST['action']) && $_POST['action'] === 'create') {
-                echo $this->createSlide($_POST, $_FILES);
-            } else if (isset($_POST['action']) && $_POST['action'] === 'delete') {
-                echo $this->deleteSlide($_POST);
-            } else {
-                echo $this->updateSlide($_POST, $_FILES);
-            }
+          if (isset($_POST['action']) && $_POST['action'] === 'create') {
+            echo $this->createSlide($_POST, $_FILES);
+          } else if (isset($_POST['action']) && $_POST['action'] === 'delete') {
+            echo $this->deleteSlide($_POST);
+          } else {
+            echo $this->updateSlide($_POST, $_FILES);
+          }
         }
         break;
     }
@@ -483,6 +479,3 @@ class IntroSlideAPI extends DataBase
 
 $api = new IntroSlideAPI();
 $api->handleRequest();
-
-
-
