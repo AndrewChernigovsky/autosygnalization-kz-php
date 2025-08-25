@@ -100,7 +100,7 @@
                     </div>
                     <div class="form-group">
                       <label>Цена:</label>
-                      <input type="number" v-model="service.price" />
+                      <input type="text" v-model="service.price" />
                     </div>
                     <div class="service-actions">
                       <MyBtn variant="secondary" @click="saveAddedService(service)" class="btn-save">Сохранить
@@ -148,6 +148,7 @@ const openAddedServiceIds = ref<string[]>([]);
 const openAccordionIds = ref<Record<string, boolean>>({});
 const isAddingMainService = ref(false);
 const isAddingAddedService = ref(false);
+// const addedServices = ref<AddedService[]>([]);
 
 const toggleAccordion = (id: string) => {
   openAccordionIds.value[id] = !openAccordionIds.value[id];
@@ -258,7 +259,7 @@ function deleteAddedService(serviceId: string) {
       }
     }
   });
-}
+} // ← Закрывающая скобка функции была пропущена
 
 async function saveAddedService(service: AddedService) {
   const isNew = String(service.id).startsWith('new-');
@@ -486,6 +487,23 @@ async function fetchServices() {
   }
 }
 
+async function fetchMoreServices() {
+  try {
+    const response = await fetch(
+      '/server/php/admin/api/services/get_added_service.php'
+    );
+    const data = await response.json();
+    localServices.value = {
+      main: data.main || [],
+      added: data.added || [],
+    };
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 async function saveService(serviceId: string) {
   const isNew = serviceId.toString().startsWith('new-');
   Swal.fire({
@@ -655,7 +673,10 @@ function getFullImagePath(path: string): string {
   return path;
 }
 
-onMounted(fetchServices);
+onMounted(() => {
+  fetchServices();
+  fetchMoreServices();
+});
 
 watchEffect(() => {
   if (isLoading.value) {

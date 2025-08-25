@@ -35,9 +35,9 @@ try {
 
   $stmt = $pdo->prepare(
     "INSERT INTO Products 
-            (id, title, description, price, is_popular, gallery, category, model, currency, link, `options_filters`, `functions`, `options`, autosygnals, is_special) 
+            (id, title, description, price, price_list, is_popular, gallery, category, model, currency, link, `options_filters`, `functions`, `options`, autosygnals, is_special) 
         VALUES 
-            (:id, :title, :description, :price, :is_popular, :gallery, :category, :model, :currency, :link, :options_filters, :functions, :options, :autosygnals, :is_special)"
+            (:id, :title, :description, :price, :price_list, :is_popular, :gallery, :category, :model, :currency, :link, :options_filters, :functions, :options, :autosygnals, :is_special)"
   );
 
   $uuid = 'product_' . $data['category'] . '_' . Uuid::uuid4()->toString();
@@ -49,6 +49,7 @@ try {
   $stmt->bindValue(':title', $data['title']);
   $stmt->bindValue(':description', $data['description'] ?? '');
   $stmt->bindValue(':price', $data['price'] ?? 0);
+  $stmt->bindValue(':price_list', json_encode($data['price_list'] ?? []));
   $stmt->bindValue(':is_popular', $is_popular ?? 0);
   $stmt->bindValue(':gallery', $galleryJson);
   $stmt->bindValue(':category', $data['category']);
@@ -65,7 +66,7 @@ try {
 
   // --- Start of new logic: rename folders and update paths ---
   $baseUploadPath = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/';
-  
+
   // Update gallery
   $gallery = $data['gallery'] ?? [];
   $tempGalleryDir = $baseUploadPath . 'products/gallery/' . $tempId;
@@ -88,20 +89,20 @@ try {
   $tempTabsDir = $baseUploadPath . 'tabs/' . $tempId;
   if (strpos($tempId, 'new_') === 0 && !empty($tabs) && is_dir($tempTabsDir)) {
     $newTabsDir = $baseUploadPath . 'tabs/' . $uuid;
-    if(rename($tempTabsDir, $newTabsDir)) {
-        foreach($tabs as $tabIndex => $tab) {
-            if(isset($tab['content'])) {
-                foreach($tab['content'] as $itemIndex => $item) {
-                    if (!empty($item['icon'])) {
-                       $tabs[$tabIndex]['content'][$itemIndex]['icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['icon']);
-                    }
-                }
+    if (rename($tempTabsDir, $newTabsDir)) {
+      foreach ($tabs as $tabIndex => $tab) {
+        if (isset($tab['content'])) {
+          foreach ($tab['content'] as $itemIndex => $item) {
+            if (!empty($item['icon'])) {
+              $tabs[$tabIndex]['content'][$itemIndex]['icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['icon']);
             }
+          }
         }
-        $data['tabs'] = $tabs;
+      }
+      $data['tabs'] = $tabs;
     }
   }
-  
+
   // Save tabs data (either original or with updated paths)
   if (isset($data['tabs'])) {
     $tabsJson = json_encode($data['tabs']);

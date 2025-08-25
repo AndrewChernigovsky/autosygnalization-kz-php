@@ -16,7 +16,7 @@ $header = new Header();
 $footer = new Footer();
 
 // $prices = (new PricesData())->getData();
-$pricesServices = (new PricesServicesData())->getData();
+$pricesServices = (new PricesServicesData())->getAddedServices();
 
 $products = (new Products())->getData();
 $prices = $products;
@@ -48,17 +48,22 @@ echo $head->setHead();
                     <p class="price__item-title" role="term" aria-details="faq-1">
                       <?= htmlspecialchars($price['title']); ?>
                     </p>
+                    <?php $price_list = json_decode($price['price_list'], true); ?>
                     <div class="price__item-box">
                       <span class="price__item-product"><?= htmlspecialchars($price['price']); ?></span>
                       <span class="price__item-currency"><?= htmlspecialchars($price['currency']); ?></span>
                     </div>
-                    <?php if (!empty($price['prices'])): ?>
-                      <?php foreach ($price['prices'] as $service): ?>
-                        <p class="price__item-price">
-                          установка от <?= htmlspecialchars($service['price']) ?>
-                          <?= htmlspecialchars($price['currency']) ?>
-                        </p>
-                      <?php endforeach; ?>
+                    <?php if (!empty($price_list)): ?>
+                      <!-- <div class="price__item-box">
+                        <span class="price__item-product"><?= htmlspecialchars($price_list[0]['price_setup']); ?></span>
+                        <span class="price__item-currency"><?= htmlspecialchars($price_list[0]['currency']); ?></span>
+                      </div> -->
+                      <p class="price__item-price">
+                        <?php error_log(print_r($price_list, true) . 'prices211233'); ?>
+                        <?= htmlspecialchars($price_list[0]['title']) ?>
+                        <?= htmlspecialchars($price_list[0]['price']) ?>
+                        <?= $price_list[0]['content'] ?>
+                      </p>
                     <?php endif; ?>
                   </summary>
                 </details>
@@ -67,7 +72,7 @@ echo $head->setHead();
                     <?php if (!empty($price['prices'])): ?>
                       <?php foreach ($price['prices'] as $service): ?>
                         <div class="service-description">
-                          <?= $service['content'] // content — это HTML, не экранируй! ?>
+                          <?= $service['content'] ?>
                         </div>
                       <?php endforeach; ?>
                     <?php endif; ?>
@@ -86,15 +91,9 @@ echo $head->setHead();
           <?php foreach ($pricesServices as $service): ?>
             <li>
               <div class="price-services__box">
-                <?php if (!empty($service['link'])): ?>
-                  <a href="<?php echo htmlspecialchars($service['link']); ?>">
-                    <?php echo ($service['title']); ?>
-                  </a>
-                <?php else: ?>
-                  <p><?php echo ($service['title']); ?></p>
-                <?php endif; ?>
+                <p><?php echo ($service['title']); ?></p>
                 <div class="price-services__price">
-                  <?php echo htmlspecialchars($service['productServicesPrice']) . ' ' . htmlspecialchars($service['currency']); ?>
+                  <?php echo htmlspecialchars($service['price']) ?>
                 </div>
               </div>
             </li>

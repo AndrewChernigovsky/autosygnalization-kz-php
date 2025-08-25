@@ -71,6 +71,7 @@ export function useProducts() {
         }
       }
       products.value = allProducts;
+      console.log(products.value, 'PRODUCTS');
     } catch (e: any) {
       console.error('Ошибка при получении или обработке продуктов:', e);
       error.value = e.message;
@@ -97,7 +98,9 @@ export function useProducts() {
         'options-filters': product['options-filters'],
         autosygnals: product.autosygnals,
         tabs: product.tabs,
+        price_list: product.price_list,
       };
+      console.log(productData, 'PRODUCT DATA');
 
       if (product.is_new) {
         const createdProduct = await apiCall(
@@ -201,6 +204,7 @@ export function useProducts() {
       options: [],
       'options-filters': [],
       autosygnals: [],
+      price_list: [],
       tabs: [],
     };
     products.value.push(newProduct);

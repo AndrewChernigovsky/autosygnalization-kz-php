@@ -2,99 +2,59 @@
   <div>
     <div class="product-item">
       <div class="product-summary" @click.prevent>
-        <strong class="product-title">{{ displayProduct.title }}</strong
-        ><MyBtn variant="primary" @click="handleButtonClick">
-          {{ isOpen ? 'Закрыть' : 'Редактировать' }}</MyBtn
-        >
+        <strong class="product-title">{{ displayProduct.title }}</strong>
+        <MyBtn variant="primary" @click="handleButtonClick">
+          {{ isOpen ? 'Закрыть' : 'Редактировать' }}</MyBtn>
       </div>
       <MyTransition>
         <div v-if="isOpen" class="product-editor">
           <!-- ... existing fields ... -->
           <div class="form-group">
             <label>Модель:</label>
-            <input
-              v-if="editingProduct && editingProduct.id"
-              v-model="editingProduct.model"
-              type="text"
-            />
+            <input v-if="editingProduct && editingProduct.id" v-model="editingProduct.model" type="text" />
             <span v-else>{{ displayProduct.model }}</span>
           </div>
 
           <div class="form-group">
             <label>Заголовок:</label>
-            <input
-              v-if="editingProduct && editingProduct.id"
-              v-model="editingProduct.title"
-              type="text"
-            />
+            <input v-if="editingProduct && editingProduct.id" v-model="editingProduct.title" type="text" />
             <span v-else>{{ displayProduct.title }}</span>
           </div>
 
           <div class="form-group">
             <label>Описание:</label>
-            <textarea
-              ref="descriptionTextarea"
-              v-if="editingProduct && editingProduct.id"
-              v-model="editingProduct.description"
-              @input="handleDescriptionInput"
-            ></textarea>
+            <textarea ref="descriptionTextarea" v-if="editingProduct && editingProduct.id"
+              v-model="editingProduct.description" @input="handleDescriptionInput"></textarea>
             <span v-else>{{ displayProduct.description }}</span>
           </div>
 
           <div class="form-group">
             <label>Цена:</label>
-            <input
-              v-if="editingProduct && editingProduct.id"
-              v-model="editingProduct.price"
-              type="number"
-            />
+            <input v-if="editingProduct && editingProduct.id" v-model="editingProduct.price" type="number" />
             <span v-else>{{ displayProduct.price }}</span>
           </div>
 
           <div class="form-group">
             <label :for="'popular-' + displayProduct.id">Популярный:</label>
-            <input
-              v-if="editingProduct && editingProduct.id"
-              type="checkbox"
-              :id="'popular-' + displayProduct.id"
-              v-model="editingProduct.is_popular"
-            />
+            <input v-if="editingProduct && editingProduct.id" type="checkbox" :id="'popular-' + displayProduct.id"
+              v-model="editingProduct.is_popular" />
             <span v-else>{{ displayProduct.is_popular ? 'Да' : 'Нет' }}</span>
           </div>
 
           <div class="form-group">
             <label :for="'special-' + displayProduct.id">Специальный:</label>
-            <input
-              v-if="editingProduct && editingProduct.id"
-              type="checkbox"
-              :id="'special-' + displayProduct.id"
-              v-model="editingProduct.is_special"
-            />
+            <input v-if="editingProduct && editingProduct.id" type="checkbox" :id="'special-' + displayProduct.id"
+              v-model="editingProduct.is_special" />
             <span v-else>{{ displayProduct.is_special ? 'Да' : 'Нет' }}</span>
           </div>
-          <Gallery
-            :product="displayProduct"
-            :is-image-uploading="isImageUploading"
+          <Gallery :product="displayProduct" :is-image-uploading="isImageUploading"
             @delete-image="(p, i) => emit('delete-image', p, i)"
-            @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
-          />
-          <Prices
-            ref="pricesRef"
-            :product="displayProduct"
-            :is-editing="!!editingProduct"
-          />
+            @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)" />
+          <Prices ref="pricesRef" :product="displayProduct" :is-editing="!!editingProduct" />
           <div class="form-group">
             <label>Категория:</label>
-            <select
-              v-if="editingProduct && editingProduct.id"
-              v-model="editingProduct.category"
-              @click.stop
-            >
-              <option
-                v-for="category in allCategories"
-                :value="category.key"
-                :key="category.key"
-              >
+            <select v-if="editingProduct && editingProduct.id" v-model="editingProduct.category" @click.stop>
+              <option v-for="category in allCategories" :value="category.key" :key="category.key">
                 {{ category.name }}
               </option>
             </select>
@@ -105,273 +65,139 @@
             <div class="form-group-functions">
               <label class="form-group-checkbox-label">
                 Функции
-                <MyBtn
-                  variant="primary"
-                  @click="toggleCheckbox('functions')"
-                  class="btn-toggle-checkbox"
-                  >{{
-                    openCheckbox.functions ? 'Свернуть' : 'Развернуть'
-                  }}</MyBtn
-                >
+                <MyBtn variant="primary" @click="toggleCheckbox('functions')" class="btn-toggle-checkbox">{{
+                  openCheckbox.functions ? 'Свернуть' : 'Развернуть'
+                }}</MyBtn>
               </label>
               <MyTransition>
-                <div
-                  class="functions-checkboxes accardion-checkboxes"
-                  v-if="openCheckbox.functions"
-                >
-                  <div
-                    class="form-group-checkbox"
-                    v-if="openCheckbox.functions"
-                  >
-                    <input
-                      type="checkbox"
-                      :id="'autostart-' + displayProduct.id"
-                      :checked="hasFunction('Автозапуск')"
-                      @change="toggleFunction('Автозапуск')"
-                    />
-                    <label :for="'autostart-' + displayProduct.id"
-                      >Автозапуск</label
-                    >
+                <div class="functions-checkboxes accardion-checkboxes" v-if="openCheckbox.functions">
+                  <div class="form-group-checkbox" v-if="openCheckbox.functions">
+                    <input type="checkbox" :id="'autostart-' + displayProduct.id" :checked="hasFunction('Автозапуск')"
+                      @change="toggleFunction('Автозапуск')" />
+                    <label :for="'autostart-' + displayProduct.id">Автозапуск</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'engine-block-' + displayProduct.id"
+                    <input type="checkbox" :id="'engine-block-' + displayProduct.id"
                       :checked="hasFunction('БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN')"
-                      @change="toggleFunction('БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN')"
-                    />
-                    <label :for="'engine-block-' + displayProduct.id"
-                      >БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN</label
-                    >
+                      @change="toggleFunction('БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN')" />
+                    <label :for="'engine-block-' + displayProduct.id">БЛОКИРОВКА ДВИГАТЕЛЯ ПО CAN</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'preheater-' + displayProduct.id"
-                      :checked="
-                        hasFunction('УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ')
-                      "
-                      @change="
+                    <input type="checkbox" :id="'preheater-' + displayProduct.id" :checked="hasFunction('УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ')
+                      " @change="
                         toggleFunction('УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ')
-                      "
-                    />
-                    <label :for="'preheater-' + displayProduct.id"
-                      >УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ</label
-                    >
+                        " />
+                    <label :for="'preheater-' + displayProduct.id">УПРАВЛЕНИЕ ПРЕДПУСКОВЫМ ПОДОГРЕВОМ</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'phone-control-' + displayProduct.id"
+                    <input type="checkbox" :id="'phone-control-' + displayProduct.id"
                       :checked="hasFunction('УПРАВЛЕНИЕ С ТЕЛЕФОНА')"
-                      @change="toggleFunction('УПРАВЛЕНИЕ С ТЕЛЕФОНА')"
-                    />
-                    <label :for="'phone-control-' + displayProduct.id"
-                      >УПРАВЛЕНИЕ С ТЕЛЕФОНА</label
-                    >
+                      @change="toggleFunction('УПРАВЛЕНИЕ С ТЕЛЕФОНА')" />
+                    <label :for="'phone-control-' + displayProduct.id">УПРАВЛЕНИЕ С ТЕЛЕФОНА</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'free-monitoring-' + displayProduct.id"
+                    <input type="checkbox" :id="'free-monitoring-' + displayProduct.id"
                       :checked="hasFunction('БЕСПЛАТНЫЙ МОНИТОРИНГ')"
-                      @change="toggleFunction('БЕСПЛАТНЫЙ МОНИТОРИНГ')"
-                    />
-                    <label :for="'free-monitoring-' + displayProduct.id"
-                      >БЕСПЛАТНЫЙ МОНИТОРИНГ</label
-                    >
+                      @change="toggleFunction('БЕСПЛАТНЫЙ МОНИТОРИНГ')" />
+                    <label :for="'free-monitoring-' + displayProduct.id">БЕСПЛАТНЫЙ МОНИТОРИНГ</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'bluetooth-auth-' + displayProduct.id"
-                      :checked="
-                        hasFunction('УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART')
-                      "
-                      @change="
+                    <input type="checkbox" :id="'bluetooth-auth-' + displayProduct.id" :checked="hasFunction('УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART')
+                      " @change="
                         toggleFunction('УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART')
-                      "
-                    />
-                    <label :for="'bluetooth-auth-' + displayProduct.id"
-                      >УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART</label
-                    >
+                        " />
+                    <label :for="'bluetooth-auth-' + displayProduct.id">УМНАЯ АВТОРИЗАЦИЯ ПО BLUETOOTH SMART</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'smart-diagnostic-' + displayProduct.id"
+                    <input type="checkbox" :id="'smart-diagnostic-' + displayProduct.id"
                       :checked="hasFunction('УМНАЯ АВТОДИАГНОСТИКА')"
-                      @change="toggleFunction('УМНАЯ АВТОДИАГНОСТИКА')"
-                    />
-                    <label :for="'smart-diagnostic-' + displayProduct.id"
-                      >УМНАЯ АВТОДИАГНОСТИКА</label
-                    >
+                      @change="toggleFunction('УМНАЯ АВТОДИАГНОСТИКА')" />
+                    <label :for="'smart-diagnostic-' + displayProduct.id">УМНАЯ АВТОДИАГНОСТИКА</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'data-fuel-' + displayProduct.id"
-                      :checked="
-                        hasFunction('ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА')
-                      "
-                      @change="
+                    <input type="checkbox" :id="'data-fuel-' + displayProduct.id" :checked="hasFunction('ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА')
+                      " @change="
                         toggleFunction('ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА')
-                      "
-                    />
-                    <label :for="'data-fuel-' + displayProduct.id"
-                      >ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА</label
-                    >
+                        " />
+                    <label :for="'data-fuel-' + displayProduct.id">ДАННЫЕ О ПРОБЕГЕ И УРОВНЕ ТОПЛИВА</label>
                   </div>
-                </div></MyTransition
-              >
+                </div>
+              </MyTransition>
             </div>
             <div class="form-group-options">
               <label class="form-group-checkbox-label">
                 Опции
-                <MyBtn
-                  variant="primary"
-                  @click="toggleCheckbox('options')"
-                  class="btn-toggle-checkbox"
-                  >{{ openCheckbox.options ? 'Свернуть' : 'Развернуть' }}</MyBtn
-                >
+                <MyBtn variant="primary" @click="toggleCheckbox('options')" class="btn-toggle-checkbox">{{
+                  openCheckbox.options ? 'Свернуть' : 'Развернуть' }}</MyBtn>
               </label>
               <MyTransition>
                 <div class="options-checkboxes" v-if="openCheckbox.options">
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'suv-' + displayProduct.id"
-                      :checked="hasOption('Для внедорожника')"
-                      @change="toggleOption('Для внедорожника', 'vnedorojnik')"
-                    />
-                    <label :for="'suv-' + displayProduct.id"
-                      >Для внедорожника</label
-                    >
+                    <input type="checkbox" :id="'suv-' + displayProduct.id" :checked="hasOption('Для внедорожника')"
+                      @change="toggleOption('Для внедорожника', 'vnedorojnik')" />
+                    <label :for="'suv-' + displayProduct.id">Для внедорожника</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'car-' + displayProduct.id"
-                      :checked="hasOption('Для легкового авто')"
+                    <input type="checkbox" :id="'car-' + displayProduct.id" :checked="hasOption('Для легкового авто')"
                       @change="
                         toggleOption('Для легкового авто', 'legkoe-avto')
-                      "
-                    />
-                    <label :for="'car-' + displayProduct.id"
-                      >Для легкового авто</label
-                    >
+                        " />
+                    <label :for="'car-' + displayProduct.id">Для легкового авто</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-autosetup-' + displayProduct.id"
-                      :checked="hasOptionFilter('autosetup')"
-                      @change="toggleOptionFilter('autosetup')"
-                    />
-                    <label :for="'option-autosetup-' + displayProduct.id"
-                      >Автозапуск</label
-                    >
+                    <input type="checkbox" :id="'option-autosetup-' + displayProduct.id"
+                      :checked="hasOptionFilter('autosetup')" @change="toggleOptionFilter('autosetup')" />
+                    <label :for="'option-autosetup-' + displayProduct.id">Автозапуск</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-block-engine-can-' + displayProduct.id"
-                      :checked="hasOptionFilter('block-engine-can')"
-                      @change="toggleOptionFilter('block-engine-can')"
-                    />
-                    <label :for="'option-block-engine-can-' + displayProduct.id"
-                      >Блокировка двигателя по CAN</label
-                    >
+                    <input type="checkbox" :id="'option-block-engine-can-' + displayProduct.id"
+                      :checked="hasOptionFilter('block-engine-can')" @change="toggleOptionFilter('block-engine-can')" />
+                    <label :for="'option-block-engine-can-' + displayProduct.id">Блокировка двигателя по CAN</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-control-before-start-' + displayProduct.id"
+                    <input type="checkbox" :id="'option-control-before-start-' + displayProduct.id"
                       :checked="hasOptionFilter('control-before-start')"
-                      @change="toggleOptionFilter('control-before-start')"
-                    />
-                    <label
-                      :for="'option-control-before-start-' + displayProduct.id"
-                      >Управление предпусковым подогревом</label
-                    >
+                      @change="toggleOptionFilter('control-before-start')" />
+                    <label :for="'option-control-before-start-' + displayProduct.id">Управление предпусковым
+                      подогревом</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-control-phone-' + displayProduct.id"
-                      :checked="hasOptionFilter('control-phone')"
-                      @change="toggleOptionFilter('control-phone')"
-                    />
-                    <label :for="'option-control-phone-' + displayProduct.id"
-                      >Управление с телефона</label
-                    >
+                    <input type="checkbox" :id="'option-control-phone-' + displayProduct.id"
+                      :checked="hasOptionFilter('control-phone')" @change="toggleOptionFilter('control-phone')" />
+                    <label :for="'option-control-phone-' + displayProduct.id">Управление с телефона</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-free-monitoring-' + displayProduct.id"
-                      :checked="hasOptionFilter('free-monitoring')"
-                      @change="toggleOptionFilter('free-monitoring')"
-                    />
-                    <label :for="'option-free-monitoring-' + displayProduct.id"
-                      >Бесплатный мониторинг</label
-                    >
+                    <input type="checkbox" :id="'option-free-monitoring-' + displayProduct.id"
+                      :checked="hasOptionFilter('free-monitoring')" @change="toggleOptionFilter('free-monitoring')" />
+                    <label :for="'option-free-monitoring-' + displayProduct.id">Бесплатный мониторинг</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-bluetooth-smart-' + displayProduct.id"
-                      :checked="hasOptionFilter('bluetooth-smart')"
-                      @change="toggleOptionFilter('bluetooth-smart')"
-                    />
-                    <label :for="'option-bluetooth-smart-' + displayProduct.id"
-                      >Умная авторизация по Bluetooth Smart</label
-                    >
+                    <input type="checkbox" :id="'option-bluetooth-smart-' + displayProduct.id"
+                      :checked="hasOptionFilter('bluetooth-smart')" @change="toggleOptionFilter('bluetooth-smart')" />
+                    <label :for="'option-bluetooth-smart-' + displayProduct.id">Умная авторизация по Bluetooth
+                      Smart</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-smart-diagnostic-' + displayProduct.id"
-                      :checked="hasOptionFilter('smart-diagnostic')"
-                      @change="toggleOptionFilter('smart-diagnostic')"
-                    />
-                    <label :for="'option-smart-diagnostic-' + displayProduct.id"
-                      >Умная автодиагностика</label
-                    >
+                    <input type="checkbox" :id="'option-smart-diagnostic-' + displayProduct.id"
+                      :checked="hasOptionFilter('smart-diagnostic')" @change="toggleOptionFilter('smart-diagnostic')" />
+                    <label :for="'option-smart-diagnostic-' + displayProduct.id">Умная автодиагностика</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-data-level-bensin-' + displayProduct.id"
+                    <input type="checkbox" :id="'option-data-level-bensin-' + displayProduct.id"
                       :checked="hasOptionFilter('data-level-bensin')"
-                      @change="toggleOptionFilter('data-level-bensin')"
-                    />
-                    <label
-                      :for="'option-data-level-bensin-' + displayProduct.id"
-                      >Данные о пробеге и уровне топлива</label
-                    >
+                      @change="toggleOptionFilter('data-level-bensin')" />
+                    <label :for="'option-data-level-bensin-' + displayProduct.id">Данные о пробеге и уровне
+                      топлива</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-for-park-systems-' + displayProduct.id"
-                      :checked="hasOptionFilter('for-park-systems')"
-                      @change="toggleOptionFilter('for-park-systems')"
-                    />
-                    <label :for="'option-for-park-systems-' + displayProduct.id"
-                      >Для парктроников</label
-                    >
+                    <input type="checkbox" :id="'option-for-park-systems-' + displayProduct.id"
+                      :checked="hasOptionFilter('for-park-systems')" @change="toggleOptionFilter('for-park-systems')" />
+                    <label :for="'option-for-park-systems-' + displayProduct.id">Для парктроников</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'option-remote-controls-' + displayProduct.id"
-                      :checked="hasOptionFilter('remote-controls')"
-                      @change="toggleOptionFilter('remote-controls')"
-                    />
-                    <label :for="'option-remote-controls-' + displayProduct.id"
-                      >Пульты управления</label
-                    >
+                    <input type="checkbox" :id="'option-remote-controls-' + displayProduct.id"
+                      :checked="hasOptionFilter('remote-controls')" @change="toggleOptionFilter('remote-controls')" />
+                    <label :for="'option-remote-controls-' + displayProduct.id">Пульты управления</label>
                   </div>
                 </div>
               </MyTransition>
@@ -379,121 +205,89 @@
             <div class="form-group-autosygnals">
               <label class="form-group-checkbox-label">
                 Раздел для автосигнализаций
-                <MyBtn
-                  variant="primary"
-                  @click="toggleCheckbox('autosygnals')"
-                  class="btn-toggle-checkbox"
-                  >{{
-                    openCheckbox.autosygnals ? 'Свернуть' : 'Развернуть'
-                  }}</MyBtn
-                >
+                <MyBtn variant="primary" @click="toggleCheckbox('autosygnals')" class="btn-toggle-checkbox">{{
+                  openCheckbox.autosygnals ? 'Свернуть' : 'Развернуть'
+                }}</MyBtn>
               </label>
               <MyTransition>
-                <div
-                  class="autosygnals-checkboxes"
-                  v-if="openCheckbox.autosygnals"
-                >
+                <div class="autosygnals-checkboxes" v-if="openCheckbox.autosygnals">
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'autosygnals-without-auto-' + displayProduct.id"
-                      :checked="hasAutosygnals('without-auto')"
-                      @change="toggleAutosygnals('without-auto')"
-                    />
-                    <label
-                      :for="'autosygnals-without-auto-' + displayProduct.id"
-                      >Без автозапуска</label
-                    >
+                    <input type="checkbox" :id="'autosygnals-without-auto-' + displayProduct.id"
+                      :checked="hasAutosygnals('without-auto')" @change="toggleAutosygnals('without-auto')" />
+                    <label :for="'autosygnals-without-auto-' + displayProduct.id">Без автозапуска</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'autosygnals-starline-' + displayProduct.id"
-                      :checked="hasAutosygnals('starline')"
-                      @change="toggleAutosygnals('starline')"
-                    />
-                    <label :for="'autosygnals-starline-' + displayProduct.id"
-                      >Starline</label
-                    >
+                    <input type="checkbox" :id="'autosygnals-starline-' + displayProduct.id"
+                      :checked="hasAutosygnals('starline')" @change="toggleAutosygnals('starline')" />
+                    <label :for="'autosygnals-starline-' + displayProduct.id">Starline</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'autosygnals-auto-' + displayProduct.id"
-                      :checked="hasAutosygnals('auto')"
-                      @change="toggleAutosygnals('auto')"
-                    />
-                    <label :for="'autosygnals-auto-' + displayProduct.id"
-                      >С автозапуском</label
-                    >
+                    <input type="checkbox" :id="'autosygnals-auto-' + displayProduct.id"
+                      :checked="hasAutosygnals('auto')" @change="toggleAutosygnals('auto')" />
+                    <label :for="'autosygnals-auto-' + displayProduct.id">С автозапуском</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'autosygnals-gsm-' + displayProduct.id"
-                      :checked="hasAutosygnals('gsm')"
-                      @change="toggleAutosygnals('gsm')"
-                    />
-                    <label :for="'autosygnals-gsm-' + displayProduct.id"
-                      >GSM модуль</label
-                    >
+                    <input type="checkbox" :id="'autosygnals-gsm-' + displayProduct.id" :checked="hasAutosygnals('gsm')"
+                      @change="toggleAutosygnals('gsm')" />
+                    <label :for="'autosygnals-gsm-' + displayProduct.id">GSM модуль</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'autosygnals-for-park-systems-' + displayProduct.id"
-                      :checked="hasAutosygnals('for-park-systems')"
-                      @change="toggleAutosygnals('for-park-systems')"
-                    />
-                    <label
-                      :for="'autosygnals-for-park-systems-' + displayProduct.id"
-                      >Для парктроников</label
-                    >
+                    <input type="checkbox" :id="'autosygnals-for-park-systems-' + displayProduct.id"
+                      :checked="hasAutosygnals('for-park-systems')" @change="toggleAutosygnals('for-park-systems')" />
+                    <label :for="'autosygnals-for-park-systems-' + displayProduct.id">Для парктроников</label>
                   </div>
                   <div class="form-group-checkbox">
-                    <input
-                      type="checkbox"
-                      :id="'autosygnals-remote-controls-' + displayProduct.id"
-                      :checked="hasAutosygnals('remote-controls')"
-                      @change="toggleAutosygnals('remote-controls')"
-                    />
-                    <label
-                      :for="'autosygnals-remote-controls-' + displayProduct.id"
-                      >Пульты управления</label
-                    >
+                    <input type="checkbox" :id="'autosygnals-remote-controls-' + displayProduct.id"
+                      :checked="hasAutosygnals('remote-controls')" @change="toggleAutosygnals('remote-controls')" />
+                    <label :for="'autosygnals-remote-controls-' + displayProduct.id">Пульты управления</label>
                   </div>
-                </div></MyTransition
-              >
+                </div>
+              </MyTransition>
+            </div>
+            <div class="form-group-autosygnals">
+              <label class="form-group-checkbox-label">
+                Раздел для прайс-листа
+                <MyBtn variant="primary" @click="toggleCheckbox('price_list')" class="btn-toggle-checkbox">{{
+                  openCheckbox.price_list ? 'Свернуть' : 'Развернуть'
+                }}</MyBtn>
+              </label>
+              <MyTransition>
+                <div class="prices-checkboxes" v-if="openCheckbox.price_list">
+                  <!-- <div class="form-group-checkbox">
+                    <label>Название</label>
+                    <p>{{ priceListRef.title }}</p>
+                    <input type="text" v-model="priceListRef.title" />
+                  </div> -->
+                  <div class="form-group-checkbox">
+                    <label>Стоимость установки</label>
+                    <input type="text" v-model="priceListRef.price" />
+                  </div>
+                  <div class="form-group-checkbox">
+                    <label>Описание</label>
+                    <MyQuill v-if="editingProduct" v-model:content="priceListRef.content"
+                      :value="priceListRef.content" />
+                  </div>
+                  <!-- <MyBtn variant="primary" @click="editPriceList(priceListRef)">Добавить</MyBtn>
+                  <MyBtn variant="secondary" @click="editPriceList(priceListRef)">Обновить</MyBtn> -->
+                </div>
+              </MyTransition>
             </div>
           </div>
-          <Tabs
-            v-if="editingProduct"
-            :product="editingProduct"
-            @upload-icon="onUploadTabIcon"
-            @delete-icon="onDeleteTabIcon"
-          />
+          <Tabs v-if="editingProduct" :product="editingProduct" @upload-icon="onUploadTabIcon"
+            @delete-icon="onDeleteTabIcon" />
+
           <div class="product-actions">
             <MyBtn variant="secondary" @click="saveChanges" class="btn-save">
               Сохранить изменения
             </MyBtn>
-            <MyBtn
-              variant="primary"
-              @click="emit('delete-product', product.id)"
-              class="btn-delete"
-            >
+            <MyBtn variant="primary" @click="emit('delete-product', product.id)" class="btn-delete">
               Удалить товар
             </MyBtn>
           </div>
         </div>
       </MyTransition>
     </div>
-    <input
-      type="file"
-      ref="iconUploader"
-      @change="onIconFileSelected"
-      style="display: none"
-      accept="image/*"
-    />
+    <input type="file" ref="iconUploader" @change="onIconFileSelected" style="display: none" accept="image/*" />
   </div>
 </template>
 
@@ -505,6 +299,7 @@ import Tabs from './Tabs.vue';
 import Prices from './Prices.vue';
 import MyBtn from '../UI/MyBtn.vue';
 import MyTransition from '../UI/MyTransition.vue';
+import MyQuill from '../UI/MyQuill.vue';
 
 defineOptions({
   name: 'Product',
@@ -525,9 +320,31 @@ const openCheckbox = ref<Record<string, boolean>>({});
 const isOpen = ref(false);
 const descriptionTextarea = ref<HTMLTextAreaElement | null>(null);
 
+const priceListRef = ref<{
+  title: string;
+  price: string;
+  currency: string;
+  content: string;
+}>({
+  title: props.product.price_list?.[0]?.title || '',
+  price: props.product.price_list?.[0]?.price || '',
+  currency: props.product.price_list?.[0]?.currency || '',
+  content: props.product.price_list?.[0]?.content || '',
+});
+
 const displayProduct = computed(() => {
   return editingProduct.value ?? props.product;
 });
+
+watch(() => props.product.price_list, (newVal) => {
+  priceListRef.value = {
+    title: newVal?.[0]?.title || '',
+    price: newVal?.[0]?.price || '',
+    currency: newVal?.[0]?.currency || '',
+    content: newVal?.[0]?.content || '',
+  };
+  editPriceList(priceListRef.value);
+}, { deep: true, immediate: true });
 
 const handleButtonClick = () => {
   isOpen.value = !isOpen.value;
@@ -683,6 +500,17 @@ const toggleAutosygnals = (autosygnalsValue: string) => {
   }
 };
 
+function editPriceList(priceList: {
+  title: string;
+  price: string;
+  currency: string;
+  content: string;
+}) {
+  if (editingProduct.value) {
+    editingProduct.value.price_list = [priceList];
+  }
+}
+
 watch(
   () => props.product.gallery,
   (newGallery) => {
@@ -728,6 +556,7 @@ function saveChanges() {
     pricesRef.value.syncPricesToProduct();
   }
   if (editingProduct.value) {
+    editingProduct.value.price_list = [priceListRef.value];
     emit('save-product', editingProduct.value);
   }
 }
@@ -739,9 +568,11 @@ function saveChanges() {
   border: 1px solid white;
   border-radius: 10px;
 }
+
 .product-title {
   font-size: 28px;
 }
+
 .product-summary {
   display: flex;
   justify-content: space-between;
@@ -750,18 +581,21 @@ function saveChanges() {
   color: #eee;
   border-radius: 20px;
 }
+
 .product-editor {
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
+
 .form-group,
 .form-group-checkbox {
   display: flex;
   align-items: center;
   gap: 15px;
 }
+
 .form-group label,
 .form-group-checkbox label {
   font-size: 20px;
@@ -769,6 +603,7 @@ function saveChanges() {
   color: #ccc;
   min-width: 150px;
 }
+
 .form-group input[type='text'],
 .form-group input[type='number'],
 .form-group textarea,
@@ -781,10 +616,12 @@ function saveChanges() {
   border-radius: 4px;
   font-size: 18px;
 }
+
 .form-group textarea {
   resize: none;
   overflow-y: hidden;
 }
+
 .form-group span {
   flex-grow: 1;
   padding: 10px;
@@ -792,6 +629,7 @@ function saveChanges() {
   border-radius: 4px;
   min-height: 40px;
 }
+
 .form-group input[type='checkbox'],
 .form-group-checkbox input[type='checkbox'] {
   appearance: none;
@@ -882,6 +720,7 @@ function saveChanges() {
 .btn-toggle-checkbox {
   transform: scale(0.9);
 }
+
 .options-checkboxes {
   display: flex;
   flex-direction: column;
@@ -938,6 +777,7 @@ function saveChanges() {
   margin: 0;
   cursor: pointer;
 }
+
 .array-fields-editor {
   border-top: 1px solid #444;
   padding-top: 15px;
@@ -946,6 +786,7 @@ function saveChanges() {
   flex-direction: column;
   gap: 15px;
 }
+
 .product-actions {
   display: flex;
   justify-content: space-between;
@@ -954,6 +795,7 @@ function saveChanges() {
   border-top: 1px solid #444;
   padding-top: 20px;
 }
+
 .btn-save,
 .btn-delete {
   flex-grow: 1;
