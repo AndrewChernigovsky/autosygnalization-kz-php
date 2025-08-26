@@ -30,10 +30,10 @@ onMounted(async () => {
       <router-view />
     </main>
   </div>
-  <div v-else class="app-container-error">
+  <div v-if="!isAuthenticated" class="app-container-error">
     <h1>Вы не авторизованы</h1>
     <MyBtn variant="primary" @click="refreshAuthStatus">
-      Проверить авторизацию
+      Перейти на страницу авторизации
     </MyBtn>
   </div>
 </template>

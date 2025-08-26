@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../../vendor/autoload.php';
 use LAYOUT\Header;
 use LAYOUT\Head;
 use LAYOUT\Footer;
+
 use DATA\PricesData;
 use DATA\PricesServicesData;
 use COMPONENTS\ModalForm;
@@ -19,12 +20,22 @@ $footer = new Footer();
 $pricesServices = (new PricesServicesData())->getAddedServices();
 
 $products = (new Products())->getData();
-$prices = $products;
+$prices = array_filter($products, function ($product) {
+  // Проверяем, что price_list не пустой и не null
+  if (empty($product['price_list']) || $product['price_list'] === null) {
+    return false;
+  }
+
+  // Декодируем и проверяем результат
+  $decoded = json_decode($product['price_list'], true);
+  return !empty($decoded);
+});
 
 error_log(print_r($prices, true) . 'prices22');
 
+$pricesJson = htmlspecialchars(json_encode($prices), ENT_QUOTES, 'UTF-8');
+$pricesServicesJson = htmlspecialchars(json_encode($pricesServices), ENT_QUOTES, 'UTF-8');
 ?>
-
 
 <!DOCTYPE html>
 <html lang="ru">
@@ -54,12 +65,8 @@ echo $head->setHead();
                       <span class="price__item-currency"><?= htmlspecialchars($price['currency']); ?></span>
                     </div>
                     <?php if (!empty($price_list)): ?>
-                      <!-- <div class="price__item-box">
-                        <span class="price__item-product"><?= htmlspecialchars($price_list[0]['price_setup']); ?></span>
-                        <span class="price__item-currency"><?= htmlspecialchars($price_list[0]['currency']); ?></span>
-                      </div> -->
+
                       <p class="price__item-price">
-                        <?php error_log(print_r($price_list, true) . 'prices211233'); ?>
                         <?= htmlspecialchars($price_list[0]['title']) ?>
                         <?= htmlspecialchars($price_list[0]['price']) ?>
                         <?= $price_list[0]['content'] ?>
@@ -105,8 +112,14 @@ echo $head->setHead();
       </div>
     </section>
     <div class="price-button">
-      <a class="button y-button-primary" href="/client/docs/Auto_Security_price.pdf"
-        download="Auto-Security-price-2025.pdf">Скачать прайс-лист</a>
+      <form method="POST" action="/server/php/admin/api/docs/price-list.php">
+        <input type="hidden" name="products" value="<?php echo $pricesJson?>">
+        <input type="hidden" name="addedServices" value="<?php echo $pricesServicesJson?>">
+        <input type="hidden" name="generate_pdf" value="1">
+        <button type="submit" class="button y-button-primary">
+          Скачать прайс-лист
+        </button>
+      </form>
     </div>
   </main>
   <?= $footer->getFooter(); ?>
