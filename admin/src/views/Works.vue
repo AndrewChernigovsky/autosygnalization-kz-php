@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
+import MyBtn from '../components/UI/MyBtn.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
 
 // --- Interfaces ---
 interface Work {
@@ -22,6 +24,7 @@ const works = ref<Work[]>([]);
 const services = ref<Service[]>([]);
 const isLoading = ref(false);
 const error = ref<string | null>(null);
+const isModalOpen = ref(false);
 
 const formState = ref({
   title: '',
@@ -30,8 +33,6 @@ const formState = ref({
   image_preview: '',
 });
 const editingWorkId = ref<number | null>(null);
-
-const draggedIndex = ref<number | null>(null);
 
 const API_URL = '/server/php/admin/api/works/works.php';
 
@@ -104,7 +105,7 @@ const handleSubmit = async () => {
       'success'
     );
     await getWorks();
-    cancelEdit();
+    closeModal();
   } catch (err: any) {
     Swal.fire('Ошибка', `Не удалось сохранить данные: ${err.message}`, 'error');
   } finally {
@@ -159,7 +160,14 @@ const updatePositions = async () => {
       }),
     });
     if (!response.success) throw new Error(response.error);
-    // Позиции обновлены, можно показать тихое уведомление, если нужно
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'success',
+      title: 'Порядок успешно обновлен',
+      showConfirmButton: false,
+      timer: 1500,
+    });
   } catch (err: any) {
     Swal.fire(
       'Ошибка',
@@ -172,18 +180,7 @@ const updatePositions = async () => {
 };
 
 // --- Form & UI Handlers ---
-const startEdit = (work: Work) => {
-  editingWorkId.value = work.work_id;
-  formState.value = {
-    title: work.title,
-    link: work.link,
-    image_file: null,
-    image_preview: work.image_path,
-  };
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-const cancelEdit = () => {
+const resetForm = () => {
   editingWorkId.value = null;
   formState.value = {
     title: '',
@@ -193,133 +190,145 @@ const cancelEdit = () => {
   };
 };
 
+const openCreateModal = () => {
+  resetForm();
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+  resetForm();
+};
+
+const startEdit = (work: Work) => {
+  editingWorkId.value = work.work_id;
+  formState.value = {
+    title: work.title,
+    link: work.link,
+    image_file: null,
+    image_preview: work.image_path,
+  };
+  isModalOpen.value = true;
+};
+
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
-  if (target.files && target.files[0]) {
-    formState.value.image_file = target.files[0];
-    formState.value.image_preview = URL.createObjectURL(target.files[0]);
+  const file = target.files?.[0];
+
+  if (!file) {
+    formState.value.image_file = null;
+    formState.value.image_preview = '';
+    return;
   }
-};
 
-// --- Drag and Drop Handlers ---
-const onDragStart = (index: number) => {
-  draggedIndex.value = index;
-};
+  const allowedTypes = ['image/png', 'image/jpeg', 'image/webp', 'image/avif'];
+  if (!allowedTypes.includes(file.type)) {
+    Swal.fire(
+      'Ошибка',
+      'Неверный формат файла. Пожалуйста, выберите изображение (PNG, JPG, WEBP, AVIF).',
+      'error'
+    );
+    target.value = ''; // Сбрасываем выбор файла
+    return;
+  }
 
-const onDrop = (targetIndex: number) => {
-  if (draggedIndex.value === null) return;
-
-  const draggedItem = works.value.splice(draggedIndex.value, 1)[0];
-  works.value.splice(targetIndex, 0, draggedItem);
-
-  draggedIndex.value = null;
-  updatePositions();
+  formState.value.image_file = file;
+  formState.value.image_preview = URL.createObjectURL(file);
 };
 
 // --- Lifecycle Hooks ---
 onMounted(() => {
   getWorks();
 });
+
+watchEffect(() => {
+  if (isLoading.value) {
+    Swal.fire({
+      title: 'Загрузка...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else {
+    Swal.close();
+  }
+});
 </script>
 
 <template>
   <div class="works-container">
-    <div v-if="isLoading" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
+    <h1 class="my-title">Работы</h1>
 
-    <h1>Управление работами</h1>
-
-    <!-- Форма создания/редактирования -->
-    <div class="form-section card">
-      <h2>
-        {{ isEditing ? 'Редактирование работы' : 'Добавить новую работу' }}
-      </h2>
-      <form @submit.prevent="handleSubmit" class="form-grid">
-        <div class="form-group">
-          <label for="title">Заголовок</label>
-          <input
-            id="title"
-            type="text"
-            v-model="formState.title"
-            placeholder="Название работы"
-            class="form-input"
-          />
-        </div>
-        <div class="form-group">
-          <label for="link">Ссылка на услугу</label>
-          <select id="link" v-model="formState.link" class="form-input">
-            <option disabled value="">-- Выберите услугу --</option>
-            <option
-              v-for="service in services"
-              :key="service.link"
-              :value="service.link"
-            >
-              {{ service.title }}
-            </option>
-          </select>
-        </div>
-        <div class="form-group form-group-full">
-          <label for="image">Изображение</label>
-          <input
-            id="image"
-            type="file"
-            @change="handleFileChange"
-            accept="image/png, image/jpeg, image/webp"
-            class="form-input-file"
-          />
-          <div v-if="formState.image_preview" class="image-preview">
-            <img :src="formState.image_preview" alt="Предпросмотр" />
+    <!-- Модальное окно -->
+    <div v-if="isModalOpen" class="modal-backdrop" @click.self="closeModal">
+      <div class="modal-content card">
+        <h2>
+          {{ isEditing ? 'Редактирование работы' : 'Добавить новую работу' }}
+        </h2>
+        <form @submit.prevent="handleSubmit" class="form-grid">
+          <div class="form-group">
+            <label for="title">Заголовок</label>
+            <input id="title" type="text" v-model="formState.title" placeholder="Название работы" class="form-input" />
           </div>
-        </div>
-        <div class="form-actions form-group-full">
-          <button type="submit" class="btn btn-primary">
-            {{ isEditing ? 'Обновить' : 'Создать' }}
-          </button>
-          <button
-            v-if="isEditing"
-            type="button"
-            @click="cancelEdit"
-            class="btn btn-secondary"
-          >
-            Отмена
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- Список работ -->
-    <h2>Существующие работы</h2>
-    <div class="works-list">
-      <div
-        v-for="(work, index) in works"
-        :key="work.work_id"
-        class="work-card card"
-        draggable="true"
-        @dragstart="onDragStart(index)"
-        @dragover.prevent
-        @drop="onDrop(index)"
-      >
-        <div
-          class="work-card-img"
-          :style="{ backgroundImage: `url(${work.image_path})` }"
-        ></div>
-        <div class="work-card-content">
-          <p class="work-card-title">{{ work.title }}</p>
-          <div class="work-card-actions">
-            <button @click="startEdit(work)" class="btn btn-sm">
-              РЕДАКТИРОВАТЬ
-            </button>
-            <button
-              @click="handleDelete(work.work_id)"
-              class="btn btn-sm btn-danger"
-            >
-              УДАЛИТЬ
-            </button>
+          <div class="form-group">
+            <label for="link">Ссылка на услугу</label>
+            <select id="link" v-model="formState.link" class="form-input">
+              <option disabled value="">-- Выберите услугу --</option>
+              <option v-for="service in services" :key="service.link" :value="service.link">
+                {{ service.title }}
+              </option>
+            </select>
           </div>
-        </div>
+          <div class="form-group form-group-full">
+            <label for="image">Изображение</label>
+            <input id="image" type="file" @change="handleFileChange"
+              accept="image/png, image/jpeg, image/webp, image/avif" class="form-input-file" />
+            <div v-if="formState.image_preview" class="image-preview">
+              <img :src="formState.image_preview" alt="Предпросмотр" />
+            </div>
+          </div>
+          <div class="form-actions form-group-full">
+            <MyBtn variant="secondary" type="submit">
+              {{ isEditing ? 'Обновить' : 'Создать' }}
+            </MyBtn>
+            <MyBtn type="button" @click="closeModal" variant="primary" class="btn">
+              Отмена
+            </MyBtn>
+          </div>
+        </form>
       </div>
     </div>
+
+    <DraggableList v-model="works" item-key="work_id" tag="div" class="works-list" @reorder="updatePositions">
+      <template #item="{ item, dragHandleProps, isDragOver }">
+        <div class="work-card card" :class="{ 'drag-over': isDragOver }">
+          <div class="drag-handle" v-bind="dragHandleProps">⠿</div>
+          <div class="work-card-img" :style="{ backgroundImage: `url(${item.image_path})` }"></div>
+          <div class="work-card-content">
+            <p class="work-card-title">{{ item.title }}</p>
+            <div class="work-card-actions">
+              <MyBtn class="btn-edit" variant="secondary" type="button" @click="startEdit(item)">
+                РЕДАКТИРОВАТЬ
+              </MyBtn>
+              <MyBtn class="btn-delete" variant="primary" @click="handleDelete(item.work_id)">
+                УДАЛИТЬ
+              </MyBtn>
+            </div>
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <!-- Карточка добавления -->
+        <div class="add-new-card card" @click="openCreateModal">
+          <div class="add-new-placeholder">
+            <span>+</span>
+            <p>Добавить работу</p>
+          </div>
+        </div>
+      </template>
+    </DraggableList>
   </div>
 </template>
 
@@ -329,6 +338,13 @@ onMounted(() => {
   padding: 2rem;
   background-image: linear-gradient(90deg, #121010 0%, #0e0c0c 100%);
   color: #fff;
+}
+
+.my-title {
+  font-size: 32px;
+  font-weight: bold;
+  padding-bottom: 30px;
+  margin: 0;
 }
 
 h1,
@@ -348,6 +364,8 @@ h2 {
   background: transparent;
   border-radius: 8px;
   box-shadow: inset 0 0 0 1px #ffffff;
+  display: flex;
+  gap: 1rem;
   border: none;
   padding: 1.5rem;
 }
@@ -385,6 +403,7 @@ select {
   border: 1px solid #ffffff;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
+
 .form-input:focus,
 select:focus {
   outline: none;
@@ -394,8 +413,13 @@ select:focus {
 
 .form-actions {
   display: flex;
+  justify-content: space-between;
   gap: 1rem;
   margin-top: 1rem;
+}
+
+.form-actions .btn {
+  width: 100%;
 }
 
 .btn {
@@ -410,22 +434,22 @@ select:focus {
   background-color: transparent;
   color: #ffffff;
 }
+
 .btn-primary:hover {
   background-color: #ffffff;
   color: #121010;
 }
+
 .btn-secondary {
   border-color: #6c757d;
   color: #6c757d;
 }
+
 .btn-secondary:hover {
   background-color: #6c757d;
   color: #ffffff;
 }
-.btn-danger {
-  border-color: #dc3545;
-  color: #dc3545;
-}
+
 .btn-danger:hover {
   background-color: #dc3545;
   color: #ffffff;
@@ -434,6 +458,7 @@ select:focus {
 .btn-sm {
   padding: 0.25rem 0.5rem;
 }
+
 .btn-icon {
   background: none;
   border: none;
@@ -441,12 +466,15 @@ select:focus {
   padding: 0.5rem;
   color: #cccccc;
 }
+
 .btn-icon:hover {
   color: #ffffff;
 }
+
 .btn-icon.btn-danger {
   color: #dc3545;
 }
+
 .btn-icon.btn-danger:hover {
   color: #ff6b81;
 }
@@ -455,6 +483,7 @@ select:focus {
   margin-top: 1rem;
   max-width: 200px;
 }
+
 .image-preview img {
   width: 100%;
   border-radius: 4px;
@@ -472,37 +501,51 @@ select:focus {
   flex-direction: column;
   padding: 0;
   overflow: hidden;
-  cursor: grab;
   transition: transform 0.2s, box-shadow 0.2s;
   box-shadow: inset 0 0 0 1px #ffffff;
   border-radius: 8px;
-  transform: translateZ(0); /* Добавлено для исправления бага с обрезкой */
+  transform: translateZ(0);
+  /* Добавлено для исправления бага с обрезкой */
+  position: relative;
+  height: 100%;
+  min-height: 250px;
 }
+
 .work-card:hover {
   transform: translateY(-5px);
   box-shadow: inset 0 0 0 1px #ffffff, 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .work-card:active {
   cursor: grabbing;
 }
+
+.work-card.drag-over {
+  border-color: #3498db;
+  outline: 2px dashed #3498db;
+}
+
 .work-card-img {
   width: 100%;
   height: 150px;
   background-size: cover;
   background-position: center;
 }
+
 .work-card-content {
   padding: 1rem;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
 }
+
 .work-card-title {
   flex-grow: 1;
   font-weight: 600;
   margin: 0 0 1rem 0;
   color: #ffffff;
 }
+
 .work-card-actions {
   display: flex;
   flex-direction: column;
@@ -540,8 +583,89 @@ select.form-input option {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* Стили модального окна */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  width: 90%;
+  max-width: 900px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+}
+
+/* Стили карточки добавления */
+.add-new-card {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-style: dashed;
+  transition: background-color 0.2s, border-color 0.2s;
+  min-height: 375px;
+}
+
+.add-new-card:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: #007bff;
+}
+
+.add-new-placeholder {
+  text-align: center;
+  color: #888;
+}
+
+.add-new-placeholder span {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.add-new-placeholder p {
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
+/* Стили ручки для перетаскивания */
+.drag-handle {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 24px;
+  color: rgba(255, 255, 255, 0.7);
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  cursor: grab;
+  transition: color 0.3s;
+}
+
+.work-card:active {
+  cursor: grabbing;
 }
 </style>

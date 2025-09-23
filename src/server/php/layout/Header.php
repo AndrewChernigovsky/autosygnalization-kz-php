@@ -18,6 +18,25 @@ class Header
 
   public function getHeader(): string
   {
+    if (session_status() === PHP_SESSION_NONE) {
+      // Настройка session cookie (гарантированно удаляется при закрытии браузера)
+      session_set_cookie_params([
+        'lifetime' => 0, // Session cookie - удаляется при закрытии
+        'path' => '/',
+        'secure' => false, // Для localhost
+        'httponly' => true,
+        'samesite' => 'Lax'
+      ]);
+      
+      // Устанавливаем время жизни сессии
+      ini_set('session.gc_maxlifetime', 1440); // 24 минуты
+      
+      session_start();
+      
+      // Принудительная очистка старых файлов сессий (только файлы, не текущую сессию)
+      $this->cleanOldSessionFiles();
+    }
+    
     // Инициализация компонентов
     $logo = new Logo();
     $cart = new Cart();
@@ -89,7 +108,9 @@ class Header
                             <use href="$addressSvgPath"></use>
                         </svg>
                     </div>
-                    {$address}
+                    <div>
+                        {$address}
+                    </div>
                 </a>
             </div>
         </div>
@@ -98,14 +119,53 @@ class Header
 HTML;
   }
 
+  private function cleanOldSessionFiles(): void
+  {
+    // Очищаем только старые файлы сессий, НЕ текущую активную сессию
+    $sessionPath = ini_get('session.save_path') ?: sys_get_temp_dir();
+    $maxLifetime = 1440; // 24 минуты
+    
+    if (is_dir($sessionPath)) {
+      $currentSessionId = session_id();
+      $files = glob($sessionPath . '/sess_*');
+      $currentTime = time();
+      
+      foreach ($files as $file) {
+        if (is_file($file)) {
+          $fileName = basename($file);
+          $fileSessionId = str_replace('sess_', '', $fileName);
+          
+          // НЕ удаляем текущую активную сессию
+          if ($fileSessionId !== $currentSessionId) {
+            $fileTime = filemtime($file);
+            if (($currentTime - $fileTime) > $maxLifetime) {
+              unlink($file); // Удаляем только старые файлы
+            }
+          }
+        }
+      }
+    }
+  }
+
   private function generateNavigationLinks($links): string
   {
     $html = '';
     foreach ($links as $link) {
       $uniqueId = 'link_' . preg_replace('/[\/?=&]/', '_', $link['path']);
       $isActive = $this->isActive($link['path'], $this->currentPath);
+      
+      // Убираем HTML теги из контента
+      $cleanContent = isset($link['content']) ? strip_tags($link['content']) : '';
+      
+      // Определяем текст для отображения: content или fallback на name
+      $displayText = !empty($cleanContent) ? $cleanContent : $link['name'];
+      
+      // Если есть контент, добавляем name в title, иначе оставляем пустым
+      $titleText = !empty($cleanContent) ? $link['name'] : '';
+      $titleAttr = !empty($titleText) ? " title='" . htmlspecialchars($titleText) . "'" : '';
+      
       $html .= "<li class='nav-item'>
-                        <a class='link {$isActive}' href='" . htmlspecialchars($link['path']) . "' id='" . htmlspecialchars($uniqueId) . "'>" . htmlspecialchars($link['name']) . "</a>
+                        <a class='link {$isActive}' href='" . htmlspecialchars($link['path']) . "' id='" . htmlspecialchars($uniqueId) . "'{$titleAttr}>" . htmlspecialchars($displayText) . "</a>
                       </li>";
     }
     return $html;
@@ -116,8 +176,11 @@ HTML;
     $html = '';
     if (!empty($phones)) {
       foreach ($phones as $phone) {
-        $cleanedPhone = str_replace(' ', '', $phone['phone']);
-        $html .= "<li><a href='tel:" . htmlspecialchars($cleanedPhone) . "'>" . htmlspecialchars($phone['phone']) . "</a></li>";
+        // Убираем HTML теги из номера телефона
+        $cleanedPhoneText = strip_tags($phone['phone']);
+        // Убираем пробелы для tel: ссылки
+        $cleanedPhoneLink = str_replace(' ', '', $cleanedPhoneText);
+        $html .= "<li><a href='tel:" . htmlspecialchars($cleanedPhoneLink) . "'>" . htmlspecialchars($cleanedPhoneText) . "</a></li>";
       }
     }
     return $html;

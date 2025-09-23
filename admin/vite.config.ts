@@ -10,8 +10,8 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false,
-        configure: (proxy) => {
-          proxy.on('proxyReq', (proxyReq, req) => {
+        configure: (proxy: any) => {
+          proxy.on('proxyReq', (proxyReq: any, req: any) => {
             if (req.url.includes('?')) {
               proxyReq.path = req.url;
             }

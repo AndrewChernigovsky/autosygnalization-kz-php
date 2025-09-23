@@ -1,7 +1,12 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/logger.php';
+
 // Запуск сессии в самом начале файла
 use DATABASE\DataBase;
+use function AUTH\log_message;
+
+log_message('google-auth-callback.php 4');
 
 session_start();
 // Загружаем .env из корня server, безопасно
@@ -69,6 +74,7 @@ $client = new Google\Client();
 $client->setClientId($clientID);
 $client->setClientSecret($clientSecret);
 // Redirect URI должен быть идентичен тому, что используется для генерации ссылки
+// $client->setRedirectUri('https://starline-service.kz/google_auth_callback');
 $client->setRedirectUri('http://localhost:3000/google_auth_callback');
 $client->addScope(['email', 'profile']);
 

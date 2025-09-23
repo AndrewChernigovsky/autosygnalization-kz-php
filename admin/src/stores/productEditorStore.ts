@@ -39,7 +39,6 @@ export const useProductEditorStore = defineStore('productEditor', {
     startEditing(product: ProductI, field: string) {
       if (!this.editingProduct || this.editingProduct.id !== product.id) {
         const productCopy = JSON.parse(JSON.stringify(product));
-        console.log(productCopy, 'productCopy');
         if (productCopy.tabs) {
           if (Array.isArray(productCopy.tabs)) {
             // Если это массив, просто нормализуем поле description
@@ -106,7 +105,6 @@ export const useProductEditorStore = defineStore('productEditor', {
             },
           ],
         });
-        console.log(this.editingProduct.tabs, 'editingProduct');
       }
     },
     removeTab(tabIndex: number) {

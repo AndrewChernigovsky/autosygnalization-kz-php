@@ -134,7 +134,11 @@ class AdvantageAPI extends DataBase
     // Если нового файла нет, но есть флаг на удаление старого
     else if (isset($data['remove_image']) && $data['remove_image'] == '1') {
       if ($old_image_path && file_exists($_SERVER['DOCUMENT_ROOT'] . $old_image_path)) {
-        unlink($_SERVER['DOCUMENT_ROOT'] . $old_image_path);
+        if (!unlink($_SERVER['DOCUMENT_ROOT'] . $old_image_path)) {
+            // Если удаление не удалось, можно записать ошибку в лог или вернуть ошибку
+            error_log("Не удалось удалить старый файл: " . $old_image_path);
+            // В зависимости от требований, можно прервать выполнение или просто продолжить
+        }
       }
       $update_fields[] = 'image_path = NULL';
     }

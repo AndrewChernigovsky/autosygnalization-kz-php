@@ -24,7 +24,7 @@ const handleClick = (event: MouseEvent) => {
 <template>
   <button
     :type="props.type"
-    :class="['btn', props.variant]"
+    :class="['btn my-btn', props.variant]"
     :disabled="props.disabled"
     @click="handleClick"
   >
@@ -46,6 +46,11 @@ const handleClick = (event: MouseEvent) => {
   min-width: 200px;
   max-width: 400px;
   transition: all 0.3s ease;
+}
+
+.my-btn {
+  font-size: var(--btn-size);
+  line-height: var(--btn-line-height);
 }
 
 .primary {

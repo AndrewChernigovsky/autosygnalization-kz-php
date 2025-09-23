@@ -28,7 +28,16 @@ export default class FiltersAction {
   constructor(block, path = '/catalog') {
     const mainSelector = document.querySelector(block.form);
     if (!mainSelector) return;
-    this.path = path;
+
+    // Создаём уникальный ключ только для autosygnal страницы с разными типами
+    const urlParams = new URLSearchParams(window.location.search);
+    if (path === '/autosygnal') {
+      const pageType = urlParams.get('type') || 'auto'; // Дефолтный тип = auto
+      this.path = path + '_' + pageType; // Например: /autosygnal_auto, /autosygnal_gsm
+    } else {
+      this.path = path; // Для остальных страниц оставляем как есть
+    }
+
     this.form = document.querySelector(block.form);
     this.inputList = this.form.querySelectorAll('input');
     this.currentUrl = new URL(window.location.href);
@@ -70,7 +79,6 @@ export default class FiltersAction {
             JSON.stringify(this.filterStates)
           );
         });
-
       } else if (
         element.name === 'min-range-cost' ||
         element.name === 'min-value-cost'
@@ -145,7 +153,9 @@ export default class FiltersAction {
       const selectType = this.currentUrl.searchParams.get('type');
 
       if (this.currentParams.has('SELECT')) {
-        location.assign(`${cleanUrl}?SELECT=${selectValue}&type=${selectType}&${params}`);
+        location.assign(
+          `${cleanUrl}?SELECT=${selectValue}&type=${selectType}&${params}`
+        );
       }
     });
   }
@@ -204,7 +214,9 @@ export default class FiltersAction {
         sessionStorage.setItem('selectStat', JSON.stringify(selectStat));
       }
       const selectType = this.currentUrl.searchParams.get('type');
-      location.assign(`${this.currentUrl.href.split('?')[0]}?SELECT=name&type=${selectType}`);
+      location.assign(
+        `${this.currentUrl.href.split('?')[0]}?SELECT=name&type=${selectType}`
+      );
     });
   }
 }

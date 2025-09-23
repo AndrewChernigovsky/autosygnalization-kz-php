@@ -21,7 +21,15 @@ export default class CustomSelect {
       this.selectStat = {};
     }
 
-    this.path = path || window.location.pathname;
+    // Создаём уникальный ключ только для autosygnal страницы с разными типами
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentPath = path || window.location.pathname;
+    if (currentPath === '/autosygnal') {
+      const pageType = urlParams.get('type') || 'auto'; // Дефолтный тип = auto
+      this.path = currentPath + '_' + pageType; // Например: /autosygnal_auto, /autosygnal_gsm
+    } else {
+      this.path = currentPath; // Для остальных страниц оставляем как есть
+    }
     this.currentParams = new URLSearchParams(window.location.search);
     this.currentUrl = new URL(window.location.href);
     this.paramState = this.currentParams.get('SELECT');

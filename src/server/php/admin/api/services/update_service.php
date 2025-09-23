@@ -29,6 +29,7 @@ $dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);
+error_log(print_r($data, true) . 'DATAAAA');
 
 if (!isset($data['id'])) {
   http_response_code(400);
@@ -48,6 +49,7 @@ if (is_array($services_data)) {
 // Extract image source
 $image_src = null;
 if (isset($data['image']) && is_array($data['image']) && isset($data['image']['src'])) {
+  error_log(print_r($data['image']['src'], true) . 'IMAGE SRC111');
   $image_src = $data['image']['src'];
 }
 
@@ -62,7 +64,6 @@ if ($oldImagePath && $oldImagePath !== $image_src) {
     unlink($oldFileFullPath);
   }
 }
-
 
 try {
   $pdo->beginTransaction();

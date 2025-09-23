@@ -36,4 +36,10 @@ export interface ProductI {
   autosygnals: string[];
   tabs?: Tab[];
   prices?: PriceItem[] | string;
+  price_list?: {
+    title: string;
+    price: string;
+    currency: string;
+    content: string;
+  }[];
 }

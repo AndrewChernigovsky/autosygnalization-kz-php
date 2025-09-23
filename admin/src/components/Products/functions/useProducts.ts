@@ -71,6 +71,7 @@ export function useProducts() {
         }
       }
       products.value = allProducts;
+      console.log(products.value, 'PRODUCTS');
     } catch (e: any) {
       console.error('Ошибка при получении или обработке продуктов:', e);
       error.value = e.message;
@@ -80,7 +81,6 @@ export function useProducts() {
   }
 
   async function updateProduct(product: ProductI): Promise<boolean> {
-    console.log('[useProducts.ts] updateProduct called', product);
     try {
       const productData = {
         id: product.id,
@@ -98,14 +98,11 @@ export function useProducts() {
         'options-filters': product['options-filters'],
         autosygnals: product.autosygnals,
         tabs: product.tabs,
+        price_list: product.price_list,
       };
-
-      console.log('productData', productData);
+      console.log(productData, 'PRODUCT DATA');
 
       if (product.is_new) {
-        console.log(
-          '[useProducts] Это НОВЫЙ товар. Выполняется API-запрос на создание...'
-        );
         const createdProduct = await apiCall(
           'create_product.php',
           'POST',
@@ -119,18 +116,12 @@ export function useProducts() {
           products.value[index].is_new = false;
         }
       } else {
-        console.log(
-          '[useProducts] Это СУЩЕСТВУЮЩИЙ товар. Выполняется API-запрос на обновление...'
-        );
         const updatedData = await apiCall(
           'update_product.php',
           'POST',
           productData
         );
-        console.log(
-          '[useProducts.ts] update_product.php response',
-          updatedData
-        );
+
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].link = updatedData.link;
@@ -138,10 +129,7 @@ export function useProducts() {
       }
 
       // --- Новый вызов API для сохранения цен-услуг ---
-      console.log(
-        '[useProducts.ts] product.prices before sending',
-        product.prices
-      );
+
       let prices = [];
       if (Array.isArray(product.prices)) {
         prices = product.prices
@@ -153,7 +141,6 @@ export function useProducts() {
             description: item.description,
             installationPrice: item.installationPrice || '',
           }));
-        console.log('[useProducts.ts] prices to send', prices);
         await apiCall('update_prices_products.php', 'POST', {
           id: product.id,
           prices,
@@ -200,9 +187,6 @@ export function useProducts() {
   }
 
   async function addProduct(category: string) {
-    console.log(
-      '[useProducts] addProduct вызван. Только локальные изменения, без API-запроса.'
-    );
     // Эта функция теперь работает только на клиенте
     const newProduct: ProductI = {
       id: `new_${Date.now()}`, // Временный ID
@@ -220,9 +204,10 @@ export function useProducts() {
       options: [],
       'options-filters': [],
       autosygnals: [],
+      price_list: [],
       tabs: [],
     };
-    products.value.unshift(newProduct);
+    products.value.push(newProduct);
     return newProduct;
   }
 

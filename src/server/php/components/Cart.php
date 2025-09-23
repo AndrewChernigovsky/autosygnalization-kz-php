@@ -11,7 +11,7 @@ class Cart
     public function __construct()
     {
         $this->totalQuantity = $this->getTotalQuantity();
-        initSession();
+        // initSession(); // Удалено - сессия должна инициализироваться на уровне страницы
     }
 
     public function initCart()

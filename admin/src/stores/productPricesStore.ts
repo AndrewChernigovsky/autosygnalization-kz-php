@@ -29,7 +29,6 @@ export const useProductPricesStore = defineStore('productPrices', {
           '/server/php/api/products/get_all_products.php'
         );
         this.allProducts = await response.json();
-        console.log(this.allProducts, 'allProducts');
         return this.allProducts;
       } catch (error) {
         console.error('Error fetching products:', error);

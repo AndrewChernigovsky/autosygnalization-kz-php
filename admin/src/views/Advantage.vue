@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { ref, onMounted, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MyBtn from '../components/UI/MyBtn.vue';
+import MyQuill from '../components/UI/MyQuill.vue';
+import MyTransition from '../components/UI/MyTransition.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
 
 // --- INTERFACES ---
 
@@ -38,13 +39,6 @@ interface VideoItem {
   sources: VideoSource[];
 }
 
-const toolbarOptions = [
-  [{ header: [1, 2, 3, false] }],
-  ['bold', 'italic', 'underline', 'strike'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  ['clean'],
-];
-
 // --- STATE ---
 
 // General
@@ -57,7 +51,6 @@ const newAdvantageSlots = ref<NewAdvantageSlot[]>([]);
 const isLoadingAdvantages = ref(false);
 const errorAdvantages = ref<string | null>(null);
 const advantageImagePreviews = ref<Record<number, string>>({});
-const draggingAdvantageItem = ref<number | null>(null);
 
 // Video State
 const videoItems = ref<VideoItem[]>([]);
@@ -65,6 +58,7 @@ const originalVideoItem = ref<VideoItem | null>(null);
 const isLoadingVideos = ref(false);
 const errorVideos = ref<string | null>(null);
 const videoPreviews = ref<Record<string, string | null>>({}); // Для превью
+const videoLoadErrors = ref<Record<number, boolean>>({});
 
 // --- API ---
 
@@ -115,7 +109,18 @@ const getVideosData = async () => {
           JSON.stringify(videoItems.value[0])
         );
       } else {
-        originalVideoItem.value = null;
+        // Создаем заглушку, если видео не существует
+        const placeholderVideo: VideoItem = {
+          video_id: 0, // Используем 0 как признак нового видео
+          title: '',
+          title_icon: null,
+          video_poster: null,
+          video_src_mob: null,
+          position: 1,
+          sources: [],
+        };
+        videoItems.value.push(placeholderVideo);
+        originalVideoItem.value = JSON.parse(JSON.stringify(placeholderVideo));
       }
     } else {
       throw new Error(response.error || 'Не удалось загрузить данные видео');
@@ -297,30 +302,6 @@ const handleAdvantageUpdatePositions = async (
   }
 };
 
-const onAdvantageDragStart = (id: number) => {
-  draggingAdvantageItem.value = id;
-};
-
-const onAdvantageDrop = (targetId: number) => {
-  if (draggingAdvantageItem.value === null) return;
-
-  const group = advantageItems.value;
-  const fromIndex = group.findIndex(
-    (it) => it.advantage_id === draggingAdvantageItem.value
-  );
-  const toIndex = group.findIndex((it) => it.advantage_id === targetId);
-
-  if (fromIndex !== -1 && toIndex !== -1) {
-    const [movedItem] = group.splice(fromIndex, 1);
-    group.splice(toIndex, 0, movedItem);
-    group.forEach((item, index) => {
-      item.position = index + 1;
-    });
-    handleAdvantageUpdatePositions(group);
-  }
-  draggingAdvantageItem.value = null;
-};
-
 const addNewAdvantageSlot = () => {
   newAdvantageSlots.value.push({
     tempId: Date.now(),
@@ -425,11 +406,8 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   }
 
   // 1. Проверка изменения заголовка
-  const titleInput = form.querySelector(
-    'input[name="title"]'
-  ) as HTMLInputElement;
-  if (titleInput && titleInput.value !== (originalVideo.title || '')) {
-    formData.append('title', titleInput.value);
+  if (video.title !== (originalVideo.title || '')) {
+    formData.append('title', video.title || '');
     updatedParts.push('Заголовок');
   }
 
@@ -452,6 +430,12 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
   if (videoInput && videoInput.files && videoInput.files.length > 0) {
     formData.append('main_video', videoInput.files[0]);
     updatedParts.push('Основное видео');
+  } else if (
+    video.video_poster === null &&
+    originalVideo.video_poster !== null
+  ) {
+    formData.append('remove_main_video', '1');
+    updatedParts.push('Основное видео');
   }
 
   if (updatedParts.length === 0) {
@@ -466,6 +450,7 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
     return;
   }
 
+  const isCreating = video.video_id === 0;
   formData.append('video_id', video.video_id.toString());
 
   try {
@@ -475,9 +460,20 @@ const handleVideoUpdate = async (event: Event, video: VideoItem) => {
       body: formData,
     });
     if (response.success) {
-      const successMessage = generateSuccessMessage(updatedParts);
-      Swal.fire('Сохранено!', successMessage, 'success');
-      await getVideosData();
+      if (isCreating) {
+        // Заменяем заглушку на реальные данные с сервера
+        const createdVideo = response.data;
+        const index = videoItems.value.findIndex((v) => v.video_id === 0);
+        if (index !== -1) {
+          videoItems.value.splice(index, 1, createdVideo);
+        }
+        originalVideoItem.value = JSON.parse(JSON.stringify(createdVideo));
+        Swal.fire('Создано!', 'Видео-блок успешно создан.', 'success');
+      } else {
+        const successMessage = generateSuccessMessage(updatedParts);
+        Swal.fire('Сохранено!', successMessage, 'success');
+        await getVideosData(); // Перезагружаем для синхронизации
+      }
       videoPreviews.value = {};
     } else {
       throw new Error(response.error || 'Ошибка при обновлении видео-блока');
@@ -523,11 +519,23 @@ const onFileChange = (event: Event, type: 'icon' | 'video') => {
 };
 
 const clearVideoFile = (type: 'icon' | 'video') => {
-  // Для иконки - помечаем на удаление с сервера
-  if (type === 'icon' && videoItems.value.length > 0) {
-    videoItems.value[0].title_icon = null;
+  if (videoItems.value.length === 0) return;
+
+  const currentVideo = videoItems.value[0];
+  let message = '';
+
+  if (type === 'icon') {
+    currentVideo.title_icon = null;
+    message = 'Иконка будет удалена после сохранения';
+  } else if (type === 'video') {
+    // Помечаем видео на удаление
+    currentVideo.video_poster = null;
+    currentVideo.video_src_mob = null;
+    currentVideo.sources = [];
+    message = 'Видео будет удалено после сохранения';
   }
-  // В любом случае сбрасываем превью
+
+  // Сбрасываем превью
   videoPreviews.value[type] = null;
 
   // Сбрасываем значение в инпуте
@@ -539,13 +547,10 @@ const clearVideoFile = (type: 'icon' | 'video') => {
   Swal.fire({
     toast: true,
     position: 'top',
-    icon: 'success',
-    title:
-      type === 'icon'
-        ? 'Иконка будет удалена после сохранения'
-        : 'Выбор видео отменен',
+    icon: 'info',
+    title: message,
     showConfirmButton: false,
-    timer: 2000,
+    timer: 2500,
   });
 };
 
@@ -555,78 +560,50 @@ const toggleAccordion = (section: string) => {
   openAccordion.value = openAccordion.value === section ? null : section;
 };
 
+watchEffect(() => {
+  if (isLoadingAdvantages.value || isLoadingVideos.value) {
+    Swal.fire({
+      title: 'Загрузка...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else {
+    Swal.close();
+  }
+});
+
 onMounted(() => {
   getAdvantageData();
   getVideosData();
 });
-
-// Transition Hooks
-const beforeEnter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = '0';
-  htmlEl.style.paddingTop = '0';
-  htmlEl.style.paddingBottom = '0';
-  htmlEl.style.opacity = '0';
-};
-
-const enter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = `${htmlEl.scrollHeight}px`;
-  htmlEl.style.paddingTop = '1.5rem';
-  htmlEl.style.paddingBottom = '1.5rem';
-  htmlEl.style.opacity = '1';
-};
-
-const afterEnter = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = '';
-};
-
-const beforeLeave = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  htmlEl.style.height = `${htmlEl.scrollHeight}px`;
-};
-
-const leave = (el: Element) => {
-  const htmlEl = el as HTMLElement;
-  getComputedStyle(htmlEl).height;
-  requestAnimationFrame(() => {
-    htmlEl.style.height = '0';
-    htmlEl.style.paddingTop = '0';
-    htmlEl.style.paddingBottom = '0';
-    htmlEl.style.opacity = '0';
-  });
-};
 </script>
 
 <template>
   <div class="container-advan">
-    <h1 class="main-title">Управление секцией 'Качество и преимущества'</h1>
-    <div v-if="isLoadingAdvantages || isLoadingVideos" class="loading-overlay">
-      <div class="spinner"></div>
-    </div>
-    <div v-else-if="errorAdvantages || errorVideos" class="error-message">
+    <h1 class="my-title">Качество и преимущества</h1>
+
+    <div v-if="errorAdvantages || errorVideos" class="error-message">
       <p>{{ errorAdvantages || errorVideos }}</p>
       <button @click="getAdvantageData">Попробовать снова</button>
     </div>
     <div v-else class="accordion">
       <!-- Секция Видео -->
       <div class="accordion-item">
-        <button class="accordion-header" @click="toggleAccordion('videos')">
+        <div class="accordion-header">
           <span>Управление видео</span>
-          <span
-            class="accordion-arrow"
+          <MyBtn
+            variant="primary"
+            class="accordion-toggle-btn"
             :class="{ 'is-open': openAccordion === 'videos' }"
-          ></span>
-        </button>
-        <Transition
-          name="accordion-transition"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @after-enter="afterEnter"
-          @before-leave="beforeLeave"
-          @leave="leave"
-        >
+            @click="toggleAccordion('videos')"
+          >
+            {{ openAccordion === 'videos' ? 'Закрыть' : 'Открыть' }}
+          </MyBtn>
+        </div>
+        <MyTransition>
           <div v-if="openAccordion === 'videos'" class="accordion-content">
             <div class="video-list">
               <form
@@ -643,7 +620,8 @@ const leave = (el: Element) => {
                       <input
                         type="text"
                         name="title"
-                        :value="video.title || ''"
+                        v-model="video.title"
+                        class="input-text"
                         placeholder="Например, Auto Security - Партнер Starline"
                       />
 
@@ -686,14 +664,14 @@ const leave = (el: Element) => {
 
                       <label>Основное видео (для конвертации):</label>
                       <p class="input-note">
-                        До 25МБ, ~1920x1080px. Форматы: MP4, WebM, WAV.
+                        До 25МБ, ~1920x1080px. Форматы только MP4.
                       </p>
                       <input
                         type="file"
                         name="main_video"
                         class="hidden-file-input"
                         id="main-video-input"
-                        accept="video/mp4,video/webm,audio/wav"
+                        accept="video/mp4"
                         @change="onFileChange($event, 'video')"
                       />
                       <label for="main-video-input" class="image-uploader">
@@ -726,11 +704,16 @@ const leave = (el: Element) => {
                         <div class="video-preview-item">
                           <label>Превью для десктопа:</label>
                           <video
-                            v-if="video.sources && video.sources.length > 0"
+                            v-if="
+                              video.sources &&
+                              video.sources.length > 0 &&
+                              !videoLoadErrors[video.video_id]
+                            "
                             :key="video.sources[0].src_path"
                             controls
                             muted
                             playsinline
+                            @error="videoLoadErrors[video.video_id] = true"
                           >
                             <source
                               v-for="source in video.sources"
@@ -768,120 +751,120 @@ const leave = (el: Element) => {
               </div>
             </div>
           </div>
-        </Transition>
+        </MyTransition>
       </div>
 
       <!-- Секция Преимуществ -->
       <div class="accordion-item">
-        <button class="accordion-header" @click="toggleAccordion('advantages')">
+        <div class="accordion-header">
           <span>Список преимуществ</span>
-          <span
-            class="accordion-arrow"
+          <MyBtn
+            variant="primary"
+            class="accordion-toggle-btn"
+            @click="toggleAccordion('advantages')"
             :class="{ 'is-open': openAccordion === 'advantages' }"
-          ></span>
-        </button>
-        <Transition
-          name="accordion-transition"
-          @before-enter="beforeEnter"
-          @enter="enter"
-          @after-enter="afterEnter"
-          @before-leave="beforeLeave"
-          @leave="leave"
-        >
+          >
+            {{ openAccordion === 'advantages' ? 'Закрыть' : 'Открыть' }}
+          </MyBtn>
+        </div>
+        <MyTransition>
           <div v-if="openAccordion === 'advantages'" class="accordion-content">
             <div class="advantages-list">
               <!-- Рендеринг списка -->
-              <form
-                v-for="item in advantageItems"
-                :key="item.advantage_id"
-                class="form-group draggable"
-                draggable="true"
-                @dragstart="onAdvantageDragStart(item.advantage_id)"
-                @dragover.prevent
-                @drop="onAdvantageDrop(item.advantage_id)"
-                @submit.prevent="handleAdvantageUpdate($event, item)"
+              <DraggableList
+                v-model="advantageItems"
+                item-key="advantage_id"
+                tag="div"
+                @reorder="handleAdvantageUpdatePositions"
               >
-                <div class="drag-handle">⠿</div>
-                <div class="content-wrapper">
-                  <div class="form-layout">
-                    <div class="form-column">
-                      <label>Изображение:</label>
-                      <div class="image-uploader">
-                        <input
-                          type="file"
-                          name="image"
-                          accept="image/*"
-                          class="hidden-file-input"
-                          :id="`file-input-existing-advantage-${item.advantage_id}`"
-                          :ref="
-                            (el) =>
-                              (fileInputs[
-                                `existing-advantage-${item.advantage_id}`
-                              ] = el as HTMLInputElement)
-                          "
-                          @change="
-                            onAdvantageFileChange($event, item.advantage_id)
-                          "
-                        />
-                        <div
-                          v-if="
-                            advantageImagePreviews[item.advantage_id] ||
-                            item.image_path
-                          "
-                          class="image-preview-wrapper"
-                        >
-                          <img
-                            :src="
-                              advantageImagePreviews[item.advantage_id] ||
-                              item.image_path ||
-                              ''
-                            "
-                            alt="preview"
-                            class="image-preview"
-                          />
-                          <button
-                            type="button"
-                            class="btn-remove-image"
-                            @click="clearExistingAdvantageImage(item)"
-                          >
-                            ×
-                          </button>
+                <template #item="{ item, dragHandleProps, isDragOver }">
+                  <form
+                    class="form-group draggable"
+                    :class="{ 'drag-over': isDragOver }"
+                    @submit.prevent="handleAdvantageUpdate($event, item)"
+                  >
+                    <div class="drag-handle" v-bind="dragHandleProps">⠿</div>
+                    <div class="content-wrapper">
+                      <div class="form-layout">
+                        <div class="form-column">
+                          <label>Изображение:</label>
+                          <div class="image-uploader">
+                            <input
+                              type="file"
+                              name="image"
+                              accept="image/*"
+                              class="hidden-file-input"
+                              :id="`file-input-existing-advantage-${item.advantage_id}`"
+                              :ref="
+                                (el) =>
+                                  (fileInputs[
+                                    `existing-advantage-${item.advantage_id}`
+                                  ] = el as HTMLInputElement)
+                              "
+                              @change="
+                                onAdvantageFileChange($event, item.advantage_id)
+                              "
+                            />
+                            <div
+                              v-if="
+                                advantageImagePreviews[item.advantage_id] ||
+                                item.image_path
+                              "
+                              class="image-preview-wrapper"
+                            >
+                              <img
+                                :src="
+                                  advantageImagePreviews[item.advantage_id] ||
+                                  item.image_path ||
+                                  ''
+                                "
+                                alt="preview"
+                                class="image-preview"
+                              />
+                              <button
+                                type="button"
+                                class="btn-remove-image"
+                                @click="clearExistingAdvantageImage(item)"
+                              >
+                                ×
+                              </button>
+                            </div>
+                            <label
+                              v-else
+                              :for="`file-input-existing-advantage-${item.advantage_id}`"
+                              class="image-uploader-placeholder"
+                            >
+                              <span>+</span>
+                            </label>
+                          </div>
                         </div>
-                        <label
-                          v-else
-                          :for="`file-input-existing-advantage-${item.advantage_id}`"
-                          class="image-uploader-placeholder"
+                        <div class="form-column form-column--grow">
+                          <label>Описание:</label>
+                          <MyQuill v-model:content="item.content" />
+                        </div>
+                      </div>
+
+                      <div class="actions">
+                        <MyBtn
+                          variant="secondary"
+                          type="submit"
+                          class="btn-save"
                         >
-                          <span>+</span>
-                        </label>
+                          Сохранить
+                        </MyBtn>
+                        <MyBtn
+                          variant="primary"
+                          type="button"
+                          @click="handleAdvantageDelete(item.advantage_id)"
+                          class="btn-delete"
+                        >
+                          Удалить
+                        </MyBtn>
                       </div>
                     </div>
-                    <div class="form-column form-column--grow">
-                      <label>Описание:</label>
-                      <QuillEditor
-                        theme="snow"
-                        :toolbar="toolbarOptions"
-                        contentType="html"
-                        v-model:content="item.content"
-                      />
-                    </div>
-                  </div>
-
-                  <div class="actions">
-                    <MyBtn variant="secondary" type="submit" class="btn-save">
-                      Сохранить
-                    </MyBtn>
-                    <MyBtn
-                      variant="primary"
-                      type="button"
-                      @click="handleAdvantageDelete(item.advantage_id)"
-                      class="btn-delete"
-                    >
-                      Удалить
-                    </MyBtn>
-                  </div>
-                </div>
-              </form>
+                  </form>
+                </template>
+              </DraggableList>
 
               <!-- Создание нового преимущества -->
               <form
@@ -933,12 +916,7 @@ const leave = (el: Element) => {
                     </div>
                     <div class="form-column form-column--grow">
                       <label>Описание:</label>
-                      <QuillEditor
-                        theme="snow"
-                        :toolbar="toolbarOptions"
-                        contentType="html"
-                        v-model:content="slot.content"
-                      />
+                      <MyQuill v-model:content="slot.content" />
                     </div>
                   </div>
 
@@ -970,51 +948,32 @@ const leave = (el: Element) => {
               </div>
             </div>
           </div>
-        </Transition>
+        </MyTransition>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-.container-advan-advan {
-  background-color: #2d2d2d;
-  color: #e0e0e0;
-  padding: 2rem;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
-    Arial, sans-serif;
-  min-height: 100vh;
-  width: 100%;
-}
-.main-title {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #444;
-}
-.loading-overlay {
+.draggable-list {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
+  flex-direction: column;
+  gap: 16px;
 }
-.spinner {
-  border: 4px solid #444;
-  border-top: 4px solid #007bff;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
+
+.container-advan {
+  color: #e0e0e0;
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
+.my-title {
+  font-size: 32px;
+  font-weight: bold;
+  color: #fff;
+  margin: 0;
 }
 .error-message {
   color: #ff6b6b;
@@ -1032,7 +991,7 @@ const leave = (el: Element) => {
 .form-group {
   margin-bottom: 0;
   padding: 1.5rem;
-  border: 1px solid #444;
+  border: 1px solid white;
   border-radius: 8px;
   background-color: black;
 }
@@ -1051,11 +1010,11 @@ label {
 input,
 textarea {
   width: 100%;
-  padding: 0.75rem;
+  font-size: 20px;
   border: 1px solid #555;
   border-radius: 4px;
-  background-color: #2c2c2c;
-  color: #e0e0e0;
+  background-color: white;
+  color: black;
   transition: border-color 0.3s, box-shadow 0.3s;
   margin-bottom: 1rem;
 }
@@ -1077,11 +1036,6 @@ textarea:focus {
 .btn-save,
 .btn-delete,
 .btn-add {
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  color: white;
-  cursor: pointer;
   font-weight: bold;
   transition: transform 0.2s, filter 0.2s;
 }
@@ -1111,22 +1065,30 @@ textarea:focus {
 .btn-add-slot {
   padding: 0.8rem 2rem;
   font-size: 1rem;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 100%;
 }
 .draggable {
-  cursor: grab;
   position: relative;
   display: flex;
   align-items: flex-start;
   gap: 15px;
 }
-.draggable:active {
-  cursor: grabbing;
+
+.draggable.drag-over {
+  border-style: dashed;
+  border-color: #3498db;
 }
 .drag-handle {
+  cursor: grab;
   font-size: 24px;
-  color: #777;
+  color: white;
   padding-top: 2.5rem;
   transition: color 0.3s;
+}
+.drag-handle:active {
+  cursor: grabbing;
 }
 .draggable:hover .drag-handle {
   color: #ccc;
@@ -1139,13 +1101,15 @@ textarea:focus {
   width: 100%;
   border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #444;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 .accordion-item {
-  border-bottom: 1px solid #444;
-}
-.accordion-item:last-child {
-  border-bottom: none;
+  background-color: black;
+  border: 1px solid white;
+  border-radius: 8px;
+  overflow: hidden;
 }
 .accordion-header {
   width: 100%;
@@ -1153,7 +1117,6 @@ textarea:focus {
   border: none;
   padding: 1rem 1.5rem;
   text-align: left;
-  cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1162,26 +1125,11 @@ textarea:focus {
   color: #fff;
   transition: background-color 0.3s;
 }
-.accordion-header:hover {
-  background-color: #4a4a4a;
-}
-.accordion-arrow {
-  width: 10px;
-  height: 10px;
-  border-right: 2px solid #ccc;
-  border-bottom: 2px solid #ccc;
-  transform: rotate(45deg);
-  transition: transform 0.3s;
-}
-.accordion-arrow.is-open {
-  transform: translateY(2px) rotate(-135deg);
-}
+
 .accordion-content {
   background-color: black;
   overflow: hidden;
-  transition: height 0.4s ease-out, padding 0.4s ease-out, opacity 0.4s ease-out;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .form-layout {
@@ -1354,7 +1302,7 @@ textarea:focus {
   border-color: #555;
   border-bottom: 0;
 }
-:deep(.ql-container-advan-advan.ql-snow) {
+:deep(.ql-container-advan.ql-snow) {
   border-color: #555;
   border-bottom-left-radius: 4px;
   border-bottom-right-radius: 4px;
@@ -1362,7 +1310,8 @@ textarea:focus {
 }
 :deep(.ql-editor) {
   min-height: 250px;
-  background-color: #2c2c2c;
+  background-color: white;
+  color: black;
 }
 :deep(.ql-snow .ql-stroke) {
   stroke: #e0e0e0;
@@ -1380,5 +1329,10 @@ textarea:focus {
 }
 :deep(.ql-snow .ql-picker-item.ql-selected) {
   background-color: #5a5a5a;
+}
+
+.input-text {
+  background-color: white;
+  color: black;
 }
 </style>

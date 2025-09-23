@@ -1,28 +1,44 @@
 <script setup lang="ts">
 import Menu from './UI/Menu.vue';
 import Header from './components/layout/Header/Header.vue';
+import {
+  isAuthenticated,
+  checkAuthStatus,
+  refreshAuthStatus,
+} from './router/authGuard';
+import MyBtn from './components/UI/MyBtn.vue';
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+const router = useRouter();
+
+onMounted(async () => {
+  await checkAuthStatus();
+  if (!isAuthenticated.value) {
+    router.push('/login');
+  }
+});
 </script>
 
 <template>
-  <div class="app-container">
+  <div v-if="isAuthenticated" class="app-container">
     <Menu />
-
+    <h1 style="text-align: center; margin-bottom: 20px" class="my-title m-0">
+      Админ-панель, здравствуйте Алексей!
+    </h1>
+    <Header />
     <main class="main-content my-page">
-      <Header />
-
-      <h1 style="text-align: center; margin-bottom: 20px" class="my-title m-0">
-        Админ-панель, здравствуйте Алексей!
-      </h1>
       <router-view />
     </main>
+  </div>
+  <div v-if="!isAuthenticated" class="app-container-error">
+    <h1>Вы не авторизованы</h1>
+    <MyBtn variant="primary" @click="refreshAuthStatus">
+      Перейти на страницу авторизации
+    </MyBtn>
   </div>
 </template>
 
 <style scoped lang="scss">
-.app-container {
-  height: 100vh;
-}
-
 .toggle-btn {
   position: absolute;
   top: 50%;
@@ -50,9 +66,17 @@ import Header from './components/layout/Header/Header.vue';
 }
 
 .main-content {
-  flex-grow: 1;
   padding: 20px;
   overflow-y: auto;
   transition: all 0.3s ease;
+}
+
+.app-container-error {
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

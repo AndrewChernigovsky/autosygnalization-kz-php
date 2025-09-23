@@ -30,15 +30,15 @@ class PdfConverter
     $fullImagePath = $imageUploadPath . $imageName;
 
     // Прямой вызов Ghostscript
-    // ВАЖНО: Укажите здесь абсолютный путь к исполняемому файлу gs.exe (Ghostscript) на вашем сервере.
-    // Пример для Windows: 'C:\\Program Files\\gs\\gs10.03.1\\bin\\gswin64c.exe'
-    // Пример для Linux: '/usr/bin/gs'
-    $gsPath = 'C:\\OSPanel\\modules\\php\\PHP_8.1\\gs.exe'; // Жестко заданный путь
+    // Команда будет искать Ghostscript в системных путях (PATH),
+    // что делает решение переносимым между Windows и Linux.
+    // Убедитесь, что Ghostscript установлен и его путь добавлен в системную переменную PATH на сервере.
+    $gsExecutable = PHP_OS_FAMILY === 'Windows' ? 'gswin64c.exe' : 'gs';
     $command = sprintf(
-        '"%s" -sDEVICE=jpeg -dFirstPage=1 -dLastPage=1 -o "%s" -r150 "%s"',
-        $gsPath,
-        $fullImagePath,
-        $pdfPath
+        '%s -sDEVICE=jpeg -dFirstPage=1 -dLastPage=1 -o %s -r150 %s',
+        $gsExecutable,
+        escapeshellarg($fullImagePath),
+        escapeshellarg($pdfPath)
     );
 
     try {

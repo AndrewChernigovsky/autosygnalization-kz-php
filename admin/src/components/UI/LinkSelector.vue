@@ -57,5 +57,6 @@ select {
   width: 100%;
   max-width: 400px;
   background-color: black;
+  color: white;
 }
 </style>

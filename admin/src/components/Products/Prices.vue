@@ -1,29 +1,22 @@
 <script setup lang="ts">
-import { watch, onMounted, defineExpose } from 'vue';
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+import { watch, onMounted, defineExpose, computed } from 'vue';
 import type { ProductI } from './interfaces/Products';
-import { useProductEditorStore } from '../../stores/productEditorStore';
 import { useProductPricesStore } from '../../stores/productPricesStore';
+import MyQuill from '../UI/MyQuill.vue';
+import MyBtn from '../UI/MyBtn.vue';
 
 const props = defineProps<{
   product: ProductI;
+  isEditing: boolean;
 }>();
 
-const editorStore = useProductEditorStore();
 const pricesStore = useProductPricesStore();
 
-const toolbarOptions = [
-  ['bold', 'italic', 'underline'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  [{ header: [1, 2, 3, false] }],
-  ['link'],
-  ['clean'],
-];
+const editingProduct = computed(() => (props.isEditing ? props.product : null));
 
 // Инициализация при монтировании
 onMounted(async () => {
-  if (editorStore.isEditing(props.product.id)) {
+  if (props.isEditing) {
     loadPricesFromProduct();
     try {
       await pricesStore.getAllProductsItems();
@@ -35,7 +28,7 @@ onMounted(async () => {
 
 // Отслеживание изменений в редактируемом продукте
 watch(
-  () => editorStore.editingProduct,
+  () => editingProduct.value,
   (newEditingProduct, oldEditingProduct) => {
     if (newEditingProduct?.id === props.product.id) {
       loadPricesFromProduct();
@@ -53,8 +46,7 @@ watch(
 );
 
 const loadPricesFromProduct = () => {
-  let productPrices =
-    editorStore.editingProduct?.prices || props.product.prices;
+  let productPrices = editingProduct.value?.prices || props.product.prices;
 
   // Преобразуем массив объектов с content в массив с description и автозаполнением остальных полей
   if (Array.isArray(productPrices) && productPrices.length > 0) {
@@ -90,12 +82,12 @@ const loadPricesFromProduct = () => {
 
 const syncPricesToProduct = () => {
   if (
-    editorStore.editingProduct &&
+    editingProduct.value &&
     pricesStore.editingProductId === props.product.id
   ) {
     const prices = pricesStore.getSerializedPrices();
     console.log('[Prices.vue] syncPricesToProduct', prices);
-    editorStore.editingProduct.prices = prices;
+    editingProduct.value.prices = prices;
   }
 };
 
@@ -131,7 +123,7 @@ defineExpose({ syncPricesToProduct });
   <div class="prices-editor">
     <h1>Цены на установку автосигнализаций</h1>
 
-    <div v-if="editorStore.isEditing(product.id)" class="editing-mode">
+    <div v-if="isEditing" class="editing-mode">
       <div class="form-group">
         <label>Список цен:</label>
         <div class="price-items">
@@ -152,42 +144,11 @@ defineExpose({ syncPricesToProduct });
               <span class="item-number">{{ index + 1 }}</span>
             </div>
 
-            <!-- <div class="price-item-fields">
-              <div class="field-group">
-                <label>Название товара:</label>
-                <input
-                  :value="priceItem.title"
-                  @input="(e) => handleTitleInput(index, e)"
-                  type="text"
-                  placeholder="Установка автосигнализации"
-                />
-              </div>
-
-              <div class="field-group">
-                <label>Цена товара:</label>
-                <input
-                  :value="priceItem.productPrice"
-                  @input="(e) => handleProductPriceInput(index, e)"
-                  type="text"
-                  placeholder="259 600"
-                />
-              </div> -->
-
-            <!-- <div class="field-group">
-                <label>Валюта:</label>
-                <input
-                  :value="priceItem.currency"
-                  @input="(e) => handleCurrencyInput(index, e)"
-                  type="text"
-                  placeholder="₸"
-                />
-              </div> -->
-
             <div class="field-group">
               <label>Цена установки:</label>
               <input
                 :value="priceItem.installationPrice"
-                @input="(e) => handleInstallationPriceInput(index, e)"
+                @input="(e: Event) => handleInstallationPriceInput(index, e)"
                 type="text"
                 placeholder="60 000"
               />
@@ -195,27 +156,25 @@ defineExpose({ syncPricesToProduct });
 
             <div class="field-group">
               <label>Описание (список преимуществ):</label>
-              <QuillEditor
+              <MyQuill
                 :key="'price-' + index"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                contentType="html"
                 :content="priceItem.description"
                 @update:content="
-                  (val) => pricesStore.updatePriceDescription(index, val)
+                  (val: string) => pricesStore.updatePriceDescription(index, val)
                 "
               />
             </div>
           </div>
         </div>
 
-        <button
+        <MyBtn
+          variant="secondary"
           type="button"
           class="add-item-btn"
           @click="pricesStore.addPriceItem"
         >
-          + Добавить элемент цены
-        </button>
+          Добавить элемент цены
+        </MyBtn>
       </div>
     </div>
 
@@ -254,9 +213,9 @@ defineExpose({ syncPricesToProduct });
 .prices-editor {
   margin-top: 20px;
   padding: 20px;
-  border: 1px solid #444;
+  border: 1px dashed #444;
   border-radius: 8px;
-  background-color: #2a2a2a;
+  background-color: black;
 }
 
 .prices-editor h1 {
@@ -287,7 +246,7 @@ defineExpose({ syncPricesToProduct });
   padding: 15px;
   border: 1px solid #555;
   border-radius: 6px;
-  background-color: #333;
+  background-color: inherit;
   position: relative;
 }
 
@@ -349,9 +308,9 @@ defineExpose({ syncPricesToProduct });
 
 .field-group input {
   padding: 8px 12px;
-  background-color: #444;
+  background-color: white;
   border: 1px solid #555;
-  color: #fff;
+  color: black;
   border-radius: 4px;
   font-size: 14px;
 }
@@ -362,19 +321,12 @@ defineExpose({ syncPricesToProduct });
 }
 
 .add-item-btn {
-  padding: 12px 20px;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.add-item-btn:hover {
-  background-color: #218838;
+  align-self: center;
+  padding: 0;
+  flex-grow: 1;
+  width: 100%;
+  max-width: 100%;
+  padding: 10px 0;
 }
 
 /* Display Mode Styles */
@@ -394,7 +346,7 @@ defineExpose({ syncPricesToProduct });
   padding: 15px;
   border: 1px solid #444;
   border-radius: 6px;
-  background-color: #333;
+  background-color: inherit;
 }
 
 .price-header {
@@ -449,19 +401,19 @@ defineExpose({ syncPricesToProduct });
   border-top: 1px solid #555;
   border-left: 1px solid #555;
   border-right: 1px solid #555;
-  background-color: #444;
+  background-color: inherit;
 }
 
 :deep(.ql-container) {
   border-bottom: 1px solid #555;
   border-left: 1px solid #555;
   border-right: 1px solid #555;
-  background-color: #333;
-  color: #fff;
+  background-color: white;
+  color: black;
 }
 
 :deep(.ql-editor) {
-  color: #fff;
+  color: black;
   min-height: 120px;
 }
 

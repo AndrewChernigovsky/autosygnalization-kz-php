@@ -25,24 +25,20 @@ class NavigationLinks extends DataBase
   public function getNavlinks()
   {
     try {
-      $query = "SELECT title as name, link as path, sort_order FROM Navigation";
+      $query = "SELECT title as name, link as path, content, sort_order FROM Navigation WHERE on_page = 1 ORDER BY sort_order ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
 
       $navigationLinks = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-      usort($navigationLinks, function($a, $b) {
-        return $a['sort_order'] <=> $b['sort_order'];
-    });
-
       if (empty($navigationLinks)) {
         return [
-          ['name' => 'Главная', 'path' => "/"],
-          ['name' => 'Автосигнализации', 'path' => "/autosygnals"],
-          ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name"],
-          ['name' => 'Наши услуги', 'path' => "/services"],
-          ['name' => 'О нас', 'path' => "/about"],
-          ['name' => 'Контакты', 'path' => "/contacts"],
+          ['name' => 'Главная', 'path' => "/", 'content' => ''],
+          ['name' => 'Автосигнализации', 'path' => "/autosygnals", 'content' => ''],
+          ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name", 'content' => ''],
+          ['name' => 'Наши услуги', 'path' => "/services", 'content' => ''],
+          ['name' => 'О нас', 'path' => "/about", 'content' => ''],
+          ['name' => 'Контакты', 'path' => "/contacts", 'content' => ''],
         ];
       }
 
@@ -50,12 +46,12 @@ class NavigationLinks extends DataBase
     } catch (\Exception $e) {
       error_log("Ошибка получения навигации: " . $e->getMessage());
       return [
-        ['name' => 'Главная', 'path' => "/"],
-        ['name' => 'Автосигнализации', 'path' => "/autosygnals"],
-        ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name"],
-        ['name' => 'Наши услуги', 'path' => "/services"],
-        ['name' => 'О нас', 'path' => "/about"],
-        ['name' => 'Контакты', 'path' => "/contacts"],
+        ['name' => 'Главная', 'path' => "/", 'content' => ''],
+        ['name' => 'Автосигнализации', 'path' => "/autosygnals", 'content' => ''],
+        ['name' => 'Видеорегистраторы', 'path' => "/parking-systems?SELECT=name", 'content' => ''],
+        ['name' => 'Наши услуги', 'path' => "/services", 'content' => ''],
+        ['name' => 'О нас', 'path' => "/about", 'content' => ''],
+        ['name' => 'Контакты', 'path' => "/contacts", 'content' => ''],
       ];
     }
   }
@@ -140,7 +136,7 @@ class NavigationLinks extends DataBase
       ],
       [
         'type' => "without-auto",
-        'link' => "/autosygnal?SELECT=name&ype=without-auto",
+        'link' => "/autosygnal?SELECT=name&type=without-auto",
         'name' => 'Автосигнализации без автозапуска',
         'count' => $this->filters_products_count['vnedorojnik'] ?? 0,
         'src' => "/client/images/autosygnals/autosygnals-3.avif"

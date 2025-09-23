@@ -11,7 +11,7 @@ export default class BuyService {
       this.modalForm.classList.toggle('active');
     })
     this.closeBtn.addEventListener('click', () => {
-      this.modalForm.classList.toggle('active');
+      this.modalForm.classList.remove('active');
     })
   }
 }

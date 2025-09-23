@@ -32,7 +32,7 @@ if (!isset($_FILES['image'])) {
 }
 
 $file = $_FILES['image'];
-$serviceId = $_POST['serviceId'] ?? 'service'; // Fallback if serviceId is not provided
+$serviceId = $_POST['id'] ?? 'service'; // Fallback if serviceId is not provided
 
 if ($file['error'] !== UPLOAD_ERR_OK) {
   http_response_code(500);
@@ -52,6 +52,7 @@ $newFileName = 'service-' . $sanitizedFileName . '-' . time() . '.' . $fileExten
 $uploadFilePath = $uploadDir . $newFileName;
 $newImagePath = '/server/uploads/services/' . $newFileName;
 
+error_log(print_r($file, true) . 'FILEFEFE');
 
 try {
   if (!move_uploaded_file($file['tmp_name'], $uploadFilePath)) {
@@ -59,7 +60,7 @@ try {
   }
 
   http_response_code(200);
-  echo json_encode(['path' => $newImagePath, 'filename' => $newFileName]);
+  echo json_encode(['id' => $serviceId, 'path' => $newImagePath, 'filename' => $newFileName]);
 } catch (Exception $e) {
   if (file_exists($uploadFilePath)) {
     unlink($uploadFilePath);

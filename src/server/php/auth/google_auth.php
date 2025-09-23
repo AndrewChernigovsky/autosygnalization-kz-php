@@ -1,18 +1,23 @@
 <?php
 require_once __DIR__ . '/../../vendor/autoload.php';
+require_once __DIR__ . '/logger.php';
+
 use LAYOUT\Head;
 use LAYOUT\Header;
 use LAYOUT\Footer;
+use function AUTH\log_message;
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 // header('Content-Type: application/json');
 
+log_message('google_auth.php 5');
 
 $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
 // Корректный Redirect URI, указывающий на обработчик
+// $redirectUri = 'https://starline-service.kz/google_auth_callback';
 $redirectUri = 'http://localhost:3000/google_auth_callback';
 
 // Загружаем .env из корня server, безопасно (без исключений, если файла нет)
@@ -75,45 +80,40 @@ $client->addScope('profile');
 
 // Ссылка для авторизации
 $authUrl = $client->createAuthUrl();
-$logoutUrl = '/google_auth?action=logout';
+$logoutUrl = '/logout';
 // Проверка предварительной авторизации через login/sign_up
 if (session_status() !== PHP_SESSION_ACTIVE) {
   session_start();
 }
-error_log('GOOGLE_AUTH_VIEW: sid=' . session_id() . '; auth_ok=' . (!empty($_SESSION['auth_ok']) ? '1' : '0') . '; token=' . (!empty($_SESSION['google_access_token']) ? '1' : '0'));
-if (empty($_SESSION['auth_ok'])) {
+
+// Дополнительная проверка безопасности
+if (empty($_SESSION['auth_ok']) || !isset($_SESSION['auth_ok']) || $_SESSION['auth_ok'] !== true) {
+  // Логируем попытку несанкционированного доступа
+  error_log('GOOGLE_AUTH_SECURITY: Unauthorized access attempt from IP: ' . ($_SERVER['REMOTE_ADDR'] ?? 'unknown'));
+
+  // Очищаем сессию для безопасности
+  $_SESSION = [];
+  session_destroy();
+
   header('Location: /login');
   exit;
 }
-// Обработчик выхода
-if (isset($_GET['action']) && $_GET['action'] === 'logout') {
-  session_start();
-  // Попытка отозвать токен Google, если сохранён
-  if (!empty($_SESSION['google_access_token'])) {
-    try {
-      $revokeToken = $_SESSION['google_access_token'];
-      // Безопасное обращение к revoke endpoint
-      $ch = curl_init('https://oauth2.googleapis.com/revoke?token=' . urlencode($revokeToken));
-      curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-type: application/x-www-form-urlencoded']);
-      curl_exec($ch);
-      curl_close($ch);
-      echo 'Вы вышли из аккаунта Google';
-    } catch (Throwable $e) {
-      error_log('GOOGLE_AUTH: revoke error: ' . $e->getMessage());
-    }
-  }
 
-  // Чистим сессию
+// Проверяем время последней активности (30 минут)
+if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > 1800)) {
   $_SESSION = [];
-  if (ini_get('session.use_cookies')) {
-    $params = session_get_cookie_params();
-    setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
-  }
   session_destroy();
-  session_write_close();
+  header('Location: /login?expired=1');
+  exit;
 }
+
+// Обновляем время последней активности
+$_SESSION['last_activity'] = time();
+$_MESSAGE_LOGOUT = '';
+
+error_log('GOOGLE_AUTH_VIEW: sid=' . session_id() . '; auth_ok=' . (!empty($_SESSION['auth_ok']) ? '1' : '0') . '; token=' . (!empty($_SESSION['google_access_token']) ? '1' : '0'));
+// Обработчик выхода
+
 ?>
 
 <!DOCTYPE html>
@@ -131,15 +131,30 @@ if (isset($_GET['action']) && $_GET['action'] === 'logout') {
       gap: 16px;
       height: 100%;
     }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin: 40px;
+    }
   </style>
 </head>
 
 <body>
   <?= (new Header())->getHeader() ?>
   <main class="main">
-    <h2>Войдите через Google</h2>
-    <a class="y-button button link" href="<?= htmlspecialchars($authUrl) ?>">Войти через Google</a>
-    <a class="x-button button link" href="<?= htmlspecialchars($logoutUrl) ?>">Выйти из аккаунта</a>
+    <div class="buttons">
+      <a class="y-button button link" href="<?= htmlspecialchars($authUrl) ?>">Войти через Google</a>
+      <?php
+      if (!empty($_SESSION['google_access_token'])) {
+        echo '<a class="x-button button link" href="' . htmlspecialchars($logoutUrl) . '">Выйти из аккаунта</a>';
+      }
+      ?>
+      <p><?= htmlspecialchars($_MESSAGE_LOGOUT) ?></p>
+    </div>
   </main>
   <?= (new Footer())->getFooter() ?>
 </body>

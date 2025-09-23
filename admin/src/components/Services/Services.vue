@@ -1,145 +1,141 @@
 <template>
   <div class="services-admin">
-    <h1>Редактор Услуг</h1>
-    <div class="theme-dark">
-      <Loader v-if="isLoading" />
-      <div v-else class="services-list space-y-2">
-        <details
-          v-for="service in localServices.main"
-          :key="service.id"
-          class="service-item"
-          :class="{
-            'new-service-highlight': service.id === highlightedServiceId,
-          }"
-          :data-service-id="service.id"
-        >
-          <summary>{{ service.name }}</summary>
-          <div class="service-details">
-            <div class="form-group">
-              <label>Название:</label>
-              <input type="text" v-model="service.name" />
+    <h1 class="my-title">Услуги</h1>
+    <div class="services-admin-wrapper">
+      <div class="services-admin-container">
+        <div class="services-admin-header">
+          <label for="">Основные услуги</label>
+          <MyBtn variant="primary" @click="toggleAccordion('main')">
+            {{ openAccordionIds.main ? 'Свернуть' : 'Развернуть' }}
+          </MyBtn>
+        </div>
+        <MyTransition>
+          <div class="theme-dark" v-if="openAccordionIds.main">
+            <div v-if="!isLoading" class="services-list space-y-2">
+              <div v-for="service in localServices.main" :key="service.id" class="service-item" :class="{
+                'is-open': isMainServiceOpen(service.id),
+                'new-service-highlight': service.id === highlightedServiceId,
+              }" :data-service-id="service.id">
+                <div class="summary-header">
+                  <span>{{ service.name }}</span>
+                  <MyBtn variant="primary" class="accordion-arrow" :class="{ 'is-open': isMainServiceOpen(service.id) }"
+                    @click="toggleMainService(service.id)">
+                    {{
+                      isMainServiceOpen(service.id)
+                        ? 'Свернуть'
+                        : 'Редактировать'
+                    }}</MyBtn>
+                </div>
+                <MyTransition>
+                  <div v-if="isMainServiceOpen(service.id)" class="service-details">
+                    <div class="form-group">
+                      <label>Название:</label>
+                      <input type="text" v-model="service.name" />
+                    </div>
+                    <div class="form-group">
+                      <label>Описание:</label>
+                      <MyQuill :key="service.id + '-desc'" :content="service.description"
+                        @update:content="(val: string) => (service.description = val)" />
+                    </div>
+                    <div class="form-group">
+                      <p>Рекомендуемый размер: 1000x1000px</p>
+                      <label>Изображение:</label>
+                      <ImageUpload :path="getFullImagePath(service.image.src)" @upload-success="handleImageUpload"
+                        @image-cleared="service.image.src = ''" :data="{ id: service.id }" serviceImage />
+                    </div>
+                    <div class="form-group">
+                      <label>Список услуг:</label>
+                      <MyQuill :key="service.id + '-serv'" :content="service.services"
+                        @update:content="(val: string) => (service.services = val)" />
+                    </div>
+                    <div class="form-group">
+                      <label>Цена:</label>
+                      <input type="number" v-model="service.cost" />
+                    </div>
+                    <div class="service-actions">
+                      <MyBtn variant="secondary" @click="saveService(service.id)" class="btn-save">
+                        Сохранить услугу
+                      </MyBtn>
+                      <MyBtn variant="primary" @click="deleteService(service.id)" class="btn-delete">
+                        Удалить услугу
+                      </MyBtn>
+                    </div>
+                  </div>
+                </MyTransition>
+              </div>
             </div>
-            <div class="form-group">
-              <label>Описание:</label>
-              <QuillEditor
-                :key="service.id + '-desc'"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                contentType="html"
-                :content="service.description"
-                @update:content="(val) => (service.description = val)"
-              />
-            </div>
-            <div class="form-group">
-              <p>Рекомендуемый размер: 1000x1000px</p>
-              <label>Изображение:</label>
-              <ImageUpload
-                :path="getFullImagePath(service.image.src)"
-                @upload-success="(data) => handleImageUpload(data, service.id)"
-                @image-cleared="service.image.src = ''"
-                :extraData="{ serviceId: service.id }"
-                serviceImage
-              />
-            </div>
-            <div class="form-group">
-              <label>Список услуг:</label>
-              <QuillEditor
-                :key="service.id + '-serv'"
-                theme="snow"
-                :toolbar="toolbarOptions"
-                contentType="html"
-                :content="service.services"
-                @update:content="(val) => (service.services = val)"
-              />
-            </div>
-            <div class="form-group">
-              <label>Цена:</label>
-              <input type="number" v-model="service.cost" />
+            <MyBtn variant="secondary" @click="addService" type="button" class="btn-save btn-add-service"
+              :disabled="isAddingMainService">
+              Добавить услугу
+            </MyBtn>
+          </div>
+        </MyTransition>
+      </div>
+      <div class="services-admin-container">
+        <div class="services-admin-header">
+          <label for="">Дополнительные услуги</label>
+          <MyBtn variant="primary" @click="toggleAccordion('added')">
+            {{ openAccordionIds.added ? 'Свернуть' : 'Развернуть' }}
+          </MyBtn>
+        </div>
+        <MyTransition>
+          <div class="theme-dark" v-if="openAccordionIds.added">
+            <div v-if="!isLoading" class="services-list space-y-2">
+              <div v-for="service in localServices.added" :key="service.id" class="service-item"
+                :class="{ 'is-open': isAddedServiceOpen(service.id) }" :data-service-id="service.id">
+                <div class="summary-header">
+                  <span>{{ service.title }}</span>
+                  <MyBtn variant="primary" class="accordion-arrow"
+                    :class="{ 'is-open': isAddedServiceOpen(service.id) }" @click="toggleAddedService(service.id)">{{
+                      isAddedServiceOpen(service.id)
+                        ? 'Свернуть'
+                        : 'Редактировать'
+                    }}</MyBtn>
+                </div>
+                <MyTransition>
+                  <div v-if="isAddedServiceOpen(service.id)" class="service-details">
+                    <div class="form-group">
+                      <label>Название:</label>
+                      <input type="text" v-model="service.title" />
+                    </div>
+                    <div class="form-group">
+                      <label>Цена:</label>
+                      <input type="text" v-model="service.price" />
+                    </div>
+                    <div class="service-actions">
+                      <MyBtn variant="secondary" @click="saveAddedService(service)" class="btn-save">Сохранить
+                        дополнительную услугу</MyBtn>
+                      <MyBtn variant="primary" @click="deleteAddedService(service.id)" class="btn-delete">
+                        Удалить дополнительную услугу
+                      </MyBtn>
+                    </div>
+                  </div>
+                </MyTransition>
+              </div>
             </div>
             <div class="service-actions">
-              <button @click="saveService(service.id)" class="btn-save">
-                Сохранить
-              </button>
-              <button @click="deleteService(service.id)" class="btn-delete">
-                Удалить
-              </button>
+              <MyBtn variant="secondary" @click="addAddedService" type="button" class="btn-save btn-add-service"
+                :disabled="isAddingAddedService">
+                Добавить дополнительную услугу
+              </MyBtn>
             </div>
           </div>
-        </details>
-      </div>
-      <button
-        @click="addService"
-        type="button"
-        class="btn-save with-margin-bottom"
-      >
-        Добавить услугу
-      </button>
-    </div>
-    <h1>Дополнительные услуги</h1>
-    <div class="theme-dark">
-      <Loader v-if="isLoading" />
-      <div v-else class="services-list space-y-2">
-        <details
-          v-for="service in localServices.added"
-          :key="service.id"
-          class="service-item"
-          :data-service-id="service.id"
-        >
-          <summary>{{ service.title }}</summary>
-          <div class="service-details">
-            <div class="form-group">
-              <label>Название:</label>
-              <input type="text" v-model="service.title" />
-            </div>
-            <div class="form-group">
-              <label>Цена:</label>
-              <input type="number" v-model="service.price" />
-            </div>
-            <div class="service-actions">
-              <button
-                @click="deleteAddedService(service.id)"
-                class="btn-delete"
-              >
-                Удалить
-              </button>
-            </div>
-          </div>
-        </details>
-      </div>
-      <div class="service-actions">
-        <button
-          @click="addAddedService"
-          type="button"
-          class="btn-save with-margin-bottom"
-        >
-          Добавить дополнительную услугу
-        </button>
-        <button @click="saveAllAddedServices" class="btn-save">
-          Сохранить
-        </button>
+        </MyTransition>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import type { Service, AddedService } from './interfaces/Service';
-import { API_URL } from '../../../config';
-import Loader from '../../UI/Loader.vue';
+// import { API_URL } from '../../../config';
 import Swal from 'sweetalert2';
-// @ts-ignore
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import ImageUpload from '../../UI/ImageUpload.vue';
 import { nextTick } from 'vue';
-
-const toolbarOptions = [
-  [{ header: [1, 2, 3, false] }],
-  ['bold', 'italic', 'underline', 'strike'],
-  [{ list: 'ordered' }, { list: 'bullet' }],
-  ['clean'],
-];
+import MyBtn from '../UI/MyBtn.vue';
+import MyQuill from '../UI/MyQuill.vue';
+import MyTransition from '../UI/MyTransition.vue';
 
 const localServices = ref<{ main: Service[]; added: AddedService[] }>({
   main: [],
@@ -147,24 +143,62 @@ const localServices = ref<{ main: Service[]; added: AddedService[] }>({
 });
 const isLoading = ref(true);
 const highlightedServiceId = ref<string | null>(null);
+const openMainServiceIds = ref<string[]>([]);
+const openAddedServiceIds = ref<string[]>([]);
+const openAccordionIds = ref<Record<string, boolean>>({});
+const isAddingMainService = ref(false);
+const isAddingAddedService = ref(false);
+// const addedServices = ref<AddedService[]>([]);
 
-function handleImageUpload(
-  data: { path: string; filename: string },
-  serviceId: string
-) {
-  if (data.path && localServices.value.main.find((s) => s.id === serviceId)) {
-    const service = localServices.value.main.find((s) => s.id === serviceId);
+const toggleAccordion = (id: string) => {
+  openAccordionIds.value[id] = !openAccordionIds.value[id];
+};
+
+const toggleMainService = (id: string) => {
+  const index = openMainServiceIds.value.indexOf(id);
+  if (index === -1) {
+    openMainServiceIds.value.push(id);
+  } else {
+    openMainServiceIds.value.splice(index, 1);
+  }
+};
+
+const isMainServiceOpen = (id: string) => {
+  return openMainServiceIds.value.includes(id);
+};
+
+const toggleAddedService = (id: string) => {
+  const index = openAddedServiceIds.value.indexOf(id);
+  if (index === -1) {
+    openAddedServiceIds.value.push(id);
+  } else {
+    openAddedServiceIds.value.splice(index, 1);
+  }
+};
+
+const isAddedServiceOpen = (id: string) => {
+  return openAddedServiceIds.value.includes(id);
+};
+
+function handleImageUpload(data: {
+  id: string;
+  path: string;
+  filename: string;
+}) {
+  if (data.path && localServices.value.main.find((s) => s.id.toString() === data.id)) {
+    const service = localServices.value.main.find((s) => s.id.toString() === data.id);
     if (service) {
       service.image.src = data.path;
       Swal.fire({
         title: 'Успешно!',
-        text: `Изображение ${data.filename} загружено.`,
+        text: `Изображение ${data.filename} загружено. Обязательно сохраните услугу.`,
         icon: 'success',
-        background: '#333',
-        color: '#fff',
+        background: 'white',
+        color: 'black',
         timer: 2000,
         showConfirmButton: false,
       });
+      saveService(service.id);
     }
   }
 }
@@ -172,13 +206,14 @@ function handleImageUpload(
 function deleteAddedService(serviceId: string) {
   const index = localServices.value.added.findIndex((s) => s.id === serviceId);
   if (index === -1) return;
-  const service = localServices.value.added[index];
-  // Если это новая услуга (ещё не сохранена на сервере)
-  if (service.id.startsWith('new-')) {
+
+  if (String(serviceId).startsWith('new-')) {
     localServices.value.added.splice(index, 1);
+    isAddingAddedService.value = false;
     return;
   }
-  // Для сохранённых услуг — запрос на сервер
+
+  const service = localServices.value.added[index];
   Swal.fire({
     title: 'Вы уверены?',
     text: `Удалить дополнительную услугу "${service.title}"?`,
@@ -188,8 +223,8 @@ function deleteAddedService(serviceId: string) {
     cancelButtonColor: '#d33',
     confirmButtonText: 'Да, удалить!',
     cancelButtonText: 'Отмена',
-    background: '#333',
-    color: '#fff',
+    background: 'white',
+    color: 'black',
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
@@ -210,23 +245,24 @@ function deleteAddedService(serviceId: string) {
           title: 'Удалено!',
           text: 'Дополнительная услуга удалена.',
           icon: 'success',
-          background: '#333',
-          color: '#fff',
+          background: 'white',
+          color: 'black',
         });
       } catch (error: any) {
         Swal.fire({
           title: 'Ошибка!',
           text: 'Не удалось удалить услугу. ' + error.message,
           icon: 'error',
-          background: '#333',
-          color: '#fff',
+          background: 'white',
+          color: 'black',
         });
       }
     }
   });
-}
+} // ← Закрывающая скобка функции была пропущена
 
-async function saveAllAddedServices() {
+async function saveAddedService(service: AddedService) {
+  const isNew = String(service.id).startsWith('new-');
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
@@ -234,8 +270,8 @@ async function saveAllAddedServices() {
     didOpen: () => {
       Swal.showLoading();
     },
-    background: '#333',
-    color: '#fff',
+    background: 'white',
+    color: 'black',
   });
   try {
     const response = await fetch(
@@ -243,30 +279,42 @@ async function saveAllAddedServices() {
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ services: localServices.value.added }),
+        body: JSON.stringify(service),
       }
     );
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Ошибка сохранения');
+      const errorText = await response.text();
+      try {
+        const errorData = JSON.parse(errorText);
+        throw new Error(errorData.message || 'Ошибка сохранения');
+      } catch (e) {
+        throw new Error(`Не удалось сохранить услуги. ${errorText}`);
+      }
     }
-    // Можно обновить localServices.added с сервера, если нужно
-    const saved = await response.json();
-    localServices.value.added = saved;
+    const savedService = await response.json();
+    const index = localServices.value.added.findIndex(
+      (s) => s.id === service.id
+    );
+    if (index !== -1) {
+      localServices.value.added[index] = savedService;
+    }
+    isAddingAddedService.value = false;
     Swal.fire({
       title: 'Сохранено!',
-      text: 'Все дополнительные услуги успешно сохранены.',
+      text: isNew
+        ? 'Новая дополнительная услуга успешно добавлена.'
+        : 'Дополнительная услуга успешно обновлена.',
       icon: 'success',
-      background: '#333',
-      color: '#fff',
+      background: 'white',
+      color: 'black',
     });
   } catch (error: any) {
     Swal.fire({
       title: 'Ошибка!',
-      text: 'Не удалось сохранить услуги. ' + error.message,
+      text: error.message,
       icon: 'error',
-      background: '#333',
-      color: '#fff',
+      background: 'white',
+      color: 'black',
     });
   }
 }
@@ -281,8 +329,8 @@ function addAddedService() {
       title: 'Дополнительная услуга уже добавлена',
       text: 'Необходимо сначала сохранить уже добавленную дополнительную услугу.',
       icon: 'warning',
-      background: '#333',
-      color: '#fff',
+      background: 'white',
+      color: 'black',
     });
 
     highlightedServiceId.value = null;
@@ -314,7 +362,9 @@ function addAddedService() {
     price: 0,
   };
   localServices.value.added.push(newService);
+  isAddingAddedService.value = true;
   highlightedServiceId.value = newId;
+  openAddedServiceIds.value.push(newId);
 
   setTimeout(() => {
     if (highlightedServiceId.value === newId) {
@@ -326,8 +376,8 @@ function addAddedService() {
     title: 'Добавлена форма для новой дополнительной услуги',
     text: 'Заполните данные и нажмите "Сохранить".',
     icon: 'info',
-    background: '#333',
-    color: '#fff',
+    background: 'white',
+    color: 'black',
     timer: 3000,
     showConfirmButton: false,
   });
@@ -352,8 +402,8 @@ function addService() {
       title: 'Услуга уже добавлена',
       text: 'Необходимо сначала сохранить уже добавленную услугу.',
       icon: 'warning',
-      background: '#333',
-      color: '#fff',
+      background: 'white',
+      color: 'black',
     });
 
     highlightedServiceId.value = null;
@@ -390,7 +440,9 @@ function addService() {
     currency: 'KZT',
   };
   localServices.value.main.push(newService);
+  isAddingMainService.value = true;
   highlightedServiceId.value = newId;
+  openMainServiceIds.value.push(newId);
 
   setTimeout(() => {
     if (highlightedServiceId.value === newId) {
@@ -402,8 +454,8 @@ function addService() {
     title: 'Добавлена форма для новой услуги',
     text: 'Заполните данные и нажмите "Сохранить".',
     icon: 'info',
-    background: '#333',
-    color: '#fff',
+    background: 'white',
+    color: 'black',
     timer: 3000,
     showConfirmButton: false,
   });
@@ -435,6 +487,23 @@ async function fetchServices() {
   }
 }
 
+async function fetchMoreServices() {
+  try {
+    const response = await fetch(
+      '/server/php/admin/api/services/get_added_service.php'
+    );
+    const data = await response.json();
+    localServices.value = {
+      main: data.main || [],
+      added: data.added || [],
+    };
+  } catch (error) {
+    console.error(error);
+  } finally {
+    isLoading.value = false;
+  }
+}
+
 async function saveService(serviceId: string) {
   const isNew = serviceId.toString().startsWith('new-');
   Swal.fire({
@@ -444,14 +513,15 @@ async function saveService(serviceId: string) {
     didOpen: () => {
       Swal.showLoading();
     },
-    background: '#333',
-    color: '#fff',
+    background: 'white',
+    color: 'black',
   });
 
   try {
     const serviceToSave = localServices.value.main.find(
       (s) => s.id === serviceId
     );
+    console.log(serviceToSave, 'SERVICE TO SAVE');
     if (!serviceToSave) {
       throw new Error('Service not found');
     }
@@ -486,6 +556,7 @@ async function saveService(serviceId: string) {
       );
       if (index !== -1) {
         localServices.value.main[index] = savedService;
+        isAddingMainService.value = false;
       }
     } else {
       // If it was an existing service, update the localServices.main array
@@ -505,8 +576,8 @@ async function saveService(serviceId: string) {
         ? 'Новая услуга была успешно добавлена.'
         : 'Услуга была успешно обновлена.',
       icon: 'success',
-      background: '#333',
-      color: '#fff',
+      background: 'white',
+      color: 'black',
     });
   } catch (error: any) {
     console.error(error);
@@ -514,13 +585,23 @@ async function saveService(serviceId: string) {
       title: 'Ошибка!',
       text: 'Не удалось сохранить услугу. ' + error.message,
       icon: 'error',
-      background: '#333',
-      color: '#fff',
+      background: 'white',
+      color: 'black',
     });
   }
 }
 
 async function deleteService(serviceId: string) {
+  // Если это новая, еще не сохраненная услуга, удаляем ее локально
+  if (String(serviceId).startsWith('new-')) {
+    const index = localServices.value.main.findIndex((s) => s.id === serviceId);
+    if (index !== -1) {
+      localServices.value.main.splice(index, 1);
+      isAddingMainService.value = false;
+    }
+    return;
+  }
+
   const serviceToDelete = localServices.value.main.find(
     (s) => s.id === serviceId
   );
@@ -535,8 +616,8 @@ async function deleteService(serviceId: string) {
     cancelButtonColor: '#d33',
     confirmButtonText: 'Да, удалить!',
     cancelButtonText: 'Отмена',
-    background: '#333',
-    color: '#fff',
+    background: 'white',
+    color: 'black',
   }).then(async (result) => {
     if (result.isConfirmed) {
       try {
@@ -568,16 +649,16 @@ async function deleteService(serviceId: string) {
           title: 'Удалено!',
           text: 'Услуга была успешно удалена.',
           icon: 'success',
-          background: '#333',
-          color: '#fff',
+          background: 'white',
+          color: 'black',
         });
       } catch (error: any) {
         Swal.fire({
           title: 'Ошибка!',
           text: 'Не удалось удалить услугу. ' + error.message,
           icon: 'error',
-          background: '#333',
-          color: '#fff',
+          background: 'white',
+          color: 'black',
         });
       }
     }
@@ -589,10 +670,30 @@ function getFullImagePath(path: string): string {
   if (path.startsWith('blob:') || path.startsWith('http')) {
     return path;
   }
-  return `${API_URL}${path}`;
+  return path;
 }
 
-onMounted(fetchServices);
+onMounted(() => {
+  fetchServices();
+  fetchMoreServices();
+});
+
+watchEffect(() => {
+  if (isLoading.value) {
+    Swal.fire({
+      title: 'Загрузка услуг...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: 'white',
+      color: 'black',
+    });
+  } else {
+    Swal.close();
+  }
+});
 </script>
 
 <style scoped>
@@ -600,8 +701,9 @@ onMounted(fetchServices);
   from {
     background-color: #2f4835;
   }
+
   to {
-    background-color: #333;
+    background-color: black;
   }
 }
 
@@ -609,17 +711,10 @@ onMounted(fetchServices);
   from {
     background-color: #35523d;
   }
+
   to {
     background-color: #3a3a3a;
   }
-}
-
-.service-item.new-service-highlight {
-  animation: highlight-fade-item 5s ease-out forwards;
-}
-
-.service-item.new-service-highlight > summary {
-  animation: highlight-fade-summary 5s ease-out forwards;
 }
 
 .services-admin h1 {
@@ -628,17 +723,11 @@ onMounted(fetchServices);
 }
 
 .theme-dark {
-  background-color: #333;
   color: #f1f1f1;
-  min-height: 100vh;
   padding: 20px;
+  padding-top: 0;
   max-width: 1440px;
   border-radius: 10px;
-  margin: 0 auto;
-}
-
-.with-margin-bottom {
-  margin-top: 20px;
 }
 
 .space-y-2 {
@@ -648,29 +737,20 @@ onMounted(fetchServices);
 }
 
 .service-item {
-  border: 1px solid #444;
-  border-radius: 5px;
-  background-color: #333;
+  border: 1px solid white;
+  border-radius: 10px;
+  background-color: inherit;
 }
 
-.service-item > summary {
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 15px;
   font-weight: bold;
-  cursor: pointer;
-  background-color: #3a3a3a;
+  background-color: inherit;
   color: #eee;
   border-radius: 5px;
-  list-style: none;
-}
-
-.service-item > summary::-webkit-details-marker {
-  display: none;
-}
-
-.service-item[open] > summary {
-  border-bottom: 1px solid #444;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
 }
 
 .service-details {
@@ -678,6 +758,8 @@ onMounted(fetchServices);
   display: flex;
   flex-direction: column;
   gap: 15px;
+  overflow: hidden;
+  transition: height 0.3s ease-out, opacity 0.3s ease-out;
 }
 
 .form-group {
@@ -694,10 +776,11 @@ onMounted(fetchServices);
 .form-group input,
 .form-group textarea {
   padding: 10px;
-  background-color: #444;
+  background-color: inherit;
   border: 1px solid #555;
-  color: #fff;
+  color: black;
   border-radius: 4px;
+  background-color: white;
 }
 
 .image-uploader {
@@ -737,39 +820,19 @@ onMounted(fetchServices);
 .service-actions {
   display: flex;
   gap: 10px;
-  justify-content: flex-end;
-  border-top: 1px solid #444;
   padding-top: 20px;
   margin-top: 10px;
 }
 
-.btn-save,
-.btn-delete {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 5px;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.btn-save {
-  background-color: #28a745;
-}
-
-.btn-delete {
-  background-color: #ff4d4f;
-}
-
 /* Add styles for Quill editor if needed */
 .form-group :deep(.ql-editor) {
-  background-color: #444;
-  color: #fff;
+  background-color: white;
+  color: black;
   min-height: 150px;
 }
 
 .form-group :deep(.ql-toolbar) {
-  background-color: #555;
+  background-color: black;
   border-color: #666;
 }
 
@@ -780,23 +843,75 @@ onMounted(fetchServices);
 .form-group :deep(.ql-toolbar .ql-stroke) {
   stroke: #ccc;
 }
+
 .form-group :deep(.ql-toolbar .ql-fill) {
   fill: #ccc;
 }
+
 .form-group :deep(.ql-toolbar button:hover .ql-stroke),
 .form-group :deep(.ql-toolbar .ql-picker-label:hover .ql-stroke) {
   stroke: #fff;
 }
+
 .form-group :deep(.ql-toolbar button:hover .ql-fill),
 .form-group :deep(.ql-toolbar .ql-picker-label:hover .ql-fill) {
   fill: #fff;
 }
+
 .form-group :deep(.ql-toolbar button.ql-active .ql-stroke),
 .form-group :deep(.ql-toolbar .ql-picker-label.ql-active .ql-stroke) {
   stroke: #007bff;
 }
+
 .form-group :deep(.ql-toolbar button.ql-active .ql-fill),
 .form-group :deep(.ql-toolbar .ql-picker-label.ql-active .ql-fill) {
   fill: #007bff;
+}
+
+.services-admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 28px;
+}
+
+.services-admin-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border: 1px solid white;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.btn-save,
+.btn-delete {
+  flex: 1;
+  width: 100%;
+  max-width: 100%;
+}
+
+.btn-add-service {
+  margin-top: 20px;
+  padding: 20px;
+}
+
+.my-title {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 32px;
+  font-weight: bold;
+  padding-left: 20px;
+  margin: 0;
+}
+
+.services-admin-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
 }
 </style>

@@ -33,18 +33,19 @@ if (!isset($data['id'])) {
 
 $productId = $data['id'];
 
-function getIconsFromTabs(array $tabs): array {
-    $icons = [];
-    foreach ($tabs as $tab) {
-        if (isset($tab['content']) && is_array($tab['content'])) {
-            foreach ($tab['content'] as $item) {
-                if (!empty($item['icon'])) {
-                    $icons[] = $item['icon'];
-                }
-            }
+function getIconsFromTabs(array $tabs): array
+{
+  $icons = [];
+  foreach ($tabs as $tab) {
+    if (isset($tab['content']) && is_array($tab['content'])) {
+      foreach ($tab['content'] as $item) {
+        if (!empty($item['icon'])) {
+          $icons[] = $item['icon'];
         }
+      }
     }
-    return $icons;
+  }
+  return $icons;
 }
 
 try {
@@ -72,21 +73,21 @@ try {
   $tabsStmt->execute([':product_id' => $productId]);
   $currentTabsData = $tabsStmt->fetch(PDO::FETCH_ASSOC);
 
-  if($currentTabsData) {
-      $currentTabs = json_decode($currentTabsData['tabs_data'], true) ?: [];
-      $newTabs = $data['tabs'] ?? [];
+  if ($currentTabsData) {
+    $currentTabs = json_decode($currentTabsData['tabs_data'], true) ?: [];
+    $newTabs = $data['tabs'] ?? [];
 
-      $currentIcons = getIconsFromTabs($currentTabs);
-      $newIcons = getIconsFromTabs($newTabs);
+    $currentIcons = getIconsFromTabs($currentTabs);
+    $newIcons = getIconsFromTabs($newTabs);
 
-      $iconsToDelete = array_diff($currentIcons, $newIcons);
+    $iconsToDelete = array_diff($currentIcons, $newIcons);
 
-      foreach($iconsToDelete as $iconUrl) {
-          $filePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($iconUrl, PHP_URL_PATH);
-          if (file_exists($filePath)) {
-              unlink($filePath);
-          }
+    foreach ($iconsToDelete as $iconUrl) {
+      $filePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($iconUrl, PHP_URL_PATH);
+      if (file_exists($filePath)) {
+        unlink($filePath);
       }
+    }
   }
 
   // Update Products table
@@ -95,7 +96,7 @@ try {
           model = :model, title = :title, description = :description, price = :price,
           is_popular = :is_popular, is_special = :is_special, gallery = :gallery,
           category = :category, link = :link, functions = :functions, options = :options,
-          options_filters = :options_filters, autosygnals = :autosygnals
+          options_filters = :options_filters, autosygnals = :autosygnals, price_list = :price_list
       WHERE id = :id
   ");
 
@@ -106,6 +107,7 @@ try {
     ':title' => $data['title'] ?? '',
     ':description' => $data['description'] ?? '',
     ':price' => $data['price'] ?? 0,
+    ':price_list' => json_encode($data['price_list'] ?? []),
     ':is_popular' => !empty($data['is_popular']) ? 1 : 0,
     ':is_special' => !empty($data['is_special']) ? 1 : 0,
     ':gallery' => json_encode($data['gallery'] ?? []),

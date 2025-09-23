@@ -11,14 +11,18 @@ class InsertPhone extends InsertSVG
         $html = '';
         if (!empty($contacts_phone)) {
             foreach ($contacts_phone as $phone) {
-                $cleanedPhone = str_replace(' ', '', $phone['phone']);
-                $html .= "<a class='link' href='tel:" . htmlspecialchars($cleanedPhone) . "'>";
+                // Убираем HTML теги из номера телефона
+                $cleanedPhoneText = strip_tags($phone['phone']);
+                // Убираем пробелы для tel: ссылки
+                $cleanedPhoneLink = str_replace(' ', '', $cleanedPhoneText);
+                
+                $html .= "<a class='link' href='tel:" . htmlspecialchars($cleanedPhoneLink) . "'>";
 
                 if (!empty($social)) {
                     $html .= $this->insertSvg($social);
                 }
 
-                $html .= htmlspecialchars($phone['phone']) . '</a>';
+                $html .= htmlspecialchars($cleanedPhoneText) . '</a>';
             }
         }
         return $html;

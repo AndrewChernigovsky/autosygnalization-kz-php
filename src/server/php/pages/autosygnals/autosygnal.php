@@ -21,6 +21,17 @@ use function FUNCTIONS\getShop;
 use function FUNCTIONS\getParamsAutosygnals;
 
 initSession();
+
+// Если нет типа в URL - редирект на дефолтный тип auto
+if (!isset($_GET['type'])) {
+    $currentParams = $_GET;
+    $currentParams['type'] = 'auto';
+    $currentParams['SELECT'] = $currentParams['SELECT'] ?? 'name';
+    $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($currentParams);
+    header("Location: $redirect_url");
+    exit();
+}
+
 getParamsAutosygnals("get_params_remote_controls");
 
 $title = 'Автосигнализации | Auto Security';

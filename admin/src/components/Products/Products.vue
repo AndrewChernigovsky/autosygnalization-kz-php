@@ -1,47 +1,37 @@
 <template>
   <div class="products-admin">
-    <h1>Товары</h1>
+    <h1 class="my-title">Товары</h1>
     <div class="p-4 md:p-6 theme-dark">
-      <input
-        type="file"
-        ref="fileInput"
-        @change="handleFileSelected"
-        style="display: none"
-        accept="image/*"
-      />
-      <div v-if="loading" class="flex justify-center items-center h-64">
-        <Loader message="Идет загрузка товаров..." />
-      </div>
+      <input type="file" ref="fileInput" @change="handleFileSelected" style="display: none" accept="image/*" />
       <div v-if="error" class="text-red-500 text-center">
         Ошибка при загрузке данных: {{ error }}
       </div>
       <div v-if="!loading && !error" class="space-y-2">
         <div v-for="(group, category) in groupedProducts" :key="category">
           <div class="category-header">
-            <h2 class="text-2xl font-bold my-4">
-              {{ getCategoryName(category) }}
-            </h2>
-            <button @click="addProduct(category)" class="btn-add">
-              Добавить товар
-            </button>
-          </div>
-          <div class="space-y-2">
-            <Product
-              v-for="product in group"
-              :key="product.id"
-              :product="product"
-              :all-categories="allCategories"
-              :is-image-uploading="isImageUploading"
-              :get-category-name="getCategoryName"
-              @save-product="saveChanges"
-              @delete-product="deleteProductHandler"
-              @delete-image="handleDeleteImage"
-              @trigger-file-upload="triggerFileUpload"
-              @handle-toggle="handleToggle"
-              @cancel-editing="handleCancelEditing"
-              @stage-tab-icon="handleStageTabIcon"
-              @delete-tab-icon="handleDeleteTabIcon"
-            />
+            <div class="category-header-content">
+              <h2 class="text-2xl font-bold my-4">
+                {{ getCategoryName(category) }}
+              </h2>
+              <MyBtn variant="primary" @click="toggleAccardion(category)">
+                {{ openAccardions[category] ? 'Закрыть' : 'Открыть' }}
+              </MyBtn>
+            </div>
+            <MyTransition>
+              <div class="space-y-2 product-list" v-if="openAccardions[category]">
+                <Product v-for="product in group" :key="product.id" :product="product" :all-categories="allCategories"
+                  :is-image-uploading="isImageUploading" :get-category-name="getCategoryName"
+                  :is-adding-new-product="isAddingNewProduct" @save-product="saveChanges"
+                  @delete-product="deleteProductHandler" @delete-image="handleDeleteImage"
+                  @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggle"
+                  @cancel-editing="handleCancelEditing" @stage-tab-icon="handleStageTabIcon"
+                  @delete-tab-icon="handleDeleteTabIcon" />
+                <MyBtn variant="secondary" @click="handleAddProduct(category)" class="btn-add"
+                  :disabled="isAddingNewProduct">
+                  Добавить товар
+                </MyBtn>
+              </div>
+            </MyTransition>
           </div>
         </div>
       </div>
@@ -50,13 +40,13 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, computed, ref } from 'vue';
+import { onMounted, computed, ref, watchEffect } from 'vue';
 import { useProducts } from './functions/useProducts';
 import type { ProductI } from './interfaces/Products';
 import Swal from 'sweetalert2';
-import Loader from '../../UI/Loader.vue';
 import Product from './Product.vue';
-import { useProductEditorStore } from '../../stores/productEditorStore';
+import MyBtn from '../UI/MyBtn.vue';
+import MyTransition from '../UI/MyTransition.vue';
 
 const {
   products,
@@ -71,8 +61,8 @@ const {
   deleteTabIcon: apiDeleteTabIcon,
 } = useProducts();
 
-const productEditorStore = useProductEditorStore();
 const fileInput = ref<HTMLInputElement | null>(null);
+const isAddingNewProduct = ref(false);
 const uploadContext = ref<{ product: ProductI; index: number | null } | null>(
   null
 );
@@ -96,6 +86,12 @@ const tabIconsToUpload = ref<
     }[]
   >
 >(new Map());
+
+const openAccardions = ref<Record<string, boolean>>({});
+
+const toggleAccardion = (productId: string) => {
+  openAccardions.value[productId] = !openAccardions.value[productId];
+};
 
 const isImageUploading = (productId: string, index: number | null) => {
   if (!imageUploadStatus.value) return false;
@@ -177,6 +173,7 @@ async function saveChanges(product: ProductI) {
   const updated: boolean = await updateProduct(product);
   if (updated) {
     Swal.fire('Сохранено!', 'Товар был успешно обновлен.', 'success');
+    isAddingNewProduct.value = false;
   } else {
     Swal.fire('Ошибка!', 'Не удалось сохранить товар.', 'error');
   }
@@ -185,7 +182,7 @@ async function deleteProductHandler(productId: string) {
   const productToDelete = products.value.find((p) => p.id === productId);
   if (productToDelete?.is_new) {
     products.value = products.value.filter((p) => p.id !== productId);
-    handleCancelEditing(productToDelete); // Очистка всех временных файлов
+    isAddingNewProduct.value = false;
     return;
   }
 
@@ -222,10 +219,7 @@ async function deleteProductHandler(productId: string) {
   }
 }
 async function handleDeleteImage(product: ProductI, imageIndex: number) {
-  const productInState =
-    productEditorStore.editingProduct?.id === product.id
-      ? productEditorStore.editingProduct
-      : product;
+  const productInState = product;
   if (!productInState) return;
 
   const imageUrl = productInState.gallery[imageIndex];
@@ -239,8 +233,6 @@ async function handleDeleteImage(product: ProductI, imageIndex: number) {
       filesToUpload.value.set(product.id, files);
     }
   }
-  // Simply remove from the array in the local state.
-  // The server will handle the actual file deletion on save.
   productInState.gallery.splice(imageIndex, 1);
 }
 
@@ -260,6 +252,7 @@ async function handleToggle(event: Event, product: ProductI) {
     });
     if (result.isConfirmed) {
       deleteProductHandler(product.id);
+      isAddingNewProduct.value = false;
     } else {
       detailsElement.open = true;
     }
@@ -280,10 +273,7 @@ async function handleFileSelected(event: Event) {
   const { product, index } = uploadContext.value;
   const file = target.files[0];
 
-  const productInState =
-    productEditorStore.editingProduct?.id === product.id
-      ? productEditorStore.editingProduct
-      : product;
+  const productInState = product;
 
   const blobUrl = URL.createObjectURL(file);
   const productFiles = filesToUpload.value.get(product.id) || [];
@@ -312,8 +302,8 @@ function handleStageTabIcon(
   itemIndex: number,
   file: File
 ) {
-  const productInState = productEditorStore.editingProduct;
-  if (!productInState || productInState.id !== productId) return;
+  const productInState = products.value.find((p) => p.id === productId);
+  if (!productInState) return;
 
   const blobUrl = URL.createObjectURL(file);
   const productIcons = tabIconsToUpload.value.get(productId) || [];
@@ -330,8 +320,8 @@ function handleDeleteTabIcon(
   tabIndex: number,
   itemIndex: number
 ) {
-  const productInState = productEditorStore.editingProduct;
-  if (!productInState || productInState.id !== productId) return;
+  const productInState = products.value.find((p) => p.id === productId);
+  if (!productInState) return;
 
   const iconUrl = productInState.tabs?.[tabIndex].content[itemIndex].icon || '';
 
@@ -386,6 +376,38 @@ const groupedProducts = computed(() => {
     return acc;
   }, {} as Record<string, ProductI[]>);
 });
+
+const handleAddProduct = (category: string) => {
+  addProduct(category);
+  isAddingNewProduct.value = true;
+  Swal.fire({
+    title: 'Добавлена форма для нового товара',
+    text: 'Заполните данные и нажмите "Сохранить изменения".',
+    icon: 'info',
+    background: 'white',
+    color: 'black',
+    timer: 3000,
+    showConfirmButton: false,
+  });
+};
+
+watchEffect(() => {
+  if (loading.value) {
+    Swal.fire({
+      title: 'Загрузка товаров...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      background: 'white',
+      color: 'black',
+    });
+  } else {
+    Swal.close();
+  }
+});
+
 onMounted(() => {
   fetchProducts();
 });
@@ -397,8 +419,8 @@ onMounted(() => {
     text-align: center;
   }
 }
+
 .theme-dark {
-  background-color: #333;
   color: #f1f1f1;
   min-height: 100vh;
   padding: 20px;
@@ -413,18 +435,29 @@ onMounted(() => {
   gap: 20px;
 }
 
-.category-header {
+.product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.category-header-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-  padding: 15px;
-  padding-right: 60px;
-  background-color: #2a2a2a;
+}
+
+.category-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
   border-radius: 5px;
   position: sticky;
   top: -20px;
   z-index: 100;
+  gap: 20px;
+  border: 1px solid white;
 }
 
 .theme-dark h2 {
@@ -438,16 +471,24 @@ onMounted(() => {
 }
 
 .btn-add {
-  background-color: #007bff;
-  padding: 8px 12px;
-  border-radius: 5px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  max-width: 100%;
+  width: 100%;
+  min-height: 60px;
+  align-self: flex-end;
+  flex-grow: 1;
 }
 
 .btn-add:hover {
   background-color: #0069d9;
+}
+
+.my-title {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 32px;
+  font-weight: bold;
+  padding-left: 20px;
+  margin: 0;
 }
 </style>

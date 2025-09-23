@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick, watch } from 'vue';
+import { ref, onMounted, computed, nextTick, watch, watchEffect } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
 import MySwitch from '../components/UI/MySwitch.vue';
 import LinkSelector from '../components/UI/LinkSelector.vue';
-import LoadingModal from '../components/UI/LoadingModal.vue';
 import MyModal from '../components/UI/MyModal.vue';
 import MyBtn from '../components/UI/MyBtn.vue';
+import DraggableList from '../components/UI/DraggableList.vue';
+import MyTransition from '../components/UI/MyTransition.vue';
 import type { LinkData, IFooterLink, SectionKey } from '../types/FooterLinks';
 
 const allLinksData = ref<LinkData[]>([]);
-const selectedLink = ref<LinkData | null>(null);
 const footerLinks = ref<IFooterLink[]>([]);
 const isInitialLoading = ref(false);
 const isUpdating = ref(false);
@@ -18,7 +18,6 @@ const error = ref<string | null>(null);
 const activeAccordion = ref<SectionKey | null>('shop');
 const editingLink = ref<Partial<IFooterLink> | null>(null);
 const isModalOpen = ref(false);
-const draggedItem = ref<IFooterLink | null>(null);
 const linkSourceMode = ref<'custom' | 'existing'>('custom');
 const selectedLinkForModal = ref<LinkData | null>(null);
 
@@ -139,15 +138,6 @@ const sendRequest = async (
 };
 
 const updatePositions = async (items: IFooterLink[]) => {
-  // Optimistic update for reordering
-  const currentOrder = JSON.parse(JSON.stringify(footerLinks.value));
-  const newOrder = [...footerLinks.value];
-  items.forEach((item, index) => {
-    const linkInNewOrder = newOrder.find((l) => l.footer_id === item.footer_id);
-    if (linkInNewOrder) linkInNewOrder.position = index + 1;
-  });
-  footerLinks.value = newOrder;
-
   const payload = items.map((item, index) => ({
     footer_id: item.footer_id,
     position: index + 1,
@@ -162,8 +152,9 @@ const updatePositions = async (items: IFooterLink[]) => {
     if (!result.success) throw new Error(result.error);
     Swal.fire('Успех!', 'Порядок ссылок обновлен!', 'success');
   } catch (e: any) {
-    footerLinks.value = currentOrder; // Revert on error
     Swal.fire('Ошибка!', 'Не удалось сохранить порядок.', 'error');
+    // Revert on error by refetching from server
+    await fetchLinks(true);
   }
 };
 
@@ -179,7 +170,6 @@ const saveLink = async (link: Partial<IFooterLink> | null) => {
     }
     payload = {
       ...link,
-      name: selectedLinkForModal.value.name,
       link: selectedLinkForModal.value.link,
       source_table: 'custom', // Per existing logic
       source_id: selectedLinkForModal.value.links_data_id,
@@ -276,40 +266,24 @@ const closeModal = () => {
   editingLink.value = null;
 };
 
-// --- Drag and Drop Logic ---
-const handleDragStart = (item: IFooterLink) => {
-  draggedItem.value = item;
-};
-const handleDragEnd = () => {
-  draggedItem.value = null;
-};
-const handleDrop = (event: DragEvent, targetSection: SectionKey) => {
-  const targetElement = event.currentTarget as HTMLElement;
-  if (
-    !targetElement ||
-    !draggedItem.value ||
-    draggedItem.value.section !== targetSection
-  )
-    return;
+const handleSectionReorder = (
+  reorderedLinks: IFooterLink[],
+  sectionKey: SectionKey
+) => {
+  // Create a new array with updated positions for optimistic UI update
+  const updatedLinks = reorderedLinks.map((link, index) => ({
+    ...link,
+    position: index + 1,
+  }));
 
-  const sectionLinks = [...sectionData.value[targetSection].links];
-  const toIndex = sectionLinks.findIndex(
-    (l) => l.footer_id === Number(targetElement.getAttribute('data-id'))
-  );
-  const fromIndex = sectionLinks.findIndex(
-    (l) => l.footer_id === draggedItem.value!.footer_id
-  );
-
-  if (fromIndex === -1 || toIndex === -1 || fromIndex === toIndex) return;
-
-  const [movedItem] = sectionLinks.splice(fromIndex, 1);
-  sectionLinks.splice(toIndex, 0, movedItem);
-
+  // 1. Optimistic update of the main array
   const otherSectionsLinks = footerLinks.value.filter(
-    (link) => link.section !== targetSection
+    (link) => link.section !== sectionKey
   );
-  footerLinks.value = [...otherSectionsLinks, ...sectionLinks];
-  updatePositions(sectionLinks);
+  footerLinks.value = [...otherSectionsLinks, ...updatedLinks];
+
+  // 2. Call the function that handles API communication
+  updatePositions(updatedLinks);
 };
 
 const toggleAccordion = (key: SectionKey) => {
@@ -339,10 +313,26 @@ onMounted(() => {
   getLinksDataFromDB();
   fetchLinks(true);
 });
+
+watchEffect(() => {
+  if (isInitialLoading.value) {
+    Swal.fire({
+      title: 'Загрузка данных футера...',
+      text: 'Пожалуйста, подождите',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  } else if (!isUpdating.value) {
+    Swal.close();
+  }
+});
 </script>
 
 <template>
   <div class="new-footer-container">
+    <h1 class="my-title">Футер</h1>
     <div class="accordions-wrapper">
       <div v-for="(section, key) in sectionData" :key="key" class="accordion">
         <div class="accordion-header" @click="toggleAccordion(key)">
@@ -351,49 +341,28 @@ onMounted(() => {
             activeAccordion === key ? 'Закрыть' : 'Открыть'
           }}</MyBtn>
         </div>
-        <div
-          class="accordion-content"
-          :class="{ 'is-open': activeAccordion === key }"
-        >
-          <div class="accordion-content-inner">
-            <ul class="links-list">
-              <li
-                v-for="link in section.links"
-                :key="link.footer_id"
-                class="link-item"
-                :class="{
-                  dragging:
-                    draggedItem && draggedItem.footer_id === link.footer_id,
-                }"
-                draggable="true"
-                :data-id="link.footer_id"
-                @dragstart="handleDragStart(link)"
-                @dragend="handleDragEnd"
-                @drop.prevent="handleDrop($event, key)"
-                @dragover.prevent
-              >
-                <div class="link-info">
-                  <span class="drag-handle">⠿</span>
-                  <span>{{ link.name }}</span>
-                </div>
-                <div class="item-controls">
-                  <MyBtn variant="primary" @click="openModal(link)"
-                    >Редактировать</MyBtn
-                  >
-                  <MyBtn
-                    v-if="link.source_table === 'custom'"
-                    variant="secondary"
-                    @click="deleteLink(link.footer_id)"
-                    >Удалить</MyBtn
-                  >
-                </div>
-              </li>
-            </ul>
-            <MyBtn variant="secondary" @click.stop="openModal(null, key)"
-              >Добавить ссылку</MyBtn
-            >
+        <MyTransition>
+          <div v-if="activeAccordion === key" class="accordion-content-inner">
+            <DraggableList :model-value="section.links" item-key="footer_id" tag="ul" class="links-list" @reorder="
+              (reorderedLinks) => handleSectionReorder(reorderedLinks, key)
+            ">
+              <template #item="{ item, dragHandleProps, isDragOver }">
+                <li class="link-item" :class="{ 'drag-over': isDragOver }">
+                  <div class="link-info">
+                    <span class="drag-handle" v-bind="dragHandleProps">⠿</span>
+                    <span>{{ item.name }}</span>
+                  </div>
+                  <div class="item-controls">
+                    <MyBtn variant="primary" @click="openModal(item)">Редактировать</MyBtn>
+                    <MyBtn v-if="item.source_table === 'custom'" variant="secondary"
+                      @click="deleteLink(item.footer_id)">Удалить</MyBtn>
+                  </div>
+                </li>
+              </template>
+            </DraggableList>
+            <MyBtn variant="secondary" @click.stop="openModal(null, key)">Добавить ссылку</MyBtn>
           </div>
-        </div>
+        </MyTransition>
       </div>
     </div>
     <MyModal v-if="isModalOpen && editingLink" @close="closeModal">
@@ -406,21 +375,11 @@ onMounted(() => {
           </h3>
           <div class="add-mode-toggle">
             <label :class="{ active: linkSourceMode === 'custom' }">
-              <input
-                type="radio"
-                value="custom"
-                v-model="linkSourceMode"
-                name="link-source-mode"
-              />
+              <input type="radio" value="custom" v-model="linkSourceMode" name="link-source-mode" />
               Внешняя ссылка
             </label>
             <label :class="{ active: linkSourceMode === 'existing' }">
-              <input
-                type="radio"
-                value="existing"
-                v-model="linkSourceMode"
-                name="link-source-mode"
-              />
+              <input type="radio" value="existing" v-model="linkSourceMode" name="link-source-mode" />
               Внутренняя страница
             </label>
           </div>
@@ -439,18 +398,9 @@ onMounted(() => {
           <!-- Поля для выбора существующей -->
           <div v-if="linkSourceMode === 'existing'" class="form-group">
             <label for="name-existing">Название (можно изменить)</label>
-            <input
-              type="text"
-              id="name-existing"
-              v-model="editingLink.name"
-              required
-            />
-            <LinkSelector
-              v-model="selectedLinkForModal"
-              :links="availableLinksForModal"
-              label="Выберите страницу"
-              id="modal-link-selector"
-            />
+            <input type="text" id="name-existing" v-model="editingLink.name" required />
+            <LinkSelector v-model="selectedLinkForModal" :links="availableLinksForModal" label="Выберите страницу"
+              id="modal-link-selector" />
           </div>
 
           <!-- Общие поля для всех режимов -->
@@ -463,20 +413,15 @@ onMounted(() => {
             </select>
             <div class="form-row">
               <label for="visible">Видимость</label>
-              <MySwitch
-                id="visible"
-                :model-value="editingLink.visible!"
-                @update:model-value="editingLink.visible = $event"
-              />
+              <MySwitch id="visible" :model-value="editingLink.visible!"
+                @update:model-value="editingLink.visible = $event" />
             </div>
           </div>
         </form>
       </template>
       <template v-slot:footer>
         <MyBtn variant="secondary" @click="closeModal">Отмена</MyBtn>
-        <MyBtn variant="primary" @click="saveLink(editingLink!)"
-          >Сохранить</MyBtn
-        >
+        <MyBtn variant="primary" @click="saveLink(editingLink!)">Сохранить</MyBtn>
       </template>
     </MyModal>
   </div>
@@ -528,19 +473,28 @@ onMounted(() => {
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
+.my-title {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 0;
+}
+
 .new-footer-container {
   padding: 20px;
 }
+
 .accordions-wrapper {
   margin-top: 20px;
   background-color: black;
 }
+
 .accordion {
   border: 1px solid #ccc;
   border-radius: 4px;
   margin-bottom: 10px;
   background-color: black;
 }
+
 .accordion-header {
   display: flex;
   justify-content: space-between;
@@ -548,14 +502,12 @@ onMounted(() => {
   padding: 10px 15px;
   cursor: pointer;
 }
+
 .accordion-title {
   margin: 0;
   font-size: 1.1rem;
 }
-.accordion-icon {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
+
 .accordion-content {
   max-height: 0;
   overflow: hidden;
@@ -564,18 +516,21 @@ onMounted(() => {
 }
 
 .accordion-content.is-open {
-  max-height: 1000px; /* Adjust as needed */
+  max-height: 1000px;
+  /* Adjust as needed */
 }
 
 .accordion-content-inner {
   background-color: black;
   padding: 15px;
 }
+
 .links-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 0 15px 0;
 }
+
 .link-item {
   display: flex;
   justify-content: space-between;
@@ -584,27 +539,38 @@ onMounted(() => {
   border-bottom: 1px solid #444;
   transition: background-color 0.2s ease;
 }
+
+.link-item.drag-over {
+  background: #3a3a3c;
+  border-radius: 4px;
+}
+
 .link-item:last-child {
   border-bottom: none;
 }
+
 .link-item[draggable='true'] {
   cursor: grab;
 }
+
 .link-item.dragging {
   opacity: 0.5;
   background: #3a3a3c;
 }
+
 .link-info {
   display: flex;
   align-items: center;
   gap: 10px;
 }
+
 .drag-handle {
   font-size: 1.4rem;
   color: #888;
   cursor: grab;
   padding: 0 5px;
 }
+
 .item-controls {
   display: flex;
   gap: 10px;
@@ -617,6 +583,7 @@ onMounted(() => {
   flex-direction: column;
   gap: 10px;
 }
+
 .form-row {
   display: flex;
   align-items: center;

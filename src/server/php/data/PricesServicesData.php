@@ -1,9 +1,27 @@
 <?php
 
 namespace DATA;
+require_once __DIR__ . '/../../vendor/autoload.php';
 
-class PricesServicesData
-{
+use DATABASE\DataBase;
+use PDO;
+use Exeption;
+header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, PATCH, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
+// header('Content-Type: application/json');
+
+
+
+class PricesServicesData extends DataBase
+ {
+
+  protected $pdo;
+
+  function __construct() {
+    $db = DataBase::getInstance();
+    $this->pdo = $db->getPdo();
+  }
     public function getData()
     {
         return [
@@ -93,4 +111,19 @@ class PricesServicesData
             ],
         ];
     }
+
+    public function getAddedServices() {
+      try {
+          $query = "SELECT * FROM add_services";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute();
+          $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+  
+          error_log("Получены все элементы прайсов: " . count($result));
+          return $result;
+      } catch (\Exception $e) {
+          error_log("Ошибка получения прайсов: " . $e->getMessage());
+          return $this->error("Ошибка получения прайсов", 500);
+      }
+  }
 }
