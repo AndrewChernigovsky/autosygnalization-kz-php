@@ -212,7 +212,7 @@ export default class FiltersAction {
       }
       const selectType = this.currentUrl.searchParams.get('type');
       location.assign(
-        `${this.currentUrl.href.split('?')[0]}?SELECT=name&type=${selectType}`
+        `${this.currentUrl.href.split('?')[0]}?SELECT=name&type=${selectType}&reset=1`
       );
     });
   }

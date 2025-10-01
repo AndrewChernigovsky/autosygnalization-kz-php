@@ -33,9 +33,23 @@ function getParamsAutosygnals($type)
     
     $hasActiveFilters = !empty(array_intersect_key($_GET, array_flip($filterParams)));
     $hasBasicParams = isset($_GET['type']) || isset($_GET['SELECT']);
+    $isReset = isset($_GET['reset']) && $_GET['reset'] == '1';
+
+    // Если это сброс - очищаем сессию и не восстанавливаем фильтры
+    if ($isReset && isset($_SESSION[$sessionKey])) {
+        unset($_SESSION[$sessionKey]);
+        log_message("RESET: Cleared session for $sessionKey");
+        
+        // Перенаправляем без параметра reset
+        $cleanParams = $_GET;
+        unset($cleanParams['reset']);
+        $redirect_url = $_SERVER['PHP_SELF'] . '?' . http_build_query($cleanParams);
+        header("Location: $redirect_url");
+        exit();
+    }
 
     // СНАЧАЛА проверяем, нужно ли восстанавливать фильтры
-    if (!$hasActiveFilters && $hasBasicParams && isset($_SESSION[$sessionKey])) {
+    if (!$hasActiveFilters && $hasBasicParams && isset($_SESSION[$sessionKey]) && !$isReset) {
         $savedParams = $_SESSION[$sessionKey];
         
         // Проверяем, есть ли в сохраненных параметрах активные фильтры
