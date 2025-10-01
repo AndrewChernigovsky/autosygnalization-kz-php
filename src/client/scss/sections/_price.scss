@@ -203,7 +203,7 @@
     }
   }
 
-  &__details[open] summary ::before {
+  &__details[open] &__item-title::before {
     transform: translateY(-50%) rotate(-90deg);
   }
 
@@ -277,15 +277,30 @@
   &__content {
     display: grid;
     grid-template-rows: 0fr;
-    transition-duration: 0.3s;
+    transition: grid-template-rows 0.4s ease-in-out;
+    overflow: hidden;
   }
 
   &__content-body {
     overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out 0.1s;
   }
 
   &__details[open]+&__content {
     grid-template-rows: 1fr;
+
+    .price__content-body {
+      opacity: 1;
+      transition: opacity 0.3s ease-in-out 0.1s;
+    }
+  }
+
+  &__details:not([open])+&__content {
+    .price__content-body {
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+    }
   }
 
   &__item-description {
