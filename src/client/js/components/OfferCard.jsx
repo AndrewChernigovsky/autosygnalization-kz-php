@@ -13,7 +13,7 @@ export class OfferCard extends Component {
   }
 
   fetchOffersCards() {
-    const url = 'server/php/api/offers.php';
+    const url = '/server/php/api/offers.php';
     const options = {
       method: 'GET',
     };
