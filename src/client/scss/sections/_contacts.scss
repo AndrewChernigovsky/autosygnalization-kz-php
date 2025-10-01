@@ -97,11 +97,19 @@
       justify-content: center;
       gap: 20px;
     }
-
-    svg {
+    & .icon-container svg {
       width: 25px;
       height: 25px;
-      color: var.$red;
+      fill: currentColor; // чтобы иконка красилась через color
+      flex-shrink: 0; // чтобы не сжималась в flex-контейнере
+      overflow: hidden;
+
+      use {
+        width: 25px !important;
+        height: 25px !important;
+        transform: scale(1);
+        transform-origin: center;
+      }
     }
 
     &.link-message {
