@@ -18,8 +18,29 @@ $footer = new Footer();
 
 // $prices = (new PricesData())->getData();
 $pricesServices = (new PricesServicesData())->getData();
+$pricesServices = (new PricesServicesData())->getData();
 
 $products = (new Products())->getData();
+
+// ПРОВЕРКА СТРУКТУРЫ БД - получаем список полей из первого продукта
+$dbFields = [];
+$requiredFields = ['id', 'title', 'price', 'currency', 'price_list', 'prices', 'description', 'category'];
+$missingFields = [];
+$existingFields = [];
+
+if (!empty($products)) {
+  $dbFields = array_keys($products[0]);
+  
+  foreach ($requiredFields as $field) {
+    if (in_array($field, $dbFields)) {
+      $existingFields[] = $field;
+    } else {
+      $missingFields[] = $field;
+    }
+  }
+}
+
+// Фильтруем продукты, у которых есть price_list
 
 // ПРОВЕРКА СТРУКТУРЫ БД - получаем список полей из первого продукта
 $dbFields = [];
@@ -51,6 +72,7 @@ $prices = array_filter($products, function ($product) {
   return !empty($decoded);
 });
 
+// Подготавливаем данные для PDF
 // Подготавливаем данные для PDF
 $pricesJson = htmlspecialchars(json_encode($prices), ENT_QUOTES, 'UTF-8');
 $pricesServicesJson = htmlspecialchars(json_encode($pricesServices), ENT_QUOTES, 'UTF-8');
@@ -158,8 +180,21 @@ echo $head->setHead();
             </div>
           <?php endif; ?>
           
+          
+          <?php if (empty($prices)): ?>
+            <div style="background: #3a1a1a; color: #ff5252; padding: 20px; border: 2px solid #ff5252; border-radius: 5px; margin: 20px 0;">
+              <h3 style="color: #ff5252; margin-top: 0;">⚠️ Продукты не найдены</h3>
+              <p style="color: #ffcdd2;">В базе данных нет продуктов с заполненным полем price_list.</p>
+            </div>
+          <?php endif; ?>
+          
           <ul class="price__list list-style-none">
             <?php foreach ($prices as $price): ?>
+              <?php 
+                // Декодируем price_list
+                $price_list = json_decode($price['price_list'], true);
+                $decode_error = json_last_error_msg();
+              ?>
               <?php 
                 // Декодируем price_list
                 $price_list = json_decode($price['price_list'], true);
@@ -180,7 +215,27 @@ echo $head->setHead();
                       <p style="color: #ff5252; background: #3a1a1a; padding: 5px 10px; border-radius: 3px; font-size: 12px; margin: 5px 0;">⚠️ Ошибка декодирования JSON: <?= $decode_error ?></p>
                     <?php endif; ?>
                     
+                    
+                    <?php if ($decode_error !== 'No error' && $decode_error !== 'Нет ошибки'): ?>
+                      <p style="color: #ff5252; background: #3a1a1a; padding: 5px 10px; border-radius: 3px; font-size: 12px; margin: 5px 0;">⚠️ Ошибка декодирования JSON: <?= $decode_error ?></p>
+                    <?php endif; ?>
+                    
                     <?php if (!empty($price_list)): ?>
+                      <?php foreach ($price_list as $item): ?>
+                        <p class="price__item-price">
+                          <?php if (!empty($item['title'])): ?>
+                            <?= htmlspecialchars($item['title']) ?>
+                          <?php endif; ?>
+                          <?php if (!empty($item['price'])): ?>
+                            <?= htmlspecialchars($item['price']) ?>
+                          <?php endif; ?>
+                          <?php if (!empty($item['currency'])): ?>
+                            <?= htmlspecialchars($item['currency']) ?>
+                          <?php endif; ?>
+                        </p>
+                      <?php endforeach; ?>
+                    <?php else: ?>
+                      <p style="color: #ffb74d; background: #3a2a1a; padding: 5px 10px; border-radius: 3px; font-size: 12px; margin: 5px 0;">⚠️ price_list пустой или не декодируется</p>
                       <?php foreach ($price_list as $item): ?>
                         <p class="price__item-price">
                           <?php if (!empty($item['title'])): ?>
@@ -210,7 +265,18 @@ echo $head->setHead();
                         <?php else: ?>
                           <p style="color: #999; background: #2a2a2a; padding: 10px; border-radius: 5px; font-style: italic;">Описание отсутствует</p>
                         <?php endif; ?>
+                    <?php if (!empty($price_list)): ?>
+                      <?php foreach ($price_list as $item): ?>
+                        <?php if (!empty($item['content'])): ?>
+                          <div class="service-description">
+                            <?= $item['content'] // content — это HTML, не экранируй! ?>
+                          </div>
+                        <?php else: ?>
+                          <p style="color: #999; background: #2a2a2a; padding: 10px; border-radius: 5px; font-style: italic;">Описание отсутствует</p>
+                        <?php endif; ?>
                       <?php endforeach; ?>
+                    <?php else: ?>
+                      <p style="color: #ffb74d; background: #3a2a1a; padding: 10px; border-radius: 5px;">Нет данных для отображения</p>
                     <?php else: ?>
                       <p style="color: #ffb74d; background: #3a2a1a; padding: 10px; border-radius: 5px;">Нет данных для отображения</p>
                     <?php endif; ?>
@@ -228,7 +294,7 @@ echo $head->setHead();
         
         <?php if (empty($pricesServices)): ?>
           <div style="background: #3a2a1a; color: #ffb74d; padding: 20px; border: 2px solid #ffb74d; border-radius: 5px; margin: 20px 0;">
-            <h3 style="color: #ffb74d; margin-top: 0;">⚠️ Дополнительные услуги не найдены</h3>
+            <h3 style="color: #极b74d; margin-top: 0;">⚠️ Дополнительные услуги не найдены</h3>
             <p style="color: #ffe0b2;">Список дополнительных услуг пуст. Проверьте метод getData() в классе PricesServicesData.</p>
           </div>
         <?php else: ?>
@@ -258,6 +324,8 @@ echo $head->setHead();
     </section>
     <div class="price-button">
       <form method="POST" action="/server/php/admin/api/docs/price-list.php">
+        <input type="hidden" name="products" value="<?php echo $pricesJson; ?>">
+        <input type="hidden" name="addedServices" value="<?php echo $pricesServicesJson; ?>">
         <input type="hidden" name="products" value="<?php echo $pricesJson; ?>">
         <input type="hidden" name="addedServices" value="<?php echo $pricesServicesJson; ?>">
         <input type="hidden" name="generate_pdf" value="1">

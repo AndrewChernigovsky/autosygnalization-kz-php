@@ -7,7 +7,7 @@ use LAYOUT\Header;
 use LAYOUT\Footer;
 use function AUTH\log_message;
 
-header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Origin: http://localhost:5173, https://starline-service.kz");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 // header('Content-Type: application/json');
@@ -18,7 +18,7 @@ $title = 'Главная | Auto Security';
 $head = new Head($title, [], []);
 // Корректный Redirect URI, указывающий на обработчик
 // $redirectUri = 'https://starline-service.kz/google_auth_callback';
-$redirectUri = 'http://localhost:3000/google_auth_callback';
+$redirectUri = 'https://starline-service.kz/google_auth_callback';
 
 // Загружаем .env из корня server, безопасно (без исключений, если файла нет)
 $primaryEnvDir = dirname(__DIR__, 2); // при запуске из dist → .../dist/server, при запуске из src → .../src/server

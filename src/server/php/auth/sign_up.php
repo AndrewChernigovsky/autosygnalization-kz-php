@@ -33,7 +33,7 @@ if ($_SESSION['login_attempts'] >= $max_attempts) {
 log_message('sign_up.php 3');
 
 // Заголовки безопасности
-header("Access-Control-Allow-Origin: http://localhost:5173");
+header("Access-Control-Allow-Origin: http://localhost:5173, https://starline-service.kz");
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json');
