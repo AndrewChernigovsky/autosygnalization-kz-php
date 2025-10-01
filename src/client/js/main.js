@@ -123,11 +123,14 @@ async function loadModules() {
     const currentPath = window.location.pathname;
     console.log(currentPath, 'PATH');
 
+    // Нормализуем путь для autosygnal страницы
+    const normalizedPath = currentPath.includes('autosygnal') ? '/autosygnal' : currentPath;
+
     new FiltersAction(
       {
         form: '.filter-form',
       },
-      currentPath
+      normalizedPath
     );
   }
   if (cartCounter != null || cartButtons.length > 0) {

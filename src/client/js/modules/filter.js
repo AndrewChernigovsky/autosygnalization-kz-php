@@ -108,32 +108,29 @@ export default class FiltersAction {
   }
 
   restoreFiltersState() {
+    console.log('Restoring filters state for path:', this.path);
+    console.log('Available filter states:', this.filterStates);
+    
+    if (!this.filterStates[this.path]) {
+      console.log('No saved state found for path:', this.path);
+      return;
+    }
+
     this.inputList.forEach((element) => {
       if (element.type === 'checkbox') {
         if (this.filterStates[this.path][element.name] !== undefined) {
           element.checked = this.filterStates[this.path][element.name];
+          console.log(`Restored checkbox ${element.name}:`, element.checked);
         }
-      } else if (
-        element.name === 'min-range-cost' ||
-        element.name === 'min-value-cost'
-      ) {
-        if (
-          this.filterStates[this.path]['min-range-cost'] !== undefined &&
-          this.filterStates[this.path]['min-value-cost'] !== undefined
-        ) {
-          element.value = this.filterStates[this.path]['min-range-cost'];
+      } else if (element.name === 'min-range-cost' || element.name === 'min-value-cost') {
+        if (this.filterStates[this.path]['min-value-cost'] !== undefined) {
           element.value = this.filterStates[this.path]['min-value-cost'];
+          console.log(`Restored min cost ${element.name}:`, element.value);
         }
-      } else if (
-        element.name === 'max-range-cost' ||
-        element.name === 'max-value-cost'
-      ) {
-        if (
-          this.filterStates[this.path]['max-range-cost'] !== undefined &&
-          this.filterStates[this.path]['max-value-cost'] !== undefined
-        ) {
-          element.value = this.filterStates[this.path]['max-range-cost'];
+      } else if (element.name === 'max-range-cost' || element.name === 'max-value-cost') {
+        if (this.filterStates[this.path]['max-value-cost'] !== undefined) {
           element.value = this.filterStates[this.path]['max-value-cost'];
+          console.log(`Restored max cost ${element.name}:`, element.value);
         }
       }
     });
