@@ -55,7 +55,7 @@ if (!$hasToken || !$hasAuth) {
     } else {
       // Fallback для локальной разработки (Vite dev server)
       echo '<div id="app"></div>';
-      echo '<script type="module" crossorigin src="/admin/assets/index-QE-07INF.js"></script>';
+      echo '<script type="module" crossorigin src="/admin/assets/index-CqW0X6Eb.js"></script>';
     }
     ?>
   <?php endif; ?>

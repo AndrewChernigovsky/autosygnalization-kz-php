@@ -19,15 +19,39 @@ export default async function fetchWithCors(
     credentials: 'include',
   });
 
-  if (!response.ok) {
-    // Пытаемся получить сообщение об ошибке из тела ответа
-    const errorData = await response.json().catch(() => ({
-      error: `HTTP error! status: ${response.status}`,
-    }));
-    throw new Error(
-      errorData.error || `HTTP error! status: ${response.status}`
-    );
+  // Получаем текст ответа для диагностики
+  const responseText = await response.text();
+
+  // Проверяем, является ли ответ HTML (ошибка PHP)
+  if (responseText.trim().startsWith('<') || responseText.includes('<br />')) {
+    console.error('Server returned HTML instead of JSON:', responseText);
+    throw new Error(`Server error: ${responseText.substring(0, 200)}...`);
   }
 
-  return response.json();
+  if (!response.ok) {
+    // Пытаемся парсить как JSON
+    try {
+      const errorData = JSON.parse(responseText);
+      throw new Error(
+        errorData.error || `HTTP error! status: ${response.status}`
+      );
+    } catch (parseError) {
+      // Если не JSON, показываем текст ответа
+      throw new Error(
+        `HTTP error! status: ${
+          response.status
+        }. Response: ${responseText.substring(0, 200)}...`
+      );
+    }
+  }
+
+  // Пытаемся парсить JSON
+  try {
+    return JSON.parse(responseText);
+  } catch (parseError) {
+    console.error('Failed to parse JSON response:', responseText);
+    throw new Error(
+      `Invalid JSON response: ${responseText.substring(0, 200)}...`
+    );
+  }
 }

@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$dbConnection = Database::getConnection();
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 // Basic validation

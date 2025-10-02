@@ -64,7 +64,8 @@ export function useProducts() {
             const productsWithCategory = categoryProducts.map((p: any) => ({
               ...p,
               category: categoryKey,
-              is_popular: p.popular ?? false,
+              is_popular: p.is_popular ?? false,
+              is_special: p.is_special ?? false,
             }));
             allProducts.push(...productsWithCategory);
           }
