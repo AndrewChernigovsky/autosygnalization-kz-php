@@ -10,5 +10,15 @@ error_log("destroy-session.php called from JavaScript");
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
+
+// Очищаем все параметры фильтрации
+$filterKeys = array_filter(array_keys($_SESSION), function($key) {
+    return strpos($key, 'get_params_') === 0;
+});
+
+foreach ($filterKeys as $key) {
+    unset($_SESSION[$key]);
+}
+
 session_destroy();
 echo "Session destroyed";

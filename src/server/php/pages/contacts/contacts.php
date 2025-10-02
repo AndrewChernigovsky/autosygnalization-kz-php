@@ -57,13 +57,11 @@ echo $head->setHead();
                 <a href="<?php echo str_replace(' ', '', $item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
-                    <svg width="25" height="25" aria-hidden="true" style="overflow: hidden;">
-  <use href="<?php echo htmlspecialchars($item['icon_path']) ?>" style="width: 25px; height: 25px;"></use>
-</svg>
+                      <img src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
                     </div>
-                    <h3><?php echo $item['title'] ?></h3>
+                    <h3><?= $item['title'] ?></h3>
                   </div>
-                  <p class="m-0"><?php echo $item['content'] ?></p>
+                  <div class="m-0"><?php echo $item['content'] ?></div>
                 </a>
               </li>
             <?php endif; ?>
@@ -72,13 +70,12 @@ echo $head->setHead();
                 <a href="<?php echo htmlspecialchars($item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
-                    <svg width="25" height="25" aria-hidden="true" style="overflow: hidden;">
-  <use href="<?php echo htmlspecialchars($item['icon_path']) ?>" style="width: 25px; height: 25px;"></use>
-</svg>
+      
+                      <img width="25" height="25" src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>">
                     </div>
-                    <h3><?php echo $item['title'] ?></h3>
+                    <h3><?= $item['title'] ?></h3>
                   </div>
-                  <p class="m-0"><?php echo htmlspecialchars($item['content']) ?></p>
+                  <div class="m-0"><?php echo $item['content'] ?></div>
                 </a>
               </li>
             <?php endif; ?>
@@ -87,13 +84,11 @@ echo $head->setHead();
                 <a href="<?php echo htmlspecialchars($item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
-                    <svg width="25" height="25" aria-hidden="true" style="overflow: hidden;">
-  <use href="<?php echo htmlspecialchars($item['icon_path']) ?>" style="width: 25px; height: 25px;"></use>
-</svg>
+                      <img  width="25" height="25"  src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
                     </div>
-                    <h3><?php echo $item['title'] ?></h3>
+                    <h3><?= $item['title'] ?></h3>
                   </div>
-                  <p class="m-0"><?php echo htmlspecialchars($item['content']) ?></p>
+                  <div class="m-0"><?php echo $item['content'] ?></div>
                 </a>
               </li>
             <?php endif; ?>
@@ -102,13 +97,11 @@ echo $head->setHead();
                 <a href="<?php echo htmlspecialchars($item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
-                    <svg width="25" height="25" aria-hidden="true" style="overflow: hidden;">
-  <use href="<?php echo htmlspecialchars($item['icon_path']) ?>" style="width: 25px; height: 25px;"></use>
-</svg>
+                      <img width="25" height="25"  src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
                     </div>
-                    <h3><?php echo $item['title'] ?></h3>
+                    <h3><?= $item['title'] ?></h3>
                   </div>
-                  <p class="m-0"><?php echo $item['content'] ?></p>
+                  <div class="m-0"><?php echo $item['content'] ?></div>
                 </a>
               </li>
             <?php endif; ?>
@@ -117,11 +110,9 @@ echo $head->setHead();
                 <a href="<?php echo htmlspecialchars($item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
-                    <svg width="25" height="25" aria-hidden="true" style="overflow: hidden;">
-  <use href="<?php echo htmlspecialchars($item['icon_path']) ?>" style="width: 25px; height: 25px;"></use>
-</svg>
-                      <h3><?php echo $item['title'] ?></h3>
+                      <img width="25" height="25"  src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
                     </div>
+                    <h3><?= $item['title'] ?></h3>
                     <div class="contacts-section__address">
                       <?php echo $item['content'] ?>
                     </div>
@@ -131,14 +122,16 @@ echo $head->setHead();
             <?php endif; ?>
             <?php if ($item['type'] === 'Расписание'): ?>
               <li class="contacts-section__item contacts-section__item--schedule">
-                <div class="icon-container">
-                 <svg width="25" height="25" aria-hidden="true" style="overflow: hidden;">
-  <use href="<?php echo htmlspecialchars($item['icon_path']) ?>" style="width: 25px; height: 25px;"></use>
-</svg>
-                  <h3><?php echo $item['title'] ?></h3>
-                </div>
-                <div class="contacts-section__schedule">
-                  <?php echo $item['content'] ?>
+                <div class="contacts-section__item-content">
+                  <div class="schedule-header">
+                    <div class="icon-container">
+                      <img  width="25" height="25" src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
+                    </div>
+                    <h3><?= $item['title'] ?></h3>
+                  </div>
+                  <div class="contacts-section__schedule">
+                    <?php echo $item['content'] ?>
+                  </div>
                 </div>
               </li>
             <?php endif; ?>

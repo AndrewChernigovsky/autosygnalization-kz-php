@@ -29,7 +29,7 @@ class Header
       ]);
       
       // Устанавливаем время жизни сессии
-      ini_set('session.gc_maxlifetime', 1440); // 24 минуты
+      ini_set('session.gc_maxlifetime', 0); // Удаляется при закрытии браузера
       
       session_start();
       

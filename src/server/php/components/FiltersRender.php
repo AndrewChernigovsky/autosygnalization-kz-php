@@ -232,7 +232,7 @@ class FiltersRender
         <div class="filter-functions__item">
           <label class="filter-functions__item-element">
             <input type="checkbox" class="filter-functions__checkbox" id="<?= htmlspecialchars($category['name']) ?>"
-              name="<?= htmlspecialchars($category['name']) ?>">
+              name="<?= htmlspecialchars($category['name']) ?>" <?= isset($this->get_params[$category['name']]) ? 'checked' : '' ?>>
             <span class="filter-functions__item-title"><?= htmlspecialchars($category['text']) ?></span>
           </label>
           <span class="filter-functions__count"><?= $category['count'] ?></span>
@@ -254,16 +254,16 @@ class FiltersRender
             <div class="range-progress"></div>
           </div>
           <div class="range-wrapper">
-            <input type="range" class="range-input range-min" min="100" max="300000" step="100" name="min-range-cost" />
-            <input type="range" class="range-input range-max" min="100" max="300000" step="100" name="max-range-cost" />
+            <input type="range" class="range-input range-min" min="100" max="300000" step="100" name="min-range-cost" value="<?= $this->filters_min_value ?>" />
+            <input type="range" class="range-input range-max" min="100" max="300000" step="100" name="max-range-cost" value="<?= $this->filters_max_value ?>" />
           </div>
         </div>
         <div class="number-container">
           <div class="numbers-wrapper">
-            <input type="number" class="number-input input-min" min="100" max="300000" step="100" name="min-value-cost" />
+            <input type="number" class="number-input input-min" min="100" max="300000" step="100" name="min-value-cost" value="<?= $this->filters_min_value ?>" />
           </div>
           <div class="numbers-wrapper">
-            <input type="number" class="number-input input-max" min="100" max="300000" step="100" name="max-value-cost" />
+            <input type="number" class="number-input input-max" min="100" max="300000" step="100" name="max-value-cost" value="<?= $this->filters_max_value ?>" />
           </div>
         </div>
       </div>
@@ -284,7 +284,7 @@ class FiltersRender
         <div class="filter-basic__item">
           <label class="filter-basic__item-element">
             <input type="checkbox" class="filter-basic__checkbox" id="<?= htmlspecialchars($category['name']) ?>"
-              name="<?= htmlspecialchars($category['name']) ?>">
+              name="<?= htmlspecialchars($category['name']) ?>" <?= isset($this->get_params[$category['name']]) ? 'checked' : '' ?>>
             <span class="filter-basic__item-title"><?= htmlspecialchars($category['text']) ?></span>
           </label>
           <span class="filter-basic__count"><?= $category['count'] ?></span>
@@ -307,6 +307,14 @@ class FiltersRender
       <span class="visually-hidden">скрыть фильтры</span>
     </button>
     <form class="filter-form" id="filter-catalog" action="<?= $this->path_send; ?>" method="get">
+      <!-- Скрытые поля для сохранения обязательных параметров -->
+      <?php if (isset($this->get_params['type'])): ?>
+        <input type="hidden" name="type" value="<?= htmlspecialchars($this->get_params['type']) ?>">
+      <?php endif; ?>
+      <?php if (isset($this->get_params['SELECT'])): ?>
+        <input type="hidden" name="SELECT" value="<?= htmlspecialchars($this->get_params['SELECT']) ?>">
+      <?php endif; ?>
+      
       <?php
       if ($filterBasic === true) {
         echo $this->renderFiltersBasic();
