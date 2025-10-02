@@ -205,6 +205,8 @@
     background-position: right top;
     background-repeat: no-repeat;
     background-size: 50px 50px;
+    display: flex;
+    flex-direction: column;
 
     @media (min-width: var.$tablet) {
       background-size: 70px 70px;

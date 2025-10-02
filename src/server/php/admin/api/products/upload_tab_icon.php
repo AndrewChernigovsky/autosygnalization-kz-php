@@ -58,11 +58,11 @@ try {
     $tabs[$tabIndex] = ['title' => 'Новая вкладка', 'content' => []];
   }
   if (!isset($tabs[$tabIndex]['content'][$itemIndex])) {
-    $tabs[$tabIndex]['content'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'icon' => ''];
+    $tabs[$tabIndex]['content'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'path-icon' => ''];
   }
   
-  if (!empty($tabs[$tabIndex]['content'][$itemIndex]['icon'])) {
-      $oldIconUrl = $tabs[$tabIndex]['content'][$itemIndex]['icon'];
+  if (!empty($tabs[$tabIndex]['content'][$itemIndex]['path-icon'])) {
+      $oldIconUrl = $tabs[$tabIndex]['content'][$itemIndex]['path-icon'];
       $oldIconPath = $_SERVER['DOCUMENT_ROOT'] . parse_url($oldIconUrl, PHP_URL_PATH);
       if (file_exists($oldIconPath)) {
           unlink($oldIconPath);
@@ -74,7 +74,7 @@ try {
   }
 
   $newIconPath = '/server/uploads/tabs/' . $productId . '/' . $newFileName;
-  $tabs[$tabIndex]['content'][$itemIndex]['icon'] = $newIconPath;
+  $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = $newIconPath;
 
   $updateStmt = $pdo->prepare("
         INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 

@@ -8,21 +8,21 @@ function cardTabsSection($id)
 {
   $tabs_from_db = (new TabsAdditionalData())->getTabsByProductId($id);
 
-  if (empty($tabs_from_db)) {
-    // Если табов нет - показываем только диагностику
-    $debug_html = '<div style="background: #1a1a1a; padding: 15px; margin: 15px 0; border: 2px solid #ff6b6b; border-radius: 8px;">';
-    $debug_html .= '<h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 18px;">🔍 ДИАГНОСТИКА ТАБОВ</h3>';
-    $debug_html .= '<p style="color: #ffffff; margin: 5px 0;"><strong>ID товара:</strong> ' . htmlspecialchars($id) . '</p>';
-    $debug_html .= '<p style="color: #ffffff; margin: 5px 0;"><strong>Количество табов:</strong> ' . count($tabs_from_db) . '</p>';
-    $debug_html .= '<p style="color: #ff6b6b; margin: 10px 0;"><strong>❌ ТАБЫ НЕ НАЙДЕНЫ!</strong></p>';
-    $debug_html .= '<p style="color: #ffffff; margin: 10px 0;">Возможные причины:</p>';
-    $debug_html .= '<ul style="color: #ffffff; margin: 10px 0; padding-left: 20px;">';
-    $debug_html .= '<li>Нет данных в таблице TabsAdditionalProductsData</li>';
-    $debug_html .= '<li>Ошибка в классе TabsAdditionalData</li>';
-    $debug_html .= '<li>Неправильный ID товара</li>';
-    $debug_html .= '</ul></div>';
-    return $debug_html;
-  }
+  // if (empty($tabs_from_db)) {
+  //   // Если табов нет - показываем только диагностику
+  //   $debug_html = '<div style="background: #1a1a1a; padding: 15px; margin: 15px 0; border: 2px solid #ff6b6b; border-radius: 8px;">';
+  //   $debug_html .= '<h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 18px;">🔍 ДИАГНОСТИКА ТАБОВ</h3>';
+  //   $debug_html .= '<p style="color: #ffffff; margin: 5px 0;"><strong>ID товара:</strong> ' . htmlspecialchars($id) . '</p>';
+  //   $debug_html .= '<p style="color: #ffffff; margin: 5px 0;"><strong>Количество табов:</strong> ' . count($tabs_from_db) . '</p>';
+  //   $debug_html .= '<p style="color: #ff6b6b; margin: 10px 0;"><strong>❌ ТАБЫ НЕ НАЙДЕНЫ!</strong></p>';
+  //   $debug_html .= '<p style="color: #ffffff; margin: 10px 0;">Возможные причины:</p>';
+  //   $debug_html .= '<ul style="color: #ffffff; margin: 10px 0; padding-left: 20px;">';
+  //   $debug_html .= '<li>Нет данных в таблице TabsAdditionalProductsData</li>';
+  //   $debug_html .= '<li>Ошибка в классе TabsAdditionalData</li>';
+  //   $debug_html .= '<li>Неправильный ID товара</li>';
+  //   $debug_html .= '</ul></div>';
+  //   return $debug_html;
+  // }
 
   ob_start();
   ?>
@@ -58,9 +58,11 @@ function cardTabsSection($id)
           <ul class="tab__list <?= $index === 0 ? 'tab__list--show' : '' ?> list-style-none"
             data-content="<?= htmlspecialchars($tab_data['title']) ?>">
             <?php foreach ($tab_data['content'] as $item): ?>
-              <li class="tab__item" style="background-image: url(<?= htmlspecialchars($item['icon'] ?? '') ?>);">
-                <h3 class="tab__title"><?= htmlspecialchars($item['title'] ?? '') ?></h3>
-                <p class="tab__description"><?= htmlspecialchars($item['description'] ?? '') ?></p>
+              <li class="tab__item" style="background-image: url(<?= htmlspecialchars($item['path-icon'] ?? '') ?>);">
+                <h3 class="tab__title"><?= $item['title'] ?? '' ?></h3>
+                <div class="tab__description-wrapper">
+                <p class="tab__description"><?= $item['description'] ?? '' ?></p>
+                </div>
               </li>
             <?php endforeach; ?>
           </ul>
@@ -70,7 +72,7 @@ function cardTabsSection($id)
   </section>
   
   <!-- ДИАГНОСТИКА ПОСЛЕ ОТРИСОВКИ ТАБОВ -->
-  <div style="background: #1a1a1a; padding: 15px; margin: 15px 0; border: 2px solid #4CAF50; border-radius: 8px;">
+  <!-- <div style="background: #1a1a1a; padding: 15px; margin: 15px 0; border: 2px solid #4CAF50; border-radius: 8px;">
     <h3 style="color: #ffffff; margin: 0 0 15px 0; font-size: 18px;">🔍 ДИАГНОСТИКА ТАБОВ</h3>
     <p style="color: #ffffff; margin: 5px 0;"><strong>ID товара:</strong> <?= htmlspecialchars($id) ?></p>
     <p style="color: #ffffff; margin: 5px 0;"><strong>Количество табов:</strong> <?= count($tabs_from_db) ?></p>
@@ -105,7 +107,7 @@ function cardTabsSection($id)
         <?php endforeach; ?>
       </div>
     </details>
-  </div>
+  </div> -->
   
   <?php
   return ob_get_clean();

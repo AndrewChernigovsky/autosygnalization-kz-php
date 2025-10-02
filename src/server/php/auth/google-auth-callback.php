@@ -91,10 +91,11 @@ if (!empty($_SESSION['oauth_state'])) {
   }
 }
 // Проверяем, получен ли код от Google
+error_log('Google Code: ' . $_GET['code']);
 if (isset($_GET['code'])) {
   try {
     $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
-
+    error_log('Google Access Token: ' . json_encode($token));
     // Проверка на ошибки при получении токена
     if (isset($token['error'])) {
       error_log('Google Access Token Error: ' . $token['error_description']);

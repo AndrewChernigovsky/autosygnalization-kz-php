@@ -42,7 +42,7 @@ const addDescriptionItem = (tabIndex: number) => {
   props.product.tabs?.[tabIndex].content.push({
     title: 'Новый пункт',
     description: '',
-    icon: '',
+    "path-icon": '',
   });
 };
 
@@ -113,14 +113,14 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
                       <label>Иконка:</label>
                       <div class="icon-management">
                         <img
-                          v-if="item.icon"
-                          :src="item.icon"
+                          v-if="item['path-icon']"
+                          :src="item['path-icon']"
                           alt="Иконка"
                           class="icon-preview"
                         />
                         <input
                           type="text"
-                          v-model="item.icon"
+                          v-model="item['path-icon']"
                           readonly
                           class="icon-input"
                         />
@@ -133,8 +133,8 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
                         </MyBtn>
                         <button
                           @click="$emit('delete-icon', tabIndex, itemIndex)"
-                          class="btn-delete-icon"
-                          v-if="item.icon"
+                          class="btn-delete-item"
+                          v-if="item['path-icon']"
                         >
                           Удалить
                         </button>

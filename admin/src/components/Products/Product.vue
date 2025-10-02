@@ -521,12 +521,11 @@ watch(
   { deep: true }
 );
 
+const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(null);
 const iconUploader = ref<HTMLInputElement | null>(null);
-const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(
-  null
-);
 
 const onUploadTabIcon = (tabIndex: number, itemIndex: number) => {
+  if (!editingProduct.value) return;
   currentIconTarget.value = { tabIndex, itemIndex };
   iconUploader.value?.click();
 };

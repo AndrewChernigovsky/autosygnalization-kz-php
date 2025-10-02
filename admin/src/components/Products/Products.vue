@@ -161,7 +161,7 @@ async function saveChanges(product: ProductI) {
         iconData.file
       );
       if (newPath && product.tabs) {
-        product.tabs[iconData.tabIndex].content[iconData.itemIndex].icon =
+        product.tabs[iconData.tabIndex].content[iconData.itemIndex]["path-icon"] =
           newPath;
       }
     }
@@ -311,7 +311,7 @@ function handleStageTabIcon(
   tabIconsToUpload.value.set(productId, productIcons);
 
   if (productInState.tabs) {
-    productInState.tabs[tabIndex].content[itemIndex].icon = blobUrl;
+    productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = blobUrl;
   }
 }
 
@@ -323,7 +323,7 @@ function handleDeleteTabIcon(
   const productInState = products.value.find((p) => p.id === productId);
   if (!productInState) return;
 
-  const iconUrl = productInState.tabs?.[tabIndex].content[itemIndex].icon || '';
+  const iconUrl = productInState.tabs?.[tabIndex].content[itemIndex]["path-icon"] || '';
 
   if (iconUrl.startsWith('blob:')) {
     const icons = tabIconsToUpload.value.get(productId) || [];
@@ -334,12 +334,12 @@ function handleDeleteTabIcon(
       tabIconsToUpload.value.set(productId, icons);
     }
     if (productInState.tabs) {
-      productInState.tabs[tabIndex].content[itemIndex].icon = '';
+      productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = '';
     }
   } else {
     apiDeleteTabIcon(productId, tabIndex, itemIndex).then((success) => {
       if (success && productInState.tabs) {
-        productInState.tabs[tabIndex].content[itemIndex].icon = '';
+        productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = '';
       }
     });
   }
