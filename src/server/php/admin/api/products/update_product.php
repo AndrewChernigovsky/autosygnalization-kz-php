@@ -39,8 +39,8 @@ function getIconsFromTabs(array $tabs): array
   foreach ($tabs as $tab) {
     if (isset($tab['content']) && is_array($tab['content'])) {
       foreach ($tab['content'] as $item) {
-        if (!empty($item['icon'])) {
-          $icons[] = $item['icon'];
+        if (!empty($item['path-icon'])) {
+          $icons[] = $item['path-icon'];
         }
       }
     }

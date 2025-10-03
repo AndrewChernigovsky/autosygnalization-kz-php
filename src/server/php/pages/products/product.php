@@ -14,6 +14,7 @@ use function FUNCTIONS\getProductCardImage;
 use function FUNCTIONS\getProductCardDescription;
 use function SECTIONS\cardTabsSection;
 use function FUNCTIONS\renderPhoneButton;
+use function FUNCTIONS\getShop;
 
 initSession();
 
@@ -100,7 +101,7 @@ echo $head->setHead();
       <?php endif; ?>
     </section>
     <?= cardTabsSection($_GET['id']) ?>
-
+    <?= getShop("setup"); ?>
   </main>
   <?php
   echo (new Footer())->getFooter();

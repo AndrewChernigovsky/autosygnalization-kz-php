@@ -160,8 +160,8 @@ async function saveChanges(product: ProductI) {
         iconData.itemIndex,
         iconData.file
       );
-      if (newPath && product.tabs) {
-        product.tabs[iconData.tabIndex].content[iconData.itemIndex]["path-icon"] =
+      if (newPath && productRef.tabs) {
+        productRef.tabs[iconData.tabIndex].content[iconData.itemIndex]["path-icon"] =
           newPath;
       }
     }
@@ -169,8 +169,42 @@ async function saveChanges(product: ProductI) {
     iconFiles.forEach(({ blobUrl }) => URL.revokeObjectURL(blobUrl));
   }
 
+  // Дополнительная проверка: если в tabs остались blob: ссылки (например, при сбое immediate upload),
+  // попытаемся сопоставить их со staged файлами и загрузить.
+  if (productRef.tabs && productRef.tabs.length > 0) {
+    for (let t = 0; t < productRef.tabs.length; t++) {
+      const tab = productRef.tabs[t];
+      if (!tab || !Array.isArray(tab.content)) continue;
+      for (let i = 0; i < tab.content.length; i++) {
+        const url = tab.content[i]['path-icon'] || '';
+        if (typeof url === 'string' && url.startsWith('blob:')) {
+          // Найти staged файл по blobUrl
+          const staged = (tabIconsToUpload.value.get(product.id) || []).find((s) => s.blobUrl === url);
+          if (staged) {
+            try {
+              const uploaded = await uploadTabIcon(product.id, t, i, staged.file);
+              if (uploaded) {
+                productRef.tabs[t].content[i]['path-icon'] = uploaded;
+                // удалить staged запись
+                const icons = tabIconsToUpload.value.get(product.id) || [];
+                const idx = icons.findIndex((x) => x.blobUrl === url);
+                if (idx !== -1) {
+                  icons.splice(idx, 1);
+                  tabIconsToUpload.value.set(product.id, icons);
+                }
+                URL.revokeObjectURL(url);
+              }
+            } catch (e) {
+              console.error('Failed to upload staged icon for', product.id, t, i, e);
+            }
+          }
+        }
+      }
+    }
+  }
+
   // 3. Сохранение основного продукта
-  const updated: boolean = await updateProduct(product);
+  const updated: boolean = await updateProduct(productRef);
   if (updated) {
     Swal.fire('Сохранено!', 'Товар был успешно обновлен.', 'success');
     isAddingNewProduct.value = false;
@@ -306,13 +340,54 @@ function handleStageTabIcon(
   if (!productInState) return;
 
   const blobUrl = URL.createObjectURL(file);
+
+  // Всегда добавляем в staged очередь (чтобы saveChanges мог загрузить, если немедленная загрузка не удалась)
   const productIcons = tabIconsToUpload.value.get(productId) || [];
   productIcons.push({ tabIndex, itemIndex, file, blobUrl });
   tabIconsToUpload.value.set(productId, productIcons);
 
+  // Показываем превью сразу
   if (productInState.tabs) {
     productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = blobUrl;
   }
+
+  // Если продукт новый — загрузка произойдет при сохранении
+  if (productInState.is_new) {
+    return;
+  }
+
+  // Для существующего продукта — пытаемся загрузить сразу
+  (async () => {
+    try {
+      Swal.fire({
+        title: 'Загрузка иконки...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+        background: '#333',
+        color: '#fff',
+      });
+      // Передаём вместе с файлом заголовки и описание для корректного сохранения
+      const newPath = await uploadTabIcon(productId, tabIndex, itemIndex, file);
+      Swal.close();
+      if (newPath && productInState.tabs) {
+        productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = newPath;
+        // Удаляем staged-запись, если она есть
+        const icons = tabIconsToUpload.value.get(productId) || [];
+        const idx = icons.findIndex((i) => i.blobUrl === blobUrl);
+        if (idx !== -1) {
+          icons.splice(idx, 1);
+          tabIconsToUpload.value.set(productId, icons);
+        }
+        Swal.fire('Успех', 'Иконка загружена, не забудьте сохранить изменения.', 'success');
+      } else {
+        Swal.fire('Ошибка', 'Не удалось загрузить иконку. Она будет загружена при сохранении.', 'error');
+      }
+    } catch (e) {
+      Swal.close();
+      console.error('uploadTabIcon error', e);
+      Swal.fire('Ошибка', 'Не удалось загрузить иконку. Она будет загружена при сохранении.', 'error');
+    }
+  })();
 }
 
 function handleDeleteTabIcon(
@@ -336,10 +411,12 @@ function handleDeleteTabIcon(
     if (productInState.tabs) {
       productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = '';
     }
+    Swal.fire('Удалено', 'Иконка была удалена.', 'success');
   } else {
     apiDeleteTabIcon(productId, tabIndex, itemIndex).then((success) => {
       if (success && productInState.tabs) {
         productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = '';
+        Swal.fire('Удалено', 'Иконка была удалена.', 'success');
       }
     });
   }

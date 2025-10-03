@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import MyBtn from '../UI/MyBtn.vue';
 import MyTransition from '../UI/MyTransition.vue';
 import MyQuill from '../UI/MyQuill.vue';
@@ -9,7 +9,7 @@ defineOptions({
   name: 'Tabs',
 });
 
-defineEmits(['upload-icon', 'delete-icon']);
+defineEmits(['upload-icon', 'delete-icon', 'update-tab-title', 'update-item']);
 
 const props = defineProps<{
   product: ProductI;
@@ -17,6 +17,45 @@ const props = defineProps<{
 
 const openTabs = ref<Record<number, boolean>>({});
 const openAccardion = ref<Record<number, boolean>>({});
+const openItems = ref<Record<string, boolean>>({});
+
+const toggleItem = (tabIndex: number, itemIndex: number) => {
+  const key = `${tabIndex}_${itemIndex}`;
+  const current = openItems.value[key];
+  openItems.value[key] = !(current ?? false);
+};
+
+// Инициализируем состояние openItems: по умолчанию все закрыты, открыт только первый элемент каждой вкладки
+watch(() => props.product.tabs, (tabs) => {
+  if (!Array.isArray(tabs)) return;
+
+  // Если ещё не инициализировали openItems — инициализируем (первичный рендер)
+  if (Object.keys(openItems.value).length === 0) {
+    const newState: Record<string, boolean> = {};
+    tabs.forEach((tab, tIdx) => {
+      if (tab && Array.isArray(tab.content)) {
+        tab.content.forEach((_, iIdx) => {
+          const key = `${tIdx}_${iIdx}`;
+          newState[key] = iIdx === 0; // только первый элемент открыт
+        });
+      }
+    });
+    openItems.value = newState;
+    return;
+  }
+
+  // При последующих изменениях добавляем только новые ключи, не сбрасывая текущие состояния
+  tabs.forEach((tab, tIdx) => {
+    if (!tab || !Array.isArray(tab.content)) return;
+    tab.content.forEach((_, iIdx) => {
+      const key = `${tIdx}_${iIdx}`;
+      if (!(key in openItems.value)) {
+        openItems.value[key] = iIdx === 0;
+      }
+    });
+  });
+}, { immediate: true, deep: true });
+
 const toggleTab = (index: number) => {
   openTabs.value[index] = !openTabs.value[index];
 };
@@ -75,7 +114,7 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
           <div class="tab-header">
             <div class="form-group">
               <label>Заголовок вкладки:</label>
-              <input type="text" v-model="tab.title" />
+              <input type="text" :value="tab.title" @input="$emit('update-tab-title', tabIndex, $event.target.value)" />
             </div>
             <div class="tab-header-buttons">
               <MyBtn
@@ -104,54 +143,64 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
                   :key="itemIndex"
                   class="description-item"
                 >
-                  <div class="description-item-inputs">
-                    <div class="form-group">
-                      <label>Заголовок пункта:</label>
-                      <input type="text" v-model="item.title" />
-                    </div>
-                    <div class="form-group">
-                      <label>Иконка:</label>
-                      <div class="icon-management">
-                        <img
-                          v-if="item['path-icon']"
-                          :src="item['path-icon']"
-                          alt="Иконка"
-                          class="icon-preview"
-                        />
-                        <input
-                          type="text"
-                          v-model="item['path-icon']"
-                          readonly
-                          class="icon-input"
-                        />
-                        <MyBtn
-                          variant="secondary"
-                          @click="$emit('upload-icon', tabIndex, itemIndex)"
-                          class="btn-upload-image"
-                        >
-                          Загрузить новую
-                        </MyBtn>
-                        <button
-                          @click="$emit('delete-icon', tabIndex, itemIndex)"
-                          class="btn-delete-item"
-                          v-if="item['path-icon']"
-                        >
-                          Удалить
-                        </button>
-                      </div>
-                    </div>
-                    <div class="form-group">
-                      <label>Описание пункта:</label>
-                      <MyQuill v-model:content="item.description"></MyQuill>
+                  <!-- Заголовок элемента и кнопки управления всегда видимы -->
+                  <div class="description-item-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                    <div class="description-item-title" style="font-weight:bold;">{{ item.title || 'Без названия' }}</div>
+                    <div style="display:flex; gap:8px;">
+                      <MyBtn variant="secondary" @click="toggleItem(tabIndex, itemIndex)" class="btn-toggle-item">
+                        {{ openItems[`${tabIndex}_${itemIndex}`] ? 'Свернуть' : 'Развернуть' }}
+                      </MyBtn>
+                      <MyBtn variant="primary" @click="removeDescriptionItem(tabIndex, itemIndex)" class="btn-delete-item">
+                        Удалить
+                      </MyBtn>
                     </div>
                   </div>
-                  <MyBtn
-                    variant="primary"
-                    @click="removeDescriptionItem(tabIndex, itemIndex)"
-                    class="btn-delete-item"
-                  >
-                    Удалить пункт
-                  </MyBtn>
+                  <MyTransition>
+                    <div v-if="openItems[`${tabIndex}_${itemIndex}`] !== false" class="description-item-inputs">
+                      <div class="form-group">
+                        <label>Заголовок пункта:</label>
+                        <input type="text" :value="item.title" @input="$emit('update-item', tabIndex, itemIndex, 'title', $event.target.value)" />
+                      </div>
+                      <div class="form-group">
+                        <label>Иконка:</label>
+                        <div class="icon-management">
+                          <img
+                            v-if="item['path-icon']"
+                            :src="item['path-icon']"
+                            alt="Иконка"
+                            class="icon-preview"
+                             width="100"
+                             height="100"
+                          />
+                          <!-- <input
+                            type="text"
+                            v-model="item['path-icon']"
+                            readonly
+                            class="icon-input"
+                          /> -->
+                          <MyBtn
+                            variant="secondary"
+                            @click="$emit('upload-icon', tabIndex, itemIndex)"
+                            class="btn-upload-image"
+                          >
+                            Загрузить новую
+                          </MyBtn>
+                          <MyBtn
+                            variant="primary"
+                            @click="$emit('delete-icon', tabIndex, itemIndex)"
+                            class="btn-delete-item"
+                            v-if="item['path-icon']"
+                          >
+                            Удалить
+                          </MyBtn>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label>Описание пункта:</label>
+                        <MyQuill :content="item.description" @update:content="$emit('update-item', tabIndex, itemIndex, 'description', $event)" />
+                      </div>
+                    </div>
+                  </MyTransition>
                 </div>
               </div>
               <MyBtn
@@ -227,13 +276,25 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
 }
 .description-item {
   display: flex;
-  align-items: flex-start;
-  gap: 15px;
+  flex-direction: column;
+  gap: 10px;
   border: 1px dashed #555;
   padding: 10px;
   margin-top: 10px;
   border-radius: 4px;
 }
+
+.description-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.description-item-title {
+  font-weight: bold;
+}
+
 .description-item-inputs {
   flex-grow: 1;
   display: flex;
@@ -274,8 +335,8 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
   flex-wrap: wrap;
 }
 .icon-preview {
-  width: 40px;
-  height: 40px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
   border-radius: 4px;
   border: 1px solid #666;

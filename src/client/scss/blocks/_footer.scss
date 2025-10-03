@@ -1,4 +1,4 @@
-@use 'variables' as var;
+@use 'variables'as var;
 
 .footer {
   padding: 50px 0 20px 0;
@@ -16,21 +16,16 @@
     margin: 0 auto;
   }
 
-  &__inner {
-    display: grid;
-  }
-
   &__contacts {
     display: grid;
-    grid-template-columns: repeat(2, 50%);
+    grid-template-columns: repeat(2, 1fr);
     column-gap: 10px;
     row-gap: 10px;
     grid-template-areas:
-      'logo logo'
-      'social social'
-      'phones phones'
-      'email-site email-site'
-      'geo geo';
+      "logo logo"
+      "social social"
+      "phones phones"
+      "email-site email-site";
 
     a {
       gap: 5px;
@@ -47,7 +42,6 @@
 
     .social {
       text-transform: none;
-      display: grid;
       grid-area: social;
       display: flex;
       align-items: center;
@@ -78,6 +72,33 @@
       font-size: 14px;
       font-weight: 700;
       grid-area: phones;
+
+      .geo {
+        &__wrapper {
+          color: var.$red;
+          position: relative;
+          gap: 5px;
+
+          &.menu-geo-phone {
+            flex-direction: row;
+            display: flex;
+
+            svg {
+              position: relative;
+              transform: none;
+            }
+          }
+
+          svg {
+            width: 25px;
+            height: 25px;
+          }
+
+          span {
+            color: var.$white;
+          }
+        }
+      }
     }
 
     .email {
@@ -98,28 +119,8 @@
       }
     }
 
-    .social {
-      width: 100%;
-    }
-
-    .social p {
-      color: var.$white;
-      font-family: var.$primary-font;
-      margin: 0;
-      margin-right: auto;
-      font-size: 14px;
-      font-weight: 700;
-      background-repeat: no-repeat;
-      background-size: 20px 20px;
-      line-height: 30px;
-      padding-left: 30px;
-      background-position: left;
-      justify-content: flex-end;
-      background-image: url('/client/vectors/icons/instagramm-icon.svg');
-    }
-
     .site {
-      grid-column: 1/-1;
+      grid-column: 1 / -1;
       text-transform: none;
       grid-area: site;
 
@@ -137,35 +138,20 @@
       }
     }
 
-    .geo {
-      grid-column: 1/3;
-      grid-area: geo;
-
-      &__wrapper {
-        color: var.$red;
-        position: relative;
-        gap: 5px;
-
-        &.menu-geo-phone {
-          flex-direction: row;
-          display: flex;
-          // padding-left: 10px;
-
-          svg {
-            position: relative;
-            transform: none;
-          }
-        }
-
-        svg {
-          width: 25px;
-          height: 25px;
-        }
-
-        span {
-          color: var.$white;
-        }
-      }
+    .social p {
+      color: var.$white;
+      font-family: var.$primary-font;
+      margin: 0;
+      margin-right: auto;
+      font-size: 14px;
+      font-weight: 700;
+      background-repeat: no-repeat;
+      background-size: 20px 20px;
+      line-height: 30px;
+      padding-left: 30px;
+      background-position: left;
+      justify-content: flex-end;
+      background-image: url('/client/vectors/icons/instagramm-icon.svg');
     }
 
     a {
@@ -258,7 +244,7 @@
         display: block;
       }
 
-      & > span {
+      &>span {
         position: relative;
       }
     }
@@ -301,21 +287,21 @@
         linear-gradient(0deg, var.$red-280000, var.$red-FF0000);
     }
 
-    & + ul {
+    &+ul {
       display: none;
     }
 
-    &.active + ul {
+    &.active+ul {
       display: block;
     }
   }
 
   span {
-    &.toggle-list + ul {
+    &.toggle-list+ul {
       display: none;
     }
 
-    &.toggle-list.active + ul {
+    &.toggle-list.active+ul {
       display: grid;
     }
   }
@@ -410,8 +396,8 @@
       row-gap: 10px;
       grid-template-areas:
         'logo social phones'
-        'logo email-site geo'
-        'logo site geo';
+        'logo email-site phones'
+        'logo site phones';
 
       .social {
         justify-items: center;
@@ -444,7 +430,7 @@
       }
 
       .site {
-        grid-column: 1/-1;
+        grid-column: 1 / -1;
 
         p {
           font-size: 16px;
@@ -457,12 +443,7 @@
         text-align: center;
 
         span {
-          // padding-right: 40px;
           text-align: left;
-        }
-
-        &__wrapper {
-          padding-left: 10px;
         }
 
         svg {
@@ -485,7 +466,7 @@
         padding-left: 0;
         cursor: auto;
 
-        & > span {
+        &>span {
           cursor: auto;
         }
 
@@ -506,6 +487,7 @@
     }
 
     &__menu-title {
+
       &::before,
       &::after {
         display: none;
@@ -528,7 +510,7 @@
       max-width: 1440px;
     }
 
-    &__menu-list > li:not(:has(a:first-of-type)) .toggle-list {
+    &__menu-list>li:not(:has(a:first-of-type)) .toggle-list {
       cursor: auto;
 
       &:hover {
@@ -649,7 +631,7 @@
     }
 
     &__menu-list {
-      li > span:first-of-type:hover {
+      li>span:first-of-type:hover {
         opacity: 1;
       }
     }
@@ -672,10 +654,9 @@
     }
 
     .geo {
-      font-size: 20px;
+      font-size: 18px;
 
       span {
-        // padding-right: 70px;
         text-align: left;
       }
 

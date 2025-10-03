@@ -19,7 +19,7 @@ $dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 // Basic validation
-if (!isset($_POST['productId'], $_POST['tabIndex'], $_POST['itemIndex'], $_FILES['icon'])) {
+if (!isset($_POST['productId'], $_POST['tabIndex'], $_POST['itemIndex'], $_FILES['path-icon'])) {
   http_response_code(400);
   echo json_encode(['message' => 'Missing required parameters.']);
   exit;
@@ -28,7 +28,7 @@ if (!isset($_POST['productId'], $_POST['tabIndex'], $_POST['itemIndex'], $_FILES
 $productId = $_POST['productId'];
 $tabIndex = (int) $_POST['tabIndex'];
 $itemIndex = (int) $_POST['itemIndex'];
-$file = $_FILES['icon'];
+$file = $_FILES['path-icon'];
 
 if ($file['error'] !== UPLOAD_ERR_OK) {
   http_response_code(500);

@@ -93,8 +93,8 @@ try {
       foreach ($tabs as $tabIndex => $tab) {
         if (isset($tab['content'])) {
           foreach ($tab['content'] as $itemIndex => $item) {
-            if (!empty($item['icon'])) {
-              $tabs[$tabIndex]['content'][$itemIndex]['icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['icon']);
+            if (!empty($item['path-icon'])) {
+              $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['path-icon']);
             }
           }
         }

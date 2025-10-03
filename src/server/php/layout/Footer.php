@@ -56,6 +56,7 @@ class Footer
           </div>
           <div class="phones">
             {$phones_footer}
+            {$geo->getGeo()}
           </div>
           <div class="email-site">
             <div class="email"><a href="{$emailLink}" class="link link-message">
@@ -63,7 +64,6 @@ class Footer
                 </a></div>
             <div class="site">{$web_site}</div>
           </div>
-          {$geo->getGeo()}
         </div>
         <div class="footer__menu">
           {$navigationFooterLinks->generateFooter()}

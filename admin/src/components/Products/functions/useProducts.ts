@@ -104,6 +104,7 @@ export function useProducts() {
       console.log(productData, 'PRODUCT DATA');
 
       if (product.is_new) {
+        console.log('Creating product payload:', productData);
         const createdProduct = await apiCall(
           'create_product.php',
           'POST',

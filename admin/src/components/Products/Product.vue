@@ -274,10 +274,20 @@
             </div>
           </div>
           <Tabs v-if="editingProduct" :product="editingProduct" @upload-icon="onUploadTabIcon"
-            @delete-icon="onDeleteTabIcon" />
+            @delete-icon="onDeleteTabIcon"
+            @update-tab-title="(tabIndex, newTitle) => {
+              if (editingProduct.value && editingProduct.value.tabs && editingProduct.value.tabs[tabIndex]) {
+                editingProduct.value.tabs[tabIndex].title = newTitle;
+              }
+            }"
+            @update-item="(tabIndex, itemIndex, field, value) => {
+              if (editingProduct.value && editingProduct.value.tabs && editingProduct.value.tabs[tabIndex] && editingProduct.value.tabs[tabIndex].content[itemIndex]) {
+                editingProduct.value.tabs[tabIndex].content[itemIndex][field] = value;
+              }
+            }" />
 
           <div class="product-actions">
-            <MyBtn variant="secondary" @click="saveChanges" class="btn-save">
+            <MyBtn variant="therdary" @click="saveChanges" class="btn-save">
               Сохранить изменения
             </MyBtn>
             <MyBtn variant="primary" @click="emit('delete-product', product.id)" class="btn-delete">
@@ -543,6 +553,18 @@ const onIconFileSelected = (event: Event) => {
     return;
   }
   const { tabIndex, itemIndex } = currentIconTarget.value;
+  // Создаём локальное превью в editingProduct, чтобы сразу отобразить в UI
+  try {
+    const blobUrl = URL.createObjectURL(file);
+    if (!editingProduct.value.tabs) editingProduct.value.tabs = [];
+    if (!editingProduct.value.tabs[tabIndex]) editingProduct.value.tabs[tabIndex] = { title: '', content: [] } as any;
+    if (!editingProduct.value.tabs[tabIndex].content[itemIndex]) editingProduct.value.tabs[tabIndex].content[itemIndex] = { title: '', description: '', ['path-icon']: '' } as any;
+    editingProduct.value.tabs[tabIndex].content[itemIndex]['path-icon'] = blobUrl;
+  } catch (e) {
+    // ignore preview errors
+  }
+
+  // Сообщаем родителю о файле для дальнейшей обработки и сохранения
   emit('stage-tab-icon', editingProduct.value.id, tabIndex, itemIndex, file);
   target.value = '';
   currentIconTarget.value = null;
@@ -556,6 +578,7 @@ function saveChanges() {
   }
   if (editingProduct.value) {
     editingProduct.value.price_list = [priceListRef.value];
+    console.log('Creating product payload (editingProduct):', editingProduct.value);
     emit('save-product', editingProduct.value);
   }
 }
