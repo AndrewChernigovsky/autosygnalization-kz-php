@@ -30,15 +30,28 @@ function cardTabsSection($id)
     <div class="tab__wrapper">
       <!-- Блок с кнопками вкладок -->
       <div class="tab__buttons">
+        <?php $tabs_filtered = []; $firstActiveIndex = null; ?>
         <?php foreach ($tabs_from_db as $index => $tab_row): ?>
           <?php
           if (empty($tab_row['content']))
             continue;
           $tab_data = json_decode($tab_row['content'], true);
-          if (!isset($tab_data['title']))
-            continue;
+          if (!isset($tab_data['title']) || !isset($tab_data['content']) || !is_array($tab_data['content']))
+          continue;
+
+        // Фильтруем элементы: только те, у которых title не пустой
+        $filtered_content = array_filter($tab_data['content'], function($item) {
+              return !empty($item['title']);  // Проверяем только title, path-icon необязательна
+            });
+          // Сохраняем отфильтрованные элементы по индексу вкладки
+          $tabs_filtered[$index] = array_values($filtered_content);
+          error_log('cardTabsSection: tab '.$index.' filtered_count=' . count($tabs_filtered[$index]));
+          if (empty($tabs_filtered[$index])) continue;  // Пропускаем вкладку, если нет элементов с title
+          if ($firstActiveIndex === null) {
+            $firstActiveIndex = $index;
+          }
           ?>
-          <button type="button" class="tab__button <?= $index === 0 ? 'tab__button--active' : '' ?> y-button-secondary"
+          <button type="button" class="tab__button <?= $index === $firstActiveIndex ? 'tab__button--active' : '' ?> y-button-secondary"
             data-tab="<?= htmlspecialchars($tab_data['title']) ?>">
             <?= htmlspecialchars($tab_data['title']) ?>
           </button>
@@ -54,16 +67,20 @@ function cardTabsSection($id)
           $tab_data = json_decode($tab_row['content'], true);
           if (!isset($tab_data['title']) || !isset($tab_data['content']) || !is_array($tab_data['content']))
             continue;
+          // Используем ранее сохраненный отфильтрованный контент для этой вкладки
+          if (!isset($tabs_filtered[$index]) || empty($tabs_filtered[$index])) continue;
           ?>
-          <ul class="tab__list <?= $index === 0 ? 'tab__list--show' : '' ?> list-style-none"
+          <ul class="tab__list <?= $index === $firstActiveIndex ? 'tab__list--show' : '' ?> list-style-none"
             data-content="<?= htmlspecialchars($tab_data['title']) ?>">
-            <?php foreach ($tab_data['content'] as $item): ?>
-              <li class="tab__item" style="background-image: url(<?= htmlspecialchars($item['path-icon'] ?? '') ?>);">
-                <h3 class="tab__title"><?= $item['title'] ?? '' ?></h3>
-                <div class="tab__description-wrapper">
-                <p class="tab__description"><?= $item['description'] ?? '' ?></p>
-                </div>
-              </li>
+            <?php foreach ($tabs_filtered[$index] as $item): ?>
+              <?php if (!empty($item['title'])): ?>
+                <li class="tab__item" style="background-image: url(<?= htmlspecialchars($item['path-icon'] ?? '') ?>);">
+                  <h3 class="tab__title"><?= $item['title'] ?? '' ?></h3>
+                  <div class="tab__description-wrapper">
+                    <p class="tab__description"><?= $item['description'] ?? 'Нет описания' ?></p>  <!-- Добавляем запасной текст, если описание пустое -->
+                  </div>
+                </li>
+              <?php endif; ?>
             <?php endforeach; ?>
           </ul>
         <?php endforeach; ?>
