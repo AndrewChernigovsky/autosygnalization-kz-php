@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 import Product from './Product/Product.vue';
 import MyBtn from '../UI/MyBtn.vue';
 import MyTransition from '../UI/MyTransition.vue';
-import { handleToggle } from './functions/useProducts';
+// handleToggle from useProducts removed — parent controls open state via openProductId
 
 const {
   products,
@@ -49,6 +49,25 @@ const tabIconsToUpload = ref<
 >(new Map());
 
 const openAccardions = ref<Record<string, boolean>>({});
+const openProductId = ref<string | null>(null);
+const dirtyMap = ref<Record<string, boolean>>({});
+
+function handleDirtyState(productId: string, state: boolean) {
+  dirtyMap.value[productId] = !!state;
+  if (state) {
+    // non-blocking toast to inform user that editing started
+    Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: 'info',
+      title: 'Есть несохранённые изменения',
+      showConfirmButton: false,
+      timer: 1500,
+      background: '#333',
+      color: '#fff',
+    });
+  }
+}
 
 const toggleAccardion = (productId: string) => {
   openAccardions.value[productId] = !openAccardions.value[productId];
@@ -75,7 +94,51 @@ const handleCancelEditing = (product: ProductI) => {
   }
 };
 
+// Проверка и подтверждение переключения между товарами при наличии несохранённых изменений
+async function handleToggleWithCheck(event: Event, product: ProductI) {
+  // find the product component that was open
+  const openId = openProductId.value;
+  if (!openId) {
+    // no open product -> open requested
+    openProductId.value = product.id;
+    return;
+  }
+
+  if (openId === product.id) {
+    // same product clicked -> close it
+    openProductId.value = null;
+    return;
+  }
+  // If open product is not dirty — just switch
+  if (!dirtyMap.value[openId]) {
+    openProductId.value = product.id;
+    return;
+  }
+
+  // ask the corresponding Product component whether it is dirty
+  const result = await Swal.fire({
+    title: 'Есть несохранённые изменения?',
+    text: 'У текущего открытого товара есть несохранённые изменения. Сохранить перед переключением?',
+    icon: 'warning',
+    showDenyButton: true,
+    showCancelButton: true,
+    confirmButtonText: 'Сохранить',
+    denyButtonText: 'Не сохранять',
+    cancelButtonText: 'Отмена',
+    background: '#333',
+    color: '#fff',
+  });
+
+  if (result.isConfirmed || result.isDenied) {
+    // Open requested product (no automatic save)
+    openProductId.value = product.id;
+  } else {
+    // Cancel - do nothing
+  }
+}
+
 async function saveChanges(product: ProductI) {
+  console.log('saveChanges called with', product);
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
@@ -184,13 +247,19 @@ async function saveChanges(product: ProductI) {
   }
 
   // 3. Сохранение основного продукта
+  console.log('Calling updateProduct with', productRef);
   const updated: boolean = await updateProduct(productRef);
+  console.log('updateProduct returned', updated);
+
   if (updated) {
     Swal.fire('Сохранено!', 'Товар был успешно обновлен.', 'success');
     isAddingNewProduct.value = false;
+    // clear dirty flag for this product
+    dirtyMap.value[product.id] = false;
   } else {
     Swal.fire('Ошибка!', 'Не удалось сохранить товар.', 'error');
   }
+  return updated;
 }
 
 async function deleteProductHandler(productId: string) {
@@ -386,6 +455,7 @@ const categoryTranslations: Record<string, string> = {
   'park-systems': 'Парковочные системы',
   'remote-controls': 'Пульты управления',
 };
+
 const allCategories = computed(() => {
   const keysFromProducts = Object.keys(groupedProducts.value);
   const keysFromTranslations = Object.keys(categoryTranslations);
@@ -474,9 +544,10 @@ onMounted(() => {
                   :is-image-uploading="isImageUploading" :get-category-name="getCategoryName"
                   :is-adding-new-product="isAddingNewProduct" @save-product="saveChanges"
                   @delete-product="deleteProductHandler" @delete-image="handleDeleteImage"
-                  @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggle"
+                  @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggleWithCheck"
                   @cancel-editing="handleCancelEditing" @stage-tab-icon="handleStageTabIcon"
-                  @delete-tab-icon="handleDeleteTabIcon" />
+                  @delete-tab-icon="handleDeleteTabIcon" @dirty-state="handleDirtyState"
+                  :current-open-id="openProductId" />
                 <MyBtn variant="secondary" @click="handleAddProduct(category)" class="btn-add"
                   :disabled="isAddingNewProduct">
                   Добавить товар

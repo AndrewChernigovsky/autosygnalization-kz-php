@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, nextTick, computed } from 'vue';
+import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
 import type { ProductI } from '../interfaces/Products';
 import Gallery from './../Gallery.vue';
 import Tabs from './../Tabs/Tabs.vue';
@@ -18,9 +18,28 @@ const props = defineProps<{
   isImageUploading: (productId: string, index: number | null) => boolean;
   getCategoryName: (key: string) => string;
   isAddingNewProduct: boolean;
+  currentOpenId?: string | null;
 }>();
 
 const editingProduct = ref<ProductI | null>(null);
+const isDirty = ref(false);
+const originalSnapshot = ref<ProductI | null>(null);
+
+function markDirty() {
+  isDirty.value = true;
+}
+
+function resetDirty() {
+  isDirty.value = false;
+}
+
+// Emit dirty-state to parent when it changes
+watch(
+  () => isDirty.value,
+  (val) => {
+    emit('dirty-state', props.product.id, val);
+  }
+);
 
 const openCheckbox = ref<Record<string, boolean>>({});
 
@@ -53,32 +72,73 @@ watch(() => props.product.price_list, (newVal) => {
   editPriceList(priceListRef.value);
 }, { deep: true, immediate: true });
 
-// Синхронизируем локальный priceListRef в editingProduct в реальном времени
 watch(
   () => priceListRef.value,
   (newVal) => {
     if (editingProduct.value) {
       editingProduct.value.price_list = [JSON.parse(JSON.stringify(newVal))];
+      markDirty();
     }
   },
   { deep: true }
 );
 
-const handleButtonClick = () => {
-  isOpen.value = !isOpen.value;
+const handleButtonClick = (e?: Event) => {
+  // Emit an event to parent that wants to toggle this product editor
+  emit('handle-toggle', e || new Event('click'), props.product);
+  // Do not toggle local isOpen here; parent controls opening via currentOpenId prop
 };
 
-const toggleCheckbox = (key: string) => {
-  openCheckbox.value[key] = !openCheckbox.value[key];
-};
+// Parent can control which product is open via props.currentOpenId
+watch(
+  () => props.currentOpenId,
+  (val) => {
+    if (val === props.product.id) {
+      isOpen.value = true;
+    } else {
+      isOpen.value = false;
+    }
+  },
+  { immediate: true }
+);
 
 watch(isOpen, (newValue) => {
   if (newValue) {
     editingProduct.value = JSON.parse(JSON.stringify(props.product));
+    // keep original snapshot to detect changes
+    originalSnapshot.value = JSON.parse(JSON.stringify(props.product));
   } else {
     editingProduct.value = null;
+    originalSnapshot.value = null;
     emit('cancel-editing', props.product);
+    // ensure parent knows dirty cleared when editor closed
+    emit('dirty-state', props.product.id, false);
+    isDirty.value = false;
   }
+});
+
+// Watch editingProduct and compare with original snapshot to set dirty flag
+watch(
+  () => editingProduct.value,
+  (newVal) => {
+    try {
+      if (!newVal || !originalSnapshot.value) {
+        isDirty.value = false;
+        return;
+      }
+      const a = JSON.stringify(newVal);
+      const b = JSON.stringify(originalSnapshot.value);
+      isDirty.value = a !== b;
+    } catch (e) {
+      // fallback: if any change path fails, mark dirty
+      isDirty.value = true;
+    }
+  },
+  { deep: true }
+);
+
+onBeforeUnmount(() => {
+  emit('dirty-state', props.product.id, false);
 });
 
 watch(
@@ -135,6 +195,8 @@ const emit = defineEmits<{
     tabIndex: number,
     itemIndex: number
   ): void;
+  (e: 'dirty-state', productId: string, isDirty: boolean): void;
+  (e: 'save-result', productId: string, success: boolean): void;
 }>();
 
 const hasFunction = (functionName: string): boolean => {
@@ -298,8 +360,10 @@ function saveChanges() {
   }
   if (editingProduct.value) {
     editingProduct.value.price_list = [priceListRef.value];
-    console.log('Creating product payload (editingProduct):', editingProduct.value);
+    console.log('Emit save-product', editingProduct.value);
     emit('save-product', editingProduct.value);
+    resetDirty();
+    emit('dirty-state', props.product.id, false);
   }
 }
 </script>
