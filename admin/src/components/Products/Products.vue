@@ -51,6 +51,15 @@ const tabIconsToUpload = ref<
 const openAccardions = ref<Record<string, boolean>>({});
 const openProductId = ref<string | null>(null);
 const dirtyMap = ref<Record<string, boolean>>({});
+const productRefs = ref<Record<string, any>>({});
+
+function registerProductRef(el: any, id: string) {
+  if (el) {
+    productRefs.value[id] = el;
+  } else {
+    delete productRefs.value[id];
+  }
+}
 
 function handleDirtyState(productId: string, state: boolean) {
   dirtyMap.value[productId] = !!state;
@@ -129,8 +138,33 @@ async function handleToggleWithCheck(event: Event, product: ProductI) {
     color: '#fff',
   });
 
-  if (result.isConfirmed || result.isDenied) {
-    // Open requested product (no automatic save)
+  if (result.isConfirmed) {
+    // Save current open product: call saveChanges and await result
+    const current = products.value.find((p) => p.id === openId);
+    if (current) {
+      // Try to get editing payload from child component instance
+      const child = productRefs.value[openId];
+      let payload = current;
+      try {
+        if (child && typeof child.getEditingProduct === 'function') {
+          const editing = child.getEditingProduct();
+          if (editing) payload = editing;
+        }
+      } catch (e) {
+        console.error('Failed to get editing payload from child:', e);
+      }
+      const updated = await saveChanges(payload);
+      if (updated) {
+        dirtyMap.value[current.id] = false;
+        openProductId.value = product.id;
+      } else {
+        Swal.fire('Ошибка', 'Не удалось сохранить товар. Оставляюсь на текущем товаре.', 'error');
+      }
+    } else {
+      openProductId.value = product.id;
+    }
+  } else if (result.isDenied) {
+    // Discard changes: we simply close the current and open new
     openProductId.value = product.id;
   } else {
     // Cancel - do nothing
@@ -138,7 +172,6 @@ async function handleToggleWithCheck(event: Event, product: ProductI) {
 }
 
 async function saveChanges(product: ProductI) {
-  console.log('saveChanges called with', product);
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
@@ -151,10 +184,48 @@ async function saveChanges(product: ProductI) {
   });
 
   const productRef = products.value.find((p) => p.id === product.id) || product;
+  console.log(productRef, 'PRODUCT REF');
 
   // Important: merge updated tabs and price_list from the edited payload into the local productRef
   // editingProduct is a deep clone; ensure productRef contains the latest tabs and price_list before uploads
   if (product && productRef && product !== productRef) {
+    // Merge primitive and structured fields from edited payload into productRef
+    const simpleFields = [
+      'model',
+      'title',
+      'description',
+      'price',
+      'is_popular',
+      'is_special',
+    ];
+    for (const f of simpleFields) {
+      if (Object.prototype.hasOwnProperty.call(product, f)) {
+        // @ts-ignore
+        productRef[f] = (product as any)[f];
+      }
+    }
+
+    const arrayFields = [
+      'functions',
+      'options',
+      'options-filters',
+      'autosygnals',
+      'gallery',
+    ];
+    for (const af of arrayFields) {
+      if (Object.prototype.hasOwnProperty.call(product, af)) {
+        try {
+          // deep clone to avoid retaining references to child component reactive objects
+          // @ts-ignore
+          productRef[af] = JSON.parse(JSON.stringify((product as any)[af] || []));
+        } catch (e) {
+          // fallback shallow copy
+          // @ts-ignore
+          productRef[af] = (product as any)[af] || [];
+        }
+      }
+    }
+
     if (product.tabs) {
       try {
         productRef.tabs = JSON.parse(JSON.stringify(product.tabs));
@@ -194,9 +265,10 @@ async function saveChanges(product: ProductI) {
   }
 
   // 2. Загрузка иконок вкладок
-  const iconFiles = tabIconsToUpload.value.get(product.id) || [];
-  if (iconFiles.length > 0) {
-    for (const iconData of iconFiles) {
+  // collect staged entries and upload them; keep staged list until blob->staged matching completes
+  const stagedIcons = tabIconsToUpload.value.get(product.id) || [];
+  if (stagedIcons.length > 0) {
+    for (const iconData of stagedIcons) {
       const newPath = await uploadTabIcon(
         product.id,
         iconData.tabIndex,
@@ -206,10 +278,12 @@ async function saveChanges(product: ProductI) {
       if (newPath && productRef.tabs) {
         productRef.tabs[iconData.tabIndex].content[iconData.itemIndex]["path-icon"] =
           newPath;
+        // store uploaded path on staged entry for later blob matching
+        // @ts-ignore
+        iconData.__uploadedPath = newPath;
       }
     }
-    tabIconsToUpload.value.delete(product.id);
-    iconFiles.forEach(({ blobUrl }) => URL.revokeObjectURL(blobUrl));
+    // don't delete staged map yet — we'll cleanup after blob->staged matching below
   }
 
   // Дополнительная проверка: если в tabs остались blob: ссылки (например, при сбое immediate upload),
@@ -221,22 +295,24 @@ async function saveChanges(product: ProductI) {
       for (let i = 0; i < tab.content.length; i++) {
         const url = tab.content[i]['path-icon'] || '';
         if (typeof url === 'string' && url.startsWith('blob:')) {
-          // Найти staged файл по blobUrl
-          const staged = (tabIconsToUpload.value.get(product.id) || []).find((s) => s.blobUrl === url);
+          // Найти staged файл по blobUrl среди stagedIcons
+          const staged = stagedIcons.find((s) => s.blobUrl === url) || (tabIconsToUpload.value.get(product.id) || []).find((s) => s.blobUrl === url);
           if (staged) {
             try {
-              const uploaded = await uploadTabIcon(product.id, t, i, staged.file);
-              if (uploaded) {
-                productRef.tabs[t].content[i]['path-icon'] = uploaded;
-                // удалить staged запись
-                const icons = tabIconsToUpload.value.get(product.id) || [];
-                const idx = icons.findIndex((x) => x.blobUrl === url);
-                if (idx !== -1) {
-                  icons.splice(idx, 1);
-                  tabIconsToUpload.value.set(product.id, icons);
+              // if already uploaded earlier, use stored path
+              // @ts-ignore
+              if (staged.__uploadedPath) {
+                // @ts-ignore
+                productRef.tabs[t].content[i]['path-icon'] = staged.__uploadedPath;
+              } else {
+                const uploaded = await uploadTabIcon(product.id, t, i, staged.file);
+                if (uploaded) {
+                  productRef.tabs[t].content[i]['path-icon'] = uploaded;
+                  // @ts-ignore
+                  staged.__uploadedPath = uploaded;
                 }
-                URL.revokeObjectURL(url);
               }
+              try { URL.revokeObjectURL(url); } catch (e) {}
             } catch (e) {
               console.error('Failed to upload staged icon for', product.id, t, i, e);
             }
@@ -246,16 +322,48 @@ async function saveChanges(product: ProductI) {
     }
   }
 
-  // 3. Сохранение основного продукта
-  console.log('Calling updateProduct with', productRef);
-  const updated: boolean = await updateProduct(productRef);
-  console.log('updateProduct returned', updated);
+  // cleanup staged entries and revoke any remaining blob urls
+  if (stagedIcons.length > 0) {
+    for (const s of stagedIcons) {
+      try {
+        if (s.blobUrl) URL.revokeObjectURL(s.blobUrl);
+      } catch (e) {}
+    }
+    tabIconsToUpload.value.delete(product.id);
+  }
 
+  // 3. Перед отправкой удалим любые оставшиеся локальные blob: ссылки из tabs,
+  // чтобы они не попали в базу. Если для blob найдётся staged файл, выше он уже был загружен.
+  if (productRef.tabs && productRef.tabs.length > 0) {
+    for (let t = 0; t < productRef.tabs.length; t++) {
+      const tab = productRef.tabs[t];
+      if (!tab || !Array.isArray(tab.content)) continue;
+      for (let i = 0; i < tab.content.length; i++) {
+        const url = tab.content[i]['path-icon'] || '';
+        if (typeof url === 'string' && url.startsWith('blob:')) {
+          // replace with empty string to avoid storing blob: URL in DB
+          tab.content[i]['path-icon'] = '';
+        }
+      }
+    }
+  }
+
+  const updated: boolean = await updateProduct(productRef);
+  
   if (updated) {
     Swal.fire('Сохранено!', 'Товар был успешно обновлен.', 'success');
     isAddingNewProduct.value = false;
     // clear dirty flag for this product
     dirtyMap.value[product.id] = false;
+    // Ensure UI list is synchronized with the saved productRef
+    const idx = products.value.findIndex((p) => p.id === productRef.id);
+    if (idx !== -1) {
+      try {
+        products.value[idx] = JSON.parse(JSON.stringify(productRef));
+      } catch (e) {
+        products.value[idx] = { ...productRef } as ProductI;
+      }
+    }
   } else {
     Swal.fire('Ошибка!', 'Не удалось сохранить товар.', 'error');
   }
@@ -547,7 +655,7 @@ onMounted(() => {
                   @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggleWithCheck"
                   @cancel-editing="handleCancelEditing" @stage-tab-icon="handleStageTabIcon"
                   @delete-tab-icon="handleDeleteTabIcon" @dirty-state="handleDirtyState"
-                  :current-open-id="openProductId" />
+                  :current-open-id="openProductId" :ref="el => registerProductRef(el, product.id)" />
                 <MyBtn variant="secondary" @click="handleAddProduct(category)" class="btn-add"
                   :disabled="isAddingNewProduct">
                   Добавить товар

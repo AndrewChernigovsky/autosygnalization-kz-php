@@ -15,6 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
+$log_file = __DIR__ . '/debug_upload_tab_icon.log';
+file_put_contents($log_file, "--- NEW upload_tab_icon REQUEST ---\n", FILE_APPEND);
+file_put_contents($log_file, "POST: " . print_r($_POST, true) . "\nFILES: " . print_r(array_map(function($f){ return [ 'name'=>$f['name'], 'error'=>$f['error'], 'size'=>$f['size'] ]; }, $_FILES), true) . "\n", FILE_APPEND);
+
 $dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 

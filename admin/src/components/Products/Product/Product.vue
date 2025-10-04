@@ -217,6 +217,28 @@ const toggleFunction = (functionName: string) => {
   }
 };
 
+const toggleCheckbox = (name: string) => {
+  // Ensure a boolean exists for the given key and toggle it
+  if (!openCheckbox.value[name]) {
+    // initialize as true when toggling from undefined/false
+    openCheckbox.value[name] = true;
+  } else {
+    openCheckbox.value[name] = !openCheckbox.value[name];
+  }
+};
+
+// Expose method to parent so it can retrieve current editing payload when needed
+defineExpose({
+  getEditingProduct: () => {
+    if (!editingProduct.value) return null;
+    try {
+      return JSON.parse(JSON.stringify(editingProduct.value));
+    } catch (e) {
+      return editingProduct.value;
+    }
+  },
+});
+
 const hasOption = (optionName: string): boolean => {
   return displayProduct.value.options?.includes(optionName) || false;
 };
@@ -373,7 +395,7 @@ function saveChanges() {
     <div class="product-item">
       <div class="product-summary" @click.prevent>
         <strong class="product-title">{{ displayProduct.title }}</strong>
-        <MyBtn variant="primary" @click="handleButtonClick">
+        <MyBtn variant="secondary" @click="handleButtonClick">
           {{ isOpen ? 'Закрыть' : 'Редактировать' }}</MyBtn>
       </div>
       <MyTransition>

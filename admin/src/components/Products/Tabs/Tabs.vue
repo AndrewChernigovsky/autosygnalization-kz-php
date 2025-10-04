@@ -217,7 +217,7 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
         </div>
       </div>
 
-      <MyBtn variant="secondary" @click="addTab()" class="btn-add btn-add-tab">
+      <MyBtn variant="therdary" @click="addTab()" class="btn-add btn-add-tab">
         Добавить вкладку
       </MyBtn>
     </div></MyTransition
@@ -227,7 +227,7 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
 <style scoped>
 @import './Tabs.module.scss';
 
-.:deep(.ql-toolbar) {
+:deep(.ql-toolbar) {
   background-color: inherit;
 }
 

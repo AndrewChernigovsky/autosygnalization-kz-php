@@ -62,12 +62,66 @@ export function useProducts() {
             Object.prototype.hasOwnProperty.call(data.category, categoryKey)
           ) {
             const categoryProducts = data.category[categoryKey];
-            const productsWithCategory = categoryProducts.map((p: any) => ({
-              ...p,
-              category: categoryKey,
-              is_popular: p.is_popular ?? false,
-              is_special: p.is_special ?? false,
-            }));
+            const productsWithCategory = categoryProducts.map((p: any) => {
+              // normalize JSON fields that may come as strings from the API
+              const parsed: any = { ...p };
+              try {
+                if (parsed.gallery && typeof parsed.gallery === 'string') {
+                  parsed.gallery = JSON.parse(parsed.gallery);
+                }
+              } catch (e) {
+                parsed.gallery = parsed.gallery || [];
+              }
+              try {
+                if (parsed.price_list && typeof parsed.price_list === 'string') {
+                  parsed.price_list = JSON.parse(parsed.price_list);
+                }
+              } catch (e) {
+                parsed.price_list = parsed.price_list || [];
+              }
+              try {
+                if (parsed.functions && typeof parsed.functions === 'string') {
+                  parsed.functions = JSON.parse(parsed.functions);
+                }
+              } catch (e) {
+                parsed.functions = parsed.functions || [];
+              }
+              try {
+                if (parsed.options && typeof parsed.options === 'string') {
+                  parsed.options = JSON.parse(parsed.options);
+                }
+              } catch (e) {
+                parsed.options = parsed.options || [];
+              }
+              try {
+                if (parsed['options-filters'] && typeof parsed['options-filters'] === 'string') {
+                  parsed['options-filters'] = JSON.parse(parsed['options-filters']);
+                }
+              } catch (e) {
+                parsed['options-filters'] = parsed['options-filters'] || [];
+              }
+              try {
+                if (parsed.autosygnals && typeof parsed.autosygnals === 'string') {
+                  parsed.autosygnals = JSON.parse(parsed.autosygnals);
+                }
+              } catch (e) {
+                parsed.autosygnals = parsed.autosygnals || [];
+              }
+              try {
+                if (parsed.tabs && typeof parsed.tabs === 'string') {
+                  parsed.tabs = JSON.parse(parsed.tabs);
+                }
+              } catch (e) {
+                parsed.tabs = parsed.tabs || [];
+              }
+
+              return {
+                ...parsed,
+                category: categoryKey,
+                is_popular: parsed.is_popular ?? false,
+                is_special: parsed.is_special ?? false,
+              };
+            });
             allProducts.push(...productsWithCategory);
           }
         }
@@ -262,7 +316,7 @@ export function useProducts() {
     formData.append('productId', productId);
     formData.append('tabIndex', String(tabIndex));
     formData.append('itemIndex', String(itemIndex));
-    formData.append('icon', file);
+    formData.append('path-icon', file);
 
     try {
       const data = await apiCall('upload_tab_icon.php', 'POST', formData);
@@ -308,7 +362,7 @@ export function useProducts() {
   };
 }
 
-export async function handleToggle(event: Event, product: ProductI) {
+export async function handleToggle(event: Event, product: ProductI): Promise<boolean> {
   const detailsElement = event.target as HTMLDetailsElement;
   if (!detailsElement.open && product.is_new) {
     event.preventDefault();
@@ -323,10 +377,12 @@ export async function handleToggle(event: Event, product: ProductI) {
       color: '#fff',
     });
     if (result.isConfirmed) {
-      deleteProductHandler(product.id);
-      isAddingNewProduct.value = false;
+      // Caller should handle deletion when this function returns true
+      return true;
     } else {
       detailsElement.open = true;
+      return false;
     }
   }
+  return false;
 }
