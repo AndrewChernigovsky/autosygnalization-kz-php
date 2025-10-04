@@ -117,6 +117,9 @@ export function useProducts() {
           products.value[index].id = createdProduct.id;
           products.value[index].link = createdProduct.link;
           products.value[index].is_new = false;
+          if (createdProduct.price_list) {
+            products.value[index].price_list = createdProduct.price_list;
+          }
         }
       } else {
         const updatedData = await apiCall(
@@ -128,6 +131,9 @@ export function useProducts() {
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].link = updatedData.link;
+          if (updatedData.price_list) {
+            products.value[index].price_list = updatedData.price_list;
+          }
         }
       }
 
