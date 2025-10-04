@@ -89,14 +89,21 @@ async function saveChanges(product: ProductI) {
 
   const productRef = products.value.find((p) => p.id === product.id) || product;
 
-  // Important: merge updated tabs from the edited payload into the local productRef
-  // editingProduct is a deep clone; ensure productRef contains the latest tabs before uploads
+  // Important: merge updated tabs and price_list from the edited payload into the local productRef
+  // editingProduct is a deep clone; ensure productRef contains the latest tabs and price_list before uploads
   if (product && productRef && product !== productRef) {
     if (product.tabs) {
       try {
         productRef.tabs = JSON.parse(JSON.stringify(product.tabs));
       } catch (e) {
         productRef.tabs = product.tabs;
+      }
+    }
+    if (product.price_list) {
+      try {
+        productRef.price_list = JSON.parse(JSON.stringify(product.price_list));
+      } catch (e) {
+        productRef.price_list = product.price_list;
       }
     }
   }

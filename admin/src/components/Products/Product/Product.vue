@@ -53,6 +53,17 @@ watch(() => props.product.price_list, (newVal) => {
   editPriceList(priceListRef.value);
 }, { deep: true, immediate: true });
 
+// Синхронизируем локальный priceListRef в editingProduct в реальном времени
+watch(
+  () => priceListRef.value,
+  (newVal) => {
+    if (editingProduct.value) {
+      editingProduct.value.price_list = [JSON.parse(JSON.stringify(newVal))];
+    }
+  },
+  { deep: true }
+);
+
 const handleButtonClick = () => {
   isOpen.value = !isOpen.value;
 };
@@ -345,7 +356,7 @@ function saveChanges() {
           <Gallery :product="displayProduct" :is-image-uploading="isImageUploading"
             @delete-image="(p, i) => emit('delete-image', p, i)"
             @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)" />
-          <Prices ref="pricesRef" :product="displayProduct" :is-editing="!!editingProduct" />
+          <Prices ref="pricesRef" :product="displayProduct" :is-editing="!!editingProduct" @update-price-list="editPriceList" />
           <div class="form-group">
             <label>Категория:</label>
             <select v-if="editingProduct && editingProduct.id" v-model="editingProduct.category" @click.stop>
