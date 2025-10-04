@@ -1,52 +1,13 @@
-<template>
-  <div class="products-admin">
-    <h1 class="my-title">Товары</h1>
-    <div class="p-4 md:p-6 theme-dark">
-      <input type="file" ref="fileInput" @change="handleFileSelected" style="display: none" accept="image/*" />
-      <div v-if="error" class="text-red-500 text-center">
-        Ошибка при загрузке данных: {{ error }}
-      </div>
-      <div v-if="!loading && !error" class="space-y-2">
-        <div v-for="(group, category) in groupedProducts" :key="category">
-          <div class="category-header">
-            <div class="category-header-content">
-              <h2 class="text-2xl font-bold my-4">
-                {{ getCategoryName(category) }}
-              </h2>
-              <MyBtn variant="primary" @click="toggleAccardion(category)">
-                {{ openAccardions[category] ? 'Закрыть' : 'Открыть' }}
-              </MyBtn>
-            </div>
-            <MyTransition>
-              <div class="space-y-2 product-list" v-if="openAccardions[category]">
-                <Product v-for="product in group" :key="product.id" :product="product" :all-categories="allCategories"
-                  :is-image-uploading="isImageUploading" :get-category-name="getCategoryName"
-                  :is-adding-new-product="isAddingNewProduct" @save-product="saveChanges"
-                  @delete-product="deleteProductHandler" @delete-image="handleDeleteImage"
-                  @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggle"
-                  @cancel-editing="handleCancelEditing" @stage-tab-icon="handleStageTabIcon"
-                  @delete-tab-icon="handleDeleteTabIcon" />
-                <MyBtn variant="secondary" @click="handleAddProduct(category)" class="btn-add"
-                  :disabled="isAddingNewProduct">
-                  Добавить товар
-                </MyBtn>
-              </div>
-            </MyTransition>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 
 <script setup lang="ts">
 import { onMounted, computed, ref, watchEffect } from 'vue';
 import { useProducts } from './functions/useProducts';
 import type { ProductI } from './interfaces/Products';
 import Swal from 'sweetalert2';
-import Product from './Product.vue';
+import Product from './Product/Product.vue';
 import MyBtn from '../UI/MyBtn.vue';
 import MyTransition from '../UI/MyTransition.vue';
+import { handleToggle } from './functions/useProducts';
 
 const {
   products,
@@ -127,6 +88,18 @@ async function saveChanges(product: ProductI) {
   });
 
   const productRef = products.value.find((p) => p.id === product.id) || product;
+
+  // Important: merge updated tabs from the edited payload into the local productRef
+  // editingProduct is a deep clone; ensure productRef contains the latest tabs before uploads
+  if (product && productRef && product !== productRef) {
+    if (product.tabs) {
+      try {
+        productRef.tabs = JSON.parse(JSON.stringify(product.tabs));
+      } catch (e) {
+        productRef.tabs = product.tabs;
+      }
+    }
+  }
 
   // 1. Загрузка изображений галереи
   const galleryFiles = filesToUpload.value.get(product.id) || [];
@@ -212,6 +185,7 @@ async function saveChanges(product: ProductI) {
     Swal.fire('Ошибка!', 'Не удалось сохранить товар.', 'error');
   }
 }
+
 async function deleteProductHandler(productId: string) {
   const productToDelete = products.value.find((p) => p.id === productId);
   if (productToDelete?.is_new) {
@@ -252,6 +226,7 @@ async function deleteProductHandler(productId: string) {
     }
   }
 }
+
 async function handleDeleteImage(product: ProductI, imageIndex: number) {
   const productInState = product;
   if (!productInState) return;
@@ -268,29 +243,6 @@ async function handleDeleteImage(product: ProductI, imageIndex: number) {
     }
   }
   productInState.gallery.splice(imageIndex, 1);
-}
-
-async function handleToggle(event: Event, product: ProductI) {
-  const detailsElement = event.target as HTMLDetailsElement;
-  if (!detailsElement.open && product.is_new) {
-    event.preventDefault();
-    const result = await Swal.fire({
-      title: 'Отменить создание?',
-      text: 'Новый товар не был сохранен и будет удален.',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Да, удалить',
-      cancelButtonText: 'Нет, оставить',
-      background: '#333',
-      color: '#fff',
-    });
-    if (result.isConfirmed) {
-      deleteProductHandler(product.id);
-      isAddingNewProduct.value = false;
-    } else {
-      detailsElement.open = true;
-    }
-  }
 }
 
 function triggerFileUpload(product: ProductI, index: number | null) {
@@ -489,6 +441,48 @@ onMounted(() => {
   fetchProducts();
 });
 </script>
+
+<template>
+  <div class="products-admin">
+    <h1 class="my-title">Товары</h1>
+    <div class="p-4 md:p-6 theme-dark">
+      <input type="file" ref="fileInput" @change="handleFileSelected" style="display: none" accept="image/*" />
+      <div v-if="error" class="text-red-500 text-center">
+        Ошибка при загрузке данных: {{ error }}
+      </div>
+      <div v-if="!loading && !error" class="space-y-2">
+        <div v-for="(group, category) in groupedProducts" :key="category">
+          <div class="category-header">
+            <div class="category-header-content">
+              <h2 class="text-2xl font-bold my-4">
+                {{ getCategoryName(category) }}
+              </h2>
+              <MyBtn variant="primary" @click="toggleAccardion(category)">
+                {{ openAccardions[category] ? 'Закрыть' : 'Открыть' }}
+              </MyBtn>
+            </div>
+            <MyTransition>
+              <div class="space-y-2 product-list" v-if="openAccardions[category]">
+                <Product v-for="product in group" :key="product.id" :product="product" :all-categories="allCategories"
+                  :is-image-uploading="isImageUploading" :get-category-name="getCategoryName"
+                  :is-adding-new-product="isAddingNewProduct" @save-product="saveChanges"
+                  @delete-product="deleteProductHandler" @delete-image="handleDeleteImage"
+                  @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggle"
+                  @cancel-editing="handleCancelEditing" @stage-tab-icon="handleStageTabIcon"
+                  @delete-tab-icon="handleDeleteTabIcon" />
+                <MyBtn variant="secondary" @click="handleAddProduct(category)" class="btn-add"
+                  :disabled="isAddingNewProduct">
+                  Добавить товар
+                </MyBtn>
+              </div>
+            </MyTransition>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
 
 <style scoped lang="scss">
 .products-admin {

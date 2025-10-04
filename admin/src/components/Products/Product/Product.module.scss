@@ -1,0 +1,243 @@
+.product-item {
+  appearance: none;
+  border: 1px solid white;
+  border-radius: 10px;
+}
+
+.product-title {
+  font-size: 28px;
+}
+
+.product-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  color: #eee;
+  border-radius: 20px;
+}
+
+.product-editor {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-group,
+.form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.form-group label,
+.form-group-checkbox label {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ccc;
+  min-width: 150px;
+}
+
+.form-group input[type='text'],
+.form-group input[type='number'],
+.form-group textarea,
+.form-group select {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #555;
+  color: black;
+  border-radius: 4px;
+  font-size: 18px;
+}
+
+.form-group textarea {
+  resize: none;
+  overflow-y: hidden;
+}
+
+.form-group span {
+  flex-grow: 1;
+  padding: 10px;
+  background-color: #2c2c2c;
+  border-radius: 4px;
+  min-height: 40px;
+}
+
+.form-group input[type='checkbox'],
+.form-group-checkbox input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  background-color: transparent;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 25px;
+  height: 25px;
+  border: 2px solid white;
+  display: grid;
+  place-content: center;
+  cursor: pointer;
+}
+
+.form-group input[type='checkbox']::before,
+.form-group-checkbox input[type='checkbox']::before {
+  content: '';
+  width: 0.9em;
+  height: 0.9em;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em white;
+  clip-path: polygon(28% 44%, 0 57%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+.form-group input[type='checkbox']:checked::before,
+.form-group-checkbox input[type='checkbox']:checked::before {
+  transform: scale(1);
+}
+
+.form-group-functions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 28px;
+}
+
+.form-group-functions label {
+  font-weight: bold;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+.functions-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background-color: inherit;
+  border-radius: 4px;
+}
+
+.functions-checkboxes .form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.functions-checkboxes .form-group-checkbox label {
+  font-weight: normal;
+  color: #eee;
+  margin: 0;
+  cursor: pointer;
+}
+
+.form-group-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 28px;
+}
+
+.form-group-checkbox-label,
+.form-group-options label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-weight: bold;
+  color: #ccc;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #444;
+  padding-bottom: 10px;
+}
+
+.btn-toggle-checkbox {
+  transform: scale(0.9);
+}
+
+.options-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background-color: inherit;
+  border-radius: 4px;
+}
+
+.options-checkboxes .form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.options-checkboxes .form-group-checkbox label {
+  font-weight: normal;
+  color: #eee;
+  margin: 0;
+  cursor: pointer;
+}
+
+.form-group-autosygnals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 28px;
+}
+
+.form-group-autosygnals label {
+  font-weight: bold;
+  color: #ccc;
+  margin-bottom: 5px;
+}
+
+.autosygnals-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  background-color: inherit;
+  border-radius: 4px;
+}
+
+.autosygnals-checkboxes .form-group-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.autosygnals-checkboxes .form-group-checkbox label {
+  font-weight: normal;
+  color: #eee;
+  margin: 0;
+  cursor: pointer;
+}
+
+.array-fields-editor {
+  border-top: 1px solid #444;
+  padding-top: 15px;
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.product-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 20px;
+  border-top: 1px solid #444;
+  padding-top: 20px;
+}
+
+.btn-save,
+.btn-delete {
+  flex-grow: 1;
+  width: 100%;
+  max-width: 100%;
+}
+
+.accardion-checkboxes {
+  border-bottom: 1px solid #444;
+}

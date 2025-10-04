@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import type { ProductI } from '../interfaces/Products';
+import Swal from 'sweetalert2';
 
 const API_URL = '/server/php/admin/api/products/';
 
@@ -210,6 +211,7 @@ export function useProducts() {
       tabs: [],
     };
     products.value.push(newProduct);
+    console.log(products.value, 'PRODUCTS ADD PRODUCT');
     return newProduct;
   }
 
@@ -283,6 +285,7 @@ export function useProducts() {
     }
   }
 
+
   return {
     products,
     loading,
@@ -297,4 +300,27 @@ export function useProducts() {
     uploadTabIcon,
     deleteTabIcon,
   };
+}
+
+export async function handleToggle(event: Event, product: ProductI) {
+  const detailsElement = event.target as HTMLDetailsElement;
+  if (!detailsElement.open && product.is_new) {
+    event.preventDefault();
+    const result = await Swal.fire({
+      title: 'Отменить создание?',
+      text: 'Новый товар не был сохранен и будет удален.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Да, удалить',
+      cancelButtonText: 'Нет, оставить',
+      background: '#333',
+      color: '#fff',
+    });
+    if (result.isConfirmed) {
+      deleteProductHandler(product.id);
+      isAddingNewProduct.value = false;
+    } else {
+      detailsElement.open = true;
+    }
+  }
 }
