@@ -100,7 +100,7 @@ export const useProductEditorStore = defineStore('productEditor', {
           content: [
             {
               title: 'Новый пункт',
-              icon: '',
+              'path-icon': '',
               description: 'Описание нового пункта',
             },
           ],
@@ -124,7 +124,7 @@ export const useProductEditorStore = defineStore('productEditor', {
         this.editingProduct.tabs[tabIndex].content.push({
           title: 'Новый пункт',
           description: 'Описание нового пункта',
-          icon: '',
+          'path-icon': '',
         });
       }
     },

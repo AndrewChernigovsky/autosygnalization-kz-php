@@ -104,7 +104,7 @@ const handleCancelEditing = (product: ProductI) => {
 };
 
 // Проверка и подтверждение переключения между товарами при наличии несохранённых изменений
-async function handleToggleWithCheck(event: Event, product: ProductI) {
+async function handleToggleWithCheck(_: Event, product: ProductI) {
   // find the product component that was open
   const openId = openProductId.value;
   if (!openId) {
