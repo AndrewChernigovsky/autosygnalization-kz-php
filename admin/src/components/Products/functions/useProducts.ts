@@ -158,6 +158,23 @@ export function useProducts() {
       };
       console.log(productData, 'PRODUCT DATA');
 
+      // Sanitize tabs: ensure preview blob: URLs are not sent to the server
+      if (productData.tabs && Array.isArray(productData.tabs)) {
+        try {
+          for (const tab of productData.tabs) {
+            if (!tab || !Array.isArray(tab.content)) continue;
+            for (const item of tab.content) {
+              if (item && typeof item['path-icon'] === 'string' && item['path-icon'].startsWith('blob:')) {
+                item['path-icon'] = '';
+              }
+            }
+          }
+        } catch (e) {
+          // if sanitization fails, fall back to removing tabs entirely to avoid storing blobs
+          productData.tabs = [];
+        }
+      }
+
       if (product.is_new) {
         console.log('Creating product payload:', productData);
         const createdProduct = await apiCall(
