@@ -3,7 +3,7 @@ import { ref, watch } from 'vue';
 import MyBtn from '../../UI/MyBtn.vue';
 import MyTransition from '../../UI/MyTransition.vue';
 import MyQuill from '../../UI/MyQuill.vue';
-import type { ProductI } from '../../interfaces/Products';
+import type { ProductI } from '../interfaces/Products';
 
 defineOptions({
   name: 'Tabs',
@@ -34,7 +34,7 @@ watch(() => props.product.tabs, (tabs) => {
     const newState: Record<string, boolean> = {};
     tabs.forEach((tab, tIdx) => {
       if (tab && Array.isArray(tab.content)) {
-        tab.content.forEach((_, iIdx) => {
+        tab.content.forEach((_, iIdx: number) => {
           const key = `${tIdx}_${iIdx}`;
           newState[key] = iIdx === 0; // только первый элемент открыт
         });
@@ -171,8 +171,8 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
                             :src="item['path-icon']"
                             alt="Иконка"
                             class="icon-preview"
-                             width="100"
-                             height="100"
+                            width="100"
+                            height="100"
                           />
                           <!-- <input
                             type="text"
