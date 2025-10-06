@@ -160,18 +160,47 @@ const clearFile = (itemId: number, type: 'video' | 'poster') => {
 const introSlideStore = useIntroSlideStore();
 const { introSlideData, isLoading } = storeToRefs(introSlideStore);
 
-// API URL для получения ссылок
+// API URLs для получения ссылок
 const API_URL_LINKS = '/server/php/admin/api/linksData/linksData.php';
+const API_URL_NAVIGATION = '/server/php/admin/api/navigation/navigation.php';
 
 // Функция для загрузки всех ссылок из БД
 const fetchAllLinks = async () => {
   try {
-    const response = await fetchWithCors(API_URL_LINKS);
-    if (response.success) {
-      allLinksData.value = response.data;
+    // Загружаем ссылки из LinksData
+    const linksResponse = await fetchWithCors(API_URL_LINKS);
+    let linksData = [];
+
+    if (linksResponse.success) {
+      linksData = linksResponse.data;
     } else {
-      throw new Error(response.error || 'Не удалось загрузить ссылки');
+      console.warn(
+        'Не удалось загрузить ссылки из LinksData:',
+        linksResponse.error
+      );
     }
+
+    // Загружаем ссылки из Navigation
+    const navResponse = await fetchWithCors(API_URL_NAVIGATION);
+    let navData = [];
+
+    if (navResponse.success) {
+      // Преобразуем данные Navigation в формат LinkData
+      navData = navResponse.data.map((item: any) => ({
+        links_data_id: item.id,
+        name: item.title,
+        link: item.link,
+        source_table: 'Navigation',
+      }));
+    } else {
+      console.warn(
+        'Не удалось загрузить ссылки из Navigation:',
+        navResponse.error
+      );
+    }
+
+    // Объединяем данные из обеих таблиц
+    allLinksData.value = [...linksData, ...navData];
   } catch (err: any) {
     console.error('Ошибка загрузки ссылок:', err.message);
   }
@@ -467,14 +496,6 @@ watchEffect(() => {
     });
   } else {
     Swal.close();
-  }
-
-  // Логируем ссылки кнопок при рендеринге списка
-  if (introSlideData.value && introSlideData.value.length > 0) {
-    console.log('Ссылки кнопок слайдов:');
-    introSlideData.value.forEach((slide, index) => {
-      console.log(`Слайд ${index + 1} (${slide.title}): ${slide.button_link}`);
-    });
   }
 });
 
