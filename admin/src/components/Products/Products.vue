@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import { onMounted, computed, ref, watchEffect } from 'vue';
 import { useProducts } from './functions/useProducts';
@@ -47,6 +46,10 @@ const tabIconsToUpload = ref<
     }[]
   >
 >(new Map());
+
+// Отдельное хранилище для путей к иконкам
+// Ключ: productId, значение: Map<"tabIndex_itemIndex", serverPath>
+const tabIconPaths = ref<Map<string, Map<string, string>>>(new Map());
 
 const openAccardions = ref<Record<string, boolean>>({});
 const openProductId = ref<string | null>(null);
@@ -158,7 +161,11 @@ async function handleToggleWithCheck(_: Event, product: ProductI) {
         dirtyMap.value[current.id] = false;
         openProductId.value = product.id;
       } else {
-        Swal.fire('Ошибка', 'Не удалось сохранить товар. Оставляюсь на текущем товаре.', 'error');
+        Swal.fire(
+          'Ошибка',
+          'Не удалось сохранить товар. Оставляюсь на текущем товаре.',
+          'error'
+        );
       }
     } else {
       openProductId.value = product.id;
@@ -184,7 +191,25 @@ async function saveChanges(product: ProductI) {
   });
 
   const productRef = products.value.find((p) => p.id === product.id) || product;
-  console.log(productRef, 'PRODUCT REF');
+  console.log('🔍 [SAVE] Начало saveChanges с product:', product);
+  console.log('🔍 [SAVE] product.tabs:', product.tabs);
+  if (
+    product.tabs &&
+    product.tabs[0] &&
+    product.tabs[0].content &&
+    product.tabs[0].content[0]
+  ) {
+    console.log(
+      '🔍 [SAVE] product.tabs[0].content[0]:',
+      product.tabs[0].content[0]
+    );
+    console.log(
+      '🔍 [SAVE] product.tabs[0].content[0][path-icon]:',
+      product.tabs[0].content[0]['path-icon']
+    );
+  }
+  console.log('🔍 [SAVE] productRef создан:', productRef);
+  console.log('🔍 [SAVE] productRef.tabs:', productRef.tabs);
 
   // Important: merge updated tabs and price_list from the edited payload into the local productRef
   // editingProduct is a deep clone; ensure productRef contains the latest tabs and price_list before uploads
@@ -217,7 +242,9 @@ async function saveChanges(product: ProductI) {
         try {
           // deep clone to avoid retaining references to child component reactive objects
           // @ts-ignore
-          productRef[af] = JSON.parse(JSON.stringify((product as any)[af] || []));
+          productRef[af] = JSON.parse(
+            JSON.stringify((product as any)[af] || [])
+          );
         } catch (e) {
           // fallback shallow copy
           // @ts-ignore
@@ -227,10 +254,50 @@ async function saveChanges(product: ProductI) {
     }
 
     if (product.tabs) {
+      console.log('🔍 [SAVE] Копируем tabs из product в productRef');
+      console.log('🔍 [SAVE] product.tabs:', product.tabs);
       try {
         productRef.tabs = JSON.parse(JSON.stringify(product.tabs));
+        console.log(
+          '🔍 [SAVE] productRef.tabs после копирования:',
+          productRef.tabs
+        );
+        if (
+          productRef.tabs &&
+          productRef.tabs[0] &&
+          productRef.tabs[0].content &&
+          productRef.tabs[0].content[0]
+        ) {
+          console.log(
+            '🔍 [SAVE] productRef.tabs[0].content[0] после копирования:',
+            productRef.tabs[0].content[0]
+          );
+          console.log(
+            '🔍 [SAVE] productRef.tabs[0].content[0][path-icon] после копирования:',
+            productRef.tabs[0].content[0]['path-icon']
+          );
+        }
       } catch (e) {
         productRef.tabs = product.tabs;
+        console.log(
+          '🔍 [SAVE] productRef.tabs после fallback копирования:',
+          productRef.tabs
+        );
+        if (
+          productRef.tabs &&
+          productRef.tabs[0] &&
+          productRef.tabs[0].content &&
+          productRef.tabs[0].content[0]
+        ) {
+          console.log(
+            '🔍 [SAVE] productRef.tabs[0].content[0] после fallback копирования:',
+            productRef.tabs[0].content[0]
+          );
+          console.log(
+            '🔍 [SAVE] productRef.tabs[0].content[0][path-icon] после fallback копирования:',
+            productRef.tabs[0].content[0]['path-icon']
+          );
+        }
       }
     }
     if (product.price_list) {
@@ -267,20 +334,31 @@ async function saveChanges(product: ProductI) {
   // 2. Загрузка иконок вкладок
   // collect staged entries and upload them; keep staged list until blob->staged matching completes
   const stagedIcons = tabIconsToUpload.value.get(product.id) || [];
+  console.log('🔍 [SAVE] stagedIcons:', stagedIcons);
   if (stagedIcons.length > 0) {
     for (const iconData of stagedIcons) {
+      console.log('🔍 [SAVE] Загружаем staged иконку:', iconData);
       const newPath = await uploadTabIcon(
         product.id,
         iconData.tabIndex,
         iconData.itemIndex,
         iconData.file
       );
+      console.log('🔍 [SAVE] Получили путь:', newPath);
       if (newPath && productRef.tabs) {
-        productRef.tabs[iconData.tabIndex].content[iconData.itemIndex]["path-icon"] =
-          newPath;
+        console.log(
+          '🔍 [SAVE] Обновляем путь в productRef:',
+          iconData.tabIndex,
+          iconData.itemIndex,
+          newPath
+        );
+        productRef.tabs[iconData.tabIndex].content[iconData.itemIndex][
+          'path-icon'
+        ] = newPath;
         // store uploaded path on staged entry for later blob matching
         // @ts-ignore
         iconData.__uploadedPath = newPath;
+        console.log('🔍 [SAVE] Путь обновлен в productRef');
       }
     }
     // don't delete staged map yet — we'll cleanup after blob->staged matching below
@@ -288,33 +366,72 @@ async function saveChanges(product: ProductI) {
 
   // Дополнительная проверка: если в tabs остались blob: ссылки (например, при сбое immediate upload),
   // попытаемся сопоставить их со staged файлами и загрузить.
+  console.log(
+    '🔍 [SAVE] Проверяем blob ссылки в productRef.tabs:',
+    productRef.tabs
+  );
   if (productRef.tabs && productRef.tabs.length > 0) {
     for (let t = 0; t < productRef.tabs.length; t++) {
       const tab = productRef.tabs[t];
       if (!tab || !Array.isArray(tab.content)) continue;
       for (let i = 0; i < tab.content.length; i++) {
         const url = tab.content[i]['path-icon'] || '';
+        console.log('🔍 [SAVE] Проверяем URL:', t, i, url);
         if (typeof url === 'string' && url.startsWith('blob:')) {
-          // Найти staged файл по blobUrl среди stagedIcons
-          const staged = stagedIcons.find((s) => s.blobUrl === url) || (tabIconsToUpload.value.get(product.id) || []).find((s) => s.blobUrl === url);
-          if (staged) {
-            try {
-              // if already uploaded earlier, use stored path
-              // @ts-ignore
-              if (staged.__uploadedPath) {
-                // @ts-ignore
-                productRef.tabs[t].content[i]['path-icon'] = staged.__uploadedPath;
-              } else {
-                const uploaded = await uploadTabIcon(product.id, t, i, staged.file);
+          console.log('🔍 [SAVE] Найден blob URL, ищем сохраненный путь');
+          // Проверяем, есть ли уже загруженный путь в нашем хранилище
+          const iconKey = `${t}_${i}`;
+          const storedPath = tabIconPaths.value.get(product.id)?.get(iconKey);
+          console.log(
+            '🔍 [SAVE] Ищем сохраненный путь для:',
+            iconKey,
+            'найден:',
+            storedPath
+          );
+          if (storedPath) {
+            console.log('🔍 [SAVE] Используем сохраненный путь:', storedPath);
+            productRef.tabs[t].content[i]['path-icon'] = storedPath;
+          } else {
+            console.log(
+              '🔍 [SAVE] НЕ найден сохраненный путь, ищем staged файл'
+            );
+            // Найти staged файл по blobUrl среди stagedIcons
+            const staged =
+              stagedIcons.find((s) => s.blobUrl === url) ||
+              (tabIconsToUpload.value.get(product.id) || []).find(
+                (s) => s.blobUrl === url
+              );
+            console.log('🔍 [SAVE] Найден staged:', staged);
+            if (staged) {
+              try {
+                console.log('🔍 [SAVE] Загружаем staged файл');
+                const uploaded = await uploadTabIcon(
+                  product.id,
+                  t,
+                  i,
+                  staged.file
+                );
                 if (uploaded) {
+                  console.log('🔍 [SAVE] Загружен новый путь:', uploaded);
                   productRef.tabs[t].content[i]['path-icon'] = uploaded;
-                  // @ts-ignore
-                  staged.__uploadedPath = uploaded;
+                  // Сохраняем путь в нашем хранилище
+                  if (!tabIconPaths.value.has(product.id)) {
+                    tabIconPaths.value.set(product.id, new Map());
+                  }
+                  tabIconPaths.value.get(product.id)!.set(iconKey, uploaded);
                 }
+                try {
+                  URL.revokeObjectURL(url);
+                } catch (e) {}
+              } catch (e) {
+                console.error(
+                  'Failed to upload staged icon for',
+                  product.id,
+                  t,
+                  i,
+                  e
+                );
               }
-              try { URL.revokeObjectURL(url); } catch (e) {}
-            } catch (e) {
-              console.error('Failed to upload staged icon for', product.id, t, i, e);
             }
           }
         }
@@ -334,22 +451,53 @@ async function saveChanges(product: ProductI) {
 
   // 3. Перед отправкой удалим любые оставшиеся локальные blob: ссылки из tabs,
   // чтобы они не попали в базу. Если для blob найдётся staged файл, выше он уже был загружен.
+  console.log(
+    '🔍 [SAVE] Финальная проверка blob ссылок в productRef.tabs:',
+    productRef.tabs
+  );
   if (productRef.tabs && productRef.tabs.length > 0) {
     for (let t = 0; t < productRef.tabs.length; t++) {
       const tab = productRef.tabs[t];
       if (!tab || !Array.isArray(tab.content)) continue;
       for (let i = 0; i < tab.content.length; i++) {
         const url = tab.content[i]['path-icon'] || '';
+        console.log('🔍 [SAVE] Финальная проверка URL:', t, i, url);
         if (typeof url === 'string' && url.startsWith('blob:')) {
-          // replace with empty string to avoid storing blob: URL in DB
-          tab.content[i]['path-icon'] = '';
+          console.log(
+            '🔍 [SAVE] Найден blob URL в финальной проверке, ищем staged файл'
+          );
+          // Проверяем, есть ли уже загруженный путь в нашем хранилище
+          const iconKey = `${tabIndex}_${i}`;
+          const storedPath = tabIconPaths.value.get(product.id)?.get(iconKey);
+          console.log(
+            '🔍 [SAVE] Ищем сохраненный путь для:',
+            iconKey,
+            'найден:',
+            storedPath
+          );
+          if (storedPath) {
+            console.log(
+              '🔍 [SAVE] Используем сохраненный путь в финальной проверке:',
+              storedPath
+            );
+            // Используем сохраненный путь
+            tab.content[i]['path-icon'] = storedPath;
+          } else {
+            console.log('🔍 [SAVE] Затираем blob URL на пустую строку');
+            // replace with empty string to avoid storing blob: URL in DB
+            tab.content[i]['path-icon'] = '';
+          }
         }
       }
     }
   }
+  console.log(
+    '🔍 [SAVE] Финальное состояние productRef.tabs:',
+    productRef.tabs
+  );
 
   const updated: boolean = await updateProduct(productRef);
-  
+
   if (updated) {
     Swal.fire('Сохранено!', 'Товар был успешно обновлен.', 'success');
     isAddingNewProduct.value = false;
@@ -484,7 +632,7 @@ function handleStageTabIcon(
 
   // Показываем превью сразу
   if (productInState.tabs) {
-    productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = blobUrl;
+    productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = blobUrl;
   }
 
   // Если продукт новый — загрузка произойдет при сохранении
@@ -506,24 +654,84 @@ function handleStageTabIcon(
       const newPath = await uploadTabIcon(productId, tabIndex, itemIndex, file);
       Swal.close();
       if (newPath && productInState.tabs) {
-        productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = newPath;
+        console.log(
+          '🔍 [UPLOAD] Обновляем путь в productInState:',
+          tabIndex,
+          itemIndex,
+          newPath
+        );
+        productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = newPath;
+
+        // Сохраняем путь в отдельном хранилище
+        const iconKey = `${tabIndex}_${itemIndex}`;
+        if (!tabIconPaths.value.has(productId)) {
+          tabIconPaths.value.set(productId, new Map());
+        }
+        tabIconPaths.value.get(productId)!.set(iconKey, newPath);
+        console.log(
+          '🔍 [UPLOAD] Сохранили путь в tabIconPaths:',
+          productId,
+          iconKey,
+          newPath
+        );
+
         // Удаляем staged-запись, если она есть
         const icons = tabIconsToUpload.value.get(productId) || [];
         const idx = icons.findIndex((i) => i.blobUrl === blobUrl);
         if (idx !== -1) {
           icons.splice(idx, 1);
           tabIconsToUpload.value.set(productId, icons);
+          console.log('🔍 [UPLOAD] Удалили staged запись');
         }
-        Swal.fire('Успех', 'Иконка загружена, не забудьте сохранить изменения.', 'success');
+        // Обновляем путь в основном состоянии products.value
+        // Это должно обновить editingProduct, так как он ссылается на тот же объект
+        console.log(
+          '🔍 [UPLOAD] Путь уже обновлен в productInState (основное состояние)'
+        );
+        console.log(
+          '🔍 [UPLOAD] productInState.tabs[tabIndex].content[itemIndex][path-icon]:',
+          productInState.tabs[tabIndex].content[itemIndex]['path-icon']
+        );
+        Swal.fire(
+          'Успех',
+          'Иконка загружена, не забудьте сохранить изменения.',
+          'success'
+        );
       } else {
-        Swal.fire('Ошибка', 'Не удалось загрузить иконку. Она будет загружена при сохранении.', 'error');
+        Swal.fire(
+          'Ошибка',
+          'Не удалось загрузить иконку. Она будет загружена при сохранении.',
+          'error'
+        );
       }
     } catch (e) {
       Swal.close();
       console.error('uploadTabIcon error', e);
-      Swal.fire('Ошибка', 'Не удалось загрузить иконку. Она будет загружена при сохранении.', 'error');
+      Swal.fire(
+        'Ошибка',
+        'Не удалось загрузить иконку. Она будет загружена при сохранении.',
+        'error'
+      );
     }
   })();
+}
+
+function handleUpdateTabIconPath(
+  productId: string,
+  tabIndex: number,
+  itemIndex: number,
+  newPath: string
+) {
+  const productInState = products.value.find((p) => p.id === productId);
+  if (!productInState || !productInState.tabs) return;
+
+  // Обновляем путь в основном состоянии продукта
+  if (
+    productInState.tabs[tabIndex] &&
+    productInState.tabs[tabIndex].content[itemIndex]
+  ) {
+    productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = newPath;
+  }
 }
 
 function handleDeleteTabIcon(
@@ -534,7 +742,8 @@ function handleDeleteTabIcon(
   const productInState = products.value.find((p) => p.id === productId);
   if (!productInState) return;
 
-  const iconUrl = productInState.tabs?.[tabIndex].content[itemIndex]["path-icon"] || '';
+  const iconUrl =
+    productInState.tabs?.[tabIndex].content[itemIndex]['path-icon'] || '';
 
   if (iconUrl.startsWith('blob:')) {
     const icons = tabIconsToUpload.value.get(productId) || [];
@@ -545,13 +754,13 @@ function handleDeleteTabIcon(
       tabIconsToUpload.value.set(productId, icons);
     }
     if (productInState.tabs) {
-      productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = '';
+      productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = '';
     }
     Swal.fire('Удалено', 'Иконка была удалена.', 'success');
   } else {
     apiDeleteTabIcon(productId, tabIndex, itemIndex).then((success) => {
       if (success && productInState.tabs) {
-        productInState.tabs[tabIndex].content[itemIndex]["path-icon"] = '';
+        productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = '';
         Swal.fire('Удалено', 'Иконка была удалена.', 'success');
       }
     });
@@ -631,7 +840,13 @@ onMounted(() => {
   <div class="products-admin">
     <h1 class="my-title">Товары</h1>
     <div class="p-4 md:p-6 theme-dark">
-      <input type="file" ref="fileInput" @change="handleFileSelected" style="display: none" accept="image/*" />
+      <input
+        type="file"
+        ref="fileInput"
+        @change="handleFileSelected"
+        style="display: none"
+        accept="image/*"
+      />
       <div v-if="error" class="text-red-500 text-center">
         Ошибка при загрузке данных: {{ error }}
       </div>
@@ -647,17 +862,37 @@ onMounted(() => {
               </MyBtn>
             </div>
             <MyTransition>
-              <div class="space-y-2 product-list" v-if="openAccardions[category]">
-                <Product v-for="product in group" :key="product.id" :product="product" :all-categories="allCategories"
-                  :is-image-uploading="isImageUploading" :get-category-name="getCategoryName"
-                  :is-adding-new-product="isAddingNewProduct" @save-product="saveChanges"
-                  @delete-product="deleteProductHandler" @delete-image="handleDeleteImage"
-                  @trigger-file-upload="triggerFileUpload" @handle-toggle="handleToggleWithCheck"
-                  @cancel-editing="handleCancelEditing" @stage-tab-icon="handleStageTabIcon"
-                  @delete-tab-icon="handleDeleteTabIcon" @dirty-state="handleDirtyState"
-                  :current-open-id="openProductId" :ref="el => registerProductRef(el, product.id)" />
-                <MyBtn variant="secondary" @click="handleAddProduct(category)" class="btn-add"
-                  :disabled="isAddingNewProduct">
+              <div
+                class="space-y-2 product-list"
+                v-if="openAccardions[category]"
+              >
+                <Product
+                  v-for="product in group"
+                  :key="product.id"
+                  :product="product"
+                  :all-categories="allCategories"
+                  :is-image-uploading="isImageUploading"
+                  :get-category-name="getCategoryName"
+                  :is-adding-new-product="isAddingNewProduct"
+                  @save-product="saveChanges"
+                  @delete-product="deleteProductHandler"
+                  @delete-image="handleDeleteImage"
+                  @trigger-file-upload="triggerFileUpload"
+                  @handle-toggle="handleToggleWithCheck"
+                  @cancel-editing="handleCancelEditing"
+                  @stage-tab-icon="handleStageTabIcon"
+                  @delete-tab-icon="handleDeleteTabIcon"
+                  @update-tab-icon-path="handleUpdateTabIconPath"
+                  @dirty-state="handleDirtyState"
+                  :current-open-id="openProductId"
+                  :ref="(el) => registerProductRef(el, product.id)"
+                />
+                <MyBtn
+                  variant="secondary"
+                  @click="handleAddProduct(category)"
+                  class="btn-add"
+                  :disabled="isAddingNewProduct"
+                >
                   Добавить товар
                 </MyBtn>
               </div>
@@ -668,7 +903,6 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
 
 <style scoped lang="scss">
 .products-admin {
