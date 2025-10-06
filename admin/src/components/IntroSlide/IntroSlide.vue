@@ -3,9 +3,12 @@ import { onMounted, ref, watchEffect } from 'vue';
 import { storeToRefs } from 'pinia';
 import MyBtn from '../UI/MyBtn.vue';
 import DraggableList from '../UI/DraggableList.vue';
+import LinkSelector from '../UI/LinkSelector.vue';
 import useIntroSlideStore from '../../stores/introSlideStore';
 import Swal from 'sweetalert2';
+import fetchWithCors from '../../utils/fetchWithCors';
 import type { IntroSlideData } from './interfaces/introSlideData';
+import type { LinkData } from '../../types/FooterLinks';
 
 const openAccardion = ref<Record<number, boolean>>({});
 const openAdvantageAccardion = ref<Record<number, boolean>>({});
@@ -23,6 +26,12 @@ const isAddingNewSlide = ref(false);
 const loadingAction = ref<'loading' | 'saving' | 'deleting' | 'reordering'>(
   'loading'
 );
+
+// Переменные для работы со ссылками
+const allLinksData = ref<LinkData[]>([]);
+const selectedLinks = ref<Record<number, LinkData | null>>({});
+const linkSourceMode = ref<Record<number, 'custom' | 'existing'>>({});
+const customLinks = ref<Record<number, string>>({});
 
 const setFileInputRef = (el: any, itemId: number, type: 'video' | 'poster') => {
   if (el) {
@@ -49,10 +58,15 @@ const togleAccardion = (id: number) => {
     const originalItem = introSlideData.value.find((i) => i.id === id);
     if (originalItem) {
       editableItemData.value[id] = JSON.parse(JSON.stringify(originalItem));
+      // Инициализируем режим ссылки для существующего слайда
+      initializeLinkMode(id, originalItem.button_link);
     }
   } else {
     // When closing, remove the copy to discard changes.
     delete editableItemData.value[id];
+    delete selectedLinks.value[id];
+    delete linkSourceMode.value[id];
+    delete customLinks.value[id];
   }
 };
 
@@ -146,6 +160,72 @@ const clearFile = (itemId: number, type: 'video' | 'poster') => {
 const introSlideStore = useIntroSlideStore();
 const { introSlideData, isLoading } = storeToRefs(introSlideStore);
 
+// API URL для получения ссылок
+const API_URL_LINKS = '/server/php/admin/api/linksData/linksData.php';
+
+// Функция для загрузки всех ссылок из БД
+const fetchAllLinks = async () => {
+  try {
+    const response = await fetchWithCors(API_URL_LINKS);
+    if (response.success) {
+      allLinksData.value = response.data;
+    } else {
+      throw new Error(response.error || 'Не удалось загрузить ссылки');
+    }
+  } catch (err: any) {
+    console.error('Ошибка загрузки ссылок:', err.message);
+  }
+};
+
+// Функция для инициализации режима ссылки для слайда
+const initializeLinkMode = (slideId: number, buttonLink: string) => {
+  // Проверяем, есть ли ссылка в списке существующих ссылок
+  const existingLink = allLinksData.value.find(
+    (link) => link.link === buttonLink
+  );
+
+  if (existingLink) {
+    linkSourceMode.value[slideId] = 'existing';
+    selectedLinks.value[slideId] = existingLink;
+  } else {
+    linkSourceMode.value[slideId] = 'custom';
+    customLinks.value[slideId] = buttonLink;
+  }
+};
+
+// Computed для получения доступных ссылок (исключая уже выбранные)
+const getAvailableLinks = (currentSlideId: number) => {
+  const usedLinks = new Set(
+    Object.entries(selectedLinks.value)
+      .filter(([id, link]) => id !== currentSlideId.toString() && link)
+      .map(([, link]) => link?.links_data_id)
+  );
+
+  return allLinksData.value.filter(
+    (link) => !usedLinks.has(link.links_data_id)
+  );
+};
+
+// Функция для обновления ссылки кнопки
+const updateButtonLink = (slideId: number) => {
+  const mode = linkSourceMode.value[slideId];
+  let newLink = '';
+
+  if (mode === 'existing' && selectedLinks.value[slideId]) {
+    newLink = selectedLinks.value[slideId]!.link;
+  } else if (mode === 'custom') {
+    newLink = customLinks.value[slideId] || '';
+  }
+
+  // Обновляем ссылку в данных слайда
+  if (editableItemData.value[slideId]) {
+    editableItemData.value[slideId].button_link = newLink;
+  }
+  if (newSlide.value && slideId === 0) {
+    newSlide.value.button_link = newLink;
+  }
+};
+
 const addAdvantage = (item: IntroSlideData) => {
   if (!Array.isArray(item.advantages)) {
     item.advantages = [];
@@ -227,6 +307,9 @@ const prepareNewSlide = () => {
     created_at: '',
     updated_at: '',
   };
+  // Инициализируем режим ссылки для нового слайда
+  linkSourceMode.value[0] = 'custom';
+  customLinks.value[0] = '#';
   isAddingNewSlide.value = true;
 };
 
@@ -235,6 +318,9 @@ const cancelNewSlide = () => {
   isAddingNewSlide.value = false;
   delete filesToUpload.value[0];
   delete videoPreviews.value[0];
+  delete selectedLinks.value[0];
+  delete linkSourceMode.value[0];
+  delete customLinks.value[0];
 };
 
 const handleSaveNewSlide = async () => {
@@ -344,9 +430,9 @@ const reorderSlides = async (reorderedSlides: IntroSlideData[]) => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   loadingAction.value = 'loading';
-  introSlideStore.getIntroSlideData();
+  await Promise.all([introSlideStore.getIntroSlideData(), fetchAllLinks()]);
 });
 
 watchEffect(() => {
@@ -381,6 +467,14 @@ watchEffect(() => {
     });
   } else {
     Swal.close();
+  }
+
+  // Логируем ссылки кнопок при рендеринге списка
+  if (introSlideData.value && introSlideData.value.length > 0) {
+    console.log('Ссылки кнопок слайдов:');
+    introSlideData.value.forEach((slide, index) => {
+      console.log(`Слайд ${index + 1} (${slide.title}): ${slide.button_link}`);
+    });
   }
 });
 
@@ -427,24 +521,90 @@ const leave = (el: Element) => {
     <h1 class="main-title">Главный слайдер на главной странице</h1>
     <div class="add-new-item-bar">
       <span>Добавить новый слайд</span>
-      <MyBtn variant="primary" @click="prepareNewSlide" :disabled="isAddingNewSlide">Добавить</MyBtn>
+      <MyBtn
+        variant="primary"
+        @click="prepareNewSlide"
+        :disabled="isAddingNewSlide"
+        >Добавить</MyBtn
+      >
     </div>
 
     <!-- Form for new slide -->
-    <form v-if="newSlide" class="main-item new-slide-form" name="intro-slide-new">
+    <form
+      v-if="newSlide"
+      class="main-item new-slide-form"
+      name="intro-slide-new"
+    >
       <div class="main-item-content">
         <div class="main-item-inputs">
           <div class="main-item-input">
             <label class="main-item-input-label">Заголовок</label>
-            <input class="main-item-input-field" type="text" v-model="newSlide.title" />
+            <input
+              class="main-item-input-field"
+              type="text"
+              v-model="newSlide.title"
+            />
           </div>
           <div class="main-item-input">
             <label class="main-item-input-label">Текст кнопки</label>
-            <input class="main-item-input-field" type="text" v-model="newSlide.button_text" />
+            <input
+              class="main-item-input-field"
+              type="text"
+              v-model="newSlide.button_text"
+            />
           </div>
           <div class="main-item-input">
             <label class="main-item-input-label">Ссылка кнопки</label>
-            <input class="main-item-input-field" type="text" v-model="newSlide.button_link" />
+            <div class="link-selector-container">
+              <div class="link-mode-toggle">
+                <label :class="{ active: linkSourceMode[0] === 'custom' }">
+                  <input
+                    type="radio"
+                    value="custom"
+                    v-model="linkSourceMode[0]"
+                    name="new-slide-link-mode"
+                  />
+                  Внешняя ссылка
+                </label>
+                <label :class="{ active: linkSourceMode[0] === 'existing' }">
+                  <input
+                    type="radio"
+                    value="existing"
+                    v-model="linkSourceMode[0]"
+                    name="new-slide-link-mode"
+                  />
+                  Внутренняя страница
+                </label>
+              </div>
+
+              <div
+                v-if="linkSourceMode[0] === 'custom'"
+                class="custom-link-input"
+              >
+                <input
+                  class="main-item-input-field"
+                  type="text"
+                  v-model="customLinks[0]"
+                  @input="updateButtonLink(0)"
+                  placeholder="Введите ссылку"
+                />
+              </div>
+
+              <div
+                v-if="linkSourceMode[0] === 'existing'"
+                class="existing-link-selector"
+              >
+                <LinkSelector
+                  :model-value="selectedLinks[0]"
+                  :links="getAvailableLinks(0)"
+                  @update:model-value="
+                    selectedLinks[0] = $event;
+                    updateButtonLink(0);
+                  "
+                  label=""
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -454,19 +614,38 @@ const leave = (el: Element) => {
           </div>
           <div class="advantages-content">
             <div>
-              <div v-if="newSlide.advantages.length > 0" class="advantages-list">
-                <div v-for="(advantage, advIndex) in newSlide.advantages" :key="advantage + advIndex"
-                  class="advantage-item">
-                  <input class="input-advantage" type="text" v-model="newSlide.advantages[advIndex]"
-                    placeholder="Введите преимущество" />
-                  <MyBtn variant="primary" @click.prevent="removeAdvantage(newSlide, advIndex)" class="btn-remove">
-                    Удалить</MyBtn>
+              <div
+                v-if="newSlide.advantages.length > 0"
+                class="advantages-list"
+              >
+                <div
+                  v-for="(advantage, advIndex) in newSlide.advantages"
+                  :key="advantage + advIndex"
+                  class="advantage-item"
+                >
+                  <input
+                    class="input-advantage"
+                    type="text"
+                    v-model="newSlide.advantages[advIndex]"
+                    placeholder="Введите преимущество"
+                  />
+                  <MyBtn
+                    variant="primary"
+                    @click.prevent="removeAdvantage(newSlide, advIndex)"
+                    class="btn-remove"
+                  >
+                    Удалить</MyBtn
+                  >
                 </div>
               </div>
               <p v-else class="no-advantages">Сейчас нет преимуществ</p>
             </div>
             <div class="advantage-actions">
-              <MyBtn variant="secondary" @click.prevent="addAdvantage(newSlide)" class="btn-add">Добавить преимущество
+              <MyBtn
+                variant="secondary"
+                @click.prevent="addAdvantage(newSlide)"
+                class="btn-add"
+                >Добавить преимущество
               </MyBtn>
             </div>
           </div>
@@ -476,59 +655,127 @@ const leave = (el: Element) => {
           <!-- Video Upload for new slide -->
           <div class="upload-group">
             <label>Видео для слайда (не более ~50 МБ, формат mp4):</label>
-            <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, 0, 'video')"
-              accept="video/mp4" @change="onFileChange($event, 0, 'video')" />
+            <input
+              type="file"
+              class="hidden-file-input"
+              :ref="(el) => setFileInputRef(el, 0, 'video')"
+              accept="video/mp4"
+              @change="onFileChange($event, 0, 'video')"
+            />
             <div class="uploader-preview video-uploader">
-              <video v-if="videoPreviews[0]?.video" :src="videoPreviews[0]?.video" class="video-preview" controls
-                muted></video>
+              <video
+                v-if="videoPreviews[0]?.video"
+                :src="videoPreviews[0]?.video"
+                class="video-preview"
+                controls
+                muted
+              ></video>
               <div v-else class="uploader-placeholder">
                 <span>Нет видео</span>
               </div>
             </div>
             <div class="upload-actions">
-              <MyBtn variant="secondary" type="button" @click="triggerFileInput(0, 'video')">Выбрать видео</MyBtn>
-              <MyBtn variant="primary" type="button" @click="clearFile(0, 'video')">Удалить видео</MyBtn>
+              <MyBtn
+                variant="secondary"
+                type="button"
+                @click="triggerFileInput(0, 'video')"
+                >Выбрать видео</MyBtn
+              >
+              <MyBtn
+                variant="primary"
+                type="button"
+                @click="clearFile(0, 'video')"
+                >Удалить видео</MyBtn
+              >
             </div>
           </div>
 
           <!-- Poster Upload for new slide -->
           <div class="upload-group">
             <label>
-              Постер (не более ~5 МБ, формат jpg, обязательно загрузите, это важно для плавного появления видео):
+              Постер (не более ~5 МБ, формат jpg, обязательно загрузите, это
+              важно для плавного появления видео):
             </label>
-            <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, 0, 'poster')"
-              accept="image/*" @change="onFileChange($event, 0, 'poster')" />
+            <input
+              type="file"
+              class="hidden-file-input"
+              :ref="(el) => setFileInputRef(el, 0, 'poster')"
+              accept="image/*"
+              @change="onFileChange($event, 0, 'poster')"
+            />
             <div class="uploader-preview image-uploader">
-              <img v-if="videoPreviews[0]?.poster" :src="videoPreviews[0]?.poster" alt="Постер" class="image-preview" />
+              <img
+                v-if="videoPreviews[0]?.poster"
+                :src="videoPreviews[0]?.poster"
+                alt="Постер"
+                class="image-preview"
+              />
               <div v-else class="uploader-placeholder">
                 <span>Нет постера</span>
               </div>
             </div>
             <div class="upload-actions">
-              <MyBtn variant="secondary" type="button" @click="triggerFileInput(0, 'poster')">Выбрать постер</MyBtn>
-              <MyBtn variant="primary" type="button" @click="clearFile(0, 'poster')">Удалить постер</MyBtn>
+              <MyBtn
+                variant="secondary"
+                type="button"
+                @click="triggerFileInput(0, 'poster')"
+                >Выбрать постер</MyBtn
+              >
+              <MyBtn
+                variant="primary"
+                type="button"
+                @click="clearFile(0, 'poster')"
+                >Удалить постер</MyBtn
+              >
             </div>
           </div>
         </div>
 
         <div class="form-actions">
-          <MyBtn variant="secondary" @click.prevent="handleSaveNewSlide" :disabled="isLoading" class="save-all-btn">
+          <MyBtn
+            variant="secondary"
+            @click.prevent="handleSaveNewSlide"
+            :disabled="isLoading"
+            class="save-all-btn"
+          >
             {{ isLoading ? 'Сохранение...' : 'Сохранить новый слайд' }}
           </MyBtn>
-          <MyBtn variant="primary" @click.prevent="cancelNewSlide" :disabled="isLoading" class="delete-slide-btn">
-            Отменить создание слайда</MyBtn>
+          <MyBtn
+            variant="primary"
+            @click.prevent="cancelNewSlide"
+            :disabled="isLoading"
+            class="delete-slide-btn"
+          >
+            Отменить создание слайда</MyBtn
+          >
         </div>
       </div>
     </form>
 
-    <DraggableList v-if="introSlideData && introSlideData.length > 0" v-model="introSlideData" item-key="id"
-      class="slides-list" tag="div" @reorder="reorderSlides">
+    <DraggableList
+      v-if="introSlideData && introSlideData.length > 0"
+      v-model="introSlideData"
+      item-key="id"
+      class="slides-list"
+      tag="div"
+      @reorder="reorderSlides"
+    >
       <template #item="{ item, dragHandleProps, isDragOver }">
-        <form class="main-item" :name="`intro-slide-${item.id}`" :class="{ 'drag-over': isDragOver }">
+        <form
+          class="main-item"
+          :name="`intro-slide-${item.id}`"
+          :class="{ 'drag-over': isDragOver }"
+        >
           <label class="main-item-label" :for="`intro-slide-${item.id}`">
             <div class="main-item-label-content">
               <div class="drag-handle" v-bind="dragHandleProps">
-                <img style="display: block" src="./../../assets/d-and-d.svg" alt="Перетащить" width="40" height="40" />
+                <img
+                  style="display: block"
+                  src="./../../assets/d-and-d.svg"
+                  alt="Перетащить"
+                  width="40"
+                  height="40"
+                />
               </div>
               {{ item.title }}
             </div>
@@ -537,56 +784,165 @@ const leave = (el: Element) => {
               openAccardion[item.id] ? 'Закрыть' : 'Редактировать'
             }}</MyBtn>
           </label>
-          <Transition name="accordion" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"
-            @before-leave="beforeLeave" @leave="leave">
-            <div v-if="openAccardion[item.id] && editableItemData[item.id]" class="main-item-content"
-              data-drag-preview-hide="true">
+          <Transition
+            name="accordion"
+            @before-enter="beforeEnter"
+            @enter="enter"
+            @after-enter="afterEnter"
+            @before-leave="beforeLeave"
+            @leave="leave"
+          >
+            <div
+              v-if="openAccardion[item.id] && editableItemData[item.id]"
+              class="main-item-content"
+              data-drag-preview-hide="true"
+            >
               <div class="main-item-inputs">
                 <div class="main-item-input">
                   <label class="main-item-input-label">Заголовок</label>
-                  <input class="main-item-input-field" type="text" v-model="editableItemData[item.id].title" />
+                  <input
+                    class="main-item-input-field"
+                    type="text"
+                    v-model="editableItemData[item.id].title"
+                  />
                 </div>
                 <div class="main-item-input">
                   <label class="main-item-input-label">Текст кнопки</label>
-                  <input class="main-item-input-field" type="text" v-model="editableItemData[item.id].button_text" />
+                  <input
+                    class="main-item-input-field"
+                    type="text"
+                    v-model="editableItemData[item.id].button_text"
+                  />
                 </div>
                 <div class="main-item-input">
                   <label class="main-item-input-label">Ссылка кнопки</label>
-                  <input class="main-item-input-field" type="text" v-model="editableItemData[item.id].button_link" />
+                  <div class="link-selector-container">
+                    <div class="link-mode-toggle">
+                      <label
+                        :class="{
+                          active: linkSourceMode[item.id] === 'custom',
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          value="custom"
+                          v-model="linkSourceMode[item.id]"
+                          :name="`slide-${item.id}-link-mode`"
+                        />
+                        Внешняя ссылка
+                      </label>
+                      <label
+                        :class="{
+                          active: linkSourceMode[item.id] === 'existing',
+                        }"
+                      >
+                        <input
+                          type="radio"
+                          value="existing"
+                          v-model="linkSourceMode[item.id]"
+                          :name="`slide-${item.id}-link-mode`"
+                        />
+                        Внутренняя страница
+                      </label>
+                    </div>
+
+                    <div
+                      v-if="linkSourceMode[item.id] === 'custom'"
+                      class="custom-link-input"
+                    >
+                      <input
+                        class="main-item-input-field"
+                        type="text"
+                        v-model="customLinks[item.id]"
+                        @input="updateButtonLink(item.id)"
+                        placeholder="Введите ссылку"
+                      />
+                    </div>
+
+                    <div
+                      v-if="linkSourceMode[item.id] === 'existing'"
+                      class="existing-link-selector"
+                    >
+                      <LinkSelector
+                        :model-value="selectedLinks[item.id]"
+                        :links="getAvailableLinks(item.id)"
+                        @update:model-value="
+                          selectedLinks[item.id] = $event;
+                          updateButtonLink(item.id);
+                        "
+                        label=""
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="main-item-advantages">
                 <div class="main-item-advantages-header">
                   <label class="main-item-input-label">Преимущества</label>
-                  <MyBtn variant="primary" @click.prevent="togleAdvantageAccardion(item.id)">{{
-                    openAdvantageAccardion[item.id] ? 'Скрыть' : 'Показать'
-                  }}
-                    преимущества</MyBtn>
+                  <MyBtn
+                    variant="primary"
+                    @click.prevent="togleAdvantageAccardion(item.id)"
+                    >{{
+                      openAdvantageAccardion[item.id] ? 'Скрыть' : 'Показать'
+                    }}
+                    преимущества</MyBtn
+                  >
                 </div>
-                <Transition name="accordion" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"
-                  @before-leave="beforeLeave" @leave="leave">
-                  <div class="advantages-content" v-if="openAdvantageAccardion[item.id]">
+                <Transition
+                  name="accordion"
+                  @before-enter="beforeEnter"
+                  @enter="enter"
+                  @after-enter="afterEnter"
+                  @before-leave="beforeLeave"
+                  @leave="leave"
+                >
+                  <div
+                    class="advantages-content"
+                    v-if="openAdvantageAccardion[item.id]"
+                  >
                     <div>
-                      <div v-if="editableItemData[item.id].advantages.length > 0" class="advantages-list">
-                        <div v-for="(advantage, advIndex) in editableItemData[
-                          item.id
-                        ].advantages" :key="advantage + advIndex" class="advantage-item">
-                          <input class="input-advantage" type="text" v-model="editableItemData[item.id].advantages[advIndex]
-                            " placeholder="Введите преимущество" />
-                          <MyBtn variant="primary" @click.prevent="
-                            removeAdvantage(
-                              editableItemData[item.id],
-                              advIndex
-                            )
-                            " class="btn-remove">Удалить</MyBtn>
+                      <div
+                        v-if="editableItemData[item.id].advantages.length > 0"
+                        class="advantages-list"
+                      >
+                        <div
+                          v-for="(advantage, advIndex) in editableItemData[
+                            item.id
+                          ].advantages"
+                          :key="advantage + advIndex"
+                          class="advantage-item"
+                        >
+                          <input
+                            class="input-advantage"
+                            type="text"
+                            v-model="
+                              editableItemData[item.id].advantages[advIndex]
+                            "
+                            placeholder="Введите преимущество"
+                          />
+                          <MyBtn
+                            variant="primary"
+                            @click.prevent="
+                              removeAdvantage(
+                                editableItemData[item.id],
+                                advIndex
+                              )
+                            "
+                            class="btn-remove"
+                            >Удалить</MyBtn
+                          >
                         </div>
                       </div>
                       <p v-else class="no-advantages">Сейчас нет преимуществ</p>
                     </div>
 
                     <div class="advantage-actions">
-                      <MyBtn variant="secondary" @click.prevent="addAdvantage(editableItemData[item.id])"
-                        class="btn-add">Добавить преимущество</MyBtn>
+                      <MyBtn
+                        variant="secondary"
+                        @click.prevent="addAdvantage(editableItemData[item.id])"
+                        class="btn-add"
+                        >Добавить преимущество</MyBtn
+                      >
                     </div>
                   </div>
                 </Transition>
@@ -596,53 +952,95 @@ const leave = (el: Element) => {
                 <!-- Video Upload -->
                 <div class="upload-group">
                   <label>Видео для слайда (не более ~50 МБ, формат mp4):</label>
-                  <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, item.id, 'video')"
-                    accept="video/mp4" @change="onFileChange($event, item.id, 'video')" />
+                  <input
+                    type="file"
+                    class="hidden-file-input"
+                    :ref="(el) => setFileInputRef(el, item.id, 'video')"
+                    accept="video/mp4"
+                    @change="onFileChange($event, item.id, 'video')"
+                  />
                   <div class="uploader-preview video-uploader">
-                    <video v-if="videoPreviews[item.id]?.video || item.video_path"
-                      :src="videoPreviews[item.id]?.video || item.video_path" class="video-preview" controls
-                      muted></video>
+                    <video
+                      v-if="videoPreviews[item.id]?.video || item.video_path"
+                      :src="videoPreviews[item.id]?.video || item.video_path"
+                      class="video-preview"
+                      controls
+                      muted
+                    ></video>
                     <div v-else class="uploader-placeholder">
                       <span>Нет видео</span>
                     </div>
                   </div>
                   <div class="upload-actions">
-                    <MyBtn variant="secondary" type="button" @click="triggerFileInput(item.id, 'video')">Выбрать видео
+                    <MyBtn
+                      variant="secondary"
+                      type="button"
+                      @click="triggerFileInput(item.id, 'video')"
+                      >Выбрать видео
                     </MyBtn>
-                    <MyBtn variant="primary" type="button" @click="clearFile(item.id, 'video')">Удалить видео</MyBtn>
+                    <MyBtn
+                      variant="primary"
+                      type="button"
+                      @click="clearFile(item.id, 'video')"
+                      >Удалить видео</MyBtn
+                    >
                   </div>
                 </div>
 
                 <!-- Poster Upload -->
                 <div class="upload-group">
-                  <label>
-                    Постер (не более ~5 МБ, формат jpg, если не выбрать,
-                    создастся из видео):
-                  </label>
-                  <input type="file" class="hidden-file-input" :ref="(el) => setFileInputRef(el, item.id, 'poster')"
-                    accept="image/*" @change="onFileChange($event, item.id, 'poster')" />
+                  <label> Постер (не более ~5 МБ, формат jpg): </label>
+                  <input
+                    type="file"
+                    class="hidden-file-input"
+                    :ref="(el) => setFileInputRef(el, item.id, 'poster')"
+                    accept="image/*"
+                    @change="onFileChange($event, item.id, 'poster')"
+                  />
                   <div class="uploader-preview image-uploader">
-                    <img v-if="videoPreviews[item.id]?.poster || item.poster_path"
-                      :src="videoPreviews[item.id]?.poster || item.poster_path" alt="Постер" class="image-preview" />
+                    <img
+                      v-if="videoPreviews[item.id]?.poster || item.poster_path"
+                      :src="videoPreviews[item.id]?.poster || item.poster_path"
+                      alt="Постер"
+                      class="image-preview"
+                    />
                     <div v-else class="uploader-placeholder">
                       <span>Нет постера</span>
                     </div>
                   </div>
                   <div class="upload-actions">
-                    <MyBtn variant="secondary" type="button" @click="triggerFileInput(item.id, 'poster')">Выбрать постер
+                    <MyBtn
+                      variant="secondary"
+                      type="button"
+                      @click="triggerFileInput(item.id, 'poster')"
+                      >Выбрать постер
                     </MyBtn>
-                    <MyBtn variant="primary" type="button" @click="clearFile(item.id, 'poster')">Удалить постер</MyBtn>
+                    <MyBtn
+                      variant="primary"
+                      type="button"
+                      @click="clearFile(item.id, 'poster')"
+                      >Удалить постер</MyBtn
+                    >
                   </div>
                 </div>
               </div>
 
               <div class="form-actions">
-                <MyBtn variant="secondary" @click.prevent="handleSave(editableItemData[item.id])" :disabled="isLoading"
-                  class="save-all-btn">
+                <MyBtn
+                  variant="secondary"
+                  @click.prevent="handleSave(editableItemData[item.id])"
+                  :disabled="isLoading"
+                  class="save-all-btn"
+                >
                   {{ isLoading ? 'Сохранение...' : 'Сохранить слайд' }}
                 </MyBtn>
-                <MyBtn variant="primary" @click.prevent="handleDeleteSlide(item.id)" :disabled="isLoading"
-                  class="delete-slide-btn">Удалить слайд</MyBtn>
+                <MyBtn
+                  variant="primary"
+                  @click.prevent="handleDeleteSlide(item.id)"
+                  :disabled="isLoading"
+                  class="delete-slide-btn"
+                  >Удалить слайд</MyBtn
+                >
               </div>
               <!-- <p>Это position: {{ item.position }}</p> -->
               <!-- <p>Это created_at: {{ item.created_at }}</p> -->
@@ -769,7 +1167,7 @@ const leave = (el: Element) => {
   gap: 20px;
 }
 
-.upload-group>label {
+.upload-group > label {
   font-weight: bold;
 }
 
@@ -951,5 +1349,78 @@ const leave = (el: Element) => {
   max-width: 100%;
   flex-grow: 1;
   padding: 20px 20px;
+}
+
+/* Стили для выбора ссылок */
+.link-selector-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  width: 100%;
+}
+
+.link-mode-toggle {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #555;
+  width: 100%;
+  max-width: 400px;
+}
+
+.link-mode-toggle input[type='radio'] {
+  display: none;
+}
+
+.link-mode-toggle label {
+  flex: 1;
+  text-align: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  background-color: #3a3a3c;
+  color: #f0f0f0;
+  transition: all 0.2s ease-in-out;
+  font-size: 0.9rem;
+  font-weight: 500;
+  user-select: none;
+}
+
+.link-mode-toggle label:not(:first-of-type) {
+  border-left: 1px solid #555;
+}
+
+.link-mode-toggle label.active {
+  background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
+  color: white;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.custom-link-input {
+  width: 100%;
+}
+
+.existing-link-selector {
+  width: 100%;
+}
+
+.existing-link-selector .form-group {
+  margin-bottom: 0;
+}
+
+.existing-link-selector select {
+  background-color: #1c1c1e;
+  color: #f0f0f0;
+  border: 1px solid #555;
+  padding: 10px;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.existing-link-selector select:focus {
+  outline: none;
+  border-color: #007aff;
+  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.5);
 }
 </style>
