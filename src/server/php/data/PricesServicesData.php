@@ -117,7 +117,7 @@ class PricesServicesData extends DataBase
           $query = "SELECT * FROM add_services";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
-          $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+          $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
   
           error_log("Получены все элементы прайсов: " . count($result));
           return $result;
