@@ -2,16 +2,21 @@
   <div>
     <h1>Профиль</h1>
     <p>Поменять имя</p>
-    <input type="text" v-model="username" name="username" />
+    <MyInput type="text" variant="primary" v-model="username" name="username" />
     <p>Поменять пароль</p>
     <div class="password-input">
-      <input :type="showPassword ? 'text' : 'password'" v-model="password" name="password" />
+      <MyInput
+        :type="showPassword ? 'text' : 'password'"
+        variant="primary"
+        v-model="password"
+        name="password"
+      />
       <button @click="togglePasswordVisibility" class="toggle-password">
         {{ showPassword ? '👁️' : '👁️‍🗨️' }}
       </button>
     </div>
     <div class="buttons">
-      <button @click="updateProfile" class="btn-primary">Изменить</button>
+      <MyBtn variant="primary" @click="updateProfile">Изменить</MyBtn>
     </div>
   </div>
 </template>
@@ -20,6 +25,8 @@
 import { ref, onMounted } from 'vue';
 import Swal from 'sweetalert2';
 import fetchWithCors from '../utils/fetchWithCors';
+import MyInput from '../components/UI/MyInput.vue';
+import MyBtn from '../components/UI/MyBtn.vue';
 
 interface ProfileI {
   username?: string;
@@ -41,9 +48,7 @@ function togglePasswordVisibility() {
 
 const loadProfile = async () => {
   try {
-    const response = await fetchWithCors(
-      '/profile'
-    );
+    const response = await fetchWithCors('/profile');
     if (response.success) {
       data.value = response.data;
 
@@ -70,11 +75,11 @@ const updateProfile = async () => {
     });
     return;
   }
-  if (!username.value) {
+  if (username.value && !username.value.trim()) {
     Swal.fire({
       icon: 'warning',
       title: 'Внимание',
-      text: 'Поле username не может быть пустым.',
+      text: 'Имя пользователя не может быть пустым.',
     });
     return;
   }
@@ -123,16 +128,21 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.my-input-wrapper {
+  width: 30%;
+}
+
 .password-input {
+  width: 100%;
   position: relative;
   display: inline-block;
 }
 
 .toggle-password {
   position: absolute;
-  right: 5px;
+  left: 30%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-140%, -50%);
   background: none;
   border: none;
   cursor: pointer;
