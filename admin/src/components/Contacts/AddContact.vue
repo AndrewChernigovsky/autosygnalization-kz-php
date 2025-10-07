@@ -61,7 +61,7 @@ const addNewContact = async (e?: Event | null) => {
     <div class="addcontact-header">
       <h2 class="title m-0">Добавить новый контакт</h2>
       <MyBtn
-        variant="primary"
+        variant="secondary"
         @click="addNewContactActive = !addNewContactActive"
         >{{ addNewContactActive ? 'Закрыть' : 'Добавить' }}</MyBtn
       >
@@ -113,7 +113,13 @@ const addNewContact = async (e?: Event | null) => {
               example@example.com
             </p>
           </div>
-          <div class="addcontact-label file-input">
+          <div
+            class="addcontact-label file-input"
+            v-if="
+              store.newContact.type === 'Социальные сети' ||
+              store.newContact.type === 'Мессенджер'
+            "
+          >
             <h3 class="subtitle m-0">Изображение</h3>
             <div class="file-input-wrapper">
               <MyFileInput
@@ -141,7 +147,10 @@ const addNewContact = async (e?: Event | null) => {
           </label>
         </div>
         <div class="addcontact-buttons-wrapper">
-          <MyBtn type="button" variant="primary" @click="addNewContact($event)"
+          <MyBtn
+            type="button"
+            variant="secondary"
+            @click="addNewContact($event)"
             >Добавить</MyBtn
           >
         </div>
@@ -165,6 +174,11 @@ const addNewContact = async (e?: Event | null) => {
   justify-content: space-between;
   align-items: center;
   overflow: hidden;
+
+  .title {
+    font-size: 34px;
+    line-height: 44px;
+  }
 }
 
 .addcontact-body-wrapper {
