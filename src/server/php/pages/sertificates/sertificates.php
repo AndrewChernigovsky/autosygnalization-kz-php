@@ -29,7 +29,7 @@ $TYPE = $_GET['type'] ?? "auto";
 
 $total_items_per_page = 10;
 $titleDocument = "Каталог | Auto Security";
-$title = "Специальные предложения";
+$title = "Сертификаты";
 
 $header = new Header();
 $footer = new Footer();
@@ -56,9 +56,7 @@ $selectData = new SelectData();
 
   <?= $header->getHeader(); ?>
   <main class="main">
-    <h2 class="title__h2"><?= $title ?></h2>
     <?= sertificatesSection(); ?>
-
     <?= getShop('setup'); ?>
   </main>
   <?= $footer->getFooter(); ?>
