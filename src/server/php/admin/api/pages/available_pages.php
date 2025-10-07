@@ -27,7 +27,7 @@ function getAvailablePages() {
         'cart' => 'Корзина',
         'checkout' => 'Оформление заказа',
         'contacts' => 'Контакты',
-        'parking-systems' => 'Парковочные системы',
+        'parking-systems' => 'Видеорегистраторы',
         'price' => 'Прайс',
         'sertificates' => 'Сертификаты',
         'services' => 'Услуги',
