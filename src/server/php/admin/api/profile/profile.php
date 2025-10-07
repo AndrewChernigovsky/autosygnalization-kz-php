@@ -121,26 +121,36 @@ class ProfileAPI extends DataBase
   public function editProfile($data)
   {
     try {
-      // Проверяем обязательные поля
-      if (empty($data['username']) || empty($data['password'])) {
-        return $this->error('Пустые поля не допустимы');
+      // Проверяем, что передано хотя бы одно поле для обновления
+      if (empty($data['username']) && empty($data['password'])) {
+        return $this->error('Нечего обновлять. Заполните хотя бы одно поле.');
       }
 
+      $updateFields = [];
+      $params = [];
 
-      $sql = "UPDATE users SET username = :username, password = :password WHERE id = 1";
-      $stmt = $this->pdo->prepare($sql);
-      $stmt->execute([
-        'username' => $data['username'],
-        'password' => $data['password']
-      ]);
+      // Обновляем username если он передан
+      if (!empty($data['username'])) {
+        if (trim($data['username']) === '') {
+          return $this->error('Имя пользователя не может быть пустым.');
+        }
+        $updateFields[] = 'username = :username';
+        $params['username'] = $data['username'];
+      }
 
-      // Обновляем пароль только если он передан
+      // Обновляем password если он передан
       if (!empty($data['password'])) {
-        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-        $passwordSql = "UPDATE users SET password = :password WHERE id = 1";
-        $passwordStmt = $this->pdo->prepare($passwordSql);
-        $passwordStmt->execute(['password' => $hashedPassword]);
+        $updateFields[] = 'password = :password';
+        $params['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
       }
+
+      if (empty($updateFields)) {
+        return $this->error('Нет данных для обновления.');
+      }
+
+      $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = 1";
+      $stmt = $this->pdo->prepare($sql);
+      $stmt->execute($params);
 
       return $this->success('Профиль успешно обновлен');
     } catch (Exception $e) {

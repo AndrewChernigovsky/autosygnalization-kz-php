@@ -9,12 +9,18 @@ import {
 import MyBtn from './components/UI/MyBtn.vue';
 import { onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import profileStore from './stores/profileStore';
+
 const router = useRouter();
+const store = profileStore();
 
 onMounted(async () => {
   await checkAuthStatus();
   if (!isAuthenticated.value) {
     router.push('/login');
+  } else {
+    // Загружаем профиль пользователя если авторизованы
+    await store.getProfile();
   }
 });
 </script>
@@ -23,7 +29,8 @@ onMounted(async () => {
   <div v-if="isAuthenticated" class="app-container">
     <Menu />
     <h1 style="text-align: center; margin-bottom: 20px" class="my-title m-0">
-      Админ-панель, здравствуйте Алексей!
+      Админ-панель, здравствуйте
+      {{ store.profile?.username || 'Администратор' }}!
     </h1>
     <Header />
     <main class="main-content my-page">
