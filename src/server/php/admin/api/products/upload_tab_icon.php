@@ -46,7 +46,7 @@ if (!is_dir($uploadDir)) {
 }
 
 $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
-$newFileName = uniqid('icon_', true) . '.' . $fileExtension;
+$newFileName = uniqid('icon_') . '.' . $fileExtension;
 $uploadFilePath = $uploadDir . $newFileName;
 
 try {
