@@ -3,7 +3,6 @@ import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
 import type { ProductI } from '../interfaces/Products';
 import Gallery from './../Gallery.vue';
 import Tabs from './../Tabs/Tabs.vue';
-import Prices from './../Prices.vue';
 import MyBtn from '../../UI/MyBtn.vue';
 import MyTransition from '../../UI/MyTransition.vue';
 import MyQuill from '../../UI/MyQuill.vue';

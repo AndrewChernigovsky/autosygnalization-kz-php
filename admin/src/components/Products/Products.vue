@@ -467,7 +467,7 @@ async function saveChanges(product: ProductI) {
             '🔍 [SAVE] Найден blob URL в финальной проверке, ищем staged файл'
           );
           // Проверяем, есть ли уже загруженный путь в нашем хранилище
-          const iconKey = `${tabIndex}_${i}`;
+          const iconKey = `${t}_${i}`;
           const storedPath = tabIconPaths.value.get(product.id)?.get(iconKey);
           console.log(
             '🔍 [SAVE] Ищем сохраненный путь для:',

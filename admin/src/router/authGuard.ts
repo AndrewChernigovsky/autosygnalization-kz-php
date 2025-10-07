@@ -22,7 +22,7 @@ export async function checkAuthGuard(
       next();
     } else {
 
-      window.location.href = 'http://localhost:3000/login';
+      window.location.href = '/login';
     }
   } catch (error) {
     isAuthenticated.value = false;

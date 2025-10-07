@@ -1,61 +1,3 @@
-<template>
-  <div class="docs-page">
-    <div class="docs-header">
-      <h1 class="docs-title">Управление документами</h1>
-    </div>
-
-    <div class="docs-container">
-      <div class="docs-item" v-for="doc in docs" :key="doc.id">
-        <div class="doc-info">
-          <div class="doc-field">
-            <label class="field-label">Новый файл:</label>
-            <div class="file-input-wrapper">
-              <input
-                type="file"
-                @change="handleFileChange($event, doc)"
-                accept=".txt,text/plain"
-                class="file-input"
-                :id="'file-' + doc.id"
-              />
-              <label :for="'file-' + doc.id" class="file-input-label">
-                <span class="file-icon">📄</span>
-                <span class="file-text">{{
-                  doc.file ? doc.file.name : 'Выбрать файл'
-                }}</span>
-              </label>
-            </div>
-          </div>
-
-          <div class="doc-field" v-if="doc.path">
-            <label class="field-label">Текущий файл:</label>
-            <div class="current-file-info">
-              <span class="file-icon">📋</span>
-              <span class="file-path">{{ doc.path }}</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="doc-actions">
-          <MyBtn
-            variant="secondary"
-            @click="updateDoc(doc)"
-            :disabled="!doc.key.trim()"
-            class="update-btn"
-          >
-            <span class="btn-icon">💾</span>
-            Обновить
-          </MyBtn>
-        </div>
-      </div>
-
-      <div v-if="docs.length === 0" class="no-docs">
-        <div class="no-docs-icon">📚</div>
-        <p>Документы не найдены</p>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import Swal from 'sweetalert2';
@@ -74,6 +16,7 @@ const isUpdating = ref<number | null>(null);
 
 const handleFileChange = (event: Event, doc: DocItem) => {
   const target = event.target as HTMLInputElement;
+
   if (target.files && target.files[0]) {
     const file = target.files[0];
 
@@ -107,6 +50,8 @@ const handleFileChange = (event: Event, doc: DocItem) => {
     }
 
     doc.file = file;
+    // Сбрасываем value input, чтобы при повторной загрузке того же файла событие change сработало
+    target.value = '';
   }
 };
 
@@ -201,16 +146,86 @@ const getDocs = async () => {
   }
 };
 
+function getDocName(key: string) {
+  switch (key) {
+    case 'deal':
+      return 'Договор';
+    case 'delivary':
+      return 'Доставка';
+    case 'policy':
+      return 'Политика';
+  }
+  return key;
+}
+
 onMounted(async () => {
   await getDocs();
 });
 </script>
 
+<template>
+  <div class="docs-page">
+    <div class="docs-header">
+      <h1 class="docs-title">Управление документами</h1>
+    </div>
+
+    <div class="docs-container">
+      <div class="docs-item" v-for="doc in docs" :key="doc.id">
+        <div class="doc-info">
+          <div class="doc-field">
+            <h3 class="title m-0">{{ getDocName(doc.key) }}</h3>
+            <label class="field-label">Новый файл:</label>
+            <div class="file-input-wrapper">
+              <input
+                type="file"
+                @change="handleFileChange($event, doc)"
+                accept=".txt,text/plain"
+                class="file-input"
+                :id="'file-' + doc.id"
+              />
+              <label :for="'file-' + doc.id" class="file-input-label">
+                <span class="file-icon">📄</span>
+                <span class="file-text">{{
+                  doc.file ? doc.file.name : 'Выбрать файл'
+                }}</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="doc-field" v-if="doc.path">
+            <label class="field-label">Текущий файл:</label>
+            <div class="current-file-info">
+              <span class="file-icon">📋</span>
+              <span class="file-path">{{ doc.path }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-actions">
+          <MyBtn
+            variant="secondary"
+            @click="updateDoc(doc)"
+            :disabled="!doc.key.trim()"
+            class="update-btn"
+          >
+            <span class="btn-icon">💾</span>
+            Обновить
+          </MyBtn>
+        </div>
+      </div>
+
+      <div v-if="docs.length === 0" class="no-docs">
+        <div class="no-docs-icon">📚</div>
+        <p>Документы не найдены</p>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .docs-page {
   padding: 20px;
   max-width: 100%;
-  background: black;
   min-height: 100vh;
 }
 
@@ -226,7 +241,7 @@ onMounted(async () => {
 .docs-title {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: #ffffff;
   margin: 0 0 10px 0;
 }
 

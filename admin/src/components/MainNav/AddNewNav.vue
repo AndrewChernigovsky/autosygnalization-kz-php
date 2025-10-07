@@ -59,7 +59,7 @@ const addNewNavItem = async (e?: Event | null) => {
   <div class="addlink">
     <div class="addlink-header">
       <h2 class="title m-0">Добавить новый элемент навигации</h2>
-      <MyBtn variant="primary" @click="addNewNavActive = !addNewNavActive">{{
+      <MyBtn variant="secondary" @click="addNewNavActive = !addNewNavActive">{{
         addNewNavActive ? 'Закрыть' : 'Добавить'
       }}</MyBtn>
     </div>

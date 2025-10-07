@@ -543,7 +543,7 @@ const leave = (el: Element) => {
     <div class="add-new-item-bar">
       <span>Добавить новый слайд</span>
       <MyBtn
-        variant="primary"
+        variant="secondary"
         @click="prepareNewSlide"
         :disabled="isAddingNewSlide"
         >Добавить</MyBtn
