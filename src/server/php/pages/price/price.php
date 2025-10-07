@@ -5,18 +5,21 @@ use LAYOUT\Header;
 use LAYOUT\Head;
 use LAYOUT\Footer;
 
-use DATA\PricesData;
-use DATA\PricesServicesData;
-use COMPONENTS\ModalForm;
-use function FUNCTIONS\renderPhoneButton;
 use DATA\Products;
+use DATA\PricesServicesData;
+
+use COMPONENTS\ModalForm;
+
+use function FUNCTIONS\renderPhoneButton;
+use function FUNCTIONS\getShop;
+
 
 $title = 'Прайс-лист | Auto Security';
 $head = new Head($title, [], []);
 $header = new Header();
 $footer = new Footer();
 
-$pricesServices = (new PricesServicesData())->getData();
+$pricesServices = (new PricesServicesData())->getAddedServices();
 $products = (new Products())->getData();
 
 // Фильтруем продукты, у которых есть price_list
@@ -117,7 +120,7 @@ echo $head->setHead();
                     <p><?php echo ($service['title']); ?></p>
                   <?php endif; ?>
                   <div class="price-services__price">
-                    <?php echo htmlspecialchars($service['productServicesPrice']) . ' ' . htmlspecialchars($service['currency']); ?>
+                    <?php echo htmlspecialchars($service['price'])  ?>
                   </div>
                 </div>
               </li>
@@ -138,6 +141,7 @@ echo $head->setHead();
         </button>
       </form>
     </div>
+    <?= getShop("shop"); ?>
   </main>
   <?= $footer->getFooter(); ?>
   <?= (new ModalForm())->render(); ?>

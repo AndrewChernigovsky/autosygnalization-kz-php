@@ -300,13 +300,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    a {
+      padding: 0;
+    }
+
+    a>p {
+      margin-bottom: 0;
+    }
   }
 
   &__box a {
     font-size: 18px;
     color: var.$white;
     text-decoration: none;
-    padding: 10px 20px;
+    padding: 5px 20px;
   }
 
   &__box a:hover {

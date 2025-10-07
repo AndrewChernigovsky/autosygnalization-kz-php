@@ -36,7 +36,7 @@ error_log(print_r($services, true) . ' SSS');
   <main class="main">
     <section class="service" id="service">
       <div class="container">
-        <h2 class="service__title1">наши услуги</h2>
+        <h2 class="service__title">наши услуги</h2>
         <div class="swiper swiper-service">
           <ul class="service__list service__list--component list-style-none swiper-wrapper component">
             <?php foreach ($services[0] as $index => $service): ?>

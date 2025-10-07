@@ -582,12 +582,12 @@ function saveChanges() {
             @delete-image="(p, i) => emit('delete-image', p, i)"
             @trigger-file-upload="(p, i) => emit('trigger-file-upload', p, i)"
           />
-          <Prices
+          <!-- <Prices
             ref="pricesRef"
             :product="displayProduct"
             :is-editing="!!editingProduct"
             @update-price-list="editPriceList"
-          />
+          /> -->
           <div class="form-group">
             <label>Категория:</label>
             <select

@@ -157,9 +157,11 @@ echo $head->setHead();
         <div class="contacts-location__phone">
           <p>По всем вопросам звоните:</p>
           <div class="contacts-location__box">
-            <?php foreach ($phones as $phone): ?>
-              <a href="tel:<?php echo str_replace(' ', '', $phone['phone']); ?>">
-                <?php echo $phone['phone']; ?>
+            <?php foreach ($phones as $phone): 
+              $cleanPhone = preg_replace('/[^\d\+]/', '', strip_tags($phone['phone']));
+            ?>
+              <a href="tel:<?php echo $cleanPhone; ?>">
+                <?php echo strip_tags($phone['phone']); ?>
               </a>
             <?php endforeach; ?>
           </div>
