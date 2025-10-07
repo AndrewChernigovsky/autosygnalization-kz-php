@@ -87,7 +87,17 @@ const syncPricesToProduct = () => {
   ) {
     const prices = pricesStore.getSerializedPrices();
     console.log('[Prices.vue] syncPricesToProduct', prices);
-    editingProduct.value.prices = prices;
+
+    // Проверяем, нужно ли обновлять цены, чтобы избежать рекурсии
+    const currentPrices = editingProduct.value.prices || [];
+    const pricesChanged =
+      JSON.stringify(currentPrices) !== JSON.stringify(prices);
+
+    if (pricesChanged) {
+      editingProduct.value.prices = prices;
+    } else {
+      console.log('[Prices.vue] Цены не изменились, пропускаем обновление');
+    }
   }
 };
 

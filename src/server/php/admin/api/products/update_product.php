@@ -6,7 +6,7 @@ file_put_contents($log_file, "--- NEW REQUEST (update_product.php) ---\n", FILE_
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 require_once __DIR__ . '/../../../config/config.php';
 
-use DATABASE\Database;
+  use DATABASE\DataBase;
 
 header("Access-control-allow-origin: http://localhost:5173");
 header("Access-control-allow-headers: Content-Type, Authorization");
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$dbConnection = Database::getConnection();
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -39,8 +39,8 @@ function getIconsFromTabs(array $tabs): array
   foreach ($tabs as $tab) {
     if (isset($tab['content']) && is_array($tab['content'])) {
       foreach ($tab['content'] as $item) {
-        if (!empty($item['icon'])) {
-          $icons[] = $item['icon'];
+        if (!empty($item['path-icon'])) {
+          $icons[] = $item['path-icon'];
         }
       }
     }

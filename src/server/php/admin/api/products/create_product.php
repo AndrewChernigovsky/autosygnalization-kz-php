@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 require_once __DIR__ . '/../../../config/config.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 use Ramsey\Uuid\Uuid;
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$dbConnection = Database::getConnection();
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo(); // Use PDO directly for transactions
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -93,8 +93,8 @@ try {
       foreach ($tabs as $tabIndex => $tab) {
         if (isset($tab['content'])) {
           foreach ($tab['content'] as $itemIndex => $item) {
-            if (!empty($item['icon'])) {
-              $tabs[$tabIndex]['content'][$itemIndex]['icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['icon']);
+            if (!empty($item['path-icon'])) {
+              $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['path-icon']);
             }
           }
         }

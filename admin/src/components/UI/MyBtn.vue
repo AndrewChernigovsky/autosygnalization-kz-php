@@ -1,7 +1,7 @@
 <script setup lang="ts">
 interface Props {
   type?: 'submit' | 'button' | 'reset';
-  variant?: 'primary' | 'secondary' | '';
+  variant?: 'primary' | 'secondary' | 'therdary' | 'fourth' | '';
   disabled?: boolean;
 }
 
@@ -69,6 +69,21 @@ const handleClick = (event: MouseEvent) => {
   text-transform: uppercase;
 }
 
+.therdary {
+  background: linear-gradient(180deg, #002414 0%, #014235 100%);
+  color: white;
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.fourth {
+  background: linear-gradient(180deg, #026237 0%, #014235 100%);
+  color: white;
+  border-radius: 10px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
 .primary:hover,
 .primary:focus-visible {
   opacity: 0.7;
@@ -87,8 +102,28 @@ const handleClick = (event: MouseEvent) => {
   opacity: 0.3;
 }
 
+.fourth:hover,
+.fourth:focus-visible {
+  opacity: 0.7;
+}
+
+.fourth:active {
+  opacity: 0.3;
+}
+
+.therdary:hover,
+.therdary:focus-visible {
+  opacity: 0.7;
+}
+
+.therdary:active {
+  opacity: 0.3;
+}
+
+.fourth:disabled,
 .primary:disabled,
-.secondary:disabled {
+.secondary:disabled,
+.therdary:disabled {
   opacity: 0.3;
   cursor: not-allowed;
   background: none;

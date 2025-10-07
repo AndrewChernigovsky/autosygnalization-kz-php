@@ -2,7 +2,7 @@
 
 namespace DATA;
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 use PDO;
 
 class TabsAdditionalData
@@ -11,7 +11,7 @@ class TabsAdditionalData
 
   public function __construct()
   {
-    $this->db = Database::getConnection();
+    $this->db = DataBase::getConnection();
   }
 
   public function getTabsByProductId($productId)

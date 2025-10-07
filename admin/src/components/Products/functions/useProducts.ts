@@ -1,6 +1,7 @@
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 import type { ProductI } from '../interfaces/Products';
+import Swal from 'sweetalert2';
 
 const API_URL = '/server/php/admin/api/products/';
 
@@ -61,11 +62,66 @@ export function useProducts() {
             Object.prototype.hasOwnProperty.call(data.category, categoryKey)
           ) {
             const categoryProducts = data.category[categoryKey];
-            const productsWithCategory = categoryProducts.map((p: any) => ({
-              ...p,
-              category: categoryKey,
-              is_popular: p.popular ?? false,
-            }));
+            const productsWithCategory = categoryProducts.map((p: any) => {
+              // normalize JSON fields that may come as strings from the API
+              const parsed: any = { ...p };
+              try {
+                if (parsed.gallery && typeof parsed.gallery === 'string') {
+                  parsed.gallery = JSON.parse(parsed.gallery);
+                }
+              } catch (e) {
+                parsed.gallery = parsed.gallery || [];
+              }
+              try {
+                if (parsed.price_list && typeof parsed.price_list === 'string') {
+                  parsed.price_list = JSON.parse(parsed.price_list);
+                }
+              } catch (e) {
+                parsed.price_list = parsed.price_list || [];
+              }
+              try {
+                if (parsed.functions && typeof parsed.functions === 'string') {
+                  parsed.functions = JSON.parse(parsed.functions);
+                }
+              } catch (e) {
+                parsed.functions = parsed.functions || [];
+              }
+              try {
+                if (parsed.options && typeof parsed.options === 'string') {
+                  parsed.options = JSON.parse(parsed.options);
+                }
+              } catch (e) {
+                parsed.options = parsed.options || [];
+              }
+              try {
+                if (parsed['options-filters'] && typeof parsed['options-filters'] === 'string') {
+                  parsed['options-filters'] = JSON.parse(parsed['options-filters']);
+                }
+              } catch (e) {
+                parsed['options-filters'] = parsed['options-filters'] || [];
+              }
+              try {
+                if (parsed.autosygnals && typeof parsed.autosygnals === 'string') {
+                  parsed.autosygnals = JSON.parse(parsed.autosygnals);
+                }
+              } catch (e) {
+                parsed.autosygnals = parsed.autosygnals || [];
+              }
+              try {
+                if (parsed.tabs && typeof parsed.tabs === 'string') {
+                  parsed.tabs = JSON.parse(parsed.tabs);
+                }
+              } catch (e) {
+                parsed.tabs = parsed.tabs || [];
+              }
+
+              return {
+                ...parsed,
+                category: categoryKey,
+                is_popular: parsed.is_popular ?? false,
+                is_special: parsed.is_special ?? false,
+              };
+            });
             allProducts.push(...productsWithCategory);
           }
         }
@@ -102,7 +158,25 @@ export function useProducts() {
       };
       console.log(productData, 'PRODUCT DATA');
 
+      // Sanitize tabs: ensure preview blob: URLs are not sent to the server
+      if (productData.tabs && Array.isArray(productData.tabs)) {
+        try {
+          for (const tab of productData.tabs) {
+            if (!tab || !Array.isArray(tab.content)) continue;
+            for (const item of tab.content) {
+              if (item && typeof item['path-icon'] === 'string' && item['path-icon'].startsWith('blob:')) {
+                item['path-icon'] = '';
+              }
+            }
+          }
+        } catch (e) {
+          // if sanitization fails, fall back to removing tabs entirely to avoid storing blobs
+          productData.tabs = [];
+        }
+      }
+
       if (product.is_new) {
+        console.log('Creating product payload:', productData);
         const createdProduct = await apiCall(
           'create_product.php',
           'POST',
@@ -114,6 +188,9 @@ export function useProducts() {
           products.value[index].id = createdProduct.id;
           products.value[index].link = createdProduct.link;
           products.value[index].is_new = false;
+          if (createdProduct.price_list) {
+            products.value[index].price_list = createdProduct.price_list;
+          }
         }
       } else {
         const updatedData = await apiCall(
@@ -125,6 +202,9 @@ export function useProducts() {
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].link = updatedData.link;
+          if (updatedData.price_list) {
+            products.value[index].price_list = updatedData.price_list;
+          }
         }
       }
 
@@ -208,6 +288,7 @@ export function useProducts() {
       tabs: [],
     };
     products.value.push(newProduct);
+    console.log(products.value, 'PRODUCTS ADD PRODUCT');
     return newProduct;
   }
 
@@ -252,7 +333,7 @@ export function useProducts() {
     formData.append('productId', productId);
     formData.append('tabIndex', String(tabIndex));
     formData.append('itemIndex', String(itemIndex));
-    formData.append('icon', file);
+    formData.append('path-icon', file);
 
     try {
       const data = await apiCall('upload_tab_icon.php', 'POST', formData);
@@ -281,6 +362,7 @@ export function useProducts() {
     }
   }
 
+
   return {
     products,
     loading,
@@ -295,4 +377,29 @@ export function useProducts() {
     uploadTabIcon,
     deleteTabIcon,
   };
+}
+
+export async function handleToggle(event: Event, product: ProductI): Promise<boolean> {
+  const detailsElement = event.target as HTMLDetailsElement;
+  if (!detailsElement.open && product.is_new) {
+    event.preventDefault();
+    const result = await Swal.fire({
+      title: 'Отменить создание?',
+      text: 'Новый товар не был сохранен и будет удален.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Да, удалить',
+      cancelButtonText: 'Нет, оставить',
+      background: '#333',
+      color: '#fff',
+    });
+    if (result.isConfirmed) {
+      // Caller should handle deletion when this function returns true
+      return true;
+    } else {
+      detailsElement.open = true;
+      return false;
+    }
+  }
+  return false;
 }

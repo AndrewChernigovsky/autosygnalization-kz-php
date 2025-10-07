@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:prod": "vue-tsc -b && vite build && echo Build complete! Upload admin/ folder to server."
   },
   "dependencies": {
     "@rafaeljunioxavier/vue-quill-fix": "^1.2.4",

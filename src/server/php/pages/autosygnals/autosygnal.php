@@ -16,11 +16,13 @@ use COMPONENTS\Pagination;
 use COMPONENTS\ModalCart;
 use COMPONENTS\SpecialProducts;
 use function FUNCTIONS\renderPhoneButton;
-use function AUTH\SESSIONS\initSession;
 use function FUNCTIONS\getShop;
 use function FUNCTIONS\getParamsAutosygnals;
 
-initSession();
+// Инициализация сессии для работы с параметрами фильтрации
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 
 // Если нет типа в URL - редирект на дефолтный тип auto
 if (!isset($_GET['type'])) {

@@ -16,6 +16,7 @@ if (!$hasToken || !$hasAuth) {
   <link rel="icon" type="image/svg+xml" href="/vite.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vite + Vue + TS</title>
+  <link rel="stylesheet" crossorigin href="/admin/assets/index-CHXsUSLN.css">
 </head>
 
 <body class="my-page">
@@ -41,8 +42,22 @@ if (!$hasToken || !$hasAuth) {
     </script>
     <?php unset($_SESSION['error_message']); ?>
   <?php else: ?>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <?php
+    // В продакшене отдаем собранное приложение из dist/
+    $distIndexPath = __DIR__ . '/dist/index.html';
+    if (file_exists($distIndexPath)) {
+      // Читаем содержимое dist/index.html
+      $distContent = file_get_contents($distIndexPath);
+      // Заменяем относительные пути на абсолютные от /admin/
+      $distContent = str_replace('href="/', 'href="/admin/', $distContent);
+      $distContent = str_replace('src="/', 'src="/admin/', $distContent);
+      echo $distContent;
+    } else {
+      // Fallback для локальной разработки (Vite dev server)
+      echo '<div id="app"></div>';
+      echo ' <script type="module" crossorigin src="/admin/assets/index-BCa4Ynfu.js"></script>';
+    }
+    ?>
   <?php endif; ?>
 </body>
 

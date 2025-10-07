@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 require_once __DIR__ . '/../../../config/config.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 use Ramsey\Uuid\Uuid;
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$db = Database::getConnection();
+$db = DataBase::getConnection();
 
 if (!isset($_POST['productId'], $_FILES['image'])) {
   http_response_code(400);

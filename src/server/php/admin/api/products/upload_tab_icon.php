@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -15,11 +15,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$dbConnection = Database::getConnection();
+$log_file = __DIR__ . '/debug_upload_tab_icon.log';
+file_put_contents($log_file, "--- NEW upload_tab_icon REQUEST ---\n", FILE_APPEND);
+file_put_contents($log_file, "POST: " . print_r($_POST, true) . "\nFILES: " . print_r(array_map(function($f){ return [ 'name'=>$f['name'], 'error'=>$f['error'], 'size'=>$f['size'] ]; }, $_FILES), true) . "\n", FILE_APPEND);
+
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 // Basic validation
-if (!isset($_POST['productId'], $_POST['tabIndex'], $_POST['itemIndex'], $_FILES['icon'])) {
+if (!isset($_POST['productId'], $_POST['tabIndex'], $_POST['itemIndex'], $_FILES['path-icon'])) {
   http_response_code(400);
   echo json_encode(['message' => 'Missing required parameters.']);
   exit;
@@ -28,7 +32,7 @@ if (!isset($_POST['productId'], $_POST['tabIndex'], $_POST['itemIndex'], $_FILES
 $productId = $_POST['productId'];
 $tabIndex = (int) $_POST['tabIndex'];
 $itemIndex = (int) $_POST['itemIndex'];
-$file = $_FILES['icon'];
+$file = $_FILES['path-icon'];
 
 if ($file['error'] !== UPLOAD_ERR_OK) {
   http_response_code(500);
@@ -42,7 +46,7 @@ if (!is_dir($uploadDir)) {
 }
 
 $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
-$newFileName = uniqid('icon_', true) . '.' . $fileExtension;
+$newFileName = uniqid('icon_') . '.' . $fileExtension;
 $uploadFilePath = $uploadDir . $newFileName;
 
 try {
@@ -58,11 +62,11 @@ try {
     $tabs[$tabIndex] = ['title' => 'Новая вкладка', 'content' => []];
   }
   if (!isset($tabs[$tabIndex]['content'][$itemIndex])) {
-    $tabs[$tabIndex]['content'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'icon' => ''];
+    $tabs[$tabIndex]['content'][$itemIndex] = ['title' => 'Новый элемент', 'description' => '', 'path-icon' => ''];
   }
   
-  if (!empty($tabs[$tabIndex]['content'][$itemIndex]['icon'])) {
-      $oldIconUrl = $tabs[$tabIndex]['content'][$itemIndex]['icon'];
+  if (!empty($tabs[$tabIndex]['content'][$itemIndex]['path-icon'])) {
+      $oldIconUrl = $tabs[$tabIndex]['content'][$itemIndex]['path-icon'];
       $oldIconPath = $_SERVER['DOCUMENT_ROOT'] . parse_url($oldIconUrl, PHP_URL_PATH);
       if (file_exists($oldIconPath)) {
           unlink($oldIconPath);
@@ -74,7 +78,7 @@ try {
   }
 
   $newIconPath = '/server/uploads/tabs/' . $productId . '/' . $newFileName;
-  $tabs[$tabIndex]['content'][$itemIndex]['icon'] = $newIconPath;
+  $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = $newIconPath;
 
   $updateStmt = $pdo->prepare("
         INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 

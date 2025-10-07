@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../../../../vendor/autoload.php';
 
-use DATABASE\Database;
+use DATABASE\DataBase;
 
 header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header('Content-Type: application/json');
 
-$dbConnection = Database::getConnection();
+$dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -45,8 +45,8 @@ try {
   $tabs = json_decode($result['tabs_data'], true);
 
   // 2. Check for icon and delete it
-  if (isset($tabs[$tabIndex]['description'][$itemIndex]['icon'])) {
-    $iconPath = $tabs[$tabIndex]['description'][$itemIndex]['icon'];
+  if (isset($tabs[$tabIndex]['content'][$itemIndex]['path-icon'])) {
+    $iconPath = $tabs[$tabIndex]['content'][$itemIndex]['path-icon'];
     if ($iconPath) {
       $fileFullPath = __DIR__ . '/../../../..' . $iconPath;
       if (file_exists($fileFullPath)) {
@@ -56,7 +56,7 @@ try {
   }
 
   // 3. Update the path in the tabs array to be empty
-  $tabs[$tabIndex]['description'][$itemIndex]['icon'] = '';
+  $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = '';
 
   // 4. Save updated tabs data back to DB
   $updateStmt = $pdo->prepare("UPDATE TabsAdditionalProductsData SET tabs_data = :tabs_data WHERE product_id = :product_id");
