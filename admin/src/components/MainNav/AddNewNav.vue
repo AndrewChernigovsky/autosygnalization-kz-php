@@ -3,7 +3,6 @@ import { ref } from 'vue';
 import mainNavStore from '../../stores/mainNavStore';
 import MyBtn from '../UI/MyBtn.vue';
 import MyInput from '../UI/MyInput.vue';
-import MyFileInput from '../UI/MyFileInput.vue';
 import MyCheckboxInput from '../UI/MyCheckboxInput.vue';
 import addItemOnDB from '../../functions/addItemOnDB';
 import showSwal from '../../functions/showSwal';
@@ -13,9 +12,7 @@ const addNewNavActive = ref(false);
 
 const store = mainNavStore();
 
-const handleFileChange = (file: File | null) => {
-  store.newNavItem.icon_path = file;
-};
+// Убрали функцию handleFileChange, так как загрузка файлов больше не нужна
 
 const addNewNavItem = async (e?: Event | null) => {
   store.isValid = false;
@@ -45,6 +42,12 @@ const addNewNavItem = async (e?: Event | null) => {
 
   store.newNavItem.sort_order = store.navItems.length + 1;
 
+  // Копируем значение title в content
+  store.newNavItem.content = store.newNavItem.title;
+
+  // Устанавливаем icon_path в null
+  store.newNavItem.icon_path = null;
+
   await addItemOnDB(store.newNavItem, store.API_BASE_URL);
   addNewNavActive.value = false;
   store.getNavItems();
@@ -71,16 +74,7 @@ const addNewNavItem = async (e?: Event | null) => {
               v-model="store.newNavItem.title"
             />
             <p class="addlink-help m-0">
-              *Введите заголовок навигационного элемента НЕ будет отображаться
-              на сайте
-            </p>
-          </div>
-          <div class="addlink-label">
-            <h3 class="subtitle m-0">Контент на странице</h3>
-            <MyInput variant="primary" v-model="store.newNavItem.content" />
-            <p class="addlink-help m-0">
-              *Дополнительный контент для навигационного элемента БУДЕТ
-              отображаться на сайте
+              *Это значение будет использоваться как заголовок на странице
             </p>
           </div>
           <div class="addlink-checkbox-wrapper">
@@ -116,18 +110,6 @@ const addNewNavItem = async (e?: Event | null) => {
             />
             <p class="addlink-help m-0">
               *Введите полную внешнюю ссылку (например: https://example.com)
-            </p>
-          </div>
-          <div class="addlink-label file-input">
-            <h3 class="subtitle m-0">Иконка</h3>
-            <div class="file-input-wrapper">
-              <MyFileInput
-                :accept="'image/svg+xml'"
-                @file-change="handleFileChange"
-              />
-            </div>
-            <p class="addlink-help m-0">
-              *Иконки должны быть в формате SVG, не более 50кб.
             </p>
           </div>
         </div>
@@ -211,11 +193,6 @@ const addNewNavItem = async (e?: Event | null) => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.file-input-wrapper {
-  width: 150px;
-  height: 150px;
 }
 
 .addlink-help {

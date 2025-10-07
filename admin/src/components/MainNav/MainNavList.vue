@@ -4,7 +4,6 @@ import mainNavStore from '../../stores/mainNavStore';
 import MyCheckboxInput from '../UI/MyCheckboxInput.vue';
 import MyBtn from '../UI/MyBtn.vue';
 import MyInput from '../UI/MyInput.vue';
-import MyFileInput from '../UI/MyFileInput.vue';
 import PagesList from './PagesList.vue';
 import updateNavItemOnDB from '../../functions/updateNavItemOnDB';
 import deleteNavItemOnDB from '../../functions/deleteNavItemOnDB';
@@ -19,21 +18,19 @@ const openNavItems = ref<Record<number, boolean>>({});
 // Состояние для редактирования ссылок
 const editingExternalLink = ref<Record<number, boolean>>({});
 
+// Сохранение предыдущих значений ссылок
+const savedLinks = ref<Record<number, { external: string; internal: string }>>(
+  {}
+);
+
 // Computed для сортированных элементов навигации
 const sortedNavItems = computed(() => {
   return store.navItems.slice().sort((a, b) => a.sort_order - b.sort_order);
 });
 
-const handleFileChange = (file: File | null, navItem: any) => {
-  navItem.icon_path = file;
-};
+// Убрали функцию handleFileChange, так как загрузка файлов больше не нужна
 
-const getImagePath = (iconPath: string | File | null): string => {
-  if (!iconPath) return '';
-  if (typeof iconPath === 'string') return iconPath;
-  if (iconPath instanceof File) return URL.createObjectURL(iconPath);
-  return '';
-};
+// Убрали функцию getImagePath, так как изображения больше не используются
 
 const toggleNavItem = (navItemId: number) => {
   // Если текущий элемент уже открыт, закрываем его
@@ -46,6 +43,16 @@ const toggleNavItem = (navItemId: number) => {
     });
     // Открываем только выбранный элемент
     openNavItems.value[navItemId] = true;
+
+    // Инициализируем сохраненные ссылки для этого элемента
+    const navItem = store.navItems.find((item) => item.id === navItemId);
+    if (navItem && !savedLinks.value[navItemId]) {
+      const isExternal = isExternalLink(navItem.link);
+      savedLinks.value[navItemId] = {
+        external: isExternal ? navItem.link : '',
+        internal: !isExternal ? navItem.link : '',
+      };
+    }
   }
 };
 
@@ -60,15 +67,23 @@ const isExternalLink = (link: string): boolean => {
 const toggleLinkType = (navItem: any) => {
   const isExternal =
     editingExternalLink.value[navItem.id] ?? isExternalLink(navItem.link);
-  editingExternalLink.value[navItem.id] = !isExternal;
 
-  if (!isExternal) {
-    // Переключаем на внешнюю ссылку - очищаем поле для ввода
-    navItem.link = '';
-  } else {
-    // Переключаем на внутреннюю ссылку - очищаем поле
-    navItem.link = '';
+  // Сохраняем текущее значение перед переключением
+  if (!savedLinks.value[navItem.id]) {
+    savedLinks.value[navItem.id] = { external: '', internal: '' };
   }
+
+  if (isExternal) {
+    // Сейчас внешняя ссылка - сохраняем её и восстанавливаем внутреннюю
+    savedLinks.value[navItem.id].external = navItem.link;
+    navItem.link = savedLinks.value[navItem.id].internal;
+  } else {
+    // Сейчас внутренняя ссылка - сохраняем её и восстанавливаем внешнюю
+    savedLinks.value[navItem.id].internal = navItem.link;
+    navItem.link = savedLinks.value[navItem.id].external;
+  }
+
+  editingExternalLink.value[navItem.id] = !isExternal;
 };
 
 const handleSaveNavItem = async (navItem: any) => {
@@ -82,8 +97,22 @@ const handleSaveNavItem = async (navItem: any) => {
     return;
   }
 
-  await updateNavItemOnDB(navItem, store.API_BASE_URL);
-  await store.getNavItems();
+  // Копируем значение title в content
+  navItem.content = navItem.title;
+
+  // Устанавливаем icon_path в null
+  navItem.icon_path = null;
+
+  try {
+    await updateNavItemOnDB(navItem, store.API_BASE_URL);
+    await store.getNavItems();
+
+    // Очищаем сохраненные ссылки после успешного сохранения
+    delete savedLinks.value[navItem.id];
+  } catch (error) {
+    // Ошибка уже обработана в updateNavItemOnDB
+    console.error('Save error:', error);
+  }
 };
 
 const handleDeleteNavItem = async (navItem: any) => {
@@ -151,7 +180,7 @@ const handleReorder = async (reorderedNavItems: any[]) => {
             </div>
             <div class="nav-item-header-wrapper">
               <h2 class="title m-0">
-                {{ item.title ? item.title : 'Заголовок' }}
+                {{ item.title ? item.title : 'Заголовок и контент' }}
               </h2>
               <MyBtn variant="primary" @click="toggleNavItem(item.id)">{{
                 openNavItems[item.id] ? 'Закрыть' : 'Редактировать'
@@ -166,10 +195,9 @@ const handleReorder = async (reorderedNavItems: any[]) => {
               <div class="nav-input-wrapper">
                 <h3 class="subtitle m-0">Заголовок*</h3>
                 <MyInput variant="primary" v-model="item.title" />
-              </div>
-              <div class="nav-input-wrapper">
-                <h3 class="subtitle m-0">Контент на странице</h3>
-                <MyInput variant="primary" v-model="item.content" />
+                <p class="addlink-help m-0">
+                  *Это значение будет использоваться как заголовок на странице
+                </p>
               </div>
               <div class="nav-checkbox-wrapper">
                 <div class="nav-checkbox-title">
@@ -207,17 +235,6 @@ const handleReorder = async (reorderedNavItems: any[]) => {
                 <MyInput variant="primary" v-model="item.link" />
               </div>
               <div class="nav-input-wrapper">
-                <h3 class="subtitle m-0">Изображение</h3>
-                <div class="nav-item-image-wrapper">
-                  <MyFileInput
-                    :imgPath="getImagePath(item.icon_path)"
-                    :accept="'image/svg+xml'"
-                    variant="primary"
-                    @file-change="(file) => handleFileChange(file, item)"
-                  />
-                </div>
-              </div>
-              <div class="nav-input-wrapper">
                 <h3 class="subtitle m-0">Показывать на странице</h3>
                 <div class="checkbox-wrapper">
                   <p class="m-0">Да</p>
@@ -230,7 +247,7 @@ const handleReorder = async (reorderedNavItems: any[]) => {
                 </div>
               </div>
               <div class="btn-wrapper">
-                <MyBtn variant="primary" @click="handleSaveNavItem(item)"
+                <MyBtn variant="therdary" @click="handleSaveNavItem(item)"
                   >Сохранить</MyBtn
                 >
                 <MyBtn variant="primary" @click="handleDeleteNavItem(item)"
@@ -341,10 +358,6 @@ const handleReorder = async (reorderedNavItems: any[]) => {
   background-color: rgba(0, 123, 255, 0.1);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
-}
-.nav-item-image-wrapper {
-  width: 150px;
-  height: 150px;
 }
 
 .drag-btn {
