@@ -31,7 +31,7 @@ $head = new Head($title, [], []);
   <main class="main">
     <section class="cart-section">
       <div class="container">
-        <h2>Корзина</h2>
+        <h2 class="secondary-title">Корзина</h2>
         <div class="cart-section__head">
         </div>
         <div class="cart-section__products">
@@ -54,7 +54,6 @@ $head = new Head($title, [], []);
 
       </div>
     </section>
-    <?= getShop("setup"); ?>
     <?= getShop("shop"); ?>
   </main>
 
