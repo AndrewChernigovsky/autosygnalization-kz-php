@@ -5,7 +5,9 @@ require_once __DIR__ . '/../../../config/config.php';
 use DATABASE\DataBase;
 use Ramsey\Uuid\Uuid;
 
-header("Access-Control-Allow-Origin: http://localhost:5173");
+// Allow dynamic origin for CORS (works for dev and deployed host)
+$origin = $_SERVER['HTTP_ORIGIN'] ?? '*';
+header("Access-Control-Allow-Origin: " . $origin);
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
 
@@ -14,7 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
   exit;
 }
 
+
 header('Content-Type: application/json');
+
+// Debug log for uploads
+$log_file = __DIR__ . '/upload_image_debug.log';
+file_put_contents($log_file, "--- NEW upload_image REQUEST ---\n", FILE_APPEND);
+file_put_contents($log_file, "ORIGIN: " . ($origin) . "\nPOST: " . print_r($_POST, true) . "\nFILES: " . print_r(array_map(function($f){ return [ 'name'=>$f['name'], 'error'=>$f['error'], 'size'=>$f['size'] ]; }, $_FILES), true) . "\n", FILE_APPEND);
 
 $db = DataBase::getConnection();
 
@@ -105,7 +113,9 @@ if (move_uploaded_file($imageFile['tmp_name'], $uploadPath)) {
     unlink($uploadPath);
     echo json_encode(['message' => 'Database error: ' . $e->getMessage()]);
   }
-} else {
-  http_response_code(500);
-  echo json_encode(['message' => 'Failed to move uploaded file.']);
+    // success
+  } else {
+    file_put_contents($log_file, "Failed to move_uploaded_file from: " . $imageFile['tmp_name'] . " to: " . $uploadPath . "\n", FILE_APPEND);
+    http_response_code(500);
+    echo json_encode(['message' => 'Failed to move uploaded file.']);
 }
