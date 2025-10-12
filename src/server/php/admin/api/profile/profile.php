@@ -46,7 +46,7 @@ $log_file = sys_get_temp_dir() . '/profile-debug.log';
 file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Script started\n", FILE_APPEND);
 
 try {
-  header("Access-Control-Allow-Origin: http://localhost:5173");
+  header("Access-Control-Allow-Origin: http://localhost:5173,https://starline-service.kz");
   header("Access-Control-Allow-Methods: GET, POST");
   header("Access-control-allow-headers: Content-Type, Authorization, X-Requested-With");
   header('Content-Type: application/json');
