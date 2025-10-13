@@ -21,7 +21,7 @@ export function initPhone() {
     closeButton.addEventListener('click', () => {
       modalForm.classList.remove('active');
       phoneButtonWrapper.classList.remove('active');
-      phoneButton.classList.add('animated-calling')
+      phoneButton.classList.remove('animated-calling')
     })
   }
 }

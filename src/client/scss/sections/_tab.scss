@@ -213,7 +213,7 @@
     background-size: 70px 70px;
     display: flex;
     flex-direction: column;
-    padding-top: 70px;
+    padding-top: 80px;
     min-height: 80px;
     position: relative;
 
@@ -235,7 +235,7 @@
     @media (min-width: var.$desktop) {
       width: 665px;
       margin-left: 0;
-      padding-left: 140px;
+      padding-left: 100px;
       background-size: 110px 110px;
     }
   }
@@ -261,7 +261,7 @@
     }
 
     @media (min-width: var.$desktop) {
-      padding-right: 140px;
+      padding-right: 100px;
     }
   }
 
