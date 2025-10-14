@@ -220,6 +220,7 @@ async function saveChanges(product: ProductI) {
       'title',
       'description',
       'price',
+      'is_published',
       'is_popular',
       'is_special',
     ];

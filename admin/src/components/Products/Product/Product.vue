@@ -567,6 +567,17 @@ function saveChanges() {
         <div v-if="isOpen" class="product-editor">
           <!-- ... existing fields ... -->
           <div class="form-group">
+            <label :for="'published-' + displayProduct.id">Публикация:</label>
+            <input
+              v-if="editingProduct && editingProduct.id"
+              type="checkbox"
+              :id="'published-' + displayProduct.id"
+              v-model="editingProduct.is_published"
+              :checked="editingProduct.is_published"
+            />
+            <span v-else>{{ displayProduct.is_published ? 'Да' : 'Нет' }}</span>
+          </div>
+          <div class="form-group">
             <label>Модель:</label>
             <input
               v-if="editingProduct && editingProduct.id"

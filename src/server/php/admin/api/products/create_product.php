@@ -35,9 +35,9 @@ try {
 
   $stmt = $pdo->prepare(
     "INSERT INTO Products 
-            (id, title, description, price, price_list, is_popular, gallery, category, model, currency, link, `options_filters`, `functions`, `options`, autosygnals, is_special) 
+            (id, title, description, price, price_list, is_published, is_popular, gallery, category, model, currency, link, `options_filters`, `functions`, `options`, autosygnals, is_special) 
         VALUES 
-            (:id, :title, :description, :price, :price_list, :is_popular, :gallery, :category, :model, :currency, :link, :options_filters, :functions, :options, :autosygnals, :is_special)"
+            (:id, :title, :description, :price, :price_list, :is_published, :is_popular, :gallery, :category, :model, :currency, :link, :options_filters, :functions, :options, :autosygnals, :is_special)"
   );
 
   $uuid = 'product_' . $data['category'] . '_' . Uuid::uuid4()->toString();
@@ -50,6 +50,7 @@ try {
   $stmt->bindValue(':description', $data['description'] ?? '');
   $stmt->bindValue(':price', $data['price'] ?? 0);
   $stmt->bindValue(':price_list', json_encode($data['price_list'] ?? []));
+  $stmt->bindValue(':is_published', !empty($data['is_published']) ? 1 : 0, PDO::PARAM_INT);
   $stmt->bindValue(':is_popular', $is_popular ?? 0);
   $stmt->bindValue(':gallery', $galleryJson);
   $stmt->bindValue(':category', $data['category']);

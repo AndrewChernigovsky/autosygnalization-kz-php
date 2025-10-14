@@ -94,7 +94,7 @@ try {
   $productStmt = $pdo->prepare("
       UPDATE Products SET
           model = :model, title = :title, description = :description, price = :price,
-          is_popular = :is_popular, is_special = :is_special, gallery = :gallery,
+          is_published = :is_published, is_popular = :is_popular, is_special = :is_special, gallery = :gallery,
           category = :category, link = :link, functions = :functions, options = :options,
           options_filters = :options_filters, autosygnals = :autosygnals, price_list = :price_list
       WHERE id = :id
@@ -108,6 +108,7 @@ try {
     ':description' => $data['description'] ?? '',
     ':price' => $data['price'] ?? 0,
     ':price_list' => json_encode($data['price_list'] ?? []),
+    ':is_published' => !empty($data['is_published']) ? 1 : 0,
     ':is_popular' => !empty($data['is_popular']) ? 1 : 0,
     ':is_special' => !empty($data['is_special']) ? 1 : 0,
     ':gallery' => json_encode($data['gallery'] ?? []),
@@ -118,6 +119,7 @@ try {
     ':options_filters' => json_encode($data['options-filters'] ?? []),
     ':autosygnals' => json_encode($data['autosygnals'] ?? []),
   ];
+  file_put_contents($log_file, "Bind data: " . print_r($productData, true) . "\n", FILE_APPEND);
   $productStmt->execute($productData);
 
   // Update TabsAdditionalProductsData table

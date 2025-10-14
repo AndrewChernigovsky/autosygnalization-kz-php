@@ -14,14 +14,15 @@ class Products
     $this->db = DataBase::getConnection();
   }
 
-  public function getData(): array
+  public function getData(bool $onlyPublished = false): array
   {
-    $stmt = $this->db->prepare("
-        SELECT p.*, t.tabs_data 
-        FROM Products p
-        LEFT JOIN TabsAdditionalProductsData t ON p.id = t.product_id
-        ORDER BY p.category, p.title
-    ");
+    $sql = "\n        SELECT p.*, t.tabs_data \n        FROM Products p\n        LEFT JOIN TabsAdditionalProductsData t ON p.id = t.product_id\n    ";
+    if (!$onlyPublished) {
+      $sql .= "WHERE p.is_published = 1\n    ";
+    }
+    $sql .= "ORDER BY p.category, p.title\n    ";
+   
+    $stmt = $this->db->prepare($sql);
     $stmt->execute();
     $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -32,6 +33,11 @@ class Products
       $product['cart'] = false; // По умолчанию, или можно добавить поле в БД
       $product['is_popular'] = (bool) $product['is_popular'];
       $product['is_special'] = (bool) $product['is_special'];
+      if (array_key_exists('is_published', $product)) {
+        $product['is_published'] = (bool) $product['is_published'];
+      } else {
+        $product['is_published'] = false;
+      }
 
       // Декодируем JSON-строки в массивы, проверяя на null
       $product['gallery'] = $product['gallery'] ? json_decode($product['gallery'], true) : [];
