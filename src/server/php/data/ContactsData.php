@@ -336,37 +336,48 @@ public function getAllContact(array $types = [])
   public function getWebsite($link = false)
   {
       try {
-          $query = "SELECT content as website, link as website_link FROM Contacts WHERE type = 'Сайт' AND on_page = 1 ORDER BY sort_order ASC LIMIT 1";
+          // Возвращаем все сайты без сортировки по sort_order и без LIMIT
+          $query = "SELECT content as website, link as website_link FROM Contacts WHERE type = 'Сайт' AND on_page = 1 ORDER BY sort_order ASC";
           $stmt = $this->pdo->prepare($query);
           $stmt->execute();
 
-          $websiteData = $stmt->fetch(\PDO::FETCH_ASSOC);
-          
-          if ($websiteData) {
-              $website = strip_tags($websiteData['website']);
-              $websiteLink = $websiteData['website_link'];
-              
-              if ($link) {
-                  return "<a class='link link-site' href='" . htmlspecialchars($websiteLink) . "'>" . htmlspecialchars($website) . '</a>';
-              } else {
-                  return htmlspecialchars($website);
-              }
+          $websites = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+          if (!empty($websites)) {
+              // Нормализуем данные и по умолчанию возвращаем массив
+              $normalized = array_map(function ($row) use ($link) {
+                  $label = strip_tags($row['website'] ?? '');
+                  $href = $row['website_link'] ?? '';
+                  if ($link) {
+                      // если ожидается строка HTML (обратная совместимость), собираем массив HTML-строк
+                      return "<a class='link link-site' href='" . htmlspecialchars($href) . "'>" . htmlspecialchars($label) . '</a>';
+                  }
+                  return [
+                      'website' => $label,
+                      'website_link' => $href,
+                  ];
+              }, $websites);
+
+              return $normalized;
           }
-          
-          // Fallback к старому значению
+
+          // Пусто: используем fallback
           if ($link) {
-              return "<a class='link link-site' href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>';
-          } else {
-              return htmlspecialchars($this->webSite);
+              return ["<a class='link link-site' href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>'];
           }
+          return [[
+              'website' => htmlspecialchars($this->webSite),
+              'website_link' => 'http://autosecurity.site',
+          ]];
       } catch (\Exception $e) {
           error_log("Ошибка получения сайта: " . $e->getMessage());
-          // Fallback к старому значению
           if ($link) {
-              return "<a class='link link-site' href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>';
-          } else {
-              return htmlspecialchars($this->webSite);
+              return ["<a class='link link-site' href='http://autosecurity.site'>" . htmlspecialchars($this->webSite) . '</a>'];
           }
+          return [[
+              'website' => htmlspecialchars($this->webSite),
+              'website_link' => 'http://autosecurity.site',
+          ]];
       }
   }
 

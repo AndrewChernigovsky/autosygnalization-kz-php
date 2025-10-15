@@ -110,7 +110,7 @@ echo $head->setHead();
                 <a href="<?php echo htmlspecialchars($item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
-                      <img width="25" height="25"  src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
+                      <img width="25" height="25"  src="/client/vectors/geo.svg" alt="<?= $item['title'] ?>" aria-hidden="true">
                     </div>
                     <h3><?= $item['title'] ?></h3>
                     <div class="contacts-section__address">

@@ -105,7 +105,7 @@ class Header
                 <a href="{$addressLink}" class="link geo-address" id="geoAddress">
                     <div class="header__image image">
                         <svg width="50" height="50">
-                            <use href="$addressSvgPath"></use>
+                          <use href="/client/vectors/sprite.svg#geo"></use>
                         </svg>
                     </div>
                     <div>

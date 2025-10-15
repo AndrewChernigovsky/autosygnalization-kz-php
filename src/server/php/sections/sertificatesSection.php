@@ -25,7 +25,7 @@ function sertificatesSection(): string
               $fileExtension = strtolower(pathinfo($certificate['image_path'], PATHINFO_EXTENSION));
               if ($fileExtension === 'pdf'): 
               ?>
-                <a href="<?= htmlspecialchars($certificate['image_path']); ?>" 
+                <a href="<?= htmlspecialchars($certificate['pdf_path']); ?>" 
                    class="fancybox quality-slider__image swiper-zoom-container pdf-preview-link"
                    data-fancybox="gallerySertificates" 
                    data-fancybox-index="<?= $index; ?>">
