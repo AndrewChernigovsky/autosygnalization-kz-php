@@ -3,7 +3,6 @@ import { ref, watch, nextTick, computed, onBeforeUnmount } from 'vue';
 import type { ProductI } from '../interfaces/Products';
 import Gallery from './../Gallery.vue';
 import Tabs from './../Tabs/Tabs.vue';
-import Prices from './../Prices.vue';
 import MyBtn from '../../UI/MyBtn.vue';
 import MyTransition from '../../UI/MyTransition.vue';
 import MyQuill from '../../UI/MyQuill.vue';
@@ -25,6 +24,7 @@ const editingProduct = ref<ProductI | null>(null);
 const isDirty = ref(false);
 const originalSnapshot = ref<ProductI | null>(null);
 const isSaving = ref(false);
+let suppressWatcher = false;
 
 function markDirty() {
   console.log('🔍 [MARK_DIRTY] Вызывается markDirty');
@@ -89,6 +89,11 @@ watch(
     console.log('🔍 [WATCHER] priceListRef.value изменился');
     console.log('🔍 [WATCHER] isSaving:', isSaving.value);
     console.log('🔍 [WATCHER] editingProduct.value:', !!editingProduct.value);
+    if (suppressWatcher) {
+      console.log('🔍 [WATCHER] suppressed priceListRef change');
+      return;
+    }
+
     if (editingProduct.value && !isSaving.value) {
       console.log('🔍 [WATCHER] Проверяем изменения price_list');
       // Проверяем, нужно ли обновлять price_list, чтобы избежать рекурсии
@@ -100,8 +105,14 @@ watch(
       console.log('🔍 [WATCHER] priceListChanged:', priceListChanged);
       if (priceListChanged) {
         console.log('🔍 [WATCHER] Обновляем price_list и вызываем markDirty');
-        editingProduct.value.price_list = [newPriceList];
-        markDirty();
+        suppressWatcher = true;
+        try {
+          editingProduct.value.price_list = [newPriceList];
+          markDirty();
+        } finally {
+          // отложенно сбрасываем suppress, чтобы дать Vue завершить реактивные обновления
+          setTimeout(() => (suppressWatcher = false), 0);
+        }
       } else {
         console.log(
           '🔍 [WATCHER] price_list не изменился, пропускаем обновление'
@@ -137,10 +148,15 @@ watch(
 
 watch(isOpen, (newValue) => {
   if (newValue) {
-    // Используем ссылку на оригинальный объект из products.value, а не копию
-    editingProduct.value = props.product;
+    // Клонируем оригинальный объект из products.value, чтобы разорвать ссылочную зависимость
+    try {
+      editingProduct.value = JSON.parse(JSON.stringify(props.product));
+    } catch (e) {
+      // fallback: shallow copy
+      editingProduct.value = Object.assign({}, props.product as any) as any;
+    }
     // keep original snapshot to detect changes
-    originalSnapshot.value = JSON.parse(JSON.stringify(props.product));
+    originalSnapshot.value = JSON.parse(JSON.stringify(editingProduct.value));
   } else {
     editingProduct.value = null;
     originalSnapshot.value = null;
@@ -158,6 +174,11 @@ watch(
     console.log('🔍 [WATCHER] editingProduct.value изменился');
     console.log('🔍 [WATCHER] isSaving:', isSaving.value);
     try {
+      if (suppressWatcher) {
+        console.log('🔍 [WATCHER] suppressed editingProduct change');
+        return;
+      }
+
       if (!newVal || !originalSnapshot.value) {
         console.log(
           '🔍 [WATCHER] Нет newVal или originalSnapshot, сбрасываем dirty'
@@ -272,7 +293,7 @@ const toggleCheckbox = (name: string) => {
   }
 };
 
-// Expose method to parent so it can retrieve current editing payload when needed
+// Expose methods to parent so it can retrieve/update current editing payload when needed
 defineExpose({
   getEditingProduct: () => {
     if (!editingProduct.value) return null;
@@ -282,6 +303,23 @@ defineExpose({
       return editingProduct.value;
     }
   },
+  // Parent can call this to update a tab icon path in the editing clone
+  updateTabIconPath: (productId: string, tabIndex: number, itemIndex: number, newPath: string) => {
+    if (!editingProduct.value || editingProduct.value.id !== productId) return;
+    if (
+      editingProduct.value.tabs &&
+      editingProduct.value.tabs[tabIndex] &&
+      editingProduct.value.tabs[tabIndex].content &&
+      editingProduct.value.tabs[tabIndex].content[itemIndex]
+    ) {
+      editingProduct.value.tabs[tabIndex].content[itemIndex]['path-icon'] = newPath;
+    }
+  },
+  // Parent can call this to replace gallery in the editing clone
+  updateGallery: (productId: string, newGallery: string[]) => {
+    if (!editingProduct.value || editingProduct.value.id !== productId) return;
+    editingProduct.value.gallery = Array.isArray(newGallery) ? JSON.parse(JSON.stringify(newGallery)) : [];
+  }
 });
 
 const hasOption = (optionName: string): boolean => {
@@ -486,10 +524,24 @@ function saveChanges() {
     if (editingProduct.value) {
       console.log('🔍 [SAVE_CHANGES] Обновляем price_list');
       console.log('🔍 [SAVE_CHANGES] priceListRef.value:', priceListRef.value);
+      // Обновляем price_list локально
       editingProduct.value.price_list = [priceListRef.value];
+
+      // Подавляем watcher на время программного обновления snapshot
+      suppressWatcher = true;
+      try {
+        // Обновим оригинальный сниппет, чтобы comparer не считал изменения после сохранения
+        originalSnapshot.value = JSON.parse(JSON.stringify(editingProduct.value));
+        console.log('🔍 [SAVE_CHANGES] originalSnapshot обновлен');
+      } finally {
+        // сброс suppress асинхронно после микротаска
+        setTimeout(() => (suppressWatcher = false), 0);
+      }
+
       console.log('🔍 [SAVE_CHANGES] price_list обновлен, эмитим save-product');
       console.log('Emit save-product', editingProduct.value);
       emit('save-product', editingProduct.value);
+
       console.log('🔍 [SAVE_CHANGES] Сбрасываем dirty и эмитим dirty-state');
       resetDirty();
       emit('dirty-state', props.product.id, false);
@@ -514,6 +566,17 @@ function saveChanges() {
       <MyTransition>
         <div v-if="isOpen" class="product-editor">
           <!-- ... existing fields ... -->
+          <div class="form-group">
+            <label :for="'published-' + displayProduct.id">Публикация:</label>
+            <input
+              v-if="editingProduct && editingProduct.id"
+              type="checkbox"
+              :id="'published-' + displayProduct.id"
+              v-model="editingProduct.is_published"
+              :checked="editingProduct.is_published"
+            />
+            <span v-else>{{ displayProduct.is_published ? 'Да' : 'Нет' }}</span>
+          </div>
           <div class="form-group">
             <label>Модель:</label>
             <input

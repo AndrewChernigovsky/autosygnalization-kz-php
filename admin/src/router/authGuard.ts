@@ -22,7 +22,7 @@ export async function checkAuthGuard(
       next();
     } else {
 
-      window.location.href = 'http://localhost:3000/login';
+      window.location.href = '/login';
     }
   } catch (error) {
     isAuthenticated.value = false;
@@ -47,5 +47,12 @@ export async function checkAuthStatus(): Promise<boolean> {
 
 // Функция для принудительного обновления статуса
 export async function refreshAuthStatus() {
-  return await checkAuthStatus();
+  const status = await checkAuthStatus();
+  if (status) {
+    isAuthenticated.value = true;
+    window.location.href = '/admin/';
+  } else {
+    isAuthenticated.value = false;
+    window.location.href = '/login';
+  }
 }

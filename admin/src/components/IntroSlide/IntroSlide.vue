@@ -33,6 +33,32 @@ const selectedLinks = ref<Record<number, LinkData | null>>({});
 const linkSourceMode = ref<Record<number, 'custom' | 'existing'>>({});
 const customLinks = ref<Record<number, string>>({});
 
+// --- Helpers to normalize hrefs for phone/email ---
+const normalizePhoneHref = (value: string): string => {
+  if (!value) return '';
+  const v = value.trim();
+  if (v.toLowerCase().startsWith('tel:')) return v;
+  // Keep leading + and digits only
+  const raw = v.replace(/[^\d+]/g, '');
+  const withPlus = raw.startsWith('+') ? raw : `+${raw.replace(/^\+/, '')}`;
+  return `tel:${withPlus}`;
+};
+
+const normalizeEmailHref = (value: string): string => {
+  if (!value) return '';
+  const v = value.trim();
+  if (v.toLowerCase().startsWith('mailto:')) return v;
+  return `mailto:${v}`;
+};
+
+const detectTypeByValue = (value: string): 'phone' | 'email' | 'link' => {
+  const v = value.trim().toLowerCase();
+  if (v.includes('@') && !v.startsWith('http')) return 'email';
+  // digits, spaces, dashes, plus -> likely phone
+  if (/^[+\d][\d\s\-()]*$/.test(v)) return 'phone';
+  return 'link';
+};
+
 const setFileInputRef = (el: any, itemId: number, type: 'video' | 'poster') => {
   if (el) {
     fileInputRefs.value[`${type}-${itemId}`] = el;
@@ -206,12 +232,23 @@ const fetchAllLinks = async () => {
   }
 };
 
-// Функция для инициализации режима ссылки для слайда
+// Функция для инициализации режима ссылки для слайда (с учетом tel:/mailto:)
 const initializeLinkMode = (slideId: number, buttonLink: string) => {
-  // Проверяем, есть ли ссылка в списке существующих ссылок
-  const existingLink = allLinksData.value.find(
-    (link) => link.link === buttonLink
-  );
+  const normalizedButton = (() => {
+    const t = detectTypeByValue(buttonLink || '');
+    if (t === 'phone') return normalizePhoneHref(buttonLink || '');
+    if (t === 'email') return normalizeEmailHref(buttonLink || '');
+    return (buttonLink || '').trim();
+  })();
+
+  const existingLink = allLinksData.value.find((link) => {
+    const linkNormalized = link.type === 'phone'
+      ? normalizePhoneHref(link.link)
+      : link.type === 'email'
+      ? normalizeEmailHref(link.link)
+      : (link.link || '').trim();
+    return linkNormalized === normalizedButton;
+  });
 
   if (existingLink) {
     linkSourceMode.value[slideId] = 'existing';
@@ -239,11 +276,22 @@ const getAvailableLinks = (currentSlideId: number) => {
 const updateButtonLink = (slideId: number) => {
   const mode = linkSourceMode.value[slideId];
   let newLink = '';
+  let linkType: 'link' | 'phone' | 'email' = 'link';
 
   if (mode === 'existing' && selectedLinks.value[slideId]) {
-    newLink = selectedLinks.value[slideId]!.link;
+    const sel = selectedLinks.value[slideId]!;
+    newLink = sel.link || '';
+    linkType = (sel as any).type ?? 'link';
   } else if (mode === 'custom') {
     newLink = customLinks.value[slideId] || '';
+    linkType = detectTypeByValue(newLink);
+  }
+
+  // Normalize by type
+  if (linkType === 'phone') {
+    newLink = normalizePhoneHref(newLink);
+  } else if (linkType === 'email') {
+    newLink = normalizeEmailHref(newLink);
   }
 
   // Обновляем ссылку в данных слайда
@@ -287,7 +335,13 @@ const handleSave = async (item: IntroSlideData) => {
     const cleanedAdvantages = item.advantages.filter(
       (adv) => adv && adv.trim() !== ''
     );
-    const itemToSave = { ...item, advantages: cleanedAdvantages };
+    // Перед сохранением ещё раз нормализуем ссылку по типу
+    let normalizedLink = item.button_link || '';
+    const t = detectTypeByValue(normalizedLink);
+    if (t === 'phone') normalizedLink = normalizePhoneHref(normalizedLink);
+    if (t === 'email') normalizedLink = normalizeEmailHref(normalizedLink);
+
+    const itemToSave = { ...item, advantages: cleanedAdvantages, button_link: normalizedLink };
 
     const files = filesToUpload.value[item.id] || {};
     const toDelete = filesToDelete.value[item.id] || {};
@@ -374,7 +428,13 @@ const handleSaveNewSlide = async () => {
   const cleanedAdvantages = newSlide.value.advantages.filter(
     (adv) => adv && adv.trim() !== ''
   );
-  const slideToCreate = { ...newSlide.value, advantages: cleanedAdvantages };
+  // Нормализуем ссылку для нового слайда
+  let normalizedLink = newSlide.value.button_link || '';
+  const t = detectTypeByValue(normalizedLink);
+  if (t === 'phone') normalizedLink = normalizePhoneHref(normalizedLink);
+  if (t === 'email') normalizedLink = normalizeEmailHref(normalizedLink);
+
+  const slideToCreate = { ...newSlide.value, advantages: cleanedAdvantages, button_link: normalizedLink };
   const files = filesToUpload.value[0] || {};
 
   try {
@@ -543,7 +603,7 @@ const leave = (el: Element) => {
     <div class="add-new-item-bar">
       <span>Добавить новый слайд</span>
       <MyBtn
-        variant="primary"
+        variant="secondary"
         @click="prepareNewSlide"
         :disabled="isAddingNewSlide"
         >Добавить</MyBtn
@@ -618,10 +678,7 @@ const leave = (el: Element) => {
                 <LinkSelector
                   :model-value="selectedLinks[0]"
                   :links="getAvailableLinks(0)"
-                  @update:model-value="
-                    selectedLinks[0] = $event;
-                    updateButtonLink(0);
-                  "
+                  @update:model-value="(val: any) => { selectedLinks[0] = val; updateButtonLink(0); }"
                   label=""
                 />
               </div>
@@ -887,10 +944,7 @@ const leave = (el: Element) => {
                       <LinkSelector
                         :model-value="selectedLinks[item.id]"
                         :links="getAvailableLinks(item.id)"
-                        @update:model-value="
-                          selectedLinks[item.id] = $event;
-                          updateButtonLink(item.id);
-                        "
+                        @update:model-value="(val: any) => { selectedLinks[item.id] = val; updateButtonLink(item.id); }"
                         label=""
                       />
                     </div>

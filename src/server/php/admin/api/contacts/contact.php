@@ -34,13 +34,17 @@ class ContactAPI extends DataBase
   public function getContacts()
   {
     try {
-      $query = "SELECT * FROM Contacts 
-ORDER BY type ASC, sort_order ASC";
+      $query = "SELECT * FROM Contacts ORDER BY type ASC, sort_order ASC";
       $stmt = $this->pdo->prepare($query);
       $stmt->execute();
       $result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-      error_log("Получены все элементы контактов: " . count($result));
+      // Диагностика типов и on_page
+      $types = array_map(function ($r) { return $r['type']; }, $result);
+      $uniqueTypes = array_values(array_unique($types));
+      $messengerAll = array_values(array_filter($result, function ($r) { return $r['type'] === 'Мессенджер'; }));
+      $messengerOnPage = array_values(array_filter($messengerAll, function ($r) { return intval($r['on_page']) === 1; }));
+      error_log('ADMIN getContacts: total=' . count($result) . ', messenger_total=' . count($messengerAll) . ', messenger_on_page=' . count($messengerOnPage) . ', types=[' . implode(', ', $uniqueTypes) . ']');
       return $this->success($result);
     } catch (\Exception $e) {
       error_log("Ошибка получения контактов: " . $e->getMessage());
@@ -157,7 +161,7 @@ ORDER BY type ASC, sort_order ASC";
             ':link' => $data['link'],
             ':icon_path' => $iconPath,
             ':sort_order' => $data['sort_order'],
-            ':on_page' => $data['on_page'] === 'true' || $data['on_page'] === true ? 1 : 0,
+            ':on_page' => (in_array($data['on_page'], ['true', '1', 1, true, 'on', 'yes'], true) ? 1 : 0),
             ':id' => $id
           ]);
 
@@ -231,11 +235,12 @@ ORDER BY type ASC, sort_order ASC";
           $data['link'],
           $iconPath,
           $nextOrder,
-          $data['on_page'] === 'true' || $data['on_page'] === true ? 1 : 0,
+          (in_array($data['on_page'], ['true', '1', 1, true, 'on', 'yes'], true) ? 1 : 0),
         ]);
   
         $contactId = $this->pdo->lastInsertId();
-        error_log("Создан элемент контактов ID: " . $contactId);
+        // Диагностика вставленного контакта
+        error_log('ADMIN createContact: id=' . $contactId . ', type=' . ($data['type'] ?? '') . ', on_page=' . (($data['on_page'] ?? null) ? '1' : '0'));
   
         return $this->success(['contact_id' => $contactId, 'message' => 'Элемент контактов создан'], 201);
       } catch (\Exception $e) {

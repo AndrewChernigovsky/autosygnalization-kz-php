@@ -25,18 +25,18 @@ function sertificatesSection(): string
               $fileExtension = strtolower(pathinfo($certificate['image_path'], PATHINFO_EXTENSION));
               if ($fileExtension === 'pdf'): 
               ?>
-                <a href="<?= htmlspecialchars($certificate['image_path']); ?>" 
+                <a href="<?= htmlspecialchars($certificate['pdf_path']); ?>" 
                    class="fancybox quality-slider__image swiper-zoom-container pdf-preview-link"
                    data-fancybox="gallerySertificates" 
                    data-fancybox-index="<?= $index; ?>">
-                  <iframe 
+                  <img 
                     src="<?= htmlspecialchars($certificate['image_path']); ?>#page=1&zoom=page-fit&toolbar=0&navpanes=0&scrollbar=0" 
                     class="pdf-preview-iframe"
                     frameborder="0"
                     width="300"
                     height="400"
                     title="Сертификат компании Auto Security"
-                  ></iframe>
+                  ></img>
                   <div class="pdf-overlay">
                     <span class="pdf-icon">📄</span>
                     <span class="pdf-text">Просмотр PDF</span>
@@ -50,7 +50,7 @@ function sertificatesSection(): string
                 </a>
               <?php endif; ?>
               <a class="sertificates__download y-button-primary button" download
-                href="<?= htmlspecialchars($certificate['image_path']); ?>">Скачать</a>
+                href="<?= htmlspecialchars($certificate['pdf_path']); ?>">Скачать</a>
             </li>
           <?php endforeach; ?>
         </ul>

@@ -16,7 +16,7 @@ if (!$hasToken || !$hasAuth) {
   <link rel="icon" type="image/svg+xml" href="/vite.svg">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Vite + Vue + TS</title>
-  <link rel="stylesheet" crossorigin href="/admin/assets/index-CuF8MHgc.css">
+  <link rel="stylesheet" crossorigin href="/admin/assets/index-CqGRo5jH.css">
 </head>
 
 <body class="my-page">
@@ -55,10 +55,10 @@ if (!$hasToken || !$hasAuth) {
     } else {
       // Fallback для локальной разработки (Vite dev server)
       echo '<div id="app"></div>';
-      echo ' <script type="module" crossorigin src="/admin/assets/index-1BUtdhta.js"></script>';
+      echo '  <script type="module" crossorigin src="/admin/assets/index-DoQ6zGun.js"></script>';
     }
     ?>
-  <?php endif; ?>
+  <?php endif; ?> 
 </body>
 
 </html>

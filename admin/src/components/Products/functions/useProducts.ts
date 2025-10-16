@@ -43,12 +43,17 @@ export function useProducts() {
   const loading = ref(false);
   const error = ref<string | null>(null);
 
+  // Приведение значений, приходящих с сервера (1/0, '1'/'0', 'true'/'false', true/false) к строгому boolean
+  function toBoolean(value: any): boolean {
+    return value === true || value === 1 || value === '1' || value === 'true';
+  }
+
   async function fetchProducts() {
     loading.value = true;
     error.value = null;
     try {
       const response = await fetch(
-        '/server/php/api/products/get_all_products.php'
+        '/server/php/api/products/get_all_products.php?is_published=true'
       );
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -118,8 +123,9 @@ export function useProducts() {
               return {
                 ...parsed,
                 category: categoryKey,
-                is_popular: parsed.is_popular ?? false,
-                is_special: parsed.is_special ?? false,
+                is_popular: toBoolean(parsed.is_popular),
+                is_special: toBoolean(parsed.is_special),
+                is_published: toBoolean(parsed.is_published),
               };
             });
             allProducts.push(...productsWithCategory);
@@ -128,6 +134,9 @@ export function useProducts() {
       }
       products.value = allProducts;
       console.log(products.value, 'PRODUCTS');
+      if (products.value.length > 0) {
+        console.log('[DIAG] is_published typeof/value:', typeof products.value[0].is_published, products.value[0].is_published);
+      }
     } catch (e: any) {
       console.error('Ошибка при получении или обработке продуктов:', e);
       error.value = e.message;
@@ -144,6 +153,7 @@ export function useProducts() {
         title: product.title,
         description: product.description,
         price: product.price,
+        is_published: product.is_published,
         is_popular: product.is_popular,
         is_special: product.is_special,
         gallery: product.gallery,
@@ -271,6 +281,7 @@ export function useProducts() {
     const newProduct: ProductI = {
       id: `new_${Date.now()}`, // Временный ID
       is_new: true,
+      is_published: false,
       model: '',
       title: 'Новый товар',
       description: 'Введите описание...',

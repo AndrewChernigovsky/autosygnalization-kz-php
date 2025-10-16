@@ -46,7 +46,7 @@ $log_file = sys_get_temp_dir() . '/profile-debug.log';
 file_put_contents($log_file, "[" . date('Y-m-d H:i:s') . "] Script started\n", FILE_APPEND);
 
 try {
-  header("Access-Control-Allow-Origin: http://localhost:5173");
+  header("Access-Control-Allow-Origin: http://localhost:5173,https://starline-service.kz");
   header("Access-Control-Allow-Methods: GET, POST");
   header("Access-control-allow-headers: Content-Type, Authorization, X-Requested-With");
   header('Content-Type: application/json');
@@ -121,26 +121,36 @@ class ProfileAPI extends DataBase
   public function editProfile($data)
   {
     try {
-      // Проверяем обязательные поля
-      if (empty($data['username']) || empty($data['password'])) {
-        return $this->error('Пустые поля не допустимы');
+      // Проверяем, что передано хотя бы одно поле для обновления
+      if (empty($data['username']) && empty($data['password'])) {
+        return $this->error('Нечего обновлять. Заполните хотя бы одно поле.');
       }
 
+      $updateFields = [];
+      $params = [];
 
-      $sql = "UPDATE users SET username = :username, password = :password WHERE id = 1";
-      $stmt = $this->pdo->prepare($sql);
-      $stmt->execute([
-        'username' => $data['username'],
-        'password' => $data['password']
-      ]);
+      // Обновляем username если он передан
+      if (!empty($data['username'])) {
+        if (trim($data['username']) === '') {
+          return $this->error('Имя пользователя не может быть пустым.');
+        }
+        $updateFields[] = 'username = :username';
+        $params['username'] = $data['username'];
+      }
 
-      // Обновляем пароль только если он передан
+      // Обновляем password если он передан
       if (!empty($data['password'])) {
-        $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
-        $passwordSql = "UPDATE users SET password = :password WHERE id = 1";
-        $passwordStmt = $this->pdo->prepare($passwordSql);
-        $passwordStmt->execute(['password' => $hashedPassword]);
+        $updateFields[] = 'password = :password';
+        $params['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
       }
+
+      if (empty($updateFields)) {
+        return $this->error('Нет данных для обновления.');
+      }
+
+      $sql = "UPDATE users SET " . implode(', ', $updateFields) . " WHERE id = 1";
+      $stmt = $this->pdo->prepare($sql);
+      $stmt->execute($params);
 
       return $this->success('Профиль успешно обновлен');
     } catch (Exception $e) {

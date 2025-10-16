@@ -21,7 +21,7 @@ class Footer
     $contacts = new ContactsData();
     $phones = $contacts->getPhones();
     $email = $contacts->getEmail();
-    $web_site = $contacts->getWebsite(true);
+    $web_sites = $contacts->getWebsite(true);
     $socialIcons = $contacts->getSocial();
     $emailTitle = $email[0]['email'];
     $emailLink = $email[0]['link'];
@@ -62,7 +62,7 @@ class Footer
             <div class="email"><a href="{$emailLink}" class="link link-message">
                     {$emailTitle}
                 </a></div>
-            <div class="site">{$web_site}</div>
+            <div class="site">{$this->generateWebsiteLinks($web_sites)}</div>
           </div>
         </div>
         <div class="footer__menu">
@@ -101,5 +101,27 @@ HTML;
       $html .= htmlspecialchars($social['title']) . '</a></li>';
     }
     return $html;
+  }
+
+  private function generateWebsiteLinks($webSites): string
+  {
+    if (!is_array($webSites)) {
+      return (string)$webSites;
+    }
+    // Если пришел массив HTML-строк
+    if (!empty($webSites) && is_string($webSites[0])) {
+      return implode(' ', array_map(function ($html) {
+        return $html;
+      }, $webSites));
+    }
+    // Если пришел массив объектов с полями website/website_link
+    $html = '';
+    foreach ($webSites as $site) {
+      $label = htmlspecialchars($site['website'] ?? '');
+      $href = htmlspecialchars($site['website_link'] ?? '#');
+      if ($label === '' && $href === '#') continue;
+      $html .= "<a class='link link-site' href='{$href}'>{$label}</a> ";
+    }
+    return trim($html);
   }
 }

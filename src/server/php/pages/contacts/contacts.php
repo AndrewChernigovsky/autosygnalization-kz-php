@@ -32,6 +32,7 @@ $address = $contacts->getAddress();
 $phones = $contacts->getPhones();
 $contactPhones = $contacts->getContactPhones();
 $social = $contacts->getSocial();
+$socialMessenger = $contacts->getSocialMessenger();
 $schedule = $contacts->getSchedule();
 $map = $contacts->getMap();
 $locationDescription = $contacts->getLocationDescription();
@@ -94,7 +95,7 @@ echo $head->setHead();
             <?php endif; ?>
             <?php if ($item['type'] === 'Электронная почта'): ?>
               <li class="contacts-section__item contacts-section__item--email">
-                <a href="<?php echo htmlspecialchars($item['link']) ?>">
+                <a href="mailto:<?php echo htmlspecialchars($item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
                       <img width="25" height="25"  src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
@@ -110,7 +111,7 @@ echo $head->setHead();
                 <a href="<?php echo htmlspecialchars($item['link']) ?>">
                   <div class="contacts-section__item-content">
                     <div class="icon-container">
-                      <img width="25" height="25"  src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
+                      <img width="25" height="25"  src="/client/vectors/geo.svg" alt="<?= $item['title'] ?>" aria-hidden="true">
                     </div>
                     <h3><?= $item['title'] ?></h3>
                     <div class="contacts-section__address">
@@ -125,7 +126,7 @@ echo $head->setHead();
                 <div class="contacts-section__item-content">
                   <div class="schedule-header">
                     <div class="icon-container">
-                      <img  width="25" height="25" src="<?php echo htmlspecialchars($item['icon_path']) ?>" alt="<?= $item['title'] ?>" aria-hidden="true">
+                      <img  width="25" height="25" src="/server/uploads/contact/icons/icon-1759346289.svg" alt="<?= $item['title'] ?>" aria-hidden="true">
                     </div>
                     <h3><?= $item['title'] ?></h3>
                   </div>

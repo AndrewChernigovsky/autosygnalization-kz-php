@@ -213,8 +213,14 @@
     background-size: 70px 70px;
     display: flex;
     flex-direction: column;
-    padding-top: 70px;
+    padding-top: 80px;
     min-height: 80px;
+    position: relative;
+
+    img {
+      position: absolute;
+      top: 0;
+    }
 
     @media (min-width: var.$tablet) {
       padding-left: 75px;
@@ -229,12 +235,17 @@
     @media (min-width: var.$desktop) {
       width: 665px;
       margin-left: 0;
-      padding-left: 140px;
+      padding-left: 100px;
       background-size: 110px 110px;
     }
   }
 
   &__item:nth-child(even) {
+
+    img {
+      right: 0;
+    }
+
     @media (min-width: var.$tablet) {
       display: flex;
       flex-direction: column;
@@ -250,7 +261,13 @@
     }
 
     @media (min-width: var.$desktop) {
-      padding-right: 140px;
+      padding-right: 100px;
+    }
+  }
+
+  &__item:nth-child(odd) {
+    img {
+      left: 0;
     }
   }
 

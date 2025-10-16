@@ -8,6 +8,7 @@ const props = defineProps<{
   height?: string;
   accept?: string;
   imgPath?: string;
+  disabled?: boolean;
 }>();
 
 const emit = defineEmits<{
@@ -53,7 +54,7 @@ const clearImage = (event: Event) => {
 </script>
 
 <template>
-  <div class="file-input-wrapper">
+  <div class="file-input-wrapper" :class="{ disabled: disabled }">
     <div v-if="isLoading" class="file-loader">
       <div class="spinner"></div>
     </div>
@@ -77,6 +78,7 @@ const clearImage = (event: Event) => {
       class="file-input"
       type="file"
       :accept="accept"
+      :disabled="disabled"
       @change="handleFileChange"
     />
   </div>
@@ -171,5 +173,10 @@ const clearImage = (event: Event) => {
   &:active {
     opacity: 0.3;
   }
+}
+
+.file-input-wrapper.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 </style>

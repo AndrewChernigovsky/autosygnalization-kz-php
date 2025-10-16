@@ -18,6 +18,9 @@ const openContactTypes = ref<Record<string, boolean>>({});
 
 const openContactItems = ref<Record<number, boolean>>({});
 
+// Хранилище для исходных значений контактов
+const originalContacts = ref<Record<number, any>>({});
+
 // Computed для сортированных контактов
 const sortedContacts = computed(() => {
   return store.contacts.slice().sort((a, b) => {
@@ -65,6 +68,18 @@ const toggleContactItem = (contactId: number) => {
     });
     // Открываем только выбранный контакт
     openContactItems.value[contactId] = true;
+
+    // Сохраняем исходные значения контакта при открытии
+    const contact = store.contacts.find((c) => c.contact_id === contactId);
+    if (contact) {
+      originalContacts.value[contactId] = {
+        title: contact.title,
+        content: contact.content,
+        link: contact.link,
+        icon_path: contact.icon_path,
+        on_page: contact.on_page,
+      };
+    }
   }
 };
 
@@ -73,6 +88,23 @@ const handleSaveContact = async (contact: any) => {
     showSwal('Ошибка', 'Заголовок не может быть пустым', 'error');
     return;
   }
+
+  // Проверяем, есть ли изменения
+  const original = originalContacts.value[contact.contact_id];
+  if (original) {
+    const hasChanges =
+      original.title !== contact.title ||
+      original.content !== contact.content ||
+      original.link !== contact.link ||
+      original.icon_path !== contact.icon_path ||
+      original.on_page !== contact.on_page;
+
+    if (!hasChanges) {
+      showSwal('Предупреждение', 'Нет изменений в контактах.', 'warning');
+      return;
+    }
+  }
+
   await uppdateItemOnDB(contact, store.contactsApiUrl);
   await store.getContacts();
 };
@@ -161,7 +193,7 @@ const handleReorder = async (reorderedContactsForType: any[]) => {
                     {{ item.title ? item.title : 'Заголовок' }}
                   </h2>
                   <MyBtn
-                    variant="primary"
+                    variant="secondary"
                     @click="toggleContactItem(item.contact_id)"
                     >{{
                       openContactItems[item.contact_id]
@@ -179,16 +211,38 @@ const handleReorder = async (reorderedContactsForType: any[]) => {
                   <div class="contact-input-wrapper">
                     <h3 class="subtitle m-0">Заголовок*</h3>
                     <MyInput variant="primary" v-model="item.title" />
+                    <p class="addcontact-help m-0">
+                      *Введите заголовок, он <strong>НЕ</strong> будет
+                      отображаться на странице
+                    </p>
                   </div>
                   <div class="contact-input-wrapper quill-input">
                     <h3 class="subtitle m-0">Контент на странице*</h3>
                     <MyQuill v-model:content="item.content" />
+                    <p class="addcontact-help m-0">
+                      *Введите текст, который будет отображаться на странице
+                      <br />
+                      **Если контакт google карта то оставьте поле пустым
+                    </p>
                   </div>
-                  <div class="contact-input-wrapper">
+                  <div class="contact-input-wrapper" v-if="item.type !== 'Как к нам добраться'">
                     <h3 class="subtitle m-0">Ссылка*</h3>
                     <MyInput variant="primary" v-model="item.link" />
+                    <p class="addcontact-help m-0">
+                      *Если нет ссылки, оставьте поле пустым <br />
+                      **Если контакт телефон, то ссылка должна быть в формате
+                      +79999999999, без пробелов <br />
+                      ***Если контакт email, то ссылка должна быть в формате
+                      example@example.com
+                    </p>
                   </div>
-                  <div class="contact-input-wrapper">
+                  <div
+                    class="contact-input-wrapper"
+                    v-if="
+                      item.type === 'Социальные сети' ||
+                      item.type === 'Мессенджер'
+                    "
+                  >
                     <h3 class="subtitle m-0">Изображение*</h3>
                     <MyFileInput
                       :imgPath="getImagePath(item.icon_path)"
@@ -196,6 +250,9 @@ const handleReorder = async (reorderedContactsForType: any[]) => {
                       variant="primary"
                       @file-change="(file) => handleFileChange(file, item)"
                     />
+                    <p class="addcontact-help m-0">
+                      *Изображения должны быть в формате SVG, не более 50кб.
+                    </p>
                   </div>
                   <div class="contact-input-wrapper">
                     <h3 class="subtitle m-0">Показывать на странице*</h3>
@@ -211,7 +268,7 @@ const handleReorder = async (reorderedContactsForType: any[]) => {
                     </div>
                   </div>
                   <div class="btn-wrapper">
-                    <MyBtn variant="primary" @click="handleSaveContact(item)"
+                    <MyBtn variant="therdary" @click="handleSaveContact(item)"
                       >Сохранить</MyBtn
                     >
                     <MyBtn variant="primary" @click="handleDeleteContact(item)"
@@ -340,6 +397,10 @@ const handleReorder = async (reorderedContactsForType: any[]) => {
   display: flex;
   gap: 10px;
   align-items: center;
+}
+
+.addcontact-help {
+  font-size: 12px;
 }
 
 /* Стили для drag-and-drop */

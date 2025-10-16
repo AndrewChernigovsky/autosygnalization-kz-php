@@ -11,3 +11,4 @@ gulpfile.js
 dist.rar
 autosygnalization-kz-php.rar
 src/server/vendor/
+.env

@@ -32,7 +32,7 @@ export function initSwiperService() {
   createServiceSwiper();
 
   function checkWindowSize() {
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth < 768) {
       createServiceSwiper();
     } else {
       destroyServiceSwiper()

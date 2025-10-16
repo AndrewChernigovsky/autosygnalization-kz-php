@@ -74,10 +74,13 @@ function cardTabsSection($id)
             data-content="<?= htmlspecialchars($tab_data['title']) ?>">
             <?php foreach ($tabs_filtered[$index] as $item): ?>
               <?php if (!empty($item['title'])): ?>
-                <li class="tab__item" style="background-image: url(<?= htmlspecialchars($item['path-icon'] ?? '') ?>);">
-                  <h3 class="tab__title"><?= $item['title'] ?? '' ?></h3>
-                  <div class="tab__description-wrapper">
-                    <p class="tab__description"><?= $item['description'] ?? 'Нет описания' ?></p>  <!-- Добавляем запасной текст, если описание пустое -->
+                <li class="tab__item">
+                  <?php if (!empty($item['path-icon'])): ?>
+                  <img src="<?= htmlspecialchars($item['path-icon'] ?? '') ?>" alt="icon" width="80" height="80">
+                  <?php endif; ?>
+                    <h3 class="tab__title"><?= $item['title'] ?? '' ?></h3>
+                    <div class="tab__description-wrapper">
+                      <p class="tab__description"><?= $item['description'] ?? 'Нет описания' ?></p>  <!-- Добавляем запасной текст, если описание пустое -->
                   </div>
                 </li>
               <?php endif; ?>

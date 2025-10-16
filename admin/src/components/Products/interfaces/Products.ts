@@ -21,6 +21,7 @@ export interface PriceItem {
 export interface ProductI {
   id: string;
   is_new?: boolean;
+  is_published: boolean;
   model: string;
   title: string;
   description: string;

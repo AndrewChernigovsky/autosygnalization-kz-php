@@ -59,7 +59,7 @@ echo $head->setHead();
 <body>
   <?= $header->getHeader(); ?>
   <main class="main">
-    <h2 class="title__h2">Видеорегистраторы</h2>
+    <h2 class="title__h2">Парковочные системы</h2>
     <div class="catalog">
       <div class="catalog__wrapper parking-systems">
         <aside class="aside">

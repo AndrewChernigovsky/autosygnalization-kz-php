@@ -161,7 +161,7 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
                     <div v-if="openItems[`${tabIndex}_${itemIndex}`] !== false" class="description-item-inputs">
                       <div class="form-group">
                         <label>Заголовок пункта:</label>
-                        <input type="text" v-model="item.title" />
+                        <input type="text" v-model="item.title" required/>
                       </div>
                       <div class="form-group">
                         <label>Иконка:</label>

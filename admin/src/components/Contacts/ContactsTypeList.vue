@@ -16,21 +16,23 @@ const store = contactsStore();
       :key="contactType"
       class="addcontact-type-item"
     >
-      <label
-        class="addcontact-type-label"
-        :class="{
-          active: store.newContact.type === contactType,
-        }"
-      >
-        <h3 class="subtitle m-0">{{ contactType }}</h3>
-        <MyRadioInput
-          variant="primary"
-          name="contact"
-          v-model="store.newContact.type"
-          :value="contactType"
-          :checked="store.newContact.type === contactType"
-        />
-      </label>
+    <template v-if="contactType !== 'Карта'">
+        <label
+          class="addcontact-type-label"
+          :class="{
+            active: store.newContact.type === contactType,
+          }"
+        >
+          <h3 class="subtitle m-0">{{ contactType }}</h3>
+          <MyRadioInput
+            variant="primary"
+            name="contact"
+            v-model="store.newContact.type"
+            :value="contactType"
+            :checked="store.newContact.type === contactType"
+          />
+        </label>
+      </template>
     </li>
   </ul>
 </template>

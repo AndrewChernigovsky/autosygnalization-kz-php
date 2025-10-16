@@ -8,7 +8,7 @@
   &__head {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 
     &.checkout {
       font-weight: 700;
@@ -72,7 +72,7 @@
 
   &__products {
     display: flex;
-    gap: 1%;
+    gap: 20px;
     flex-wrap: wrap;
     min-height: 350px;
     height: 100%;

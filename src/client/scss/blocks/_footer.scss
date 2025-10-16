@@ -7,6 +7,10 @@
   min-height: 300px;
   border-top: 1px solid var.$white;
 
+  .geo {
+    display: none;
+  }
+
   &__inner {
     display: grid;
     align-items: flex-start;
@@ -74,6 +78,7 @@
       grid-area: phones;
 
       .geo {
+
         &__wrapper {
           color: var.$red;
           position: relative;

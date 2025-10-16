@@ -17,9 +17,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 
 header("Content-Type: application/json; charset=UTF-8");
 
+$is_published = true;
+
+if (isset($_GET['is_published']) && $_GET['is_published'] !== '') {
+  $is_published = $_GET['is_published'] === 'true';
+}
 
 $productsData = new Products();
-$allProducts = $productsData->getData();
+$allProducts = $productsData->getData($is_published);
 
 $groupedProducts = [];
 foreach ($allProducts as $product) {
