@@ -26,35 +26,39 @@ const toggleItem = (tabIndex: number, itemIndex: number) => {
 };
 
 // Инициализируем состояние openItems: по умолчанию все закрыты, открыт только первый элемент каждой вкладки
-watch(() => props.product.tabs, (tabs) => {
-  if (!Array.isArray(tabs)) return;
+watch(
+  () => props.product.tabs,
+  (tabs) => {
+    if (!Array.isArray(tabs)) return;
 
-  // Если ещё не инициализировали openItems — инициализируем (первичный рендер)
-  if (Object.keys(openItems.value).length === 0) {
-    const newState: Record<string, boolean> = {};
+    // Если ещё не инициализировали openItems — инициализируем (первичный рендер)
+    if (Object.keys(openItems.value).length === 0) {
+      const newState: Record<string, boolean> = {};
+      tabs.forEach((tab, tIdx) => {
+        if (tab && Array.isArray(tab.content)) {
+          tab.content.forEach((_, iIdx: number) => {
+            const key = `${tIdx}_${iIdx}`;
+            newState[key] = iIdx === 0; // только первый элемент открыт
+          });
+        }
+      });
+      openItems.value = newState;
+      return;
+    }
+
+    // При последующих изменениях добавляем только новые ключи, не сбрасывая текущие состояния
     tabs.forEach((tab, tIdx) => {
-      if (tab && Array.isArray(tab.content)) {
-        tab.content.forEach((_, iIdx: number) => {
-          const key = `${tIdx}_${iIdx}`;
-          newState[key] = iIdx === 0; // только первый элемент открыт
-        });
-      }
+      if (!tab || !Array.isArray(tab.content)) return;
+      tab.content.forEach((_, iIdx) => {
+        const key = `${tIdx}_${iIdx}`;
+        if (!(key in openItems.value)) {
+          openItems.value[key] = iIdx === 0;
+        }
+      });
     });
-    openItems.value = newState;
-    return;
-  }
-
-  // При последующих изменениях добавляем только новые ключи, не сбрасывая текущие состояния
-  tabs.forEach((tab, tIdx) => {
-    if (!tab || !Array.isArray(tab.content)) return;
-    tab.content.forEach((_, iIdx) => {
-      const key = `${tIdx}_${iIdx}`;
-      if (!(key in openItems.value)) {
-        openItems.value[key] = iIdx === 0;
-      }
-    });
-  });
-}, { immediate: true, deep: true });
+  },
+  { immediate: true, deep: true }
+);
 
 const toggleTab = (index: number) => {
   openTabs.value[index] = !openTabs.value[index];
@@ -80,8 +84,8 @@ const removeTab = (tabIndex: number) => {
 const addDescriptionItem = (tabIndex: number) => {
   props.product.tabs?.[tabIndex].content.push({
     title: 'Новый пункт',
-    description:  '',
-    "path-icon": '',
+    description: '',
+    'path-icon': '',
   });
 
   console.log(props.product.tabs, 'PRODUCTS ADD DESCRIPTION ITEM');
@@ -146,22 +150,50 @@ const removeDescriptionItem = (tabIndex: number, itemIndex: number) => {
                   class="description-item"
                 >
                   <!-- Заголовок элемента и кнопки управления всегда видимы -->
-                  <div class="description-item-header" style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                    <div class="description-item-title" style="font-weight:bold;">{{ item.title || 'Без названия' }}</div>
-                    <div style="display:flex; gap:8px;">
-                      <MyBtn variant="secondary" @click="toggleItem(tabIndex, itemIndex)" class="btn-toggle-item">
-                        {{ openItems[`${tabIndex}_${itemIndex}`] ? 'Свернуть' : 'Развернуть' }}
+                  <div
+                    class="description-item-header"
+                    style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      width: 100%;
+                    "
+                  >
+                    <div
+                      class="description-item-title"
+                      style="font-weight: bold"
+                    >
+                      {{ item.title || 'Без названия' }}
+                    </div>
+                    <div style="display: flex; gap: 8px">
+                      <MyBtn
+                        variant="secondary"
+                        @click="toggleItem(tabIndex, itemIndex)"
+                        class="btn-toggle-item"
+                      >
+                        {{
+                          openItems[`${tabIndex}_${itemIndex}`]
+                            ? 'Свернуть'
+                            : 'Развернуть'
+                        }}
                       </MyBtn>
-                      <MyBtn variant="primary" @click="removeDescriptionItem(tabIndex, itemIndex)" class="btn-delete-item">
+                      <MyBtn
+                        variant="primary"
+                        @click="removeDescriptionItem(tabIndex, itemIndex)"
+                        class="btn-delete-item"
+                      >
                         Удалить
                       </MyBtn>
                     </div>
                   </div>
                   <MyTransition>
-                    <div v-if="openItems[`${tabIndex}_${itemIndex}`] !== false" class="description-item-inputs">
+                    <div
+                      v-if="openItems[`${tabIndex}_${itemIndex}`] !== false"
+                      class="description-item-inputs"
+                    >
                       <div class="form-group">
                         <label>Заголовок пункта:</label>
-                        <input type="text" v-model="item.title" required/>
+                        <input type="text" v-model="item.title" required />
                       </div>
                       <div class="form-group">
                         <label>Иконка:</label>

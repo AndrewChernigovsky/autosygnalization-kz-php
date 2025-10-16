@@ -304,7 +304,12 @@ defineExpose({
     }
   },
   // Parent can call this to update a tab icon path in the editing clone
-  updateTabIconPath: (productId: string, tabIndex: number, itemIndex: number, newPath: string) => {
+  updateTabIconPath: (
+    productId: string,
+    tabIndex: number,
+    itemIndex: number,
+    newPath: string
+  ) => {
     if (!editingProduct.value || editingProduct.value.id !== productId) return;
     if (
       editingProduct.value.tabs &&
@@ -312,14 +317,17 @@ defineExpose({
       editingProduct.value.tabs[tabIndex].content &&
       editingProduct.value.tabs[tabIndex].content[itemIndex]
     ) {
-      editingProduct.value.tabs[tabIndex].content[itemIndex]['path-icon'] = newPath;
+      editingProduct.value.tabs[tabIndex].content[itemIndex]['path-icon'] =
+        newPath;
     }
   },
   // Parent can call this to replace gallery in the editing clone
   updateGallery: (productId: string, newGallery: string[]) => {
     if (!editingProduct.value || editingProduct.value.id !== productId) return;
-    editingProduct.value.gallery = Array.isArray(newGallery) ? JSON.parse(JSON.stringify(newGallery)) : [];
-  }
+    editingProduct.value.gallery = Array.isArray(newGallery)
+      ? JSON.parse(JSON.stringify(newGallery))
+      : [];
+  },
 });
 
 const hasOption = (optionName: string): boolean => {
@@ -410,6 +418,42 @@ watch(
   { deep: true }
 );
 
+// Синхронизация tabs - обновляем только серверные пути к иконкам
+watch(
+  () => props.product.tabs,
+  (newTabs) => {
+    if (editingProduct.value && newTabs) {
+      // Синхронизируем только серверные пути к иконкам, не перезаписывая всю структуру
+      const editing = editingProduct.value; // Сохраняем ссылку для линтера
+      if (editing.tabs && Array.isArray(newTabs)) {
+        newTabs.forEach((tab, tIdx) => {
+          if (tab?.content && editing.tabs?.[tIdx]?.content) {
+            tab.content.forEach((item: any, iIdx: number) => {
+              const editItem = editing.tabs?.[tIdx]?.content?.[iIdx];
+              const newPath = item['path-icon'];
+
+              // Обновляем только если новый путь - валидный серверный путь
+              if (
+                editItem &&
+                newPath &&
+                !newPath.startsWith('blob:') &&
+                newPath.startsWith('/')
+              ) {
+                console.log(
+                  `✅ [SYNC] Синхронизируем серверный путь в editingProduct [${tIdx}][${iIdx}]:`,
+                  newPath
+                );
+                editItem['path-icon'] = newPath;
+              }
+            });
+          }
+        });
+      }
+    }
+  },
+  { deep: true }
+);
+
 const currentIconTarget = ref<{ tabIndex: number; itemIndex: number } | null>(
   null
 );
@@ -468,16 +512,36 @@ const onUpdateTabIconPath = (
 };
 
 const onIconFileSelected = (event: Event) => {
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+  console.log('📸 [PRODUCT.VUE] onIconFileSelected - НАЧАЛО');
   const target = event.target as HTMLInputElement;
   const file = target.files?.[0];
+
   if (!file || !currentIconTarget.value || !editingProduct.value) {
+    console.log('❌ [PRODUCT.VUE] Нет файла или цели:', {
+      file: !!file,
+      target: !!currentIconTarget.value,
+      editing: !!editingProduct.value,
+    });
     if (target) target.value = '';
     return;
   }
+
   const { tabIndex, itemIndex } = currentIconTarget.value;
+  console.log('📍 [PRODUCT.VUE] Выбран файл:', {
+    fileName: file.name,
+    fileSize: file.size,
+    fileType: file.type,
+    tabIndex,
+    itemIndex,
+    productId: editingProduct.value.id,
+  });
+
   // Создаём локальное превью в editingProduct, чтобы сразу отобразить в UI
   try {
     const blobUrl = URL.createObjectURL(file);
+    console.log('🔗 [PRODUCT.VUE] Создан blob URL:', blobUrl);
+
     if (!editingProduct.value.tabs) editingProduct.value.tabs = [];
     if (!editingProduct.value.tabs[tabIndex])
       editingProduct.value.tabs[tabIndex] = { title: '', content: [] } as any;
@@ -487,16 +551,29 @@ const onIconFileSelected = (event: Event) => {
         description: '',
         ['path-icon']: '',
       } as any;
+
     editingProduct.value.tabs[tabIndex].content[itemIndex]['path-icon'] =
       blobUrl;
+
+    console.log('✅ [PRODUCT.VUE] Установлен blob URL в editingProduct:', {
+      tabIndex,
+      itemIndex,
+      'path-icon': blobUrl,
+    });
+    console.log(
+      '📊 [PRODUCT.VUE] Текущее состояние editingProduct.tabs:',
+      JSON.parse(JSON.stringify(editingProduct.value.tabs))
+    );
   } catch (e) {
-    // ignore preview errors
+    console.error('❌ [PRODUCT.VUE] Ошибка создания превью:', e);
   }
 
   // Сообщаем родителю о файле для дальнейшей обработки и сохранения
+  console.log('📤 [PRODUCT.VUE] Эмитим stage-tab-icon в родителя');
   emit('stage-tab-icon', editingProduct.value.id, tabIndex, itemIndex, file);
   target.value = '';
   currentIconTarget.value = null;
+  console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
 };
 
 // Синхронизация tabs, приходящих из дочернего компонента Tabs
@@ -510,47 +587,70 @@ function handleTabsChanged(newTabs: any[]) {
 const pricesRef = ref();
 
 function saveChanges() {
-  console.log(
-    '🔍 [SAVE_CHANGES] Начало saveChanges, isSaving:',
-    isSaving.value
-  );
+  console.log('\n');
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('💾 [PRODUCT.VUE] saveChanges - НАЧАЛО');
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('🔍 [PRODUCT.VUE] isSaving:', isSaving.value);
+  console.log('🔍 [PRODUCT.VUE] productId:', props.product.id);
+
+  if (editingProduct.value && editingProduct.value.tabs) {
+    console.log('📊 [PRODUCT.VUE] editingProduct.tabs ПЕРЕД отправкой:');
+    editingProduct.value.tabs.forEach((tab, tIdx) => {
+      console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+      if (tab.content) {
+        tab.content.forEach((item: any, iIdx: number) => {
+          console.log(
+            `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → path-icon: "${item['path-icon']}"`
+          );
+        });
+      }
+    });
+  }
+
   isSaving.value = true;
-  console.log('🔍 [SAVE_CHANGES] Установили isSaving = true');
   try {
     if (pricesRef.value && pricesRef.value.syncPricesToProduct) {
-      console.log('🔍 [SAVE_CHANGES] Вызываем syncPricesToProduct');
+      console.log('💰 [PRODUCT.VUE] Синхронизируем цены');
       pricesRef.value.syncPricesToProduct();
     }
     if (editingProduct.value) {
-      console.log('🔍 [SAVE_CHANGES] Обновляем price_list');
-      console.log('🔍 [SAVE_CHANGES] priceListRef.value:', priceListRef.value);
       // Обновляем price_list локально
       editingProduct.value.price_list = [priceListRef.value];
 
       // Подавляем watcher на время программного обновления snapshot
       suppressWatcher = true;
       try {
-        // Обновим оригинальный сниппет, чтобы comparer не считал изменения после сохранения
-        originalSnapshot.value = JSON.parse(JSON.stringify(editingProduct.value));
-        console.log('🔍 [SAVE_CHANGES] originalSnapshot обновлен');
+        originalSnapshot.value = JSON.parse(
+          JSON.stringify(editingProduct.value)
+        );
+        console.log('📸 [PRODUCT.VUE] originalSnapshot обновлен');
       } finally {
-        // сброс suppress асинхронно после микротаска
         setTimeout(() => (suppressWatcher = false), 0);
       }
 
-      console.log('🔍 [SAVE_CHANGES] price_list обновлен, эмитим save-product');
-      console.log('Emit save-product', editingProduct.value);
+      console.log(
+        '📤 [PRODUCT.VUE] Эмитим save-product в родителя (Products.vue)'
+      );
+      console.log('📦 [PRODUCT.VUE] Отправляем editingProduct:', {
+        id: editingProduct.value.id,
+        title: editingProduct.value.title,
+        tabsCount: editingProduct.value.tabs?.length || 0,
+      });
+
       emit('save-product', editingProduct.value);
 
-      console.log('🔍 [SAVE_CHANGES] Сбрасываем dirty и эмитим dirty-state');
       resetDirty();
       emit('dirty-state', props.product.id, false);
     }
   } finally {
-    console.log('🔍 [SAVE_CHANGES] Сбрасываем isSaving = false');
     isSaving.value = false;
   }
-  console.log('🔍 [SAVE_CHANGES] Конец saveChanges');
+  console.log('═════════════════════════════════════════════════════════════');
+  console.log('💾 [PRODUCT.VUE] saveChanges - КОНЕЦ');
+  console.log(
+    '═════════════════════════════════════════════════════════════\n'
+  );
 }
 </script>
 

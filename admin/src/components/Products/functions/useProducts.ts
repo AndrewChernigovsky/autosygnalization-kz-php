@@ -78,7 +78,10 @@ export function useProducts() {
                 parsed.gallery = parsed.gallery || [];
               }
               try {
-                if (parsed.price_list && typeof parsed.price_list === 'string') {
+                if (
+                  parsed.price_list &&
+                  typeof parsed.price_list === 'string'
+                ) {
                   parsed.price_list = JSON.parse(parsed.price_list);
                 }
               } catch (e) {
@@ -99,14 +102,22 @@ export function useProducts() {
                 parsed.options = parsed.options || [];
               }
               try {
-                if (parsed['options-filters'] && typeof parsed['options-filters'] === 'string') {
-                  parsed['options-filters'] = JSON.parse(parsed['options-filters']);
+                if (
+                  parsed['options-filters'] &&
+                  typeof parsed['options-filters'] === 'string'
+                ) {
+                  parsed['options-filters'] = JSON.parse(
+                    parsed['options-filters']
+                  );
                 }
               } catch (e) {
                 parsed['options-filters'] = parsed['options-filters'] || [];
               }
               try {
-                if (parsed.autosygnals && typeof parsed.autosygnals === 'string') {
+                if (
+                  parsed.autosygnals &&
+                  typeof parsed.autosygnals === 'string'
+                ) {
                   parsed.autosygnals = JSON.parse(parsed.autosygnals);
                 }
               } catch (e) {
@@ -135,7 +146,11 @@ export function useProducts() {
       products.value = allProducts;
       console.log(products.value, 'PRODUCTS');
       if (products.value.length > 0) {
-        console.log('[DIAG] is_published typeof/value:', typeof products.value[0].is_published, products.value[0].is_published);
+        console.log(
+          '[DIAG] is_published typeof/value:',
+          typeof products.value[0].is_published,
+          products.value[0].is_published
+        );
       }
     } catch (e: any) {
       console.error('Ошибка при получении или обработке продуктов:', e);
@@ -146,6 +161,15 @@ export function useProducts() {
   }
 
   async function updateProduct(product: ProductI): Promise<boolean> {
+    console.log('\n');
+    console.log(
+      '▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒'
+    );
+    console.log('🔧 [useProducts.ts] updateProduct - НАЧАЛО');
+    console.log(
+      '▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒'
+    );
+
     try {
       const productData = {
         id: product.id,
@@ -166,23 +190,75 @@ export function useProducts() {
         tabs: product.tabs,
         price_list: product.price_list,
       };
-      console.log(productData, 'PRODUCT DATA');
+
+      console.log('📦 [useProducts.ts] productData ПЕРЕД санитизацией:', {
+        id: productData.id,
+        title: productData.title,
+        tabsCount: productData.tabs?.length || 0,
+      });
+
+      if (productData.tabs) {
+        console.log('📊 [useProducts.ts] productData.tabs ПЕРЕД санитизацией:');
+        productData.tabs.forEach((tab: any, tIdx: number) => {
+          console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+          if (tab.content) {
+            tab.content.forEach((item: any, iIdx: number) => {
+              console.log(
+                `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → path-icon: "${item['path-icon']}"`
+              );
+            });
+          }
+        });
+      }
 
       // Sanitize tabs: ensure preview blob: URLs are not sent to the server
+      console.log('\n🧹 [useProducts.ts] Санитизация tabs...');
       if (productData.tabs && Array.isArray(productData.tabs)) {
         try {
-          for (const tab of productData.tabs) {
+          let blobCount = 0;
+          for (let t = 0; t < productData.tabs.length; t++) {
+            const tab = productData.tabs[t];
             if (!tab || !Array.isArray(tab.content)) continue;
-            for (const item of tab.content) {
-              if (item && typeof item['path-icon'] === 'string' && item['path-icon'].startsWith('blob:')) {
+            for (let i = 0; i < tab.content.length; i++) {
+              const item = tab.content[i];
+              if (
+                item &&
+                typeof item['path-icon'] === 'string' &&
+                item['path-icon'].startsWith('blob:')
+              ) {
+                console.log(
+                  `🧹 [useProducts.ts] Заменяем blob на пустую строку [${t}][${i}]:`,
+                  item['path-icon']
+                );
                 item['path-icon'] = '';
+                blobCount++;
               }
             }
           }
+          console.log(
+            `✅ [useProducts.ts] Санитизация завершена, заменено blob URLs: ${blobCount}`
+          );
         } catch (e) {
-          // if sanitization fails, fall back to removing tabs entirely to avoid storing blobs
+          console.error('❌ [useProducts.ts] Ошибка санитизации:', e);
           productData.tabs = [];
         }
+      }
+
+      if (productData.tabs) {
+        console.log('📊 [useProducts.ts] productData.tabs ПОСЛЕ санитизации:');
+        productData.tabs.forEach((tab: any, tIdx: number) => {
+          console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+          if (tab.content) {
+            tab.content.forEach((item: any, iIdx: number) => {
+              const icon = item['path-icon'];
+              console.log(
+                `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → ${
+                  icon ? '✅' : '❌'
+                } path-icon: "${icon}"`
+              );
+            });
+          }
+        });
       }
 
       if (product.is_new) {
@@ -238,9 +314,20 @@ export function useProducts() {
       }
       // --- конец нового блока ---
 
+      console.log('✅ [useProducts.ts] updateProduct УСПЕШНО');
+      console.log(
+        '▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒'
+      );
+      console.log('🔧 [useProducts.ts] updateProduct - КОНЕЦ');
+      console.log(
+        '▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n'
+      );
       return true;
     } catch (error) {
-      console.error('[useProducts.ts] updateProduct error:', error);
+      console.error('❌ [useProducts.ts] updateProduct ОШИБКА:', error);
+      console.log(
+        '▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n'
+      );
       return false;
     }
   }
@@ -373,7 +460,6 @@ export function useProducts() {
     }
   }
 
-
   return {
     products,
     loading,
@@ -390,7 +476,10 @@ export function useProducts() {
   };
 }
 
-export async function handleToggle(event: Event, product: ProductI): Promise<boolean> {
+export async function handleToggle(
+  event: Event,
+  product: ProductI
+): Promise<boolean> {
   const detailsElement = event.target as HTMLDetailsElement;
   if (!detailsElement.open && product.is_new) {
     event.preventDefault();

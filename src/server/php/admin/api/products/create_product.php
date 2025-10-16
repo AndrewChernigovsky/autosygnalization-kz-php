@@ -10,17 +10,41 @@ header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
 
-if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-  http_response_code(200);
-  exit;
-}
+// if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+//   http_response_code(200);
+//   exit;
+// }
 
 header('Content-Type: application/json');
+
+$log_file = __DIR__ . '/debug_create_product.log';
 
 $dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo(); // Use PDO directly for transactions
 
 $data = json_decode(file_get_contents("php://input"), true);
+
+file_put_contents($log_file, "\n\n", FILE_APPEND);
+file_put_contents($log_file, "████████████████████████████████████████████████████████████████████████\n", FILE_APPEND);
+file_put_contents($log_file, "➕ [PHP] create_product.php - СОЗДАНИЕ НОВОГО ТОВАРА\n", FILE_APPEND);
+file_put_contents($log_file, "████████████████████████████████████████████████████████████████████████\n", FILE_APPEND);
+file_put_contents($log_file, "🕐 Время: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+file_put_contents($log_file, "📦 tempId: " . ($data['id'] ?? 'НЕТ') . "\n", FILE_APPEND);
+file_put_contents($log_file, "📦 title: " . ($data['title'] ?? 'НЕТ') . "\n", FILE_APPEND);
+file_put_contents($log_file, "📦 category: " . ($data['category'] ?? 'НЕТ') . "\n", FILE_APPEND);
+
+if (isset($data['tabs']) && is_array($data['tabs'])) {
+  file_put_contents($log_file, "\n📊 [PHP] tabs ПОЛУЧЕНЫ от клиента (count: " . count($data['tabs']) . "):\n", FILE_APPEND);
+  foreach ($data['tabs'] as $tIdx => $tab) {
+    file_put_contents($log_file, "  Вкладка [$tIdx]: " . ($tab['title'] ?? '') . "\n", FILE_APPEND);
+    if (isset($tab['content'])) {
+      foreach ($tab['content'] as $iIdx => $item) {
+        $icon = $item['path-icon'] ?? '';
+        file_put_contents($log_file, "    Элемент [$tIdx][$iIdx]: \"" . ($item['title'] ?? '') . "\" → \"$icon\"\n", FILE_APPEND);
+      }
+    }
+  }
+}
 
 if (!isset($data['title'], $data['category'])) {
   http_response_code(400);
@@ -88,21 +112,45 @@ try {
   // Update tabs
   $tabs = $data['tabs'] ?? [];
   $tempTabsDir = $baseUploadPath . 'tabs/' . $tempId;
+  
+  file_put_contents($log_file, "\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", FILE_APPEND);
+  file_put_contents($log_file, "📂 [PHP] Обработка tabs для нового продукта\n", FILE_APPEND);
+  file_put_contents($log_file, "  tempId: $tempId\n", FILE_APPEND);
+  file_put_contents($log_file, "  uuid (новый ID): $uuid\n", FILE_APPEND);
+  file_put_contents($log_file, "  tempTabsDir: $tempTabsDir\n", FILE_APPEND);
+  file_put_contents($log_file, "  is_new: " . (strpos($tempId, 'new_') === 0 ? 'ДА' : 'НЕТ') . "\n", FILE_APPEND);
+  file_put_contents($log_file, "  tabs count: " . count($tabs) . "\n", FILE_APPEND);
+  file_put_contents($log_file, "  dir exists: " . (is_dir($tempTabsDir) ? 'ДА' : 'НЕТ') . "\n", FILE_APPEND);
+  
   if (strpos($tempId, 'new_') === 0 && !empty($tabs) && is_dir($tempTabsDir)) {
     $newTabsDir = $baseUploadPath . 'tabs/' . $uuid;
+    file_put_contents($log_file, "  newTabsDir: $newTabsDir\n", FILE_APPEND);
+    
     if (rename($tempTabsDir, $newTabsDir)) {
+      file_put_contents($log_file, "✅ [PHP] Папка переименована успешно\n", FILE_APPEND);
+      file_put_contents($log_file, "🔄 [PHP] Обновляем пути в tabs:\n", FILE_APPEND);
+      
       foreach ($tabs as $tabIndex => $tab) {
         if (isset($tab['content'])) {
           foreach ($tab['content'] as $itemIndex => $item) {
             if (!empty($item['path-icon'])) {
-              $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $item['path-icon']);
+              $oldPath = $item['path-icon'];
+              $newPath = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $oldPath);
+              $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = $newPath;
+              file_put_contents($log_file, "  [$tabIndex][$itemIndex]: \"$oldPath\" → \"$newPath\"\n", FILE_APPEND);
             }
           }
         }
       }
       $data['tabs'] = $tabs;
+      file_put_contents($log_file, "✅ [PHP] Пути обновлены в tabs\n", FILE_APPEND);
+    } else {
+      file_put_contents($log_file, "❌ [PHP] НЕ удалось переименовать папку!\n", FILE_APPEND);
     }
+  } else {
+    file_put_contents($log_file, "ℹ️ [PHP] Условия для переименования НЕ выполнены, пропускаем\n", FILE_APPEND);
   }
+  file_put_contents($log_file, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", FILE_APPEND);
 
   // Save tabs data (either original or with updated paths)
   if (isset($data['tabs'])) {
@@ -123,6 +171,11 @@ try {
 
   $data['id'] = $uuid;
   $data['link'] = $link;
+  
+  file_put_contents($log_file, "\n✅ [PHP] create_product УСПЕШНО ЗАВЕРШЕН\n", FILE_APPEND);
+  file_put_contents($log_file, "📦 Возвращаем клиенту новый ID: $uuid\n", FILE_APPEND);
+  file_put_contents($log_file, "████████████████████████████████████████████████████████████████████████\n", FILE_APPEND);
+  
   echo json_encode($data);
 
 } catch (Exception $e) {

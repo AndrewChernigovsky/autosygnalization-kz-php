@@ -18,8 +18,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 header('Content-Type: application/json');
 
 $log_file = __DIR__ . '/debug_upload_tab_icon.log';
-file_put_contents($log_file, "--- NEW upload_tab_icon REQUEST ---\n", FILE_APPEND);
-file_put_contents($log_file, "POST: " . print_r($_POST, true) . "\nFILES: " . print_r(array_map(function($f){ return [ 'name'=>$f['name'], 'error'=>$f['error'], 'size'=>$f['size'] ]; }, $_FILES), true) . "\n", FILE_APPEND);
+file_put_contents($log_file, "\n\n", FILE_APPEND);
+file_put_contents($log_file, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", FILE_APPEND);
+file_put_contents($log_file, "📤 [PHP] upload_tab_icon.php - НОВЫЙ ЗАПРОС\n", FILE_APPEND);
+file_put_contents($log_file, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", FILE_APPEND);
+file_put_contents($log_file, "🕐 Время: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+file_put_contents($log_file, "📦 POST параметры:\n", FILE_APPEND);
+file_put_contents($log_file, "  productId: " . ($_POST['productId'] ?? 'НЕТ') . "\n", FILE_APPEND);
+file_put_contents($log_file, "  tabIndex: " . ($_POST['tabIndex'] ?? 'НЕТ') . "\n", FILE_APPEND);
+file_put_contents($log_file, "  itemIndex: " . ($_POST['itemIndex'] ?? 'НЕТ') . "\n", FILE_APPEND);
+file_put_contents($log_file, "📁 FILES параметры:\n", FILE_APPEND);
+file_put_contents($log_file, print_r(array_map(function($f){ 
+  return [ 'name'=>$f['name'], 'error'=>$f['error'], 'size'=>$f['size'], 'type'=>$f['type'] ]; 
+}, $_FILES), true) . "\n", FILE_APPEND);
 
 $dbConnection = DataBase::getConnection();
 $pdo = $dbConnection->getPdo();
@@ -54,11 +65,16 @@ $uploadFilePath = $uploadDir . $newFileName;
 try {
   $pdo->beginTransaction();
 
+  file_put_contents($log_file, "\n📊 [PHP] Читаем tabs_data из БД для productId: $productId\n", FILE_APPEND);
+  
   $stmt = $pdo->prepare("SELECT tabs_data FROM TabsAdditionalProductsData WHERE product_id = :product_id");
   $stmt->execute([':product_id' => $productId]);
   $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
   $tabs = $result ? json_decode($result['tabs_data'], true) : [];
+  
+  file_put_contents($log_file, "📥 [PHP] tabs_data из БД:\n", FILE_APPEND);
+  file_put_contents($log_file, json_encode($tabs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND);
 
   if (!isset($tabs[$tabIndex])) {
     $tabs[$tabIndex] = ['title' => 'Новая вкладка', 'content' => []];
@@ -80,7 +96,13 @@ try {
   }
 
   $newIconPath = '/server/uploads/tabs/' . $productId . '/' . $newFileName;
+  file_put_contents($log_file, "\n✅ [PHP] Файл сохранен: $newIconPath\n", FILE_APPEND);
+  
   $tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = $newIconPath;
+  
+  file_put_contents($log_file, "📝 [PHP] Обновляем tabs[$tabIndex]['content'][$itemIndex]['path-icon'] = $newIconPath\n", FILE_APPEND);
+  file_put_contents($log_file, "\n📊 [PHP] tabs ПЕРЕД сохранением в БД:\n", FILE_APPEND);
+  file_put_contents($log_file, json_encode($tabs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) . "\n", FILE_APPEND);
 
   $updateStmt = $pdo->prepare("
         INSERT INTO TabsAdditionalProductsData (product_id, tabs_data) 
@@ -93,6 +115,10 @@ try {
   ]);
 
   $pdo->commit();
+  
+  file_put_contents($log_file, "✅ [PHP] tabs_data СОХРАНЕН В БД\n", FILE_APPEND);
+  file_put_contents($log_file, "✅ [PHP] Возвращаем клиенту: " . json_encode(['filePath' => $newIconPath]) . "\n", FILE_APPEND);
+  file_put_contents($log_file, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", FILE_APPEND);
 
   http_response_code(200);
   echo json_encode(['filePath' => $newIconPath]);

@@ -179,6 +179,35 @@ async function handleToggleWithCheck(_: Event, product: ProductI) {
 }
 
 async function saveChanges(product: ProductI) {
+  console.log('\n\n');
+  console.log(
+    '████████████████████████████████████████████████████████████████████████'
+  );
+  console.log('💾💾💾 [PRODUCTS.VUE] saveChanges - НАЧАЛО СОХРАНЕНИЯ 💾💾💾');
+  console.log(
+    '████████████████████████████████████████████████████████████████████████'
+  );
+  console.log('📦 [PRODUCTS.VUE] Получен product от Product.vue:', {
+    id: product.id,
+    title: product.title,
+    tabsCount: product.tabs?.length || 0,
+    is_new: product.is_new,
+  });
+
+  if (product.tabs) {
+    console.log('📊 [PRODUCTS.VUE] product.tabs ПОЛУЧЕНЫ от Product.vue:');
+    product.tabs.forEach((tab: any, tIdx: number) => {
+      console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+      if (tab.content) {
+        tab.content.forEach((item: any, iIdx: number) => {
+          console.log(
+            `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → path-icon: "${item['path-icon']}"`
+          );
+        });
+      }
+    });
+  }
+
   Swal.fire({
     title: 'Сохранение...',
     text: 'Пожалуйста, подождите',
@@ -191,8 +220,10 @@ async function saveChanges(product: ProductI) {
   });
 
   const productRef = products.value.find((p) => p.id === product.id) || product;
-  console.log('🔍 [SAVE] Начало saveChanges с product:', product);
-  console.log('🔍 [SAVE] product.tabs:', product.tabs);
+  console.log('🔍 [PRODUCTS.VUE] productRef создан/найден:', {
+    id: productRef.id,
+    'productRef === product': productRef === product,
+  });
   if (
     product.tabs &&
     product.tabs[0] &&
@@ -255,50 +286,77 @@ async function saveChanges(product: ProductI) {
     }
 
     if (product.tabs) {
-      console.log('🔍 [SAVE] Копируем tabs из product в productRef');
+      console.log(
+        '🔍 [SAVE] Копируем tabs из product в productRef с умным слиянием'
+      );
       console.log('🔍 [SAVE] product.tabs:', product.tabs);
       try {
-        productRef.tabs = JSON.parse(JSON.stringify(product.tabs));
-        console.log(
-          '🔍 [SAVE] productRef.tabs после копирования:',
-          productRef.tabs
-        );
-        if (
-          productRef.tabs &&
-          productRef.tabs[0] &&
-          productRef.tabs[0].content &&
-          productRef.tabs[0].content[0]
-        ) {
-          console.log(
-            '🔍 [SAVE] productRef.tabs[0].content[0] после копирования:',
-            productRef.tabs[0].content[0]
-          );
-          console.log(
-            '🔍 [SAVE] productRef.tabs[0].content[0][path-icon] после копирования:',
-            productRef.tabs[0].content[0]['path-icon']
-          );
+        const newTabs = JSON.parse(JSON.stringify(product.tabs));
+
+        // УМНОЕ СЛИЯНИЕ: сохраняем валидные серверные пути из productRef
+        if (productRef.tabs && Array.isArray(productRef.tabs)) {
+          console.log('🔍 [SAVE] Выполняем умное слияние с существующими tabs');
+          newTabs.forEach((tab: any, tIdx: number) => {
+            if (
+              tab?.content &&
+              productRef.tabs &&
+              productRef.tabs[tIdx]?.content
+            ) {
+              tab.content.forEach((item: any, iIdx: number) => {
+                const oldPath =
+                  productRef.tabs &&
+                  productRef.tabs[tIdx]?.content[iIdx]?.['path-icon'];
+                const newPath = item['path-icon'];
+
+                // Если в productRef валидный серверный путь, а в editingProduct blob - сохраняем старый
+                if (
+                  oldPath &&
+                  !oldPath.startsWith('blob:') &&
+                  oldPath.startsWith('/') &&
+                  (!newPath || newPath.startsWith('blob:'))
+                ) {
+                  console.log(
+                    `🔍 [SAVE] Сохраняем серверный путь для [${tIdx}][${iIdx}]:`,
+                    oldPath
+                  );
+                  item['path-icon'] = oldPath;
+                } else if (newPath && !newPath.startsWith('blob:')) {
+                  console.log(
+                    `🔍 [SAVE] Используем новый путь для [${tIdx}][${iIdx}]:`,
+                    newPath
+                  );
+                } else {
+                  console.log(
+                    `🔍 [SAVE] Оставляем blob для последующей загрузки [${tIdx}][${iIdx}]:`,
+                    newPath
+                  );
+                }
+              });
+            }
+          });
         }
+
+        productRef.tabs = newTabs;
+        console.log('\n━━━ УМНОЕ КОПИРОВАНИЕ ЗАВЕРШЕНО ━━━');
+        console.log(
+          '📊 [PRODUCTS.VUE] productRef.tabs ПОСЛЕ умного копирования:'
+        );
+        if (productRef.tabs) {
+          productRef.tabs.forEach((tab: any, tIdx: number) => {
+            console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+            if (tab.content) {
+              tab.content.forEach((item: any, iIdx: number) => {
+                console.log(
+                  `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → path-icon: "${item['path-icon']}"`
+                );
+              });
+            }
+          });
+        }
+        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
       } catch (e) {
+        console.error('❌ [PRODUCTS.VUE] Ошибка при умном копировании:', e);
         productRef.tabs = product.tabs;
-        console.log(
-          '🔍 [SAVE] productRef.tabs после fallback копирования:',
-          productRef.tabs
-        );
-        if (
-          productRef.tabs &&
-          productRef.tabs[0] &&
-          productRef.tabs[0].content &&
-          productRef.tabs[0].content[0]
-        ) {
-          console.log(
-            '🔍 [SAVE] productRef.tabs[0].content[0] после fallback копирования:',
-            productRef.tabs[0].content[0]
-          );
-          console.log(
-            '🔍 [SAVE] productRef.tabs[0].content[0][path-icon] после fallback копирования:',
-            productRef.tabs[0].content[0]['path-icon']
-          );
-        }
       }
     }
     if (product.price_list) {
@@ -333,37 +391,81 @@ async function saveChanges(product: ProductI) {
   }
 
   // 2. Загрузка иконок вкладок
-  // collect staged entries and upload them; keep staged list until blob->staged matching completes
+  console.log('\n');
+  console.log('░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░');
+  console.log('📤 [PRODUCTS.VUE] ЗАГРУЗКА ИКОНОК - НАЧАЛО');
+  console.log('░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░');
+
   const stagedIcons = tabIconsToUpload.value.get(product.id) || [];
-  console.log('🔍 [SAVE] stagedIcons:', stagedIcons);
+  console.log(
+    '📋 [PRODUCTS.VUE] Иконок в очереди (tabIconsToUpload):',
+    stagedIcons.length
+  );
+
   if (stagedIcons.length > 0) {
-    for (const iconData of stagedIcons) {
-      console.log('🔍 [SAVE] Загружаем staged иконку:', iconData);
+    console.log('📋 [PRODUCTS.VUE] Список иконок для загрузки:');
+    stagedIcons.forEach((icon, idx) => {
+      console.log(
+        `  [${idx}] tab[${icon.tabIndex}][${icon.itemIndex}] - ${icon.file.name}`
+      );
+    });
+
+    for (let i = 0; i < stagedIcons.length; i++) {
+      const iconData = stagedIcons[i];
+      console.log(
+        `\n🔄 [PRODUCTS.VUE] Загружаем иконку ${i + 1}/${stagedIcons.length}:`,
+        {
+          tabIndex: iconData.tabIndex,
+          itemIndex: iconData.itemIndex,
+          fileName: iconData.file.name,
+          blobUrl: iconData.blobUrl,
+        }
+      );
+
       const newPath = await uploadTabIcon(
         product.id,
         iconData.tabIndex,
         iconData.itemIndex,
         iconData.file
       );
-      console.log('🔍 [SAVE] Получили путь:', newPath);
+
+      console.log('✅ [PRODUCTS.VUE] API вернул путь:', newPath);
+
       if (newPath && productRef.tabs) {
-        console.log(
-          '🔍 [SAVE] Обновляем путь в productRef:',
-          iconData.tabIndex,
-          iconData.itemIndex,
-          newPath
-        );
         productRef.tabs[iconData.tabIndex].content[iconData.itemIndex][
           'path-icon'
         ] = newPath;
-        // store uploaded path on staged entry for later blob matching
         // @ts-ignore
         iconData.__uploadedPath = newPath;
-        console.log('🔍 [SAVE] Путь обновлен в productRef');
+        console.log(
+          `✅ [PRODUCTS.VUE] Путь обновлен в productRef.tabs[${iconData.tabIndex}][${iconData.itemIndex}]:`,
+          newPath
+        );
+      } else {
+        console.error('❌ [PRODUCTS.VUE] НЕ удалось загрузить иконку!');
       }
     }
-    // don't delete staged map yet — we'll cleanup after blob->staged matching below
+
+    console.log('\n📊 [PRODUCTS.VUE] productRef.tabs ПОСЛЕ загрузки иконок:');
+    if (productRef.tabs) {
+      productRef.tabs.forEach((tab: any, tIdx: number) => {
+        console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+        if (tab.content) {
+          tab.content.forEach((item: any, iIdx: number) => {
+            console.log(
+              `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → path-icon: "${item['path-icon']}"`
+            );
+          });
+        }
+      });
+    }
+  } else {
+    console.log('ℹ️ [PRODUCTS.VUE] Нет иконок для загрузки');
   }
+
+  console.log('░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░');
+  console.log('📤 [PRODUCTS.VUE] ЗАГРУЗКА ИКОНОК - КОНЕЦ');
+  console.log('░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░\n');
 
   // Дополнительная проверка: если в tabs остались blob: ссылки (например, при сбое immediate upload),
   // попытаемся сопоставить их со staged файлами и загрузить.
@@ -492,14 +594,48 @@ async function saveChanges(product: ProductI) {
       }
     }
   }
-  console.log(
-    '🔍 [SAVE] Финальное состояние productRef.tabs:',
-    productRef.tabs
-  );
+  console.log('\n');
+  console.log('╔════════════════════════════════════════════════════════════╗');
+  console.log('║  ФИНАЛЬНАЯ ПРОВЕРКА ПЕРЕД ОТПРАВКОЙ В БД                 ║');
+  console.log('╚════════════════════════════════════════════════════════════╝');
+  console.log('📊 [PRODUCTS.VUE] productRef.tabs ФИНАЛЬНОЕ СОСТОЯНИЕ:');
+  if (productRef.tabs) {
+    productRef.tabs.forEach((tab: any, tIdx: number) => {
+      console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+      if (tab.content) {
+        tab.content.forEach((item: any, iIdx: number) => {
+          const icon = item['path-icon'];
+          const isBlob = icon && icon.startsWith('blob:');
+          const isEmpty = !icon;
+          const isServer = icon && icon.startsWith('/');
+          console.log(
+            `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → ` +
+              `${
+                isEmpty
+                  ? '❌ ПУСТО'
+                  : isBlob
+                  ? '⚠️ BLOB'
+                  : isServer
+                  ? '✅ СЕРВЕР'
+                  : '❓ НЕИЗВЕСТНО'
+              } → ` +
+              `"${icon}"`
+          );
+        });
+      }
+    });
+  }
+  console.log('\n🚀 [PRODUCTS.VUE] Вызываем updateProduct(productRef)...\n');
 
   const updated: boolean = await updateProduct(productRef);
 
+  console.log(
+    '\n📥 [PRODUCTS.VUE] updateProduct ЗАВЕРШЕН, результат:',
+    updated
+  );
+
   if (updated) {
+    console.log('✅ [PRODUCTS.VUE] Товар успешно обновлен в БД');
     Swal.fire('Сохранено!', 'Товар был успешно обновлен.', 'success');
     isAddingNewProduct.value = false;
     // clear dirty flag for this product
@@ -514,8 +650,18 @@ async function saveChanges(product: ProductI) {
       }
     }
   } else {
+    console.log('❌ [PRODUCTS.VUE] НЕ удалось обновить товар');
     Swal.fire('Ошибка!', 'Не удалось сохранить товар.', 'error');
   }
+
+  console.log(
+    '████████████████████████████████████████████████████████████████████████'
+  );
+  console.log('💾💾💾 [PRODUCTS.VUE] saveChanges - КОНЕЦ СОХРАНЕНИЯ 💾💾💾');
+  console.log(
+    '████████████████████████████████████████████████████████████████████████\n\n'
+  );
+
   return updated;
 }
 
@@ -621,100 +767,86 @@ function handleStageTabIcon(
   itemIndex: number,
   file: File
 ) {
+  console.log('\n');
+  console.log('▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓');
+  console.log('📥 [PRODUCTS.VUE] handleStageTabIcon - ПОЛУЧЕН ФАЙЛ');
+  console.log('▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓');
+
   const productInState = products.value.find((p) => p.id === productId);
-  if (!productInState) return;
+  if (!productInState) {
+    console.log('❌ [PRODUCTS.VUE] Продукт не найден:', productId);
+    return;
+  }
+
+  console.log('📦 [PRODUCTS.VUE] Параметры:', {
+    productId,
+    tabIndex,
+    itemIndex,
+    fileName: file.name,
+    fileSize: file.size,
+  });
 
   const blobUrl = URL.createObjectURL(file);
+  console.log('🔗 [PRODUCTS.VUE] Создан blob URL:', blobUrl);
 
-  // Всегда добавляем в staged очередь (чтобы saveChanges мог загрузить, если немедленная загрузка не удалась)
+  // Всегда добавляем в staged очередь
   const productIcons = tabIconsToUpload.value.get(productId) || [];
   productIcons.push({ tabIndex, itemIndex, file, blobUrl });
   tabIconsToUpload.value.set(productId, productIcons);
 
-  // Показываем превью сразу
-  if (productInState.tabs) {
-    productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = blobUrl;
+  console.log('📋 [PRODUCTS.VUE] Добавлен в tabIconsToUpload:', {
+    productId,
+    totalIconsInQueue: productIcons.length,
+  });
+
+  // Показываем превью сразу - проверяем и создаем структуру если нужно
+  if (!productInState.tabs) {
+    productInState.tabs = [];
+    console.log('📝 [PRODUCTS.VUE] Создана пустая структура tabs');
   }
 
-  // Если продукт новый — загрузка произойдет при сохранении
-  if (productInState.is_new) {
-    return;
+  // Создаем вкладку, если не существует
+  if (!productInState.tabs[tabIndex]) {
+    productInState.tabs[tabIndex] = { title: 'Новая вкладка', content: [] };
+    console.log(`📝 [PRODUCTS.VUE] Создана вкладка [${tabIndex}]`);
   }
 
-  // Для существующего продукта — пытаемся загрузить сразу
-  (async () => {
-    try {
-      Swal.fire({
-        title: 'Загрузка иконки...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-        background: '#333',
-        color: '#fff',
+  // Создаем content массив, если не существует
+  if (!productInState.tabs[tabIndex].content) {
+    productInState.tabs[tabIndex].content = [];
+    console.log(`📝 [PRODUCTS.VUE] Создан content для вкладки [${tabIndex}]`);
+  }
+
+  // Создаем элемент, если не существует
+  if (!productInState.tabs[tabIndex].content[itemIndex]) {
+    productInState.tabs[tabIndex].content[itemIndex] = {
+      title: 'Новый элемент',
+      description: '',
+      'path-icon': '',
+    };
+    console.log(`📝 [PRODUCTS.VUE] Создан элемент [${tabIndex}][${itemIndex}]`);
+  }
+
+  // Устанавливаем blob URL
+  productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = blobUrl;
+  console.log('✅ [PRODUCTS.VUE] Установлен blob URL в productInState.tabs');
+
+  console.log('📊 [PRODUCTS.VUE] Текущее состояние productInState.tabs:');
+  productInState.tabs.forEach((tab: any, tIdx: number) => {
+    console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
+    if (tab.content) {
+      tab.content.forEach((item: any, iIdx: number) => {
+        console.log(
+          `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → path-icon: "${item['path-icon']}"`
+        );
       });
-      // Передаём вместе с файлом заголовки и описание для корректного сохранения
-      const newPath = await uploadTabIcon(productId, tabIndex, itemIndex, file);
-      Swal.close();
-      if (newPath && productInState.tabs) {
-        console.log(
-          '🔍 [UPLOAD] Обновляем путь в productInState:',
-          tabIndex,
-          itemIndex,
-          newPath
-        );
-        productInState.tabs[tabIndex].content[itemIndex]['path-icon'] = newPath;
-
-        // Сохраняем путь в отдельном хранилище
-        const iconKey = `${tabIndex}_${itemIndex}`;
-        if (!tabIconPaths.value.has(productId)) {
-          tabIconPaths.value.set(productId, new Map());
-        }
-        tabIconPaths.value.get(productId)!.set(iconKey, newPath);
-        console.log(
-          '🔍 [UPLOAD] Сохранили путь в tabIconPaths:',
-          productId,
-          iconKey,
-          newPath
-        );
-
-        // Удаляем staged-запись, если она есть
-        const icons = tabIconsToUpload.value.get(productId) || [];
-        const idx = icons.findIndex((i) => i.blobUrl === blobUrl);
-        if (idx !== -1) {
-          icons.splice(idx, 1);
-          tabIconsToUpload.value.set(productId, icons);
-          console.log('🔍 [UPLOAD] Удалили staged запись');
-        }
-        // Обновляем путь в основном состоянии products.value
-        // Это должно обновить editingProduct, так как он ссылается на тот же объект
-        console.log(
-          '🔍 [UPLOAD] Путь уже обновлен в productInState (основное состояние)'
-        );
-        console.log(
-          '🔍 [UPLOAD] productInState.tabs[tabIndex].content[itemIndex][path-icon]:',
-          productInState.tabs[tabIndex].content[itemIndex]['path-icon']
-        );
-        Swal.fire(
-          'Успех',
-          'Иконка загружена, не забудьте сохранить изменения.',
-          'success'
-        );
-      } else {
-        Swal.fire(
-          'Ошибка',
-          'Не удалось загрузить иконку. Она будет загружена при сохранении.',
-          'error'
-        );
-      }
-    } catch (e) {
-      Swal.close();
-      console.error('uploadTabIcon error', e);
-      Swal.fire(
-        'Ошибка',
-        'Не удалось загрузить иконку. Она будет загружена при сохранении.',
-        'error'
-      );
     }
-  })();
+  });
+
+  console.log(
+    '✅ [PRODUCTS.VUE] Иконка готова для превью, будет загружена при сохранении'
+  );
+  console.log('▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\n');
 }
 
 function handleUpdateTabIconPath(
