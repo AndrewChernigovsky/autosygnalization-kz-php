@@ -269,6 +269,12 @@ export function useProducts() {
           productData
         );
 
+        console.log('✅ [useProducts.ts] Товар создан, получен ответ:', {
+          oldId: product.id,
+          newId: createdProduct.id,
+          hasTabs: !!createdProduct.tabs,
+        });
+
         const index = products.value.findIndex((p) => p.id === product.id);
         if (index !== -1) {
           products.value[index].id = createdProduct.id;
@@ -276,6 +282,15 @@ export function useProducts() {
           products.value[index].is_new = false;
           if (createdProduct.price_list) {
             products.value[index].price_list = createdProduct.price_list;
+          }
+          // ✅ ОБНОВЛЯЕМ TABS из ответа create_product.php (там пути переименованы!)
+          if (createdProduct.tabs) {
+            console.log(
+              '✅ [useProducts.ts] Обновляем tabs из ответа create_product.php'
+            );
+            console.log('  Старые tabs:', products.value[index].tabs);
+            console.log('  Новые tabs:', createdProduct.tabs);
+            products.value[index].tabs = createdProduct.tabs;
           }
         }
       } else {

@@ -10,10 +10,10 @@ header("Access-Control-Allow-Origin: http://localhost:5173");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS, DELETE, PUT');
 
-// if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
-//   http_response_code(200);
-//   exit;
-// }
+if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
+  http_response_code(200);
+  exit;
+}
 
 header('Content-Type: application/json');
 
@@ -120,7 +120,12 @@ try {
   file_put_contents($log_file, "  tempTabsDir: $tempTabsDir\n", FILE_APPEND);
   file_put_contents($log_file, "  is_new: " . (strpos($tempId, 'new_') === 0 ? 'ДА' : 'НЕТ') . "\n", FILE_APPEND);
   file_put_contents($log_file, "  tabs count: " . count($tabs) . "\n", FILE_APPEND);
+  file_put_contents($log_file, "  tempTabsDir полный путь: $tempTabsDir\n", FILE_APPEND);
   file_put_contents($log_file, "  dir exists: " . (is_dir($tempTabsDir) ? 'ДА' : 'НЕТ') . "\n", FILE_APPEND);
+  file_put_contents($log_file, "  DOCUMENT_ROOT: " . $_SERVER['DOCUMENT_ROOT'] . "\n", FILE_APPEND);
+  
+  // ОТЛАДКА: Выводим в error_log тоже
+  error_log("CREATE_PRODUCT: tempId=$tempId, uuid=$uuid, tempTabsDir=$tempTabsDir, exists=" . (is_dir($tempTabsDir) ? 'YES' : 'NO'));
   
   if (strpos($tempId, 'new_') === 0 && !empty($tabs) && is_dir($tempTabsDir)) {
     $newTabsDir = $baseUploadPath . 'tabs/' . $uuid;

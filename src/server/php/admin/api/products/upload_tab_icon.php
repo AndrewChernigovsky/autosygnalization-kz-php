@@ -18,6 +18,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
 header('Content-Type: application/json');
 
 $log_file = __DIR__ . '/debug_upload_tab_icon.log';
+
+// Простое логирование для проверки
+error_log("=== upload_tab_icon.php ВЫЗВАН ===");
+file_put_contents($log_file, "\n\nTEST TEST TEST\n", FILE_APPEND);
+
 file_put_contents($log_file, "\n\n", FILE_APPEND);
 file_put_contents($log_file, "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n", FILE_APPEND);
 file_put_contents($log_file, "📤 [PHP] upload_tab_icon.php - НОВЫЙ ЗАПРОС\n", FILE_APPEND);
@@ -54,8 +59,17 @@ if ($file['error'] !== UPLOAD_ERR_OK) {
 }
 
 $uploadDir = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/tabs/' . $productId . '/';
+
+// ОТЛАДКА
+error_log("UPLOAD_TAB_ICON: productId=$productId, uploadDir=$uploadDir, DOCUMENT_ROOT=" . $_SERVER['DOCUMENT_ROOT']);
+file_put_contents($log_file, "📁 [PHP] uploadDir: $uploadDir\n", FILE_APPEND);
+file_put_contents($log_file, "📁 [PHP] DOCUMENT_ROOT: " . $_SERVER['DOCUMENT_ROOT'] . "\n", FILE_APPEND);
+
 if (!is_dir($uploadDir)) {
   mkdir($uploadDir, 0777, true);
+  file_put_contents($log_file, "✅ [PHP] Создана папка: $uploadDir\n", FILE_APPEND);
+} else {
+  file_put_contents($log_file, "ℹ️ [PHP] Папка уже существует: $uploadDir\n", FILE_APPEND);
 }
 
 $fileExtension = pathinfo($file['name'], PATHINFO_EXTENSION);
