@@ -189,6 +189,12 @@ function handleImageUpload(data: {
     const service = localServices.value.main.find((s) => s.id.toString() === data.id);
     if (service) {
       service.image.src = data.path;
+      const isNew = String(service.id).startsWith('new-');
+      console.debug('[Services] handleImageUpload', {
+        id: service.id,
+        isNew,
+        openIdsBefore: openMainServiceIds.value.slice(),
+      });
       Swal.fire({
         title: 'Успешно!',
         text: `Изображение ${data.filename} загружено. Обязательно сохраните услугу.`,
@@ -198,7 +204,15 @@ function handleImageUpload(data: {
         timer: 2000,
         showConfirmButton: false,
       });
-      saveService(service.id);
+      if (!isNew) {
+        // Автосохранение только для существующих услуг
+        saveService(service.id);
+      } else {
+        // Гарантируем, что аккордеон остается раскрытым для новой услуги
+        if (!openMainServiceIds.value.includes(service.id)) {
+          openMainServiceIds.value.push(service.id);
+        }
+      }
     }
   }
 }
@@ -549,6 +563,13 @@ async function saveService(serviceId: string) {
 
     const savedService = await response.json();
 
+    console.debug('[Services] saveService result', {
+      prevId: serviceId,
+      newId: savedService?.id,
+      isNew,
+      openIdsBefore: openMainServiceIds.value.slice(),
+    });
+
     if (isNew) {
       // If it was a new service, update the localServices.main array
       const index = localServices.value.main.findIndex(
@@ -557,6 +578,13 @@ async function saveService(serviceId: string) {
       if (index !== -1) {
         localServices.value.main[index] = savedService;
         isAddingMainService.value = false;
+      }
+      // Сохраняем раскрытие аккордеона при смене id
+      if (savedService?.id && savedService.id !== serviceId) {
+        const openIdx = openMainServiceIds.value.indexOf(serviceId);
+        if (openIdx !== -1) {
+          openMainServiceIds.value.splice(openIdx, 1, savedService.id);
+        }
       }
     } else {
       // If it was an existing service, update the localServices.main array

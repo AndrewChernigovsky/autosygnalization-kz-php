@@ -3,12 +3,33 @@
 namespace API\ADMIN;
 function log_message($message)
 {
-    $log_file = sys_get_temp_dir() . '/docs-debug.log';
+    // Пытаемся писать рядом со скриптом
+    $baseDir = __DIR__;
+    $log_file = $baseDir . '/docs-debug.log';
     $timestamp = date('Y-m-d H:i:s');
+    if (!is_writable($baseDir)) {
+        // Фоллбек в системный TMP, если каталог недоступен для записи
+        $fallback = sys_get_temp_dir() . '/docs-debug.log';
+        @file_put_contents($fallback, "[$timestamp] " . $message . "\n", FILE_APPEND);
+        return;
+    }
     file_put_contents($log_file, "[$timestamp] " . $message . "\n", FILE_APPEND);
 }
 
-header("Access-Control-Allow-Origin: http://localhost:5173");
+// Корректный заголовок CORS: только один Origin
+$allowed_origins = [
+    'http://localhost:5173',
+    'https://starline-service.kz',
+    'https://www.starline-service.kz'
+];
+$request_origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+if (in_array($request_origin, $allowed_origins, true)) {
+    header("Access-Control-Allow-Origin: $request_origin");
+    header('Vary: Origin');
+} else {
+    // Фоллбек на прод домен
+    header("Access-Control-Allow-Origin: https://starline-service.kz");
+}
 header("Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With");
 header('Content-Type: application/json');
@@ -58,6 +79,7 @@ class DocsAPI extends DataBase {
         $key = $data['key'] ?? '';
         
         try {
+            log_message("updateDoc: id=$id, key='$key', DOCUMENT_ROOT='" . ($_SERVER['DOCUMENT_ROOT'] ?? '') . "'");
             // Обновляем ключ если он передан
             if (!empty($key)) {
                 $query = "UPDATE docs SET `key` = :key WHERE id = :id";
@@ -67,6 +89,10 @@ class DocsAPI extends DataBase {
             
             // Если передан файл, обрабатываем его
             if ($file && $file['error'] === UPLOAD_ERR_OK) {
+                log_message("File incoming: name='{$file['name']}', type='{$file['type']}', size={$file['size']}, tmp='{$file['tmp_name']}'");
+                if (!is_uploaded_file($file['tmp_name'])) {
+                    log_message("is_uploaded_file=false for tmp='{$file['tmp_name']}'");
+                }
                 // Получаем старый путь
                 $query = "SELECT path FROM docs WHERE id = :id";
                 $stmt = $this->pdo->prepare($query);
@@ -74,15 +100,31 @@ class DocsAPI extends DataBase {
                 $old_path = $stmt->fetchColumn();
                 
                 // Удаляем старый файл если он существует
-                if ($old_path && file_exists($_SERVER['DOCUMENT_ROOT'] . $old_path)) {
-                    unlink($_SERVER['DOCUMENT_ROOT'] . $old_path);
+                if ($old_path) {
+                    $old_abs = ($_SERVER['DOCUMENT_ROOT'] ?? '') . $old_path;
+                    if (file_exists($old_abs)) {
+                        if (!@unlink($old_abs)) {
+                            log_message("Failed to unlink old file: $old_abs");
+                        } else {
+                            log_message("Old file removed: $old_abs");
+                        }
+                    } else {
+                        log_message("Old file not found to unlink: $old_abs");
+                    }
                 }
                 
                 // Загружаем новый файл
-                $upload_dir = $_SERVER['DOCUMENT_ROOT'] . '/client/docs/';
+                $upload_dir = rtrim(($_SERVER['DOCUMENT_ROOT'] ?? ''), '/');
+                $upload_dir .= '/client/docs/';
                 if (!is_dir($upload_dir)) {
-                    mkdir($upload_dir, 0777, true);
+                    if (!mkdir($upload_dir, 0777, true)) {
+                        log_message("mkdir failed: $upload_dir");
+                        return $this->error("Не удалось создать директорию загрузки", 500);
+                    }
                 }
+                $dir_perms = substr(sprintf('%o', @fileperms($upload_dir)), -4);
+                $dir_writable = is_writable($upload_dir) ? 'true' : 'false';
+                log_message("Upload dir: '$upload_dir', perms=$dir_perms, writable=$dir_writable");
                 
                 $new_filename = $key . '.txt';
                 $upload_file = $upload_dir . $new_filename;
@@ -92,6 +134,11 @@ class DocsAPI extends DataBase {
                     $query = "UPDATE docs SET path = :path WHERE id = :id";
                     $stmt = $this->pdo->prepare($query);
                     $stmt->execute([':path' => $relative_path, ':id' => $id]);
+                    log_message("File moved to: $upload_file, db path set to: $relative_path");
+                } else {
+                    $err = error_get_last();
+                    log_message("move_uploaded_file failed to '$upload_file' error=" . json_encode($err));
+                    return $this->error("Не удалось сохранить загруженный файл", 500);
                 }
             }
             

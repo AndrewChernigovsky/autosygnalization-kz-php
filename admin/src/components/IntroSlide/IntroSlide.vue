@@ -314,6 +314,17 @@ const removeAdvantage = (item: IntroSlideData, index: number) => {
   item.advantages.splice(index, 1);
 };
 
+// Диагностика ввода преимуществ: фиксируем события для поиска причин потери фокуса
+const logAdvantageInput = (
+  scope: 'new' | 'existing',
+  slideId: number,
+  index: number,
+  value: string
+) => {
+  // Лог без тяжелых вычислений, чтобы не влиять на производительность ввода
+  console.debug('[IntroSlide] advantage input', { scope, slideId, index, valueLength: value?.length ?? 0 });
+};
+
 const handleSave = async (item: IntroSlideData) => {
   try {
     if (
@@ -697,14 +708,15 @@ const leave = (el: Element) => {
                 class="advantages-list"
               >
                 <div
-                  v-for="(advantage, advIndex) in newSlide.advantages"
-                  :key="advantage + advIndex"
+                  v-for="(_, advIndex) in newSlide.advantages"
+                  :key="`new-adv-${advIndex}`"
                   class="advantage-item"
                 >
                   <input
                     class="input-advantage"
                     type="text"
                     v-model="newSlide.advantages[advIndex]"
+                    @input="(e: any) => logAdvantageInput('new', 0, advIndex, (e?.target?.value ?? '') as string)"
                     placeholder="Введите преимущество"
                   />
                   <MyBtn
@@ -981,10 +993,10 @@ const leave = (el: Element) => {
                         class="advantages-list"
                       >
                         <div
-                          v-for="(advantage, advIndex) in editableItemData[
+                          v-for="(_, advIndex) in editableItemData[
                             item.id
                           ].advantages"
-                          :key="advantage + advIndex"
+                          :key="`adv-${item.id}-${advIndex}`"
                           class="advantage-item"
                         >
                           <input
@@ -993,6 +1005,7 @@ const leave = (el: Element) => {
                             v-model="
                               editableItemData[item.id].advantages[advIndex]
                             "
+                            @input="(e: any) => logAdvantageInput('existing', item.id, advIndex, (e?.target?.value ?? '') as string)"
                             placeholder="Введите преимущество"
                           />
                           <MyBtn
@@ -1128,374 +1141,6 @@ const leave = (el: Element) => {
 </template>
 
 <style scoped>
-.main-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 48px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+@import url('./introSiide.module.css');
 
-.add-slide-actions {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.main-loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.main-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid white;
-  padding: 10px;
-  margin-bottom: 10px;
-  border-radius: 10px;
-  gap: 20px;
-  transition: all 0.2s ease;
-}
-
-.drag-handle {
-  cursor: grab;
-  padding: 5px;
-}
-
-.drag-handle:active {
-  cursor: grabbing;
-}
-
-.draggable:active {
-  cursor: grabbing;
-}
-
-.main-item.dragging {
-  opacity: 0.5;
-  transform: scale(0.95);
-}
-
-.main-item.drag-over {
-  border-color: #3498db;
-}
-
-.main-item-label-content {
-  display: flex;
-  align-items: center;
-}
-
-.main-item-label {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 24px;
-  font-weight: bold;
-  padding: 3px;
-  padding-right: 10px;
-}
-
-.advantages {
-  margin-top: 15px;
-  margin-bottom: 15px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.advantage-item {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-.btn-add {
-  width: 100%;
-  max-width: 100%;
-  flex-grow: 1;
-  padding: 20px 20px;
-}
-
-.btn-remove {
-  padding: 8px 12px;
-  font-size: 14px;
-}
-
-.media-uploads {
-  display: flex;
-  gap: 20px;
-  margin: 20px 0;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #444;
-}
-
-.upload-group {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.upload-group > label {
-  font-weight: bold;
-}
-
-.hidden-file-input {
-  display: none;
-}
-
-.uploader-preview {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border: 2px dashed #555;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #333;
-  overflow: hidden;
-}
-
-.uploader-placeholder {
-  color: #777;
-}
-
-.image-preview,
-.video-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.upload-actions {
-  padding-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.main-item-input {
-  display: flex;
-  gap: 10px;
-  font-size: 24px;
-  padding: 15px;
-}
-
-.main-item-input-field {
-  flex: 1;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  color: black;
-  background-color: white;
-  font-size: 24px;
-  box-shadow: 0 0 0 5px #363535;
-}
-
-.main-item-input-label {
-  min-width: 200px;
-  font-weight: bold;
-}
-
-.main-item-inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding-top: 10px;
-  border-top: 1px solid #444;
-}
-
-.main-item-advantages {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #444;
-}
-
-.main-item-content {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  padding: 15px;
-  padding-top: 0;
-}
-
-.main-item-advantages-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 24px;
-  padding: 10px;
-  padding-left: 0;
-  padding-right: 0;
-  border-top: 1px solid #444;
-}
-
-.advantages-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 15px;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background-color: black;
-}
-
-.advantages-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 15px;
-}
-
-.no-advantages {
-  color: #888;
-  font-style: italic;
-  margin-bottom: 15px;
-  text-align: center;
-}
-
-.advantage-actions {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-}
-
-.advantage-item input {
-  font-size: 24px;
-  flex-grow: 1;
-  padding: 5px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  color: black;
-  background-color: white;
-  box-shadow: 0 0 0 5px #363535;
-}
-
-.accordion-enter-active,
-.accordion-leave-active {
-  transition: all 0.4s ease-out;
-  overflow: hidden;
-}
-
-.main-item-content {
-  /* Add this for a smooth transition */
-  transition: all 0.4s ease-out;
-}
-
-.add-new-item-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border: 1px solid white;
-  border-radius: 10px;
-  margin-bottom: 20px;
-  font-size: 26px;
-  font-weight: bold;
-}
-
-.new-slide-form {
-  border-color: #3498db;
-}
-
-.slides-list {
-  /* Space for the drag handle */
-  padding-top: 10px;
-}
-
-.form-actions {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-}
-
-.delete-slide-btn,
-.save-all-btn {
-  align-self: center;
-  width: 100%;
-  max-width: 100%;
-  flex-grow: 1;
-  padding: 20px 20px;
-}
-
-/* Стили для выбора ссылок */
-.link-selector-container {
-  display: flex;
-  justify-content: space-between;
-  gap: 15px;
-  width: 100%;
-}
-
-.link-mode-toggle {
-  display: flex;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid #555;
-  width: 100%;
-  max-width: 400px;
-}
-
-.link-mode-toggle input[type='radio'] {
-  display: none;
-}
-
-.link-mode-toggle label {
-  flex: 1;
-  text-align: center;
-  padding: 8px 12px;
-  cursor: pointer;
-  background-color: #3a3a3c;
-  color: #f0f0f0;
-  transition: all 0.2s ease-in-out;
-  font-size: 0.9rem;
-  font-weight: 500;
-  user-select: none;
-}
-
-.link-mode-toggle label:not(:first-of-type) {
-  border-left: 1px solid #555;
-}
-
-.link-mode-toggle label.active {
-  background: linear-gradient(180deg, #280000 0%, #ff0000 100%);
-  color: white;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-.custom-link-input {
-  width: 100%;
-}
-
-.existing-link-selector {
-  width: 100%;
-}
-
-.existing-link-selector .form-group {
-  margin-bottom: 0;
-}
-
-.existing-link-selector select {
-  background-color: #1c1c1e;
-  color: #f0f0f0;
-  border: 1px solid #555;
-  padding: 10px;
-  border-radius: 6px;
-  width: 100%;
-  box-sizing: border-box;
-  font-size: 1rem;
-}
-
-.existing-link-selector select:focus {
-  outline: none;
-  border-color: #007aff;
-  box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.5);
-}
 </style>
