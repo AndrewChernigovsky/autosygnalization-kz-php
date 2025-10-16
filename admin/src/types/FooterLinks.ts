@@ -2,6 +2,7 @@ export interface LinkData {
   links_data_id: number;
   name: string;
   link: string;
+  type: 'link' | 'phone' | 'email';
   source_table: 'Sections-Product' | 'Services' | 'Contacts' | 'Navigation';
 }
 

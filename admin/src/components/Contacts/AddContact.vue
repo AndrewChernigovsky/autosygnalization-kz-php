@@ -102,7 +102,7 @@ const addNewContact = async (e?: Event | null) => {
               **Если контакт google карта то оставьте поле пустым
             </p>
           </div>
-          <div class="addcontact-label">
+          <div class="addcontact-label" v-if="store.newContact.type !== 'Как к нам добраться'">
             <h3 class="subtitle m-0">Ссылка</h3>
             <MyInput variant="primary" v-model="store.newContact.link" />
             <p class="addcontact-help m-0">

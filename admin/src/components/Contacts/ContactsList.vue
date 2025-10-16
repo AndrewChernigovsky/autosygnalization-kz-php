@@ -193,7 +193,7 @@ const handleReorder = async (reorderedContactsForType: any[]) => {
                     {{ item.title ? item.title : 'Заголовок' }}
                   </h2>
                   <MyBtn
-                    variant="primary"
+                    variant="secondary"
                     @click="toggleContactItem(item.contact_id)"
                     >{{
                       openContactItems[item.contact_id]
@@ -225,7 +225,7 @@ const handleReorder = async (reorderedContactsForType: any[]) => {
                       **Если контакт google карта то оставьте поле пустым
                     </p>
                   </div>
-                  <div class="contact-input-wrapper">
+                  <div class="contact-input-wrapper" v-if="item.type !== 'Как к нам добраться'">
                     <h3 class="subtitle m-0">Ссылка*</h3>
                     <MyInput variant="primary" v-model="item.link" />
                     <p class="addcontact-help m-0">

@@ -219,6 +219,26 @@ public function getAllContact(array $types = [])
   }
 
   // Обновленная функция получение Social на странице контакты
+  public function getSocialMessenger()
+  {
+      try {
+          $query = "SELECT content as content, title as title, link as link, icon_path as svg_path FROM Contacts WHERE type = 'Мессенджер' AND on_page = 1 ORDER BY sort_order ASC";
+          $stmt = $this->pdo->prepare($query);
+          $stmt->execute();
+
+          $contactSocial = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+          
+          // Убираем HTML теги из контента социальных сетей
+          foreach ($contactSocial as &$social) {
+              $social['content'] = strip_tags($social['content']);
+              $social['title'] = strip_tags($social['title']);
+          }
+          return $contactSocial;
+      } catch (\Exception $e) {
+          error_log("Ошибка получения социальных сетей: " . $e->getMessage());
+          return [];
+      }
+  }
   public function getSocial()
   {
       try {
@@ -400,6 +420,7 @@ public function getAllContact(array $types = [])
       "webSite" => $this->getWebsite(),
       "address" => $this->getAddress(),
       "social" => $this->getSocialIcons(),
+      "socialMessenger" => $this->getSocialMessenger(),
     ];
   }
 
