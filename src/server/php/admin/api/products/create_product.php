@@ -89,27 +89,11 @@ try {
 
   $stmt->execute();
 
-  // --- Start of new logic: rename folders and update paths ---
-  $baseUploadPath = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/';
-
-  // Update gallery
-  $gallery = $data['gallery'] ?? [];
-  $tempGalleryDir = $baseUploadPath . 'products/gallery/' . $tempId;
-  if (strpos($tempId, 'new_') === 0 && !empty($gallery) && is_dir($tempGalleryDir)) {
-    $newGalleryDir = $baseUploadPath . 'products/gallery/' . $uuid;
-    if (rename($tempGalleryDir, $newGalleryDir)) {
-      $newGallery = [];
-      foreach ($gallery as $imageUrl) {
-        $newGallery[] = str_replace('/' . $tempId . '/', '/' . $uuid . '/', $imageUrl);
-      }
-      $data['gallery'] = $newGallery;
-      $galleryJson = json_encode($newGallery);
-      $updateStmt = $pdo->prepare("UPDATE Products SET gallery = :gallery WHERE id = :id");
-      $updateStmt->execute([':gallery' => $galleryJson, ':id' => $uuid]);
-    }
-  }
+  // --- Галерея уже загружена с правильными путями, не нужно переименовывать ---
+  // Пути формируются на основе productTitle, а не productId
 
   // Update tabs
+  $baseUploadPath = $_SERVER['DOCUMENT_ROOT'] . '/server/uploads/';
   $tabs = $data['tabs'] ?? [];
   $tempTabsDir = $baseUploadPath . 'tabs/' . $tempId;
   

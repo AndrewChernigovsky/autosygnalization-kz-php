@@ -191,6 +191,7 @@ export function useProducts() {
         price_list: product.price_list,
       };
 
+
       console.log('📦 [useProducts.ts] productData ПЕРЕД санитизацией:', {
         id: productData.id,
         title: productData.title,
@@ -252,8 +253,7 @@ export function useProducts() {
             tab.content.forEach((item: any, iIdx: number) => {
               const icon = item['path-icon'];
               console.log(
-                `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → ${
-                  icon ? '✅' : '❌'
+                `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → ${icon ? '✅' : '❌'
                 } path-icon: "${icon}"`
               );
             });
@@ -262,7 +262,6 @@ export function useProducts() {
       }
 
       if (product.is_new) {
-        console.log('Creating product payload:', productData);
         const createdProduct = await apiCall(
           'create_product.php',
           'POST',
@@ -412,6 +411,7 @@ export function useProducts() {
   ): Promise<string[] | null> {
     const formData = new FormData();
     formData.append('productId', product.id);
+    formData.append('productTitle', product.title || 'product'); // Передаем название товара
     formData.append('image', file);
     if (imageIndex !== null) {
       formData.append('imageIndex', String(imageIndex));

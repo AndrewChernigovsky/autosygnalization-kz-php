@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
+header('Content-Type: text/html; charset=utf-8');
 
 use LAYOUT\Header;
 use LAYOUT\Footer;

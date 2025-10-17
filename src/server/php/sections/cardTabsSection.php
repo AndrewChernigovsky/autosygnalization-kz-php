@@ -71,7 +71,8 @@ function cardTabsSection($id)
           if (!isset($tabs_filtered[$index]) || empty($tabs_filtered[$index])) continue;
           ?>
           <ul class="tab__list <?= $index === $firstActiveIndex ? 'tab__list--show' : '' ?> list-style-none"
-            data-content="<?= htmlspecialchars($tab_data['title']) ?>">
+          data-content="<?= htmlspecialchars($tab_data['title'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') ?>"
+          >
             <?php foreach ($tabs_filtered[$index] as $item): ?>
               <?php if (!empty($item['title'])): ?>
                 <li class="tab__item">

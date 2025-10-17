@@ -239,8 +239,6 @@ async function saveChanges(product: ProductI) {
       product.tabs[0].content[0]['path-icon']
     );
   }
-  console.log('🔍 [SAVE] productRef создан:', productRef);
-  console.log('🔍 [SAVE] productRef.tabs:', productRef.tabs);
 
   // Important: merge updated tabs and price_list from the edited payload into the local productRef
   // editingProduct is a deep clone; ensure productRef contains the latest tabs and price_list before uploads
@@ -267,7 +265,7 @@ async function saveChanges(product: ProductI) {
       'options',
       'options-filters',
       'autosygnals',
-      'gallery',
+      // НЕ включаем 'gallery' - она обрабатывается отдельно через filesToUpload
     ];
     for (const af of arrayFields) {
       if (Object.prototype.hasOwnProperty.call(product, af)) {
@@ -284,18 +282,16 @@ async function saveChanges(product: ProductI) {
         }
       }
     }
+    
+    // Галерея: НЕ копируем из product, оставляем productRef.gallery как есть
+    // Она будет обновлена ниже только если есть файлы в filesToUpload
 
     if (product.tabs) {
-      console.log(
-        '🔍 [SAVE] Копируем tabs из product в productRef с умным слиянием'
-      );
-      console.log('🔍 [SAVE] product.tabs:', product.tabs);
       try {
         const newTabs = JSON.parse(JSON.stringify(product.tabs));
 
         // УМНОЕ СЛИЯНИЕ: сохраняем валидные серверные пути из productRef
         if (productRef.tabs && Array.isArray(productRef.tabs)) {
-          console.log('🔍 [SAVE] Выполняем умное слияние с существующими tabs');
           newTabs.forEach((tab: any, tIdx: number) => {
             if (
               tab?.content &&
@@ -337,23 +333,6 @@ async function saveChanges(product: ProductI) {
         }
 
         productRef.tabs = newTabs;
-        console.log('\n━━━ УМНОЕ КОПИРОВАНИЕ ЗАВЕРШЕНО ━━━');
-        console.log(
-          '📊 [PRODUCTS.VUE] productRef.tabs ПОСЛЕ умного копирования:'
-        );
-        if (productRef.tabs) {
-          productRef.tabs.forEach((tab: any, tIdx: number) => {
-            console.log(`  Вкладка [${tIdx}]: ${tab.title}`);
-            if (tab.content) {
-              tab.content.forEach((item: any, iIdx: number) => {
-                console.log(
-                  `    Элемент [${tIdx}][${iIdx}]: "${item.title}" → path-icon: "${item['path-icon']}"`
-                );
-              });
-            }
-          });
-        }
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n');
       } catch (e) {
         console.error('❌ [PRODUCTS.VUE] Ошибка при умном копировании:', e);
         productRef.tabs = product.tabs;
@@ -370,6 +349,7 @@ async function saveChanges(product: ProductI) {
 
   // 1. Загрузка изображений галереи
   const galleryFiles = filesToUpload.value.get(product.id) || [];
+
   if (galleryFiles.length > 0) {
     productRef.gallery = productRef.gallery.filter(
       (url) => !url.startsWith('blob:')

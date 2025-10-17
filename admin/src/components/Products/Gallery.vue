@@ -4,7 +4,7 @@
     <div class="gallery-images">
       <div
         v-for="(image, index) in product.gallery"
-        :key="index"
+        :key="index + '-' + product.id + '-' + image"
         class="gallery-image"
         @click="
           !isImageUploading(product.id, index) &&

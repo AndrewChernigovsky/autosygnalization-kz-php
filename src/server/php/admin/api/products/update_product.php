@@ -73,21 +73,39 @@ function getIconsFromTabs(array $tabs): array
 try {
   $pdo->beginTransaction();
 
-  // Handle gallery image deletions
+  // Handle gallery image deletions and check if gallery changed
   $stmt = $pdo->prepare("SELECT gallery FROM Products WHERE id = :id");
   $stmt->execute([':id' => $productId]);
   $currentProduct = $stmt->fetch(PDO::FETCH_ASSOC);
 
+  $galleryChanged = false;
+  $galleryToSave = [];
+  
   if ($currentProduct) {
     $currentGallery = json_decode($currentProduct['gallery'], true) ?: [];
     $newGallery = $data['gallery'] ?? [];
-    $imagesToDelete = array_diff($currentGallery, $newGallery);
-    foreach ($imagesToDelete as $imageUrl) {
-      $filePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($imageUrl, PHP_URL_PATH);
-      if (file_exists($filePath)) {
-        unlink($filePath);
+    
+    // Проверяем, изменилась ли галерея
+    if (json_encode($currentGallery) !== json_encode($newGallery)) {
+      $galleryChanged = true;
+      $galleryToSave = $newGallery;
+      
+      // Удаляем старые файлы, которых нет в новой галерее
+      $imagesToDelete = array_diff($currentGallery, $newGallery);
+      foreach ($imagesToDelete as $imageUrl) {
+        $filePath = $_SERVER['DOCUMENT_ROOT'] . parse_url($imageUrl, PHP_URL_PATH);
+        if (file_exists($filePath)) {
+          unlink($filePath);
+        }
       }
+    } else {
+      // Галерея не изменилась, используем текущую из БД
+      $galleryToSave = $currentGallery;
     }
+  } else {
+    // Если продукта нет в БД (не должно произойти), используем данные из запроса
+    $galleryChanged = true;
+    $galleryToSave = $data['gallery'] ?? [];
   }
 
   // Handle tab icon deletions
@@ -112,7 +130,7 @@ try {
     }
   }
 
-  // Update Products table
+  // Update Products table - используем $galleryToSave вместо $data['gallery']
   $productStmt = $pdo->prepare("
       UPDATE Products SET
           model = :model, title = :title, description = :description, price = :price,
@@ -133,7 +151,7 @@ try {
     ':is_published' => !empty($data['is_published']) ? 1 : 0,
     ':is_popular' => !empty($data['is_popular']) ? 1 : 0,
     ':is_special' => !empty($data['is_special']) ? 1 : 0,
-    ':gallery' => json_encode($data['gallery'] ?? []),
+    ':gallery' => json_encode($galleryToSave), // Используем проверенную галерею
     ':category' => $data['category'] ?? 'uncategorized',
     ':link' => $link,
     ':functions' => json_encode($data['functions'] ?? []),

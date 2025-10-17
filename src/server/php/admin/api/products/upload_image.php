@@ -33,6 +33,7 @@ if (!isset($_POST['productId'], $_FILES['image'])) {
 }
 
 $productId = $_POST['productId'];
+$productTitle = $_POST['productTitle'] ?? $productId; // Получаем название товара
 $imageFile = $_FILES['image'];
 $imageIndex = $_POST['imageIndex'] ?? null;
 
@@ -45,10 +46,18 @@ if ($imageFile['error'] !== UPLOAD_ERR_OK) {
 
 $isNewProduct = strpos($productId, 'new_') === 0;
 
+// Создаем безопасное имя папки из названия товара
+$safeFolderName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $productTitle);
+$safeFolderName = preg_replace('/_+/', '_', $safeFolderName); // Убираем множественные подчеркивания
+$safeFolderName = trim($safeFolderName, '_'); // Убираем подчеркивания с краев
+if (empty($safeFolderName)) {
+  $safeFolderName = $productId; // Fallback на ID, если название пустое
+}
+
 // Создаем уникальное имя файла
 $extension = pathinfo($imageFile['name'], PATHINFO_EXTENSION);
 $filename = Uuid::uuid4()->toString() . '.' . $extension;
-$uploadDir = '/server/uploads/products/gallery/' . $productId . '/';
+$uploadDir = '/server/uploads/products/gallery/' . $safeFolderName . '/';
 $destinationDirectory = $_SERVER['DOCUMENT_ROOT'] . $uploadDir;
 
 // Создаем директорию, если она не существует
