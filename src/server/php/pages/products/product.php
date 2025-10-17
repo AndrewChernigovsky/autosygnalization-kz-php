@@ -101,7 +101,9 @@ echo $head->setHead();
         <?php endif; ?>
       <?php endif; ?>
     </section>
-    <?= cardTabsSection($_GET['id']) ?>
+    <?php if ($product !== null && $product['is_published']): ?>
+      <?= cardTabsSection($_GET['id']) ?>
+    <?php endif; ?>
     <?= getShop("setup"); ?>
   </main>
   <?php
